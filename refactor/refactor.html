@@ -110,8 +110,8 @@ function TeamInfo(x,y,team)
 
 function Infantry(x,y,team,type,target)
 //  type    (string) unit class
-{   
-    var _=new Pawn(x,y,team,target);    
+{
+    var _=new Pawn(x,y,team,target);
     var r=Math.random;
         
     var typeInfo=
@@ -125,18 +125,26 @@ function Infantry(x,y,team,type,target)
     _.berserkPotential= typeInfo[type][i++];
     _.berserkTime=      typeInfo[type][i++];
     _.reloadTime=       typeInfo[type][i++];
-    _.sightRange=       typeInfo[type][i++];    
+    _.sightRange=       typeInfo[type][i++];
     _.GFXSET=           typeInfo[type][i++][team];
         
     // Event flags / timers
+    _.action=0;
     _.isReloading=0;
     _.isBerserk=0;
     _.corpseTime=180;
     _.class=Enum.UnitClass.INFANTRY;
     
     // Game events
-    this.clearTarget;   // resetTarget()
-    this.checkTarget;   // check for and head in the direction of new targets to attack
+    this.clearTarget=function()
+    {
+        this.target=undefined;
+        this.action=0;
+    };
+    this.findTarget=function()
+    {
+        
+    };   // check for and head in the direction of new targets to attack
     this.active;        // highest level "alive" status: check if alive carry out movement, attacking, death.
                         // if dead lay out the corpse until it rots.
     
@@ -149,7 +157,7 @@ function Bullet(x,y,team,target,dx,dy,accuracy)
 //  dx          (double) X distance to cover per tick
 //  dy          (double) Y distance to cover per tick
 //  accuracy    (double[]) chance to hit [target, bystanders]
-{   
+{
     var _=new Pawn(x,y,team,target);
     _.dx=dx;
     _.dy=dy;
@@ -169,7 +177,7 @@ function Bullet(x,y,team,target,dx,dy,accuracy)
         
         // Get our 3 closest spatialHash partitions.
         var sh=world.spatialHash;
-        var x=this.x>>6;
+        var x=this.x>>world.shWidth;
         var h=sh[x];
         if(sh[x-1]) h=h.concat(sh[x-1]);
         if(sh[x+1]) h=h.concat(sh[x+1]);
@@ -238,7 +246,7 @@ function SmallExplosion(x,y)
     {
         // Get our 3 closest spatialHash partitions.
         var sh=world.spatialHash;
-        var x=this.x>>6;
+        var x=this.x>>world.shWidth;
         var h=sh[x];
         if(sh[x-1]) h=h.concat(sh[x-1]);
         if(sh[x+1]) h=h.concat(sh[x+1]);
@@ -270,7 +278,7 @@ var music;
 var world=new (function()
 {
     this.w=2490;
-    this.h=192;
+    this.h=192;    
     
     // Drawing contexts.
     this.BG=undefined;
@@ -280,12 +288,13 @@ var world=new (function()
     // Terrain heightmap.
     this.heightmap=[];    
     
-    // Hash array contains partitions (width 64 pixels) of the gamefield
+    // Hash array contains partitions (width 64 (1<<6) pixels) of the gamefield
     this.spatialHash=[];
+    this.shWidth=6;     // 1<<6 = 64
     this.clearSpatialHash=function()
     {
         this.spatialHash=[];
-        for(var i=(this.w/64+1)>>0; i--;) this.spatialHash.push([]);
+        for(var i=(this.w>>this.shWidth)+1; i--;) this.spatialHash.push([]);
     }; this.clearSpatialHash();
         
     // Entity lists: STUFF that's alive
@@ -347,7 +356,7 @@ var world=new (function()
             die3:{      src:"snd/die3",     channels:2  },
             die4:{      src:"snd/die4",     channels:2  },
             
-            expsmall:{  src:"snd/expsmall", channels:2  },
+            expsmall:{  src:"snd/expsmall", channels:3  },
             accomp:{    src:"snd/accomp",   channels:1  }
             
         });
@@ -360,6 +369,9 @@ var world=new (function()
         var FG=world.FG;
         var FGimgs=world.FGimgs;
         world.FG.clearRect(0,0,world.w,world.h);
+        // Viewport coords
+        var vw=window.innerWidth;
+        var vs=document.body.scrollLeft;
         
         var newSpatialHash=[];
 
@@ -368,10 +380,12 @@ var world=new (function()
         for(var i in world.infantry)
         {
             var a=world.infantry[i];
+            
+            if(a.x>vs && a.x<vs+vw)
             FG.drawImage(FGimgs[a.GFXSET],a.type*8,a.type*8,8,8,a.x-3,a.y-7,8,8);
             
             a.active();
-            if(a.health>0)      newSpatialHash[a.x>>6].push(a);
+            if(a.health>0)      newSpatialHash[a.x>>world.shWidth].push(a);
             if(a.corpseTime)    newInfantry.push(a);
             //else updateMSGS("Corpse has decomposed.");
         }
@@ -382,6 +396,8 @@ var world=new (function()
         for(var i in world.projectiles)
         {
             var a=world.projectiles[i];
+            
+            if(a.x>vs && a.x<vs+vw)
             FG.drawImage(FGimgs[Enum.GFX.PROJECTILES],3*((a.dx<0)?0:1),a.action*3,3,3,a.x-2,a.y-2,3,3);
             
             a.fly();
@@ -397,7 +413,10 @@ var world=new (function()
             var f=a.frame;            
             var w=a.width;
             var h=a.height;            
+            
+            if(a.x>vs && a.x<vs+vw)
             FG.drawImage(FGimgs[Enum.GFX.EXPLOSION1],f*w,0,w,h,a.x-(w>>1),a.y-(h>>1),w,h);
+            
             a.explode();
             if(a.frame>a.lastFrame) continue;            
             newExplosions.push(a);
@@ -414,7 +433,7 @@ var world=new (function()
 window.onload=function()
 {
     world.loadResources();
-    setInterval("world.run()",40);
+    setInterval("world.run()",50);
 };
 window.onclick=function(e)
 {
