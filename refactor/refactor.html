@@ -63,7 +63,7 @@ var Enum=
         TACTICALNUKE:6
     },
     
-    /** This is linked to the loading order of the FG resources in LoadResources(). **/
+    // This is linked to the loading order of the FG resources in LoadResources().
     GFX:
     {
         PROJECTILES:0,
@@ -230,19 +230,40 @@ function SmallExplosion(x,y)
     //updateMSGS("Rocket explosion at "+i.x+".");
     
     var _=new Pawn(x,y);
-    _.frame=-1;
-    _.lastFrame=13;
-    _.damage=1;
+    _.lastFrame=12;     // inclusive
+    _.width=41;
+    _.height=35;
+    _.damage=2;
+    _.explode=function()
+    {
+        // Get our 3 closest spatialHash partitions.
+        var sh=world.spatialHash;
+        var x=this.x>>6;
+        var h=sh[x];
+        if(sh[x-1]) h=h.concat(sh[x-1]);
+        if(sh[x+1]) h=h.concat(sh[x+1]);
+        
+        for(var i in sh)
+        {
+            var unit=sh[i];
+            var dx=this.x-unit.x; dx*=dx;
+            var dy=this.y-unit.y; dy*=dy;
+            var ww=this.width>>1; ww*=ww;
+            if(ww-dx-dy>0) continue;  // Not close enough!
+            unit.health-=this.damage;
+        }
+        this.frame++;
+    };
     return _;
 }
 
 // Special Entities ///////////////////////////////////////////////////////////
 
-/**
+/*
     Audio channels (HTML5 only!)
     At least one channel for each sound, multiple channels for more frequent sounds.
     Groups: gunfire, death sounds, explosions and specials, music, gamestate sounds
-**/
+*/
 var audio;
 var music;
 
@@ -273,8 +294,8 @@ var world=new (function()
     this.aircraft=[];
     this.projectiles=[];
     this.explosions=[];
-
-        
+    this.structures=[];
+    
     this.loadResources=function()
     // Load the graphics and audio; setup things related to resources
     {
@@ -295,12 +316,6 @@ var world=new (function()
             world.BG=g.c;
         });
         
-        /***
-        
-            MAYBE WE CAN USE OBJECT PROPERTIES TO HOLD THE NAMES OF THE UNIT TYPE
-            OR THE ENUM INSTEAD...?
-        
-        ***/
         var g_FG=new gLayer([
         
             // Special Effects
@@ -336,7 +351,6 @@ var world=new (function()
             accomp:{    src:"snd/accomp",   channels:1  }
             
         });
-        
     };
     
     this.run=function()
@@ -348,12 +362,12 @@ var world=new (function()
         world.FG.clearRect(0,0,world.w,world.h);
         
         var newSpatialHash=[];
-        
+
         // Handle Infantry
         var newInfantry=[];
-        for(var i in world.stuff.infantry)
+        for(var i in world.infantry)
         {
-            var a=world.stuff.infantry[i];
+            var a=world.infantry[i];
             FG.drawImage(FGimgs[a.GFXSET],a.type*8,a.type*8,8,8,a.x-3,a.y-7,8,8);
             
             a.active();
@@ -361,25 +375,50 @@ var world=new (function()
             if(a.corpseTime)    newInfantry.push(a);
             //else updateMSGS("Corpse has decomposed.");
         }
-        world.stuff.infantry=newInfantry;
+        world.infantry=newInfantry;
         
         // Handle Projectile
         var newProjectiles=[];
-        for(var i in world.stuff.projectiles)
+        for(var i in world.projectiles)
         {
-            var a=world.stuff.projectiles[i];
+            var a=world.projectiles[i];
             FG.drawImage(FGimgs[Enum.GFX.PROJECTILES],3*((a.dx<0)?0:1),a.action*3,3,3,a.x-2,a.y-2,3,3);
             
             a.fly();
             if(a.range) newProjectiles.push(a);
         }
-        world.stuff.projectiles=newProjectiles;        
+        world.projectiles=newProjectiles;        
         
+        // Handle Explosions
+        var newExplosions=[];
+        for(var i in world.explosions)
+        {
+            var a=world.explosions[i];            
+            var f=a.frame;            
+            var w=a.width;
+            var h=a.height;            
+            FG.drawImage(FGimgs[Enum.GFX.EXPLOSION1],f*w,0,w,h,a.x-(w>>1),a.y-(h>>1),w,h);
+            a.explode();
+            if(a.frame>a.lastFrame) continue;            
+            newExplosions.push(a);
+        }
+        world.explosions=newExplosions;
         
+        // Reset the spatialHash for the next cycle!
+        world.spatialHash=newSpatialHash;
     };
     
 })();    
     
-
+    
+window.onload=function()
+{
+    world.loadResources();
+    setInterval("world.run()",40);
+};
+window.onclick=function(e)
+{
+    world.explosions.push(new SmallExplosion(e.pageX,e.pageY));
+};
 </script></html>
 

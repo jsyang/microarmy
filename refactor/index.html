@@ -1,0 +1,416 @@
+<html><title>(Random war generator. Reload for more battles!)</title>
+
+<link rel="SHORTCUT ICON" href="ba2.ico">
+<link rel=StyleSheet href=ba.css>
+
+<script src=soundmanager2.js></script>
+<script src=sound.js></script>
+<script src=gLayer.js></script>
+<script src=terrainSet.js></script>
+<script src=infantry.js></script>
+<script src=log.js></script>
+
+<script>
+/*******************************************************************************
+Version 0.2
+
+	BASE ATTACK2 PROTOTYPE ~ http://jsyang.ca/ba2/
+	Random war generator. Reload for more battles!
+	Comments?		 jsyang.ca@gmail.com
+
+	Credits:
+
+	Alex Szczepaniak	(Egypt map, original Afghan map)
+	Frank Klepacki 		(music)
+	Command & Conquer	(sounds)
+
+*******************************************************************************/
+
+
+
+/********************************************************************** UNITS */
+
+
+
+function Vehicle(x,y,type,direction){
+	this.fx=x;
+	this.x=x;
+	this.y=y;
+	this.angle=0;
+	
+	this.action=0;
+	this.type=type;
+	this.direction=direction;
+	this.side=type%2;				// allegiancea
+	this.target=undefined;				// attack this
+	
+	switch(type){
+		case 0:
+		case 1:
+		// kitten
+		
+		this.speed=1.4;
+		this.health=((Math.random()*30)>>0)+200;
+		this.sight=5;
+		this.maxreloadtime=60;
+		break;
+	}	
+	
+	// animations
+	this.frame=0;
+	this.wrecktime=180;				// ;)
+	
+	this.resetTarget=function(){
+		this.action=0;
+		this.target=undefined;
+	};
+	
+	this.move=function(){
+		var r=Math.random;		
+		switch(this.action){
+			case 0:	//------------------------------------- movement
+				if(this.frame<2) this.frame++;
+				else this.frame=0;
+								
+				this.fx+=this.direction*this.speed;
+				this.x=(this.fx)>>0;
+				
+				// check if out of bounds
+				if(!(this.x<world.size[0]) || (this.x<0)){
+					this.health=0;
+					break;
+				}
+
+
+				this.y=world.heightmap[this.x];
+				this.angle=world.anglemap[this.x];		
+				break;
+		}
+	};
+	
+	this.alive=function(scan){
+		this.move();
+	};
+}
+
+/*********************************************************** SPECIAL ENTITIES */
+
+function RPGExplosion(x,y){
+	this.type=1;
+	this.x=x;
+	this.y=y;
+	this.endFrame=13;
+	this.splashDamage=2;
+	this.frame=-1;
+}
+
+function Bullet(type,x,y,range,dydx,dx,side,accuracy,target){
+	this.type=type;			// bullet, rocket, cannon shell
+	this.x=x;
+	this.y=y;
+	this.fy=y;			// floating point y
+	this.range=range;
+	this.dydx=dydx;
+	this.dx=dx;
+	this.frame=(dx>0)?1:0;
+	this.side=side;
+	this.accuracy=accuracy;		// base, target bonus accuracy
+	this.target=target;
+	
+	this.fly=function(){
+		if(this.y>world.heightmap[this.x]){
+			this.range=0;
+		}else{
+			if(this.range-->0){
+				this.fy+=this.dydx;
+				this.y=Math.round(this.fy);
+				this.x+=this.dx;
+			}
+		}
+	};	
+}
+
+
+/************************************************************ STATS AND WORLD */
+
+var world={
+
+	size:[],
+	
+	deaths:[0,0],
+	
+	bg:undefined,
+	veh:undefined,
+	inf:undefined,
+	spe:undefined,
+
+	heightmap:[],
+	anglemap:[],
+	
+	run:undefined,
+	runTimer:undefined,
+	
+	log:undefined,
+	msgs:["","","","",
+	      "","","","",
+	      "","","","",
+	      "","","",""],
+	logUpdate:0,
+	logUpdateInterval:8
+};
+
+var troops=[];
+var vehicles=[];
+var projectiles=[];
+var explosions=[];
+
+var hitScan=[];
+
+
+/*********************************************** RUNTIME PROCESSING FUNCTIONS */
+
+//---------------------------------------------------------------- draw infantry
+function drawINF(){
+	var g=world.inf;
+	var oldhitScan=hitScan.slice(0);		// copy of hitScan
+	
+	for(var a in hitScan) hitScan[a]=[];		// clear hits	
+	g.c.clearRect(0,0,g.e.width,g.e.height);	// clear canvas
+
+	var c=[]; for(var a in troops){
+		var i=troops[a];				
+		i.alive(oldhitScan);			// particulate actions	
+		g.c.drawImage(g.i[i.type],i.frame*8,i.action*8,8,8,i.x-3,i.y-7,8,8);
+
+		if(i.health>0) hitScan[i.x>>8].push(i);	// update hit segments
+		if(i.corpsetime>0) c.push(i);
+		else updateMSGS("Corpse has decomposed.");
+
+	} troops=c;
+}
+
+
+//--------------------------------------------------------------------- vehicles
+function drawVEH(){	
+	var g=world.veh;
+/*	var oldhitScan=hitScan.slice(0);
+	
+	// clear hits
+	for(var a in hitScan) hitScan[a]=[];
+*/		
+	g.c.clearRect(0,0,g.e.width,g.e.height);
+
+	var c=[]; for(var a in vehicles){
+		var i=vehicles[a];				
+		i.alive();			// particulate actions
+		var fo=(i.direction>0)?4:1;	// frame offset (for direction)
+		g.c.drawImage(g.i[i.type],(i.angle+fo)*32,i.frame*32,32,32,i.x-16,i.y-20,32,32);
+
+		// update hit segments
+//		if(i.health>0) hitScan[i.x>>8].push(i);
+		if(i.wrecktime>0) c.push(i);
+	} vehicles=c;
+}
+
+
+//----------------------------------------- specials: explosions, bullets, bombs
+function drawSPE(){
+	var g=world.spe;
+	g.c.clearRect(0,0,g.e.width,g.e.height);
+
+	var c=[];
+	for(var a in projectiles){
+		var i=projectiles[a];
+		g.c.drawImage(g.i[0],i.type*3,i.frame*3,3,3,i.x-2,i.y-2,3,3);
+		i.fly();			// particulate actions
+		
+		// kill stuff
+		var seg=hitScan[i.x>>8];
+		for(var b in seg){
+			var dx=i.x-seg[b].x-3;
+			var dy=i.y-seg[b].y+3;
+			if(seg[b].side!=i.side){
+				if(!((dx*dx+dy*dy)>>3)){
+					if(seg[b].health>0){
+						var chanceToHit=i.accuracy[0];
+						chanceToHit+=(seg[b]==i.target)?i.accuracy[1]:0;
+						// account for crouching and prone targets
+						chanceToHit-=(i.target.action==2)?0.05:0;
+						chanceToHit-=(i.target.action==3)?0.12:0;
+						
+						if(Math.random()<chanceToHit){
+							if(i.type==1){
+								explosions.push(new RPGExplosion(i.x,i.y));
+								soundManager.play('exp');
+								
+								updateMSGS("Rocket explosion at "+i.x+".");
+							}
+							seg[b].health-=(i.type%2)?30:20;
+							i.range=0;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		if(i.range>0) c.push(i);
+	} projectiles=c;
+
+	var d=[]; for(var a in explosions){
+		var i=explosions[a];		
+		if(++i.frame<i.endFrame){
+			g.c.drawImage(g.i[i.type],i.frame*41,0,41,35,i.x-20,i.y-17,41,35);
+			d.push(i);
+			
+			var seg=hitScan[i.x>>8];
+			for(var b in seg){
+				var dx=i.x-seg[b].x;
+				var dy=i.y-seg[b].y;
+				if(!((dx*dx+dy*dy)>>8)){
+					seg[b].health-=this.splashDamage;
+				}
+			}
+		}
+	} explosions=d;
+}
+
+
+function init(){
+	//---------------------------------- mouse events -- (maniacal laughter)
+	window.onclick=function(e){
+		if(e.pageY>192) return;
+		explosions.push(new RPGExplosion(e.pageX, e.pageY));
+		soundManager.play('exp');
+	};
+
+	//------------------ hitScan[] = field broken up into 256-width segments
+	var i=(world.size[0]>>8)+1; while(i--) hitScan.push([]);
+
+	//----------------------------------------------------- draw the terrain
+	var yOffset=world.size[1]-world.bg.e.height;
+	world.bg.c.drawImage(world.bg.i[0],0,yOffset);
+	
+	//------------------------------------------------- create the heightmap
+	var d=world.bg.c.getImageData(0,yOffset,world.size[0],world.size[1]);
+	var w=d.width; d=d.data; var x=world.size[0];
+	while(x--){
+		var y=world.size[1]-1;
+		while(d[(y*w*4)+(x*4)+3]) y--;
+		world.heightmap.push(y+yOffset);
+	}
+	world.heightmap.reverse();
+	
+	//------------------------------- precompute the anglemap (for vehicles)
+	for(var i in world.heightmap){
+		var j=parseInt(i);
+		var a=[
+			world.heightmap[j-2],
+			world.heightmap[j-1],
+			world.heightmap[j+1],
+			world.heightmap[j+2]
+		];
+		// fill in for the edges
+		for(var k in a){ if(!a[k]) a[k]=world.heightmap[j]; }
+		var avgslope=0.25*(
+			0.25*(a[0]-a[3]) +
+			0.5*(a[1]-a[2])  +
+			0.3333*(a[0]-a[2])+
+			0.3333*(a[1]-a[3])
+		);
+		var avgrad=Math.atan(avgslope);
+		var angle=0;
+		if(avgrad>0.2618) angle=1;
+//		if(avgrad>0.5236) angle=2;
+		if(avgrad<-0.2618) angle=-1;
+//		if(avgrad<-0.5236) angle=-2;
+		world.anglemap.push(angle);
+	}
+	
+	//----------------------------------------------- prop buildings for now
+	world.bg.c.clearRect(0,0,world.bg.e.width,world.bg.e.height);
+	world.bg.c.drawImage(world.bg.i[1],0,yOffset);
+	world.bg.c.drawImage(world.bg.i[0],0,yOffset);
+
+/* anglemap testing
+	window.onmousemove=function(e){
+		document.title=world.anglemap[e.pageX];
+	};return;
+//*/
+	
+	//---------------------------------------------------- create test units
+	var r=Math.random, f=Math.floor, rnd=Math.round;
+	var unitSpread=1200;
+	var d=20;while(d--){
+		var soldierType=(r()>0.1)?0:1;
+		var soldier=rnd(r())?
+			new Infantry(f(r()*unitSpread),0,2+soldierType,1):
+			new Infantry(world.size[0]-f(r()*unitSpread),0,soldierType,-1);
+		troops.push(soldier);
+	}
+	
+//	vehicles.push(new Vehicle(100,0,1,1));	// test tank
+	
+	//------------------------------------------------------ start the game!
+	world.runTimer=setInterval("world.run()",40);
+
+}
+
+function preload(){
+
+	var size=getDocumentSize();
+	var w=size[0];
+	var h=size[1];
+	
+	world.log=document.createElement("div");
+	world.log.id="log";
+	document.body.appendChild(world.log);
+	window.onscroll=function(){
+		world.log.style.left=window.pageXOffset;
+	};
+
+	world.run=function(){
+		var r=Math.random;
+		var rnd=Math.round;
+		drawVEH();
+		drawINF();
+		drawSPE();
+		if(r()<0.017){
+			var soldierType=(r()>0.07)?0:1;
+			var soldier=rnd(r())?
+				new Infantry(0,0,2+soldierType,1):
+				new Infantry(world.size[0]-2,0,soldierType,-1);
+			troops.push(soldier);
+		}
+		displayMSGS();
+
+	};
+	
+	world.size=[2490,192];
+
+
+	var gfx_vehicles=[
+		'gfx/kitten0.png',
+		'gfx/kitten1.png'
+	];
+	
+	var gfx_infantry=[
+		'gfx/pistol0.png',
+		'gfx/rocket0.png',
+		'gfx/pistol1.png',
+		'gfx/rocket1.png'
+	];
+	
+	var gfx_specials=[
+		'gfx/fire0.png',
+		'gfx/exp1.png'
+	];
+	
+	world.bg=new gLayer(terrainSet,world.size);
+	world.veh=new gLayer(gfx_vehicles,world.size);
+	world.inf=new gLayer(gfx_infantry,world.size);
+	world.spe=new gLayer(gfx_specials,world.size,function(){setTimeout("init()",200);});
+}
+
+
+</script><body onload="preload()"></body></html>
