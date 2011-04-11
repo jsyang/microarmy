@@ -125,7 +125,6 @@ function TeamInfo(x,y,team)
 }
 
 // Structure classes ///////////////////////////////////////////////////////////
-
 function Structure(x,y,type,team)
 {
     var _=new Pawn(x,y);
