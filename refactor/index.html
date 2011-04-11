@@ -6,13 +6,11 @@
 <body></body><script>
 // Misc. helpers ///////////////////////////////////////////////////////////////
 
-function RAND(min,max)
+function RAND(min,max) { return min+(Math.random()*(max-min+1))>>0; }
 // Random integer from [min,max] (bound inclusive)
-{
-    return min+(Math.random()*(max-min+1))>>0;
-}
 
-// Enums ///////////////////////////////////////////////////////////////////////
+
+// Enums and other constants ///////////////////////////////////////////////////
 
 var Enum=
 {
@@ -459,6 +457,12 @@ function SmallExplosion(x,y)
 }
 
 // Special Entities ///////////////////////////////////////////////////////////
+
+var stats=new (function()
+{
+    this.log=[];
+    for(var i=12;i--;) this.log.push("");
+})();    
 
 /*
     Audio channels (HTML5 only!)
