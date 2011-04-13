@@ -1,7 +1,0 @@
-div#log{position:absolute;top:192;left:0;color:#888;font: 9px verdana;width:280}
-canvas{position:absolute;top:0;left:0}
-canvas#spfx{position:absolute;top:0;left:0;opacity:0.8;}
-body{background:#000;cursor:crosshair;}
-div#shamelessplug{position:absolute;bottom:2px;right:0;font: 10px verdana;font-weight:bold;background:#555}
-a#sp{color:#123;}
-a#sp:hover{color:#89d;}
