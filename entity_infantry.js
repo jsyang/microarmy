@@ -1,190 +1,235 @@
-function Infantry(x,y,team,type,target)
-//  type    (string) unit class
-{
-  var _=new Pawn(x,y,team,target);
-  var r=Math.random;
-      
-  var typeInfo=
-  ({
-  //type        health          berserkPotential    berserkTime     maxAmmo reloadTime  sightRange  GFXset          isFiring
-    "rocket":[  RAND(60,80),    r()*0.5,            RAND(3,18),     1,      160,        9,          Enum.GFX.ROCKET,Enum.GFX.ISFIRING.ROCKET ],
-    "pistol":[  RAND(30,70),    r()*0.19,           RAND(10,30),    2,      40,         7,          Enum.GFX.PISTOL,Enum.GFX.ISFIRING.PISTOL ]
-  })[type];
-  var i=0;
-  _.health=           typeInfo[i++];
-  _.berserkPotential= typeInfo[i++];
-  _.berserkTime=      typeInfo[i++];
-  _.maxAmmo=          typeInfo[i++];
-  _.ammo=             _.maxAmmo;
-  _.reloadTime=       typeInfo[i++];
-  _.sightRange=       typeInfo[i++];
-  _.GFXSET=           typeInfo[i++][team];
-  _.isShotFrame=      typeInfo[i++];
-  _.direction=        Enum.Directions[team];
-  
-  // Event flags / timers
-  _.action=0;
-  _.isReloading=0;
-  _.isBerserk=0;
-  _.corpseTime=180;                   // when this is 0, entity is deleted.
-  _.class=Enum.UnitClass.INFANTRY;
-  _.type=type;
-  
-  _.correctFacing=function()
-  {
-    if(this.target) this.direction=(this.target.x>this.x)?1:-1;
-    else            this.direction=Enum.Directions[this.team];
-    
-    this.firstFrame=(this.direction>0)? 6 : 0;
-    this.lastFrame=(this.direction>0)?  11: 5;
-  };
-    
-  _.clearTarget=function()
-  {
-    this.target=undefined;
-    this.action=0;
-  };
-    
-  _.findTarget=function()
-  // Find the enemy.
-  {        
-    var sh=world.spatialHash;
-    var x=this.x>>world.shWidth;
-    var h=sh[x];
-    // Find the partitions to check to find potential enemies.
-    for(var s=this.sightRange+1, i=1; s-->world.shWidth; i++) 
-    {
-      if(sh[x-i]) h=h.concat(sh[x-i]);
-      if(sh[x+i]) h=h.concat(sh[x+i]);
-    }
+var TEAM={  
+  BLUE: 0,
+  GREEN:1,  
+  GOALDIRECTION:[1,-1],
+  NAMES:'blue,green'.split(',')
+};
 
-    // Sort by dist to self.
-    h.sort( function(a,b) { var ab=Math.abs; return ab(this.x-a.x)-ab(this.x-b.x); } );
-    for(var i in h)
-    {
-      if(h[i].health<=0) continue;
-      if(Math.abs(h[i].x-this.x)>>this.sightRange) break;     // Can't see it!
-      if(h[i].team!=this.team) { this.target=h[i]; break; }   // Target acquired!
-    }
-    
-    // May need to filter h by team later, right now it's okay.        
-    this.correctFacing();
-  };
-    
-  _.active=function()
-  {
-    if(this.health>0)
-    {
-      this.correctFacing();
-      
-      // Reloading: exhausted the mag.
-      if(this.isReloading){ return this.isReloading--; }
-      
-      // Berserk: moving toward the original target for some time without
-      //          regard to self-preservation or where the current target location is!
-      //          once berserk is done, standard actions resume. 
-      if(this.isBerserk){ this.isBerserk--; }
-      else
-      {                
-        //if(!this.target || this.target.health<=0) this.findTarget();
-        if(!this.target || this.target.health<=0 || (Math.abs(this.x-this.target.x)>>this.sightRange) )
-        {
-          this.clearTarget();
-          this.findTarget();
-        }
-        else
-        {
-          if(!this.action) this.action=RAND(Enum.InfantryAction.ATTACK_STANDING,Enum.InfantryAction.ATTACK_PRONE); 
-        }
-      }
-      
-      if(!this.ammo) { this.isReloading=this.reloadTime; this.ammo=this.maxAmmo; this.frame=this.firstFrame; return; }
-      
-      // Loop the animation by default if not dead.
-      if(++this.frame>this.lastFrame) this.frame=this.firstFrame;
-      
-      if(this.action==Enum.InfantryAction.MOVEMENT) // Moving!
-      {                
-        this.x+=this.direction;
-        var x=this.x;                
-        
-        if(!( x<0 || x>world.width-1 )) 
-        {
-          this.y=world.heightmap[x];
-          return;
-        }
-        
-        var d=Enum.Directions[this.team];
-        // Out of bounds! Check win conditions
-        if( (x<0 && d<0) || (x>world.width-1 && d>0) ) // Reach the enemy border: win
-        {} // log.win(this.team);
-        this.corpseTime=0;
-        this.health=0;
-      }
-      else // Attacking!
-      {
-        var distTarget=Math.abs(this.x-this.target.x);
-        if(distTarget<9)    // Melee distance: KILL OR BE KILLED
-        {
-          if(Math.random()<this.berserkPotential)
-          {
-            this.target.health=0;
-            this.clearTarget();
-            // log.meleeKill(this.team);
-          }
-          return;
-        }
-        
-        // Berserk!-- better now than never!
-        if(Math.random()<this.berserkPotential)
-        {  this.action=Enum.InfantryAction.MOVEMENT; return this.isBerserk=this.berserkTime; }
-        
-        if(this.frame==this.firstFrame && this.type=="pistol") audio.s.pistol.play();
-        if(!this.isShotFrame[this.frame]) return;                
-        
-        var bulletDY=(this.action==Enum.InfantryAction.ATTACK_PRONE)? -2: -4;
-        var bulletDX=(this.direction>0)? 5 : -5;
+var INFANTRY={
+  ACTION:{
+    MOVEMENT:         0,
+    ATTACK_STANDING:  1,
+    ATTACK_CROUCHING: 2,
+    ATTACK_PRONE:     3,
+    DEATH1:           4,
+    DEATH2:           5
+  },
+  SHOTFRAME:{
+    PISTOL:[0,1,0,1,0,0,  0,1,0,1,0,0],
+    ROCKET:[0,0,0,1,0,0,  0,0,0,1,0,0]
+  },
+  CENTERADJUST:{ X: 3, Y: 4 }
+};
 
-        var shotType=({
-        //            accuracy        projectileType  strayDY
-          "rocket":[  [0.18,0.75],    SmallRocket,    RAND(-15,15)/100    ],
-          "pistol":[  [0.1,0.45],     Bullet,         RAND(-21,21)/100    ]
-        })[this.type];                
-        var i=0;
-        var accuracy=       shotType[i++];
-        var projectileType= shotType[i++];
-        var strayDY=        shotType[i++];
-        if(distTarget>40){  accuracy[0]-=0.02; accuracy[1]-=0.15; }
-        if(distTarget>80){  accuracy[0]-=0.01; accuracy[1]-=0.08; }
-        if(distTarget>120){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
-        if(distTarget>160){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
-        
-        // Flight speed = 1<<2.
-        world.projectiles.push(
-          new projectileType(this.x+bulletDX,this.y+bulletDY,this.team,this.target,this.direction<<2,((this.target.y-this.y-bulletDY)<<2)/distTarget+strayDY,accuracy)
-        );
-        
-        this.ammo--;
-      }
+Infantry.prototype=new Pawn;
+function Infantry() {
+  this.correctDirection=function(){ var _=this._;
+    _.direction=_.target? (_.target.x>this.x)?1:-1 : TEAM.GOALDIRECTION[this.team];
+    _.frame.first=_.direction>0?  6 : 0;
+    _.frame.last =_.direction>0?  11: 5;
+  }
+  
+  this.seeTarget=function(returnDist) { var _=this._;
+    return _.target?
+      returnDist?
+        Math.abs(_.target.x-this.x)
+        : !(Math.abs(_.target.x-this.x)>>_.sight)
+      : Infinity;
+  }
+  
+  this.findTarget=function() { var _=this._;
+    _.target=undefined;
+    _.action=INFANTRY.ACTION.MOVEMENT;
+    // Get all objects possibly within our sight, sort by distance to us
+    var h=world.xHash.getNBucketsByCoord(this.x, _.sight-6+2)
+    h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });
+    
+    for(var i=0; i<h.length; i++) {
+      ///if(!(h[i] instanceof Infantry))    continue;      // only attack infantry
+      if(h[i].isDead())                  continue;      // already dead!
+      if(Math.abs(h[i].x-this.x)>>_.sight) break;       // can't see closest!      
+      
+      if(h[i].team!=this.team) { _.target=h[i]; break; }
     }
-    else
-    {   
-      if(this.action<Enum.InfantryAction.DEATH1)
-      {
-        [ audio.s.die1, audio.s.die2, audio.s.die3, audio.s.die4 ][RAND(0,3)].play();
-        this.action=RAND(Enum.InfantryAction.DEATH1, Enum.InfantryAction.DEATH2);
-        this.correctFacing();
-        this.frame=this.firstFrame;
-        // log.deaths[this.team]++;
-        // log.unitLost(team,this.class);   // Enum.UnitClass.INFANTRY;                
+    this.correctDirection();
+  }
+  
+  this.move=function() { var _=this._;
+    this.x+=_.direction;
+    this.y=world.getHeight(this.x);
+    if(!world.isOutside(this)) { return true; }
+    else if(TEAM.GOALDIRECTION[this.team]==_.direction) {
+      soundManager.play('accomp');
+      world.pause();
+    }
+    // just disappear, walked off the map
+    _.action=INFANTRY.ACTION.DEATH1;
+    _.health=this.corpsetime=0;    
+    return false;
+  }
+  
+  this.attack=function() { var _=this._;
+    if(!_.target) return true;
+    var distTarget=this.seeTarget(1);
+    if(distTarget<9) {    // Melee distance: KILL OR BE KILLED
+      if($.r()<_.berserk.chance) {
+        _.target.takeDamage(_.meleeDmg);
+        this.findTarget();
       }
-      else
-      {
-        if(this.frame<this.lastFrame) this.frame++;
-        else this.corpseTime--;
+      return true;
+    }
+    
+  /* Berserk: moving toward the original target for some time without
+  regard to self-preservation or where the current target location is!
+  once berserk is done, standard actions resume. */
+    if($.r()<_.berserk.chance) {
+      _.action=INFANTRY.ACTION.MOVEMENT;
+      _.berserk.ing=_.berserk.time;
+    }
+    
+    var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
+    var strayDY=0;      // deviation in firing angle.
+    if(_.projectile==Bullet) {
+      if(_.frame.current==_.frame.first+1) soundManager.play('pistol');
+      if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
+      accuracy=[0.10,0.45]; strayDY=$.R(-15,15)/100;      
+    } else if(_.projectile==SmallRocket) {
+      if(distTarget<24) return true;  // don't shoot rockets if too close!
+      if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
+      else soundManager.play('rocket');
+      accuracy=[0.18,0.78]; strayDY=$.R(-21,21)/100;
+    } else {
+      return true;      // melee only
+    }
+    
+    // Projectile origin relative to sprite
+    var pDY=_.action==INFANTRY.ACTION.ATTACK_PRONE? -2: -4;
+    var pDX=_.direction>0?                          2 : -2;
+    
+    // Distance penalties for chance to hit
+    if(distTarget>40){  accuracy[0]-=0.02; accuracy[1]-=0.15; }
+    if(distTarget>80){  accuracy[0]-=0.01; accuracy[1]-=0.08; }
+    if(distTarget>120){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
+    if(distTarget>160){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
+    
+    // Flight speed = 1<<2.
+    world.addPawn(
+      new _.projectile(
+        this.x+pDX,this.y+pDY,
+        this.team,
+        _.target,
+        _.direction*4,
+        ((_.target.y-this.y-pDY)<<2)/distTarget+strayDY,
+        accuracy
+      )
+    );
+    _.ammo.clip--;
+    return true;
+  }
+  
+  this.corpsetime=180;
+  this.takeDamage=function(d){ return this._.health-=d; };
+  this.kill=function(){ return this._.health=0; };
+  this.isDead=function(){ return this._.health<=0; };
+  
+  this.getGFX=function(){ var _=this._; return {
+      img:    _.imgSheet,
+      imgdx:  _.frame.current*8, imgdy:  _.action*8,
+      worldx: this.x-3,   worldy: this.y-7,
+      imgw:8, imgh:8
+  }; };
+  
+  this.alive=function(){
+    var _=this._;
+    if(this.isDead()) {
+      if(_.action<INFANTRY.ACTION.DEATH1) {
+        _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
+        this.correctDirection();
+        _.frame.current=_.frame.first;
+        soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
+      } else {
+        if(_.frame.current<_.frame.last) _.frame.current++;
+        else this.corpsetime--;
       }
+      return false;
+    }
+    
+    // If reloading, don't do anything else. 
+    if(_.ammo.clip==0) {
+      _.reload.ing=_.reload.time;
+      _.ammo.clip=_.ammo.max;
+      _.frame.current=_.frame.first;
+      return true;
+    }
+    if(_.reload.ing) { _.reload.ing--; return true; }
+    this.correctDirection();
+    
+    // If berserking, don't try anything else! 
+    if(_.berserk.ing) {
+      _.berserk.ing--;
+    } else {
+      if(!_.target || _.target.isDead() || !this.seeTarget() )
+        this.findTarget();
+      else if(_.action==INFANTRY.ACTION.MOVEMENT)
+        _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,INFANTRY.ACTION.ATTACK_PRONE); 
     }    
+    
+    // Animation loop
+    if(++_.frame.current>_.frame.last) _.frame.current=_.frame.first;    
+    
+    switch(_.action) {
+      case INFANTRY.ACTION.MOVEMENT:         return this.move();
+      case INFANTRY.ACTION.ATTACK_CROUCHING:
+      case INFANTRY.ACTION.ATTACK_PRONE:
+      case INFANTRY.ACTION.ATTACK_STANDING:  return this.attack();
+    }
+    
+    return true;
   };
   
-  return _;
+}
+
+
+PistolInfantry.prototype=new Infantry;
+function PistolInfantry(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  this._={
+    action:     INFANTRY.ACTION.MOVEMENT,
+    frame:      { current:0, first:0, last:5 },
+    target:     undefined,
+    direction:  TEAM.GOALDIRECTION[team],
+    
+    projectile: Bullet,
+    sight:      7, // 1<<7 == 128 pixels
+    imgSheet:   preloader.getFile('pistol'+TEAM.NAMES[team]),
+    health:     $.R(30,70),
+    reload:     { ing:0, time:40 },
+    berserk:    { ing:0, time:$.R(10,30), chance:$.r(0.19) },
+    ammo:       { clip:2, max:2 },
+    meleeDmg:   8
+  };
+}
+
+RocketInfantry.prototype=new Infantry;
+function RocketInfantry(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  this._={
+    action:     INFANTRY.ACTION.MOVEMENT,
+    frame:      { current:0, first:0, last:5 },
+    target:     undefined,
+    direction:  TEAM.GOALDIRECTION[team],
+    
+    projectile: SmallRocket,
+    sight:      9,
+    imgSheet:   preloader.getFile('rocket'+TEAM.NAMES[team]),
+    health:     $.R(60,90),
+    reload:     { ing:0, time:$.R(110,160) },
+    berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.52) },
+    ammo:       { clip:1, max:1 },
+    meleeDmg:   18
+  };
 }
