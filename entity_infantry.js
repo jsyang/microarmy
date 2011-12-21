@@ -80,7 +80,6 @@ function Infantry() {
     if(distTarget<this.img.w) {
       if($.r()<_.berserk.chance) {
         _.target.takeDamage(_.meleeDmg);
-        this.findTarget();
         return true;
       }      
     }
@@ -100,12 +99,12 @@ function Infantry() {
     if(_.projectile==Bullet) {
       if(_.frame.current==_.frame.first+1) soundManager.play('pistol');
       if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
-      accuracy=[0.10,0.65]; strayDY=$.R(-15,15)/100;      
+      accuracy=[0.10,0.85]; strayDY=$.R(-15,15)/100;      
     } else if(_.projectile==SmallRocket) {
       if(distTarget<24) return true;  // don't shoot rockets if too close!
       if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
       else soundManager.play('rocket');
-      accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
+      accuracy=[0.18,0.68]; strayDY=$.R(-21,21)/100;
     } else {
       return true;      // melee only
     }

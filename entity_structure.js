@@ -58,7 +58,7 @@ function Structure() {
       }
       
       // absorb health
-      _.health.current+=h[i]._.health;
+      _.health.current+=2*h[i]._.health;
       if(_.health.current>_.health.max) _.health.current=_.health.max;
       h[i].remove(); _.crew.current++;
       soundManager.play('sliderack1');
@@ -76,7 +76,7 @@ function Structure() {
     var strayDY=0;      // deviation in firing angle.
     if(_.projectile==MGBullet) {
       soundManager.play('mgburst');
-      accuracy=[0.22,0.65]; strayDY=$.R(-11,11)/100;
+      accuracy=[0.45,0.55]; strayDY=$.R(-11,11)/100;
     }
     
     // Projectile origin relative to sprite
@@ -195,7 +195,7 @@ function CommCenter(x,y,team) {
   };
   
   this._={    
-    health:       { current:$.R(1100,1500), max:$.R(1500,1600) },
+    health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 120,
                     types:  [PistolInfantry,RocketInfantry],
@@ -231,10 +231,10 @@ function Pillbox(x,y,team) {
   
   this._={    
     sight:        8,
-    health:       { current:$.R(400,500), max:$.R(500,580) },
+    health:       { current:$.R(700,800), max:$.R(700,900) },
     projectile:   MGBullet,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 260 },
+    reload:       { ing:0, time: 180 },
     ammo:         { clip:6, max: 6 },
     shootHeight:  5,
     crew:         { current: 0, max:8,

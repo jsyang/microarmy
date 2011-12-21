@@ -89,8 +89,8 @@ function MGBullet(x,y,team,target,dx,dy,accuracy) {
   this.target=target;
   this.imgSheet=preloader.getFile('shells');
     
-  this.range=50;
-  this.damage=$.R(16,24);
+  this.range=60;
+  this.damage=$.R(21,32);
 }
 
 SmallRocket.prototype=new Projectile;
