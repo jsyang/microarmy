@@ -17,17 +17,18 @@ var INFANTRY={
   SHOTFRAME:{
     PISTOL:[0,1,0,1,0,0,  0,1,0,1,0,0],
     ROCKET:[0,0,0,1,0,0,  0,0,0,1,0,0]
-  },
-  CENTERADJUST:{ X: 3, Y: 4 }
+  }
 };
 
 Infantry.prototype=new Pawn;
 function Infantry() {
+  this.img={ w:8, h:8, hDist2:20 };
+  
   this.correctDirection=function(){ var _=this._;
     _.direction=_.target? (_.target.x>this.x)?1:-1 : TEAM.GOALDIRECTION[this.team];
     _.frame.first=_.direction>0?  6 : 0;
     _.frame.last =_.direction>0?  11: 5;
-  }
+  };
   
   this.seeTarget=function(returnDist) { var _=this._;
     return _.target?
@@ -35,13 +36,13 @@ function Infantry() {
         Math.abs(_.target.x-this.x)
         : !(Math.abs(_.target.x-this.x)>>_.sight)
       : Infinity;
-  }
+  };
   
   this.findTarget=function() { var _=this._;
     _.target=undefined;
     _.action=INFANTRY.ACTION.MOVEMENT;
     // Get all objects possibly within our sight, sort by distance to us
-    var h=world.xHash.getNBucketsByCoord(this.x, _.sight-6+2)
+    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-6)*2)
     h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });
     
     for(var i=0; i<h.length; i++) {
@@ -71,7 +72,7 @@ function Infantry() {
   this.attack=function() { var _=this._;
     if(!_.target) return true;
     var distTarget=this.seeTarget(1);
-    if(distTarget<9) {    // Melee distance: KILL OR BE KILLED
+    if(distTarget<this.img.w) {           // Melee distance: LESS than one body!
       if($.r()<_.berserk.chance) {
         _.target.takeDamage(_.meleeDmg);
         this.findTarget();
@@ -85,6 +86,8 @@ function Infantry() {
     if($.r()<_.berserk.chance) {
       _.action=INFANTRY.ACTION.MOVEMENT;
       _.berserk.ing=_.berserk.time;
+      this.findTarget();
+      return true;
     }
     
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
@@ -119,7 +122,7 @@ function Infantry() {
         this.team,
         _.target,
         _.direction*4,
-        ((_.target.y-this.y-pDY)<<2)/distTarget+strayDY,
+        ((_.target.y-this.y-pDY)*4)/distTarget+strayDY,
         accuracy
       )
     );
@@ -134,9 +137,10 @@ function Infantry() {
   
   this.getGFX=function(){ var _=this._; return {
       img:    _.imgSheet,
-      imgdx:  _.frame.current*8, imgdy:  _.action*8,
-      worldx: this.x-3,   worldy: this.y-7,
-      imgw:8, imgh:8
+      imgdx:  _.frame.current*this.img.w,
+      imgdy:  _.action*this.img.w,
+      worldx: this.x-(this.img.w>>1),   worldy: this.y-this.img.h+1,
+      imgw: this.img.w,               imgh: this.img.h
   }; };
   
   this.alive=function(){

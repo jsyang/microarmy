@@ -4,6 +4,10 @@ function Pawn() {
   this.y;
   this.team;
   this.corpsetime;
+  this.img={
+    w:undefined, h:undefined,
+    hDist2: undefined           // radius^2 for collision testing
+  };
   this.alive=function(){};
   this.getGFX=function(){};
 }
@@ -22,8 +26,12 @@ var map=(function() {
   return {
     gfx:  ["maps/"+m+"_terrain.png","maps/"+m+"_props.png"],
     makeBases: function() {
-      world.addPawn(new CommCenter(bases.blue,world.getHeight(bases.blue)+1,TEAM.BLUE));
-      world.addPawn(new CommCenter(bases.green,world.getHeight(bases.green)+1,TEAM.GREEN));
+      world.addPawn(
+        new CommCenter(bases.blue,world.getHeight(bases.blue)+1,TEAM.BLUE)
+      );
+      world.addPawn(
+        new CommCenter(bases.green,world.getHeight(bases.green)+1,TEAM.GREEN)
+      );
     }    
   };    
 })();
@@ -219,6 +227,6 @@ window.onclick=function(){
 */
 
 // BOOM! HEH.
-//window.onclick=function(e){world.addPawn(new SmallExplosion(e.pageX,e.pageY));}
+window.onclick=function(e){world.addPawn(new SmallExplosion(e.pageX,e.pageY));}
 
-window.ondblclick=function(e){ world.getCommCenterInfo(); };
+//window.ondblclick=function(e){ world.getCommCenterInfo(); };

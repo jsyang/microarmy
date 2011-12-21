@@ -2,23 +2,20 @@
 Explosion.prototype=new Pawn;
 function Explosion() {
   this.damage=0;
+  this.damageDecay=2;
   this.imgSheet;
   this.corpsetime=1;
   this.frame={ current:0, last:0 };
-  this.w;
-  this.h;
   this.radius;
-  
-  this.setRadius=function(){ return this.radius=Math.max(this.w,this.h)>>1; };
   
   this.getGFX=function(){
     return {
       img:    this.imgSheet,
-      imgdx:  this.frame.current*this.w,
+      imgdx:  this.frame.current*this.img.w,
       imgdy:  0,
-      worldx: this.x-(this.w>>1),
-      worldy: this.y-(this.h>>1),
-      imgw:this.w, imgh:this.h
+      worldx: this.x-(this.img.w>>1),
+      worldy: this.y-(this.img.h>>1),
+      imgw:this.img.w, imgh:this.img.h
     }
   };
   
@@ -27,16 +24,13 @@ function Explosion() {
     var h=world.xHash.getNBucketsByCoord(this.x,2);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
-      var dx=this.x-unit.x;
-      var dy=this.y-unit.y;
-      
-      
-      if(unit instanceof Infantry) {
-        dx-=INFANTRY.CENTERADJUST.X;
-        dy-=INFANTRY.CENTERADJUST.Y;
-      }
-      if(dx*dx+dy*dy>this.radius*this.radius) continue;  // Not close enough!
+      var dx=this.x-(unit.x-(unit.img.w>>1));     // point object.
+      var dy=this.y-(unit.y-(unit.img.h>>1));      
+      if(dx*dx+dy*dy>this.img.hDist2) continue;   // Not close enough!
       unit.takeDamage(this.damage);
+      // Make sure not to "give" anyone health because of this.
+      if(this.damage-this.damageDecay<0) this.damage=0;
+      else this.damage-=this.damageDecay;
     }    
     return false;
   };
@@ -44,12 +38,10 @@ function Explosion() {
 
 SmallExplosion.prototype=new Explosion;
 function SmallExplosion(x,y) {
-  this.x=x;
-  this.y=y;
+  this.x=x; this.y=y;
   this.imgSheet=preloader.getFile('exp1');
   this.frame={ current:0, last:12 };
-  this.w=41, this.h=35;
-  this.damage=18;
-  this.setRadius();
+  this.img={w:41, h:35, hDist2: 400 };
+  this.damage=32;
   soundManager.play('expsmall');
 }

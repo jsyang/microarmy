@@ -10,14 +10,15 @@ var STRUCTURE={
 Structure.prototype=new Pawn;
 function Structure() {
   this.corpsetime=Infinity;
+  
   this.getGFX=function(){
     return {
       img:    this.imgSheet,
-      imgdx:  (this._.direction>0)? this.w:0,
-      imgdy:  this.state*this.h,
-      worldx: this.x-(this.w>>1),
-      worldy: this.y-this.h,
-      imgw:this.w, imgh:this.h
+      imgdx:  (this._.direction>0)? this.img.w:0,
+      imgdy:  this.state*this.img.h,
+      worldx: this.x-(this.img.w>>1),
+      worldy: this.y-this.img.h,
+      imgw:this.img.w, imgh:this.img.h
     }
   }
   
@@ -49,12 +50,12 @@ function Structure() {
     var strayDY=0;      // deviation in firing angle.
     if(_.projectile==MGBullet) {
       soundManager.play('mgburst');
-      accuracy=[0.20,0.35]; strayDY=$.R(-11,11)/100;
+      accuracy=[0.21,0.65]; strayDY=$.R(-18,18)/100;
     }
     
     // Projectile origin relative to sprite
     var pDY= -_.shootHeight;
-    var pDX=_.direction>0? this.w>>1-2 : -(this.w>>1-2);
+    var pDX=_.direction>0? (this.img.w>>1)-2 : -((this.img.h>>1)-2);
     
     // Distance penalties for chance to hit
     if(distTarget>40){  accuracy[0]-=0.01; accuracy[1]-=0.09; }
@@ -130,16 +131,16 @@ function CommCenter(x,y,team) {
   this.team=team;
   this.state=STRUCTURE.STATE.GOOD;
   
-  this.w=28; this.h=28;
+  this.img={ w:28, h:28, hDist2:196 };
   this.imgSheet=preloader.getFile('comm'+TEAM.NAMES[team]);  
   
   this._={    
     sight:        8,
-    health:       { current:$.R(500,1200), max:$.R(600,1300) },
+    health:       { current:$.R(900,1200), max:$.R(1200,1500) },
     projectile:   MGBullet,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 180 },
-    ammo:         { clip:6, max: 6 },
+    reload:       { ing:0, time: 60 },
+    ammo:         { clip:4, max: 4 },
     shootHeight:  12,
     reinforce:    { next: 0, time: 120,
                     types:  [PistolInfantry,RocketInfantry],
