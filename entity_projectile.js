@@ -107,3 +107,31 @@ function SmallRocket(x,y,team,target,dx,dy,accuracy) {
   this.range=90;
   this.damage=20;
 }
+
+MortarShell.prototype=new Projectile;
+function MortarShell(x,y,team,target,dx,dy,accuracy) {
+  this.x=x,   this.y=y;
+  this.dx=dx, this.dy=dy;
+  this.imgSheet=preloader.getFile('shells');
+  
+  this.ddy=0.31;
+  this.img.row=2;
+  this.explosion=FragExplosion;
+  this.range=1;
+  
+  // Hit on contact with ground
+  this.alive=function(){
+    if(this.range==0) return false;
+    if(world.isOutside(this)) {      
+      this.x-=this.dx>>1;
+      this.y=world.getHeight(this.x>>0);
+      this.range=0;
+      world.addPawn(new FragExplosion(this.x,this.y));
+      return this.corpsetime=0;
+    }
+    this.y+=this.dy;
+    this.x+=this.dx;
+    this.dy+=this.ddy;
+    return false;
+  };
+}

@@ -46,7 +46,7 @@ var preloader=(function() {
     "bgprops*:"+map.gfx[1],
     // special-fx
     'shells*:gfx/fire0.png',
-    'exp1*:gfx/exp1.png',
+    'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png',
     // infantry
     'pistolblue*:gfx/pistol0.png', 'rocketblue*:gfx/rocket0.png',
     'pistolgreen*:gfx/pistol1.png', 'rocketgreen*:gfx/rocket1.png',
@@ -63,8 +63,8 @@ preloader.onfinish=function() {
   // 2. Preload sfx/music
   soundManager.onready(function() {
     var list=(
-      'pistol,rocket,die1,die2,die3,die4,'+
-      'expsmall,accomp,crumble,mgburst,sliderack1'
+      'pistol,mgburst,rocket,die1,die2,die3,die4,'+
+      'expsmall,expfrag,accomp,crumble,sliderack1'
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
@@ -211,9 +211,10 @@ function World() {
   this.go=function() { timer=setInterval(cycle,40); };
   this.pause=function() { clearInterval(timer); };
   
-  this.getHeight=function(x) { return (x>=0 && x<w) ? heightmap[x] : 0; };
+  this.getHeight=function(x) { x>>=0; return (x>=0 && x<w) ? heightmap[x] : 0; };
   this.isOutside=function(obj) {
-    return obj.x<0 || obj.x>=w || obj.y<0 || obj.y>heightmap[obj.x];
+    var x=obj.x>>0, y=obj.y>>0;
+    return x<0 || x>=w || y<0 || y>heightmap[x];
   };
   
   this.getCommCenterInfo=function(){
@@ -250,7 +251,11 @@ window.onclick=function(){
 */
 
 // BOOM! HEH.
-//window.onclick=function(e){world.addPawn(new SmallExplosion(e.pageX,e.pageY));}
+/* window.onclick=function(e){
+  world.addPawn(new MortarShell(
+    e.pageX,e.pageY,0,0,$.R(-4,4)/2,$.R(-18,-12)/4,0
+  ));
+};*/
 
 var pills=2;
 window.onclick=function(e){

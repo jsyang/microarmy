@@ -115,11 +115,14 @@ function Structure() {
     if(_.health.current<0.7*_.health.max) this.state=STRUCTURE.STATE.BAD;
   };
   
+  // Play crumble sound by default.
+  this.deathEvent=function(){ soundManager.play('crumble'); };
+  
   this.alive=function() { var _=this._;    
     if(this.isDead()) {
       if(this.state!=STRUCTURE.STATE.WRECK) {
         this.state=STRUCTURE.STATE.WRECK;
-        soundManager.play('crumble');
+        this.deathEvent();
       }
       return false;
     } else {
@@ -137,7 +140,7 @@ function Structure() {
       }
       
       // Give some reinforcements, if there are any to give
-      if(_.reinforce && $.sum(_.reinforce.supply)>1) {
+      if(_.reinforce && $.sum(_.reinforce.supply)>0) {
         if(_.reinforce.next) _.reinforce.next--; else {
           _.reinforce.next=$.R(20,_.reinforce.time);
           // Dump reinforcements faster if badly damaged.
@@ -199,6 +202,17 @@ function CommCenter(x,y,team) {
     return this._.health.current-=d;
   };
   
+  this.deathEvent=function(){
+    var w2=this.img.w>>1, h2=this.img.h>>1;
+    world.addPawn(new SmallExplosion(this.x,this.y-h2));    
+    var shrap=$.R(5,10);
+    while(shrap--) world.addPawn(
+      new MortarShell(
+        this.x+$.R(-w2,w2),this.y-h2,0,0,
+        $.R(-4,4)/2,$.R(-18,-12)/4,0)
+    );
+  };
+  
   this._={    
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
@@ -209,7 +223,7 @@ function CommCenter(x,y,team) {
                   },
     
     target:       undefined
-  }
+  };
 }
 
 Pillbox.prototype=new Structure;

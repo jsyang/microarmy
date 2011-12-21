@@ -45,3 +45,15 @@ function SmallExplosion(x,y) {
   this.damage=24;
   soundManager.play('expsmall');
 }
+
+////////// to do
+FragExplosion.prototype=new Explosion;
+function FragExplosion(x,y) {
+  this.x=x; this.y=y;
+  this.imgSheet=preloader.getFile('exp2');
+  this.frame={ current:0, last:8 };
+  this.img={w:25, h:17, hDist2: 160 };
+  this.damage=12;
+  this.damageDecay=1;
+  soundManager.play('expfrag');
+}
