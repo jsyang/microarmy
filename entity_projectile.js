@@ -73,7 +73,7 @@ function Bullet(x,y,team,target,dx,dy,accuracy) {
   this.dx=dx, this.dy=dy;
   this.accuracy=accuracy;
   this.team=team;
-  this.target=target;
+  this.target=target;  
   this.imgSheet=preloader.getFile('shells');
 
   this.range=35;
@@ -88,10 +88,9 @@ function MGBullet(x,y,team,target,dx,dy,accuracy) {
   this.team=team;
   this.target=target;
   this.imgSheet=preloader.getFile('shells');
-  this.img.row=3;
-
-  this.range=60;
-  this.damage=$.R(26,42);
+    
+  this.range=50;
+  this.damage=$.R(16,24);
 }
 
 SmallRocket.prototype=new Projectile;
@@ -102,9 +101,9 @@ function SmallRocket(x,y,team,target,dx,dy,accuracy) {
   this.team=team;
   this.target=target;
   this.imgSheet=preloader.getFile('shells');
-  this.img.row=1
-    
+  
+  this.img.row=1    
   this.explosion=SmallExplosion;
-  this.range=90;;
-  this.damage=10;
+  this.range=90;
+  this.damage=20;
 }

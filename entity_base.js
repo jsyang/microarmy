@@ -27,10 +27,10 @@ var map=(function() {
     gfx:  ["maps/"+m+"_terrain.png","maps/"+m+"_props.png"],
     makeBases: function() {
       world.addPawn(
-        new CommCenter(bases.blue,world.getHeight(bases.blue)+1,TEAM.BLUE)
+        new CommCenter(bases.blue,world.getHeight(bases.blue),TEAM.BLUE)
       );
       world.addPawn(
-        new CommCenter(bases.green,world.getHeight(bases.green)+1,TEAM.GREEN)
+        new CommCenter(bases.green,world.getHeight(bases.green),TEAM.GREEN)
       );
     }    
   };    
@@ -51,7 +51,9 @@ var preloader=(function() {
     'pistolblue*:gfx/pistol0.png', 'rocketblue*:gfx/rocket0.png',
     'pistolgreen*:gfx/pistol1.png', 'rocketgreen*:gfx/rocket1.png',
     // structures
-    'commblue*:gfx/commcenter0.png','commgreen*:gfx/commcenter1.png'
+    'commblue*:gfx/commcenter0.png','commgreen*:gfx/commcenter1.png',
+    'pillboxblue*:gfx/pillbox0.png','pillboxgreen*:gfx/pillbox1.png',
+    'pillbox_*:gfx/pillbox_.png'
     // todo: vehicles, aircraft, 
     // Todo: Debris particles   
   );
@@ -62,11 +64,13 @@ preloader.onfinish=function() {
   soundManager.onready(function() {
     var list=(
       'pistol,rocket,die1,die2,die3,die4,'+
-      'expsmall,accomp,crumble,mgburst'
+      'expsmall,accomp,crumble,mgburst,sliderack1'
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
     
+    
+    /* Start the music
     var list='decept,lof,march,otp,untamed'.split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./mus/'+list[i]);
@@ -77,18 +81,19 @@ preloader.onfinish=function() {
       var k=$.R(0,i.length-1);
       j=j.concat(i.splice(k,1));
     } while (i.length);
-    //* Start the music
-    soundManager.play(list[j[0]],{onfinish:function(){
-      soundManager.play(list[j[1]],{onfinish:function(){
-        soundManager.play(list[j[2]],{onfinish:function(){
-          soundManager.play(list[j[3]],{onfinish:function(){     
-            soundManager.play(list[j[4]]);
+    
+    soundManager.play(list[j[0]],{volume:70, onfinish:function(){
+      soundManager.play(list[j[1]],{volume:70, onfinish:function(){
+        soundManager.play(list[j[2]],{volume:70, onfinish:function(){
+          soundManager.play(list[j[3]],{volume:70, onfinish:function(){     
+            soundManager.play(list[j[4]],{volume:70} );
           }})
         }})
       }})
     }})
+    //*/
   });
-  //*/
+  
   
   // 3. Create the gameworld and run the game
   world=new World();
@@ -156,6 +161,18 @@ function World() {
     return cv.getContext("2d");    
   })(w,h);  
   
+  var msgbox=(function(){
+    var ta=document.createElement("div");
+    var s=ta.style;
+    s.position='absolute'; s.left=0; s.top=h; s.width=500;
+    s.fontFamily='lucida console'; s.fontSize='10px';
+    s.color='#ddd'; s.background='#555';    
+    window.onscroll=
+      (function(s){return function(){s.left=document.body.scrollLeft;};})(s);
+    document.body.appendChild(ta);
+    return ta;
+  })();
+  
   function processInstances(newXHash,vx,vw,instances) {
     // Process Pawns -- generic code
     for(var i=0, newInstances=[];i<instances.length;i++) {
@@ -185,6 +202,9 @@ function World() {
     explosions=processInstances(xHash_,viewLeft,viewWidth,explosions);    
     
     world.xHash=xHash_;
+    
+    msgbox.innerText=world.getCommCenterInfo();
+    
   };
   
   var timer;
@@ -197,16 +217,19 @@ function World() {
   };
   
   this.getCommCenterInfo=function(){
+    var s="\n"+
+      pills>0? "\nClick to add pillboxes, you have "+pills+" left.\n":"";
     for(var i=0; i<structures.length; i++) {
       var j=structures[i];
       if(j instanceof CommCenter)
-        alert(
-          TEAM.NAMES[j.team]+" base\n----------\n"+
-          "reinforcements remaining:\n"+
+        s+="____________________________________________\n"+
+          TEAM.NAMES[j.team].toUpperCase()+" CommCenter\n"+          
+          "Reinforcements remaining:\n"+
           "PistolInfantry: "+j._.reinforce.supply[0]+"\n"+
-          "RocketInfantry: "+j._.reinforce.supply[1]+"\n"
-        );
+          "RocketInfantry: "+j._.reinforce.supply[1]+"\n"+
+        "\n";
     }
+    return s;
   };
   
   this.addPawn=function(obj) {
@@ -227,6 +250,13 @@ window.onclick=function(){
 */
 
 // BOOM! HEH.
-window.onclick=function(e){world.addPawn(new SmallExplosion(e.pageX,e.pageY));}
+//window.onclick=function(e){world.addPawn(new SmallExplosion(e.pageX,e.pageY));}
 
-//window.ondblclick=function(e){ world.getCommCenterInfo(); };
+var pills=2;
+window.onclick=function(e){
+  if(pills==0) return;
+  world.addPawn(
+    new Pillbox(e.pageX,world.getHeight(e.pageX),TEAM.BLUE)
+  );
+  pills--;
+};

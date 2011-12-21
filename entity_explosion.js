@@ -42,6 +42,6 @@ function SmallExplosion(x,y) {
   this.imgSheet=preloader.getFile('exp1');
   this.frame={ current:0, last:12 };
   this.img={w:41, h:35, hDist2: 400 };
-  this.damage=32;
+  this.damage=24;
   soundManager.play('expsmall');
 }

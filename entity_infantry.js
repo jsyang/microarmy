@@ -42,7 +42,7 @@ function Infantry() {
     _.target=undefined;
     _.action=INFANTRY.ACTION.MOVEMENT;
     // Get all objects possibly within our sight, sort by distance to us
-    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-6)*2)
+    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-6)*2+2)
     h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });
     
     for(var i=0; i<h.length; i++) {
@@ -71,23 +71,28 @@ function Infantry() {
   
   this.attack=function() { var _=this._;
     if(!_.target) return true;
+    if(_.target.team==this.team) findTarget();
+    if(!_.target) return true;
+    
     var distTarget=this.seeTarget(1);
-    if(distTarget<this.img.w) {           // Melee distance: LESS than one body!
+    
+    // Melee distance: LESS than one body!
+    if(distTarget<this.img.w) {
       if($.r()<_.berserk.chance) {
         _.target.takeDamage(_.meleeDmg);
         this.findTarget();
-      }
-      return true;
+        return true;
+      }      
     }
     
-  /* Berserk: moving toward the original target for some time without
-  regard to self-preservation or where the current target location is!
-  once berserk is done, standard actions resume. */
+    /* Berserk: moving toward the original target for some time without
+      regard to self-preservation or where the current target location is!
+      once berserk is done, standard actions resume. */
     if($.r()<_.berserk.chance) {
       _.action=INFANTRY.ACTION.MOVEMENT;
       _.berserk.ing=_.berserk.time;
       this.findTarget();
-      return true;
+      return this.move();
     }
     
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
@@ -95,12 +100,12 @@ function Infantry() {
     if(_.projectile==Bullet) {
       if(_.frame.current==_.frame.first+1) soundManager.play('pistol');
       if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
-      accuracy=[0.10,0.45]; strayDY=$.R(-15,15)/100;      
+      accuracy=[0.10,0.65]; strayDY=$.R(-15,15)/100;      
     } else if(_.projectile==SmallRocket) {
       if(distTarget<24) return true;  // don't shoot rockets if too close!
       if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
       else soundManager.play('rocket');
-      accuracy=[0.18,0.78]; strayDY=$.R(-21,21)/100;
+      accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
     } else {
       return true;      // melee only
     }
@@ -122,7 +127,7 @@ function Infantry() {
         this.team,
         _.target,
         _.direction*4,
-        ((_.target.y-this.y-pDY)*4)/distTarget+strayDY,
+        ((_.target.y-(_.target.img.h>>1)-(this.y-(this.img.h>>1))-pDY)*4)/distTarget+strayDY,
         accuracy
       )
     );
@@ -132,8 +137,14 @@ function Infantry() {
   
   this.corpsetime=180;
   this.takeDamage=function(d){ return this._.health-=d; };
-  this.kill=function(){ return this._.health=0; };
   this.isDead=function(){ return this._.health<=0; };
+  
+  this.remove=function(){ // silently remove the Pawn.
+    this.corpsetime=this._.health=0;
+    this._.action=INFANTRY.ACTION.DEATH1;
+    this._.frame.current=0;
+  };
+  
   
   this.getGFX=function(){ var _=this._; return {
       img:    _.imgSheet,
@@ -194,20 +205,23 @@ function Infantry() {
 }
 
 
+// Sight in pixels = 1<<_.sight
+
 PistolInfantry.prototype=new Infantry;
 function PistolInfantry(x,y,team) {
   this.x=x;
   this.y=y;
   this.team=team;
+  
   this._={
     action:     INFANTRY.ACTION.MOVEMENT,
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
     direction:  TEAM.GOALDIRECTION[team],
     
-    projectile: Bullet,
-    sight:      7, // 1<<7 == 128 pixels
     imgSheet:   preloader.getFile('pistol'+TEAM.NAMES[team]),
+    projectile: Bullet,
+    sight:      7,
     health:     $.R(30,70),
     reload:     { ing:0, time:40 },
     berserk:    { ing:0, time:$.R(10,30), chance:$.r(0.19) },
@@ -221,15 +235,16 @@ function RocketInfantry(x,y,team) {
   this.x=x;
   this.y=y;
   this.team=team;
+  
   this._={
     action:     INFANTRY.ACTION.MOVEMENT,
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
     direction:  TEAM.GOALDIRECTION[team],
     
+    imgSheet:   preloader.getFile('rocket'+TEAM.NAMES[team]),
     projectile: SmallRocket,
     sight:      9,
-    imgSheet:   preloader.getFile('rocket'+TEAM.NAMES[team]),
     health:     $.R(60,90),
     reload:     { ing:0, time:$.R(110,160) },
     berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.52) },

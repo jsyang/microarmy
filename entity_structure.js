@@ -17,7 +17,7 @@ function Structure() {
       imgdx:  (this._.direction>0)? this.img.w:0,
       imgdy:  this.state*this.img.h,
       worldx: this.x-(this.img.w>>1),
-      worldy: this.y-this.img.h,
+      worldy: this.y-this.img.h+1,
       imgw:this.img.w, imgh:this.img.h
     }
   }
@@ -42,20 +42,45 @@ function Structure() {
     }
   };
   
+  this.findCrew=function() { var _=this._;
+    // Get all objects possibly within our sight, sort by distance to us
+    var h=world.xHash.getNBucketsByCoord(this.x,2)
+    h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });    
+    for(var i=0; i<h.length; i++) {
+      if(!(h[i] instanceof PistolInfantry)) continue;    
+      if(h[i].isDead())               continue;
+      if(Math.abs(h[i].x-this.x)>(this.img.w>>1))  break;  // can't see closest!
+      
+      // new ownership!
+      if(h[i].team!=this.team && !_.crew.current) {
+        this.team=h[i].team;
+        this._.direction=TEAM.GOALDIRECTION[this.team];
+      }
+      
+      // absorb health
+      _.health+=h[i]._.health;
+      h[i].remove(); _.crew.current++;
+      soundManager.play('sliderack1');
+    }
+  };
+  
   this.attack=function() { var _=this._;
-    if(!_.target) return true;
+    if(!_.projectile) return true;
+    if(!_.target)     return true;
+    if(_.target.team==this.team) findTarget();    
+    if(!_.target)     return true;
     var distTarget=this.seeTarget(1);
     
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
     var strayDY=0;      // deviation in firing angle.
     if(_.projectile==MGBullet) {
       soundManager.play('mgburst');
-      accuracy=[0.21,0.65]; strayDY=$.R(-18,18)/100;
+      accuracy=[0.31,0.65]; strayDY=$.R(-11,11)/100;
     }
     
     // Projectile origin relative to sprite
     var pDY= -_.shootHeight;
-    var pDX=_.direction>0? (this.img.w>>1)-2 : -((this.img.h>>1)-2);
+    var pDX=_.direction>0? (this.img.w>>1)-2 : -((this.img.w>>1)-2);
     
     // Distance penalties for chance to hit
     if(distTarget>40){  accuracy[0]-=0.01; accuracy[1]-=0.09; }
@@ -69,7 +94,7 @@ function Structure() {
         this.team,
         _.target,
         _.direction*4,
-        ((_.target.y-this.y-pDY)<<2)/distTarget+strayDY,
+        ((_.target.y-(_.target.img.h>>1)-(this.y-(this.img.h>>1))-pDY)*4)/distTarget+strayDY,
         accuracy
       )
     );
@@ -78,7 +103,7 @@ function Structure() {
   }
   
   this.takeDamage=function(d){ return this._.health.current-=d; };  
-  this.kill=function(){ return this._.health.current=0; };
+  // this.remove;
   this.isDead=function(){ return this._.health.current<=0; };
   this.checkState=function(){ var _=this._;
     if(_.health.current<0.7*_.health.max) this.state=STRUCTURE.STATE.BAD;
@@ -92,34 +117,55 @@ function Structure() {
       }
       return false;
     } else {
+      
       this.checkState();
-      // Give some reinforcements
-      if(_.reinforce) {
+      
+      if(_.crew){
+        if(_.crew.current<_.crew.max) this.findCrew();
+        if(!_.crew.current){
+          // Enemies should not attack an empty pillbox
+          this.imgSheet=_.crew.empty; return false;
+        } else {
+          this.imgSheet=_.crew.occupied(this);
+        }        
+      }
+      
+      // Give some reinforcements, if there are any to give
+      if(_.reinforce && $.sum(_.reinforce.supply)>1) {
         if(_.reinforce.next) _.reinforce.next--; else {
           _.reinforce.next=$.R(20,_.reinforce.time);
-          // Dirty, but working for now--we'll want to build this later
-          var typePick=$.R(0,_.reinforce.types.length-1);
-          if(_.reinforce.supply[typePick]
-             && $.r()<_.reinforce.chances[typePick]) {
-            _.reinforce.supply[typePick]--;
-            world.addPawn(
-              new _.reinforce.types[typePick]
-              (this.x,world.getHeight(this.x),this.team)
-            );
+          // Dump reinforcements faster if badly damaged.
+          for(var i=0; i<=this.state; i++) {            
+            // Dirty, but working for now--we'll want to build this later
+            var typePick=$.R(0,_.reinforce.types.length-1);
+            if(_.reinforce.supply[typePick]
+               && $.r()<_.reinforce.chances[typePick]) {
+              _.reinforce.supply[typePick]--;
+              world.addPawn(
+                new _.reinforce.types[typePick]
+                (this.x,world.getHeight(this.x),this.team)
+              );
+            }
           }
-          
         }
       }
       
-      // If reloading, don't do anything else. 
-      if(_.ammo.clip==0) {
-        _.reload.ing=_.reload.time;
-        _.ammo.clip=_.ammo.max;
-        return true;
+      if(_.projectile) {
+        // If reloading, don't do anything else. 
+        if(_.ammo.clip==0) {
+          // Attack more frequently if better stocked
+          _.reload.ing=(_.reload.time*(1.1-_.crew.current/_.crew.max))>>0;
+          _.ammo.clip=_.ammo.max;
+          return true;
+        }
+        if(_.reload.ing) { _.reload.ing--; return true; }      
+        if(!_.target || _.target.isDead() || !this.seeTarget() )
+          this.findTarget();        
+        
+        // Attack!
+        this.attack();
       }
-      if(_.reload.ing) { _.reload.ing--; return true; }      
-      if(!_.target || _.target.isDead() || !this.seeTarget() ) this.findTarget();
-      return this.attack();
+      return true;
     }    
   };
 }
@@ -134,20 +180,68 @@ function CommCenter(x,y,team) {
   this.img={ w:28, h:28, hDist2:196 };
   this.imgSheet=preloader.getFile('comm'+TEAM.NAMES[team]);  
   
+  // Large damage has a chance of killing the supply of people inside.
+  this.takeDamage=function(d){
+    if(d>18 && $.r()<0.4) {
+      var t=$.R(0,1);
+      var killed=$.R(1,5);
+      if(this._.reinforce.supply[t]-killed>0)
+        this._.reinforce.supply[t]-=killed;
+      else
+        this._.reinforce.supply[t]=0;
+    }
+    return this._.health.current-=d;
+  };
+  
   this._={    
-    sight:        8,
-    health:       { current:$.R(900,1200), max:$.R(1200,1500) },
-    projectile:   MGBullet,
+    health:       { current:$.R(1100,1500), max:$.R(1500,1600) },
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 60 },
-    ammo:         { clip:4, max: 4 },
-    shootHeight:  12,
     reinforce:    { next: 0, time: 120,
                     types:  [PistolInfantry,RocketInfantry],
-                    supply: [250,40],
-                    chances:[1,0.3]
+                    supply: [250,80],                    
+                    chances:[1,0.4]
                   },
     
+    target:       undefined
+  }
+}
+
+Pillbox.prototype=new Structure;
+function Pillbox(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  this.state=STRUCTURE.STATE.GOOD;
+  
+  this.img={ w:19, h:8, hDist2:64 };
+  this.imgSheet=preloader.getFile('pillbox_');//+TEAM.NAMES[team]);  
+  
+  // Large damage has a chance of killing everyone inside.
+  this.takeDamage=function(d){
+    if(d>18 && $.r()<0.23) {
+      var killed=$.R(2,this._.crew.max);
+      if(this._.crew.current-killed>0)
+        this._.crew.current-=killed;
+      else
+        this._.crew.current=0;
+    }
+    return this._.health.current-=d;
+  };
+  
+  this._={    
+    sight:        8,
+    health:       { current:$.R(400,500), max:$.R(500,580) },
+    projectile:   MGBullet,
+    direction:    TEAM.GOALDIRECTION[team],
+    reload:       { ing:0, time: 260 },
+    ammo:         { clip:6, max: 6 },
+    shootHeight:  5,
+    crew:         { current: 0, max:8,
+                    occupied: function(owner){
+                      return preloader.getFile('pillbox'+TEAM.NAMES[owner.team]);
+                    },
+                    empty: preloader.getFile('pillbox_') },
+
     target:       undefined
   }
 }

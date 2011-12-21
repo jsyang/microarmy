@@ -6,4 +6,7 @@ var $=new function() {
   // Random integer from [min,max] (bound inclusive)
   this.R=function(min,max) { return min+(Math.random()*(max-min+1))>>0; };
   this.i=function(s) { return parseInt(s); };
+  this.sum=function(a) {
+    for(var sum=0, i=a.length; i--; sum+=a[i] ); return sum;
+  };
 }
