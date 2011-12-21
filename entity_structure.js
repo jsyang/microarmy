@@ -51,10 +51,12 @@ function Structure() {
       if(h[i].isDead())               continue;
       if(Math.abs(h[i].x-this.x)>(this.img.w>>1))  break;  // can't see closest!
       
-      // new ownership!
-      if(h[i].team!=this.team && !_.crew.current) {
-        this.team=h[i].team;
-        this._.direction=TEAM.GOALDIRECTION[this.team];
+      if(h[i].team!=this.team) {      
+        // new ownership!
+        if(_.crew.current==0) {
+          this.team=h[i].team;
+          this._.direction=TEAM.GOALDIRECTION[this.team];
+        } else continue;
       }
       
       // absorb health
@@ -71,6 +73,9 @@ function Structure() {
     if(_.target.team==this.team) this.findTarget();    
     if(!_.target)     return true;
     var distTarget=this.seeTarget(1);
+    
+    // Close quarters melee
+    if(distTarget==0) {_.target.takeDamage(2); return true;}
     
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
     var strayDY=0;      // deviation in firing angle.
@@ -231,10 +236,10 @@ function Pillbox(x,y,team) {
   
   this._={    
     sight:        8,
-    health:       { current:$.R(700,800), max:$.R(700,900) },
+    health:       { current:$.R(800,900), max:$.R(800,1100) },
     projectile:   MGBullet,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 180 },
+    reload:       { ing:0, time: 120 },
     ammo:         { clip:6, max: 6 },
     shootHeight:  5,
     crew:         { current: 0, max:8,
