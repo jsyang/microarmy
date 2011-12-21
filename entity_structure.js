@@ -58,7 +58,8 @@ function Structure() {
       }
       
       // absorb health
-      _.health+=h[i]._.health;
+      _.health.current+=h[i]._.health;
+      if(_.health.current>_.health.max) _.health.current=_.health.max;
       h[i].remove(); _.crew.current++;
       soundManager.play('sliderack1');
     }
@@ -75,7 +76,7 @@ function Structure() {
     var strayDY=0;      // deviation in firing angle.
     if(_.projectile==MGBullet) {
       soundManager.play('mgburst');
-      accuracy=[0.31,0.65]; strayDY=$.R(-11,11)/100;
+      accuracy=[0.22,0.65]; strayDY=$.R(-11,11)/100;
     }
     
     // Projectile origin relative to sprite
