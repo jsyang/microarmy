@@ -254,7 +254,7 @@ window.onclick=function(){
 
 var pills=2;
 window.onclick=function(e){
-  if(pills==0) return;
+  if(pills==0) return world.addPawn(new SmallExplosion(e.pageX,e.pageY));
   world.addPawn(
     new Pillbox(e.pageX,world.getHeight(e.pageX),TEAM.BLUE)
   );

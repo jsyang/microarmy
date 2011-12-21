@@ -67,7 +67,7 @@ function Structure() {
   this.attack=function() { var _=this._;
     if(!_.projectile) return true;
     if(!_.target)     return true;
-    if(_.target.team==this.team) findTarget();    
+    if(_.target.team==this.team) this.findTarget();    
     if(!_.target)     return true;
     var distTarget=this.seeTarget(1);
     
