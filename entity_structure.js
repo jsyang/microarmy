@@ -35,7 +35,7 @@ function Structure() {
     _.target=undefined;
     // Get all objects possibly within our sight, sort by distance to us
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
-    for(var i=0; i<h.length; i++) {
+    for(var i=0, minDist=Infinity; i<h.length; i++) {
       if(h[i].team==this.team)              continue;
       if(h[i].isDead())                     continue;
       if(Math.abs(h[i].x-this.x)>>_.sight)  continue;
