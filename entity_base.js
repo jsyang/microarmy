@@ -12,96 +12,6 @@ function Pawn() {
   this.getGFX=function(){};
 }
 
-// Pick a random map: background + terrain /////////////////////////////////////
-var map=(function() {
-  var m='spring,afghan,egypt,chechnya'.split(',');
-  var bases={
-    blue:'526,26,123,26'.split(','),
-    green:'1892,2394,2456,2410'.split(',')
-  };
-  var pick=$.R(0,m.length-1);
-  m=m[pick];
-  bases.blue=$.i(bases.blue[pick]);
-  bases.green=$.i(bases.green[pick]);
-  return {
-    gfx:  ["maps/"+m+"_terrain.png","maps/"+m+"_props.png"],
-    makeBases: function() {
-      world.addPawn(
-        new CommCenter(bases.blue,world.getHeight(bases.blue),TEAM.BLUE)
-      );
-      world.addPawn(
-        new CommCenter(bases.green,world.getHeight(bases.green),TEAM.GREEN)
-      );
-    }    
-  };    
-})();
-
-
-// Preload stuff ///////////////////////////////////////////////////////////////
-var preloader=(function() {  
-  // 1. Preload gfx
-  return new html5Preloader(
-    // current map
-    "bgterrain*:"+map.gfx[0],
-    "bgprops*:"+map.gfx[1],
-    // special-fx
-    'shells*:gfx/fire0.png',
-    'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png',
-    // infantry
-    'pistolblue*:gfx/pistol0.png', 'rocketblue*:gfx/rocket0.png',
-    'pistolgreen*:gfx/pistol1.png', 'rocketgreen*:gfx/rocket1.png',
-    // structures
-    'commblue*:gfx/commcenter0.png','commgreen*:gfx/commcenter1.png',
-    'pillboxblue*:gfx/pillbox0.png','pillboxgreen*:gfx/pillbox1.png',
-    'pillbox_*:gfx/pillbox_.png'
-    // todo: vehicles, aircraft, 
-    // Todo: Debris particles   
-  );
-})();
-
-preloader.onfinish=function() {  
-  // 2. Preload sfx/music
-  soundManager.onready(function() {
-    var list=(
-      'pistol,mgburst,rocket,die1,die2,die3,die4,'+
-      'expsmall,expfrag,accomp,crumble,sliderack1'
-    ).split(',');
-    for(var i=list.length; i--;)
-      soundManager.createSound(list[i],'./snd/'+list[i]);
-    
-    
-    /* Start the music
-    var list='decept,lof,march,otp,untamed'.split(',');
-    for(var i=list.length; i--;)
-      soundManager.createSound(list[i],'./mus/'+list[i]);
-    
-    // Very ugly, but will do for now; shuffle playlist.
-    for(var i=[], j=0; j<list.length; i.push(j),j++);
-    j=[]; do {
-      var k=$.R(0,i.length-1);
-      j=j.concat(i.splice(k,1));
-    } while (i.length);
-    
-    soundManager.play(list[j[0]],{volume:70, onfinish:function(){
-      soundManager.play(list[j[1]],{volume:70, onfinish:function(){
-        soundManager.play(list[j[2]],{volume:70, onfinish:function(){
-          soundManager.play(list[j[3]],{volume:70, onfinish:function(){     
-            soundManager.play(list[j[4]],{volume:70} );
-          }})
-        }})
-      }})
-    }})
-    //*/
-  });
-  
-  
-  // 3. Create the gameworld and run the game
-  world=new World();
-  world.go();
-  // Experimental stuff: make comm centers and the comm centers build infantry
-  map.makeBases();
-};
-
 // X-coord obj hash: avoid checking hits on faraway stuff //////////////////////
 function XHash(worldWidth) {  
   // divide world into 1<<6 == 64 pixel buckets    
@@ -203,7 +113,7 @@ function World() {
     
     world.xHash=xHash_;
     
-    msgbox.innerText=world.getCommCenterInfo();
+    //msgbox.innerText=world.getCommCenterInfo();
     
   };
   
@@ -218,9 +128,7 @@ function World() {
   };
   
   this.getCommCenterInfo=function(){
-    var s="\n"+
-      pills>0? "\nClick to add pillboxes, you have "+pills+" left.\n":"";
-    for(var i=0; i<structures.length; i++) {
+    for(var i=0, s=""; i<structures.length; i++) {
       var j=structures[i];
       if(j instanceof CommCenter)
         s+="____________________________________________\n"+
@@ -257,11 +165,4 @@ window.onclick=function(){
   ));
 };*/
 
-var pills=2;
-window.onclick=function(e){
-  if(pills==0) return world.addPawn(new SmallExplosion(e.pageX,e.pageY));
-  world.addPawn(
-    new Pillbox(e.pageX,world.getHeight(e.pageX),TEAM.BLUE)
-  );
-  pills--;
-};
+//window.onclick=function(e){  alert(e.pageX); };

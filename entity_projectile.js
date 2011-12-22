@@ -77,7 +77,7 @@ function Bullet(x,y,team,target,dx,dy,accuracy) {
   this.imgSheet=preloader.getFile('shells');
 
   this.range=35;
-  this.damage=14;
+  this.damage=15;
 }
 
 MGBullet.prototype=new Projectile;
@@ -103,11 +103,12 @@ function SmallRocket(x,y,team,target,dx,dy,accuracy) {
   this.imgSheet=preloader.getFile('shells');
   
   this.img.row=1    
-  this.explosion=SmallExplosion;
+  this.explosion=FragExplosion;
   this.range=90;
   this.damage=20;
 }
 
+// Used as shrap for now..
 MortarShell.prototype=new Projectile;
 function MortarShell(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;
@@ -116,7 +117,6 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
   
   this.ddy=0.31;
   this.img.row=2;
-  this.explosion=FragExplosion;
   this.range=1;
   
   // Hit on contact with ground

@@ -40,9 +40,8 @@ function Infantry() {
   
   this.findTarget=function() { var _=this._;
     _.target=undefined;
-    _.action=INFANTRY.ACTION.MOVEMENT;
     // Get all objects possibly within our sight, sort by distance to us
-    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-6)*2+2)
+    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2)
     h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });
     
     for(var i=0; i<h.length; i++) {
@@ -87,8 +86,7 @@ function Infantry() {
       once berserk is done, standard actions resume. */
     if($.r()<_.berserk.chance) {
       _.action=INFANTRY.ACTION.MOVEMENT;
-      _.berserk.ing=_.berserk.time;
-      _.target=undefined;
+      _.berserk.ing=_.berserk.time;      
       return true;
     }
     
@@ -97,12 +95,12 @@ function Infantry() {
     if(_.projectile==Bullet) {
       if(_.frame.current==_.frame.first+1) soundManager.play('pistol');
       if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
-      accuracy=[0.10,0.85]; strayDY=$.R(-15,15)/100;      
+      accuracy=[0.15,0.85]; strayDY=$.R(-15,15)/100;      
     } else if(_.projectile==SmallRocket) {
       if(distTarget<24) return true;  // don't shoot rockets if too close!
       if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
       else soundManager.play('rocket');
-      accuracy=[0.18,0.68]; strayDY=$.R(-21,21)/100;
+      accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
     } else {
       return true;      // melee only
     }
@@ -112,10 +110,10 @@ function Infantry() {
     var pDX=_.direction>0?                          2 : -2;
     
     // Distance penalties for chance to hit
-    if(distTarget>40){  accuracy[0]-=0.02; accuracy[1]-=0.15; }
-    if(distTarget>80){  accuracy[0]-=0.01; accuracy[1]-=0.08; }
-    if(distTarget>120){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
-    if(distTarget>160){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
+    if(distTarget>50){  accuracy[0]-=0.02; accuracy[1]-=0.15; }
+    if(distTarget>120){ accuracy[0]-=0.01; accuracy[1]-=0.18; }
+    if(distTarget>180){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
+    if(distTarget>200){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
     
     // Flight speed = 1<<2.
     world.addPawn(
@@ -151,8 +149,7 @@ function Infantry() {
       imgw: this.img.w,               imgh: this.img.h
   }; };
   
-  this.alive=function(){
-    var _=this._;
+  this.alive=function(){ var _=this._;
     if(this.isDead()) {
       if(_.action<INFANTRY.ACTION.DEATH1) {
         _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
@@ -166,19 +163,22 @@ function Infantry() {
       return false;
     }
     
-    // If reloading, don't do anything else. 
-    if(_.ammo.clip==0) {
+    // If reloading, don't do anything else.     
+    if(_.reload.ing) {
+      _.reload.ing--;
+      if(!_.reload.ing) _.ammo.clip=_.ammo.max;
+      return true;
+    } else if(_.ammo.clip==0) {
       _.reload.ing=_.reload.time;
-      _.ammo.clip=_.ammo.max;
       _.frame.current=_.frame.first;
       return true;
     }
-    if(_.reload.ing) { _.reload.ing--; return true; }    
     
     // If berserking, don't try anything else! 
     if(_.berserk.ing) {
       _.berserk.ing--;
-    } else {
+      if(_.berserk.ing==0) this.findTarget();
+    } else {      
       if(!_.target || _.target.isDead() || !this.seeTarget() )
         this.findTarget();
       else if(_.action==INFANTRY.ACTION.MOVEMENT)
@@ -221,7 +221,7 @@ function PistolInfantry(x,y,team) {
     sight:      7,
     health:     $.R(30,70),
     reload:     { ing:0, time:40 },
-    berserk:    { ing:0, time:$.R(10,22), chance:$.r(0.19) },
+    berserk:    { ing:0, time:$.R(8,18), chance:$.r(0.19) },
     ammo:       { clip:2, max:2 },
     meleeDmg:   18
   };
@@ -244,7 +244,7 @@ function RocketInfantry(x,y,team) {
     sight:      9,
     health:     $.R(60,90),
     reload:     { ing:0, time:$.R(110,160) },
-    berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.32) },
+    berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.35) },
     ammo:       { clip:1, max:1 },
     meleeDmg:   23
   };

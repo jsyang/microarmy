@@ -42,7 +42,7 @@ function SmallExplosion(x,y) {
   this.imgSheet=preloader.getFile('exp1');
   this.frame={ current:0, last:12 };
   this.img={w:41, h:35, hDist2: 400 };
-  this.damage=24;
+  this.damage=$.R(28,45);
   soundManager.play('expsmall');
 }
 
@@ -53,7 +53,7 @@ function FragExplosion(x,y) {
   this.imgSheet=preloader.getFile('exp2');
   this.frame={ current:0, last:8 };
   this.img={w:25, h:17, hDist2: 160 };
-  this.damage=12;
+  this.damage=$.R(12,29);
   this.damageDecay=1;
   soundManager.play('expfrag');
 }
