@@ -37,9 +37,11 @@ function Structure() {
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
     for(var i=0; i<h.length; i++) {
       if(h[i].team==this.team)              continue;
-      if(h[i].isDead())                     continue;   // already dead!
-      if(Math.abs(h[i].x-this.x)>>_.sight)  continue;      // can't see closest!         
-      _.target=h[i]; break;
+      if(h[i].isDead())                     continue;
+      if(Math.abs(h[i].x-this.x)>>_.sight)  continue;
+      if(Math.abs(h[i].x-this.x)<minDist){
+        _.target=h[i]; minDist=Math.abs(h[i].x-this.x);
+      }
     }
   };
   
@@ -49,7 +51,7 @@ function Structure() {
     for(var i=0; i<h.length; i++) {
       if(!(h[i] instanceof PistolInfantry))       continue;    
       if(h[i].isDead())                           continue;
-      if(Math.abs(h[i].x-this.x)>(this.img.w>>1)) continue;  // can't see closest!
+      if(Math.abs(h[i].x-this.x)>(this.img.w>>1)) continue;
       
       if(h[i].team!=this.team) {
         // new ownership!
@@ -82,7 +84,7 @@ function Structure() {
     var strayDY=0;      // deviation in firing angle.
     if(_.projectile==MGBullet) {
       soundManager.play('mgburst');
-      accuracy=[0.45,0.55]; strayDY=$.R(-11,11)/100;
+      accuracy=[0.65,0.35]; strayDY=$.R(-12,12)/100;
     }
     
     // Projectile origin relative to sprite
@@ -90,10 +92,10 @@ function Structure() {
     var pDX=_.direction>0? (this.img.w>>1)-2 : -((this.img.w>>1)-2);
     
     // Distance penalties for chance to hit
-    if(distTarget>40){  accuracy[0]-=0.08; accuracy[1]-=0.13; }
-    if(distTarget>80){  accuracy[0]-=0.05; accuracy[1]-=0.09; }
-    if(distTarget>120){ accuracy[0]-=0.02; accuracy[1]-=0.08; }
-    if(distTarget>160){ accuracy[0]-=0.01; accuracy[1]-=0.04; }
+    if(distTarget>40){  accuracy[0]-=0.06; accuracy[1]-=0.09; }
+    if(distTarget>80){  accuracy[0]-=0.05; accuracy[1]-=0.07; }
+    if(distTarget>120){ accuracy[0]-=0.02; accuracy[1]-=0.05; }
+    if(distTarget>160){ accuracy[0]-=0.01; accuracy[1]-=0.03; }
     
     world.addPawn(
       new _.projectile(
@@ -141,13 +143,14 @@ function Structure() {
       }
       
       // Give some reinforcements, if there are any to give
-      if(_.reinforce) {
-        // Dump reinforcements faster if badly damaged.
-        if(_.health.current<0.6*_.health.max) _.reinforce.next--;
-        if(_.health.current<0.2*_.health.max) _.reinforce.next--;
-        
+      if(_.reinforce) {        
         if(_.reinforce.next>0) _.reinforce.next--; else {
           _.reinforce.next=$.R(20,_.reinforce.time);
+          
+          // Dump reinforcements faster if shit is hitting the fan.
+          if(_.health.current<_.health.max*0.4) _.reinforce.next-=$.R(8,18);
+          if(_.health.current<_.health.max*0.2) _.reinforce.next-=$.R(16,26);
+          
           for(var i=0; i<=this.state; i++) {            
             // Dirty, but working for now--we'll want to build this later
             var typePick=$.R(0,_.reinforce.types.length-1);
@@ -222,7 +225,7 @@ function CommCenter(x,y,team) {
   this._={    
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
-    reinforce:    { next: 0, time: 280,
+    reinforce:    { next: 0, time: 290,
                     types:  [PistolInfantry,RocketInfantry],
                     supply: [250,80],                    
                     chances:[1,0.27]
@@ -255,6 +258,7 @@ function Barracks(x,y,team) {
   };
   
   this.deathEvent=function(){
+    soundManager.play('crumble');
     var w2=this.img.w>>1, h2=this.img.h>>1;
     world.addPawn(new SmallExplosion(this.x,this.y-h2));    
     var shrap=$.R(5,10);
@@ -268,7 +272,7 @@ function Barracks(x,y,team) {
   this._={    
     health:       { current:$.R(1800,1950), max:$.R(1950,2500) },
     direction:    TEAM.GOALDIRECTION[team],
-    reinforce:    { next: 0, time: 120,
+    reinforce:    { next: 0, time: 190,
                     types:  [PistolInfantry],
                     supply: [600],
                     chances:[0.8]

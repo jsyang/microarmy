@@ -109,7 +109,7 @@ preloader.onfinish=function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-window.onclick=function(e){  alert(e.pageX); };
+window.ondblclick=function(e){  alert(e.pageX); };
 
 /*
 window.onclick=function(){

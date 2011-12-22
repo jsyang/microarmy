@@ -42,7 +42,7 @@ function SmallExplosion(x,y) {
   this.imgSheet=preloader.getFile('exp1');
   this.frame={ current:0, last:12 };
   this.img={w:41, h:35, hDist2: 400 };
-  this.damage=$.R(28,45);
+  this.damage=$.R(28,55);
   soundManager.play('expsmall');
 }
 

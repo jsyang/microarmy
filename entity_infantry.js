@@ -46,10 +46,10 @@ function Infantry() {
       if(h[i].team==this.team) continue;
       if(h[i].isDead()) continue;                   // already dead!
       if(Math.abs(h[i].x-this.x)>>_.sight) continue;   // can't see closest!      
-      _.target=h[i]; break;
-    }
-    
-    
+      if(Math.abs(h[i].x-this.x)<minDist){
+        _.target=h[i]; minDist=Math.abs(h[i].x-this.x);
+      }
+    }    
   }
   
   this.move=function() { var _=this._;
@@ -236,8 +236,8 @@ function RocketInfantry(x,y,team) {
     projectile: SmallRocket,
     sight:      8,
     health:     $.R(60,90),
-    reload:     { ing:0, time:$.R(110,160) },
-    berserk:    { ing:0, time:$.R(0,8), chance:$.r(0.35) },
+    reload:     { ing:0, time:$.R(90,120) },
+    berserk:    { ing:0, time:$.R(1,11), chance:0.08+$.r(0.35) },
     ammo:       { clip:1, max:1 },
     meleeDmg:   23
   };
