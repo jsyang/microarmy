@@ -71,7 +71,11 @@ function Infantry() {
     
     // Melee distance: LESS than one body!
     if(distTarget<this.img.w) {
-      if($.r()<_.berserk.chance)  _.target.takeDamage(_.meleeDmg);
+      if($.r()<_.berserk.chance) {
+        _.target.takeDamage(_.meleeDmg);
+        // Pretty hard to ignore someone punching your face
+        if(_.target._) _.target._.target=this;
+      }
       return true;
     }
     
@@ -216,7 +220,7 @@ function PistolInfantry(x,y,team) {
     reload:     { ing:0, time:40 },
     berserk:    { ing:0, time:$.R(10,26), chance:$.r(0.59) },
     ammo:       { clip:2, max:2 },
-    meleeDmg:   18
+    meleeDmg:   8
   };
 }
 
@@ -237,7 +241,7 @@ function RocketInfantry(x,y,team) {
     sight:      8,
     health:     $.R(60,90),
     reload:     { ing:0, time:$.R(90,120) },
-    berserk:    { ing:0, time:$.R(1,11), chance:0.08+$.r(0.35) },
+    berserk:    { ing:0, time:$.R(6,21), chance:0.08+$.r(0.35) },
     ammo:       { clip:1, max:1 },
     meleeDmg:   23
   };

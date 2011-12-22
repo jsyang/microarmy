@@ -227,7 +227,7 @@ function CommCenter(x,y,team) {
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 290,
                     types:  [PistolInfantry,RocketInfantry],
-                    supply: [250,80],                    
+                    supply: [120,80],                    
                     chances:[1,0.27]
                   },
     
@@ -274,8 +274,8 @@ function Barracks(x,y,team) {
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 190,
                     types:  [PistolInfantry],
-                    supply: [600],
-                    chances:[0.8]
+                    supply: [200],
+                    chances:[1]
                   },
     
     target:       undefined
