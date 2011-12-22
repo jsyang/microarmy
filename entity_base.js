@@ -148,21 +148,3 @@ function World() {
     if(obj instanceof Explosion)  return explosions.push(obj);
   };
 };
-
-/*
-window.onclick=function(){
-  var l=[$.R(60,180),$.R(460,580)];
-  var t=[PistolInfantry,RocketInfantry][Math.round($.r(0.8))];
-  world.addPawn(new t(l[0],world.getHeight(l[0]), TEAM.BLUE));
-  world.addPawn(new t(l[1],world.getHeight(l[1]), TEAM.GREEN));
-}
-*/
-
-// BOOM! HEH.
-/* window.onclick=function(e){
-  world.addPawn(new MortarShell(
-    e.pageX,e.pageY,0,0,$.R(-4,4)/2,$.R(-18,-12)/4,0
-  ));
-};*/
-
-//window.onclick=function(e){  alert(e.pageX); };

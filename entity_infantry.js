@@ -25,7 +25,7 @@ function Infantry() {
   this.img={ w:8, h:8, hDist2:20 };
   
   this.correctDirection=function(){ var _=this._;
-    _.direction=_.target? (_.target.x>this.x)?1:-1 : TEAM.GOALDIRECTION[this.team];
+    _.direction=_.target? (_.target.x>this.x)?1:-1 : TEAM.GOALDIRECTION[this.team];    
     _.frame.first=_.direction>0?  6 : 0;
     _.frame.last =_.direction>0?  11: 5;
   };
@@ -40,17 +40,16 @@ function Infantry() {
   
   this.findTarget=function() { var _=this._;
     _.target=undefined;
-    // Get all objects possibly within our sight, sort by distance to us
+    // Get all objects possibly within our sight, don't care about dist
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2)
-    h.sort(function(a,b) { return Math.abs(this.x-b.x)-Math.abs(this.x-a.x); });
-    
-    for(var i=0; i<h.length; i++) {
+    for(var i=0, minDist=Infinity; i<h.length; i++) {
       if(h[i].team==this.team) continue;
       if(h[i].isDead()) continue;                   // already dead!
-      if(Math.abs(h[i].x-this.x)>>_.sight) break;   // can't see closest!      
-      
+      if(Math.abs(h[i].x-this.x)>>_.sight) continue;   // can't see closest!      
       _.target=h[i]; break;
     }
+    
+    
   }
   
   this.move=function() { var _=this._;
@@ -178,12 +177,10 @@ function Infantry() {
         _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,INFANTRY.ACTION.ATTACK_PRONE);          
     }
     this.correctDirection();
+    if(!_.target) _.action=INFANTRY.ACTION.MOVEMENT;
     
     // Animation loop
     if(++_.frame.current>_.frame.last) _.frame.current=_.frame.first;    
-    
-    // Still no target, just move.
-    if(!_.target) _.action=INFANTRY.ACTION.MOVEMENT;
     
     switch(_.action) {
       case INFANTRY.ACTION.MOVEMENT:         return this.move();
@@ -217,7 +214,7 @@ function PistolInfantry(x,y,team) {
     sight:      7,
     health:     $.R(30,70),
     reload:     { ing:0, time:40 },
-    berserk:    { ing:0, time:$.R(8,18), chance:$.r(0.49) },
+    berserk:    { ing:0, time:$.R(10,26), chance:$.r(0.59) },
     ammo:       { clip:2, max:2 },
     meleeDmg:   18
   };
@@ -237,10 +234,10 @@ function RocketInfantry(x,y,team) {
     
     imgSheet:   preloader.getFile('rocket'+TEAM.NAMES[team]),
     projectile: SmallRocket,
-    sight:      9,
+    sight:      8,
     health:     $.R(60,90),
     reload:     { ing:0, time:$.R(110,160) },
-    berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.25) },
+    berserk:    { ing:0, time:$.R(0,8), chance:$.r(0.35) },
     ammo:       { clip:1, max:1 },
     meleeDmg:   23
   };

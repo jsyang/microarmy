@@ -35,23 +35,21 @@ function Structure() {
     _.target=undefined;
     // Get all objects possibly within our sight, sort by distance to us
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
-    h.sort(function(a,b) { return Math.abs(this.x-b.x)-Math.abs(this.x-a.x); });    
     for(var i=0; i<h.length; i++) {
       if(h[i].team==this.team)              continue;
       if(h[i].isDead())                     continue;   // already dead!
-      if(Math.abs(h[i].x-this.x)>>_.sight)  break;      // can't see closest!         
+      if(Math.abs(h[i].x-this.x)>>_.sight)  continue;      // can't see closest!         
       _.target=h[i]; break;
     }
   };
   
   this.findCrew=function() { var _=this._;
-    // Get all objects possibly within our sight, sort by distance to us
+    // Get all objects possibly within our sight
     var h=world.xHash.getNBucketsByCoord(this.x,2);
-    h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });    
     for(var i=0; i<h.length; i++) {
       if(!(h[i] instanceof PistolInfantry))       continue;    
       if(h[i].isDead())                           continue;
-      if(Math.abs(h[i].x-this.x)>(this.img.w>>1)) break;  // can't see closest!
+      if(Math.abs(h[i].x-this.x)>(this.img.w>>1)) continue;  // can't see closest!
       
       if(h[i].team!=this.team) {
         // new ownership!
@@ -66,6 +64,7 @@ function Structure() {
       if(_.health.current>_.health.max) _.health.current=_.health.max;
       h[i].remove(); _.crew.current++;
       soundManager.play('sliderack1');
+      break;
     }
   };
   
@@ -303,11 +302,11 @@ function Pillbox(x,y,team) {
   };
   
   this._={    
-    sight:        8,
+    sight:        7,
     health:       { current:$.R(800,900), max:$.R(800,1100) },
     projectile:   MGBullet,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 190 },
+    reload:       { ing:0, time: 160 },
     ammo:         { clip:6, max: 6 },
     shootHeight:  5,
     crew:         { current: 0, max:8,
