@@ -35,20 +35,21 @@ function Infantry() {
       returnDist?
         Math.abs(_.target.x-this.x)
         : !(Math.abs(_.target.x-this.x)>>_.sight)
-      : Infinity;
+      : 0;
   };
   
   this.findTarget=function() { var _=this._;
     _.target=undefined;
     // Get all objects possibly within our sight, sort by distance to us
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2)
-    h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });
+    h.sort(function(a,b) { return Math.abs(this.x-b.x)-Math.abs(this.x-a.x); });
     
     for(var i=0; i<h.length; i++) {
+      if(h[i].team==this.team) continue;
       if(h[i].isDead()) continue;                   // already dead!
       if(Math.abs(h[i].x-this.x)>>_.sight) break;   // can't see closest!      
       
-      if(h[i].team!=this.team) { _.target=h[i]; break; }
+      _.target=h[i]; break;
     }
   }
   
@@ -66,18 +67,12 @@ function Infantry() {
     return false;
   }
   
-  this.attack=function() { var _=this._;
-    if(!_.target) return true;
-    if(_.target.team==this.team) this.findTarget();
-    if(!_.target) return true;
-    
+  this.attack=function() { var _=this._;    
     var distTarget=this.seeTarget(1);
     
     // Melee distance: LESS than one body!
     if(distTarget<this.img.w) {
-      if($.r()<_.berserk.chance) {
-        _.target.takeDamage(_.meleeDmg);        
-      }
+      if($.r()<_.berserk.chance)  _.target.takeDamage(_.meleeDmg);
       return true;
     }
     
@@ -85,8 +80,7 @@ function Infantry() {
       regard to self-preservation or where the current target location is!
       once berserk is done, standard actions resume. */
     if($.r()<_.berserk.chance) {
-      _.action=INFANTRY.ACTION.MOVEMENT;
-      _.berserk.ing=_.berserk.time;      
+      _.berserk.ing=_.berserk.time;
       return true;
     }
     
@@ -164,30 +158,32 @@ function Infantry() {
     }
     
     // If reloading, don't do anything else.     
-    if(_.reload.ing) {
-      _.reload.ing--;
-      if(!_.reload.ing) _.ammo.clip=_.ammo.max;
-      return true;
-    } else if(_.ammo.clip==0) {
+    if(_.reload.ing) { _.reload.ing--; return true; }
+    else if(_.ammo.clip==0) {
       _.reload.ing=_.reload.time;
       _.frame.current=_.frame.first;
+      _.ammo.clip=_.ammo.max;
       return true;
     }
     
     // If berserking, don't try anything else! 
     if(_.berserk.ing) {
+      _.action=INFANTRY.ACTION.MOVEMENT;
       _.berserk.ing--;
-      if(_.berserk.ing==0) this.findTarget();
+      //if(_.berserk.ing==0) this.findTarget();
     } else {      
-      if(!_.target || _.target.isDead() || !this.seeTarget() )
-        this.findTarget();
+      if(!_.target || _.target.isDead() ||
+         !this.seeTarget() || _.target.team==this.team) this.findTarget();
       else if(_.action==INFANTRY.ACTION.MOVEMENT)
-        _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,INFANTRY.ACTION.ATTACK_PRONE); 
+        _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,INFANTRY.ACTION.ATTACK_PRONE);          
     }
     this.correctDirection();
     
     // Animation loop
     if(++_.frame.current>_.frame.last) _.frame.current=_.frame.first;    
+    
+    // Still no target, just move.
+    if(!_.target) _.action=INFANTRY.ACTION.MOVEMENT;
     
     switch(_.action) {
       case INFANTRY.ACTION.MOVEMENT:         return this.move();
@@ -221,7 +217,7 @@ function PistolInfantry(x,y,team) {
     sight:      7,
     health:     $.R(30,70),
     reload:     { ing:0, time:40 },
-    berserk:    { ing:0, time:$.R(8,18), chance:$.r(0.19) },
+    berserk:    { ing:0, time:$.R(8,18), chance:$.r(0.49) },
     ammo:       { clip:2, max:2 },
     meleeDmg:   18
   };
@@ -244,7 +240,7 @@ function RocketInfantry(x,y,team) {
     sight:      9,
     health:     $.R(60,90),
     reload:     { ing:0, time:$.R(110,160) },
-    berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.35) },
+    berserk:    { ing:0, time:$.R(3,20), chance:$.r(0.25) },
     ammo:       { clip:1, max:1 },
     meleeDmg:   23
   };

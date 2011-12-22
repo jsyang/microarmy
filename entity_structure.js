@@ -28,18 +28,19 @@ function Structure() {
       returnDist?
         Math.abs(_.target.x-this.x)
         : !(Math.abs(_.target.x-this.x)>>_.sight)
-      : Infinity;
+      : 0;
   }
   
   this.findTarget=function(){ var _=this._;
     _.target=undefined;
     // Get all objects possibly within our sight, sort by distance to us
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
-    h.sort(function(a,b) { return Math.abs(this.x-a.x)-Math.abs(this.x-b.x); });    
+    h.sort(function(a,b) { return Math.abs(this.x-b.x)-Math.abs(this.x-a.x); });    
     for(var i=0; i<h.length; i++) {
+      if(h[i].team==this.team)              continue;
       if(h[i].isDead())                     continue;   // already dead!
       if(Math.abs(h[i].x-this.x)>>_.sight)  break;      // can't see closest!         
-      if(h[i].team!=this.team) { _.target=h[i]; break; }
+      _.target=h[i]; break;
     }
   };
   
