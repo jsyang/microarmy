@@ -145,11 +145,9 @@ function Structure() {
       // Give some reinforcements, if there are any to give
       if(_.reinforce) {        
         if(_.reinforce.next>0) _.reinforce.next--; else {
-          _.reinforce.next=$.R(20,_.reinforce.time);
-          
           // Dump reinforcements faster if shit is hitting the fan.
-          if(_.health.current<_.health.max*0.4) _.reinforce.next-=$.R(8,18);
-          if(_.health.current<_.health.max*0.2) _.reinforce.next-=$.R(16,26);
+          _.reinforce.next=$.R(20,
+            (_.reinforce.time*_.health.current/_.health.max)>>0);
           
           for(var i=0; i<=this.state; i++) {            
             // Dirty, but working for now--we'll want to build this later
@@ -210,20 +208,24 @@ function CommCenter(x,y,team) {
     }
     
     // Panic attack: launch homing missile from hell.
-    if(_.health.current<0.1*_.health.max && _.ammo.clip>0) {
-      _.target=undefined;
+    if(_.health.current<0.3*_.health.max && _.ammo.clip>0
+       && !(_.health.current % 6)) {
       // Get all objects possibly within our sight, sort by distance to us
       var h=world.xHash.getNBucketsByCoord(this.x,8);
       for(var i=0, maxDist=-Infinity; i<h.length; i++) {
-        if(h[i].team==this.team)              continue;
-        if(h[i].isDead())                     continue;
-        if(Math.abs(h[i].x-this.x)>maxDist){
-          _.target=h[i]; maxDist=Math.abs(h[i].x-this.x);
+        if(h[i]==_.target)        continue;
+        if(h[i].team==this.team)  continue;
+        if(h[i].isDead())         continue;
+        if(_.target && Math.abs(h[i].x-_.target.x)<60) continue;
+        else { _.target=h[i]; maxDist=Math.abs(h[i].x-this.x); break; }
+        if(Math.abs(h[i].x-this.x)>maxDist) {          
+            _.target=h[i]; maxDist=Math.abs(h[i].x-this.x);
+            if($.r()<0.11) break; // just pick this one NOW
         }
       }
       soundManager.play('missile1');
       world.addPawn(
-        new HomingMissile(this.x,this.y-20,this.team,_.target,0,-5,0 )
+        new HomingMissile(this.x,this.y-20,this.team,_.target,0,-7,0 )
       );
       _.ammo.clip--;
     }
@@ -243,7 +245,7 @@ function CommCenter(x,y,team) {
   };
   
   this._={
-    ammo:         { clip: 1, max:1 },
+    ammo:         { clip: 2, max:2 },
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 290,

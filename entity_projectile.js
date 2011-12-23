@@ -148,7 +148,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   
   this.maxSpeed=100;
   this.range=300;
-  this.dspeed=0.7;
+  this.dspeed=0.4;
   this.ddy=0.13;
   
   this.getGFX=function(){
@@ -175,7 +175,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     }
     
     // Smoke trail
-    if(this.range%5)
+    if(this.range>293)
       world.addPawn(new SmokeCloud(this.x-this.dx,this.y-this.dy));
     
     // Hit enemy.

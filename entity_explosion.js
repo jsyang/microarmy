@@ -64,15 +64,7 @@ function HEAPExplosion(x,y) {
   this.frame={ current:0, last:22 };
   this.img={w:41, h:28, hDist2: 400 };
   this.damage=$.R(65,95);
-  /*// Throw some shrapnel around
-  var w2=this.img.w>>1, h2=this.img.h>>1;  
-  var shrap=$.R(2,24);
-  while(shrap--) world.addPawn(
-    new Bullet(
-      this.x+$.R(-w2,w2),this.y,TEAM.NONE,undefined,
-      $.R(-1,-60)/$.R(40,50),$.R(-1,-60)/$.R(40,50),[1,0])
-  );
-  */
+  this.damageDecay=1;
   soundManager.play('exp2big');
 }
 

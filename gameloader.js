@@ -132,14 +132,13 @@ preloader.onfinish=function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
-window.onclick=function(){
-  var l=[$.R(60,180),$.R(460,580)];
+//*
+window.onclick=function(e){
   var t=[PistolInfantry,RocketInfantry][Math.round($.r(0.8))];
-  world.addPawn(new t(l[0],world.getHeight(l[0]), TEAM.BLUE));
-  world.addPawn(new t(l[1],world.getHeight(l[1]), TEAM.GREEN));
+  //world.addPawn(new t(l[0],world.getHeight(l[0]), TEAM.BLUE));
+  world.addPawn(new t(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));
 }
-*/
+//*/
 
 // BOOM! HEH.
 /* window.onclick=function(e){
@@ -158,7 +157,7 @@ window.onclick=function(e){
 };
 */
 
-window.ondblclick=function(e){  alert(e.pageX); };
+//window.ondblclick=function(e){  alert(e.pageX); };
 // window.onclick=function(e){  alert(e.pageX); };
 
 
