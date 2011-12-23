@@ -132,7 +132,7 @@ preloader.onfinish=function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//*
+/*
 window.onclick=function(e){
   var t=[PistolInfantry,RocketInfantry][Math.round($.r(0.8))];
   //world.addPawn(new t(l[0],world.getHeight(l[0]), TEAM.BLUE));
