@@ -63,8 +63,9 @@ var preloader=(function() {
     "bgterrain*:maps/"+map.name+"_terrain.png",
     "bgprops*:maps/"+map.name+"_props.png",
     // special-fx
-    'shells*:gfx/fire0.png',
-    'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png',
+    'shells*:gfx/fire0.png','missilered*:gfx/missilered.png',
+    'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png','exp2big*:gfx/exp2big.png',
+    'smoke*:gfx/smoke.png',
     // infantry
     'pistolblue*:gfx/pistol0.png', 'rocketblue*:gfx/rocket0.png',
     'pistolgreen*:gfx/pistol1.png', 'rocketgreen*:gfx/rocket1.png',
@@ -85,7 +86,7 @@ preloader.onfinish=function() {
     var list=(
       'pistol,mgburst,rocket,die1,die2,die3,die4,'+
       'expsmall,expfrag,accomp,crumble,sliderack1,'+
-      'tack'
+      'tack,exp2big,missile1'
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
@@ -131,8 +132,6 @@ preloader.onfinish=function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-window.ondblclick=function(e){  alert(e.pageX); };
-
 /*
 window.onclick=function(){
   var l=[$.R(60,180),$.R(460,580)];
@@ -149,6 +148,17 @@ window.onclick=function(){
   ));
 };*/
 
+/*
+window.onclick=function(e){
+  soundManager.play('missile1');
+  world.addPawn(new HomingMissile(
+    e.pageX,e.pageY,TEAM.NONE,undefined,
+    0,-6,0
+  ));
+};
+*/
+
+window.ondblclick=function(e){  alert(e.pageX); };
 // window.onclick=function(e){  alert(e.pageX); };
 
 

@@ -46,7 +46,6 @@ function SmallExplosion(x,y) {
   soundManager.play('expsmall');
 }
 
-////////// to do
 FragExplosion.prototype=new Explosion;
 function FragExplosion(x,y) {
   this.x=x; this.y=y;
@@ -56,4 +55,37 @@ function FragExplosion(x,y) {
   this.damage=$.R(12,29);
   this.damageDecay=1;
   soundManager.play('expfrag');
+}
+
+HEAPExplosion.prototype=new Explosion;
+function HEAPExplosion(x,y) {
+  this.x=x; this.y=y;
+  this.imgSheet=preloader.getFile('exp2big');
+  this.frame={ current:0, last:22 };
+  this.img={w:41, h:28, hDist2: 400 };
+  this.damage=$.R(65,95);
+  /*// Throw some shrapnel around
+  var w2=this.img.w>>1, h2=this.img.h>>1;  
+  var shrap=$.R(2,24);
+  while(shrap--) world.addPawn(
+    new Bullet(
+      this.x+$.R(-w2,w2),this.y,TEAM.NONE,undefined,
+      $.R(-1,-60)/$.R(40,50),$.R(-1,-60)/$.R(40,50),[1,0])
+  );
+  */
+  soundManager.play('exp2big');
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+SmokeCloud.prototype=new Explosion;
+function SmokeCloud(x,y) {
+  this.x=x; this.y=y;
+  this.imgSheet=preloader.getFile('smoke');
+  this.frame={ current:-1, last:22 };
+  this.img={w:19, h:17 };
+  this.alive=function(){
+    if(this.frame.current++>this.frame.last) return this.corpsetime=0;
+    return false;
+  };
 }

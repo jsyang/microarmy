@@ -114,6 +114,7 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;
   this.dx=dx, this.dy=dy;
   this.imgSheet=preloader.getFile('shells');
+  // ^^^ might have to clean that code up... a lot of repetition
   
   this.ddy=0.31;
   this.img.row=2;
@@ -134,4 +135,115 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
     this.dy+=this.ddy;
     return false;
   };
+}
+
+// Homing missile fired by a panicked CommCenter
+HomingMissile.prototype=new Projectile;
+function HomingMissile(x,y,team,target,dx,dy,accuracy) {
+  this.x=x,   this.y=y;
+  this.dx=dx, this.dy=dy;  
+  this.team=team;
+  this.target=target;
+  this.img={ w:15, h:15, frame:0, sheet:preloader.getFile('missilered') };
+  
+  this.maxSpeed=100;
+  this.range=300;
+  this.dspeed=0.7;
+  this.ddy=0.13;
+  
+  this.getGFX=function(){
+    return {
+      img:    this.img.sheet,
+      imgdx:  this.img.w*this.img.frame,
+      imgdy:  0,
+      worldx: this.x-(this.img.w>>1),
+      worldy: this.y-(this.img.h>>1),
+      imgw:this.img.w, imgh:this.img.h
+    }
+  };
+  
+  this.explode=function(){
+    world.addPawn(new HEAPExplosion(this.x,this.y));
+    this.range=0;
+    this.corpsetime=0;
+  };
+  
+  this.alive=function(){
+    if(!this.range) {
+      this.explode();
+      return this.corpsetime=0;
+    }
+    
+    // Smoke trail
+    if(this.range%5)
+      world.addPawn(new SmokeCloud(this.x-this.dx,this.y-this.dy));
+    
+    // Hit enemy.
+    var h=world.xHash.getNBucketsByCoord(this.x,0);    
+    for(var i=0; i<h.length; i++) {
+      var unit=h[i];
+      if(unit.team==this.team)  continue;
+      if(unit.isDead())         continue;
+      var dx=this.x-(unit.x-(unit.img.w>>1));
+      var dy=this.y-(unit.y-(unit.img.h>>1));      
+      if(dx*dx+dy*dy>169)       continue;   // Not close enough!
+      this.explode();
+      return false;
+    }
+    
+    // Hit ground
+    if(world.isOutside(this)) {      
+      this.x-=this.dx>>1;
+      this.y=world.getHeight(this.x>>0);
+      this.explode();
+      return false;
+    }
+        
+    // Homing.
+    if(this.target) {
+      this.dx+=this.target.x<this.x? -this.dspeed: this.dspeed;
+      this.dy+=this.target.y<this.y? -this.dspeed: this.dspeed;
+      if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed)
+        this.dx-=this.target.x<this.x? -this.dspeed: this.dspeed;        
+      if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed)
+        this.dy-=this.target.y<this.y? -this.dspeed: this.dspeed;      
+    } else {      
+      // Gravity
+      this.dy+=this.ddy;      
+      var h=world.xHash.getNBucketsByCoord(this.x,4);
+      for(var i=0, minDist=Infinity; i<h.length; i++) {
+        if(h[i].team==this.team) continue;
+        if(h[i].isDead()) continue;
+        if(Math.abs(h[i].x-this.x)<minDist){
+          this.target=h[i]; minDist=Math.abs(h[i].x-this.x);
+        }
+      }
+    }
+    
+    // Projectile angle graphics
+    // Days since last no division by zero: 10
+    if(this.dx==0) this.dx=0.001;
+    if(this.dy==0) this.dy=0.001;
+    var dydx=Math.abs(this.dy/this.dx);
+    var fr; // cover 4 quadrants
+    
+    if(this.dx<0 && this.dy<0)      fr=[4,3,2,1,0];//[8,7,6,5,4];
+    else if(this.dx<0 && this.dy>0) fr=[4,5,6,7,8];//[0,15,14,13,12];//
+    else if(this.dx>0 && this.dy>0) fr=[12,11,10,9,8];//[0,1,2,3,4];//
+    else                            fr=[12,13,14,15,0];//[8,9,10,11,12];//
+    
+    this.img.frame=fr[0];
+    if(dydx>=0.1989 && dydx<0.6681)  this.img.frame=fr[1];
+    if(dydx>=0.6681 && dydx<1.4966)  this.img.frame=fr[2];
+    if(dydx>=1.4966 && dydx<5.0273)  this.img.frame=fr[3];
+    if(dydx>=5.0273)                 this.img.frame=fr[4];
+    //console.log(this.img.frame);
+    
+    this.y+=this.dy;
+    this.x+=this.dx;    
+    
+    this.range--;
+    return false;
+  };
+  
 }

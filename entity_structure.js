@@ -199,15 +199,35 @@ function CommCenter(x,y,team) {
   this.imgSheet=preloader.getFile('comm'+TEAM.NAMES[team]);  
   
   // Large damage has a chance of killing the supply of people inside.
-  this.takeDamage=function(d){
+  this.takeDamage=function(d){ var _=this._;
     if(d>18 && $.r()<0.4) {
       var t=$.R(0,1);
       var killed=$.R(2,16);
-      if(this._.reinforce.supply[t]-killed>0)
-        this._.reinforce.supply[t]-=killed;
+      if(_.reinforce.supply[t]-killed>0)
+        _.reinforce.supply[t]-=killed;
       else
-        this._.reinforce.supply[t]=0;
+        _.reinforce.supply[t]=0;
     }
+    
+    // Panic attack: launch homing missile from hell.
+    if(_.health.current<0.1*_.health.max && _.ammo.clip>0) {
+      _.target=undefined;
+      // Get all objects possibly within our sight, sort by distance to us
+      var h=world.xHash.getNBucketsByCoord(this.x,8);
+      for(var i=0, maxDist=-Infinity; i<h.length; i++) {
+        if(h[i].team==this.team)              continue;
+        if(h[i].isDead())                     continue;
+        if(Math.abs(h[i].x-this.x)>maxDist){
+          _.target=h[i]; maxDist=Math.abs(h[i].x-this.x);
+        }
+      }
+      soundManager.play('missile1');
+      world.addPawn(
+        new HomingMissile(this.x,this.y-20,this.team,_.target,0,-5,0 )
+      );
+      _.ammo.clip--;
+    }
+    
     return this._.health.current-=d;
   };
   
@@ -222,7 +242,8 @@ function CommCenter(x,y,team) {
     );
   };
   
-  this._={    
+  this._={
+    ammo:         { clip: 1, max:1 },
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 290,

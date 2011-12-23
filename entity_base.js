@@ -124,7 +124,7 @@ function World() {
   this.getHeight=function(x) { x>>=0; return (x>=0 && x<w) ? heightmap[x] : 0; };
   this.isOutside=function(obj) {
     var x=obj.x>>0, y=obj.y>>0;
-    return x<0 || x>=w || y<0 || y>heightmap[x];
+    return x<0 || x>=w || y>heightmap[x]; // || y<0
   };
   
   this.getCommCenterInfo=function(){

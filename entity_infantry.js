@@ -1,4 +1,6 @@
-var TEAM={  
+var TEAM={
+  NONE:-1,
+  
   BLUE: 0,
   GREEN:1,  
   GOALDIRECTION:[1,-1],
