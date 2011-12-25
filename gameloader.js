@@ -129,7 +129,48 @@ window.onclick=function(e){
   eng._.build.x=e.pageX;
   world.addPawn(eng);
   turrets--;
-  world.writeToMsgBox("");
+  world.writeToMsgBox(
+"\nMICROARMY---------------------------------------------------\n\
+  Team wins if a unit reaches the opposing team's edge\n\
+\n\
+CommCenter\n\
+  contains PistolInfantry and RocketInfantry supply\n\
+  panic attack when severely damaged\n\
+  explodes when destroyed\n\
+\n\
+Barracks\n\
+  contains PistolInfantry supply\n\
+  explodes when destroyed\n\
+\n\
+Pillbox\n\
+  crew capacity of 8, reload time decreases with capacity\n\
+  small repairs made when crew supply is replenished\n\
+  fires bursts of MGBullets\n\
+  can be occupied by enemy forces if unmanned\n\
+\n\
+Small Turret\n\
+  automated heavy sentry with cannon weapon\n\
+  cannot be commandeered by enemy troops\n\
+  high resistance to small arms fire\n\
+  effective against vehicles\n\
+\n\
+Pistol Infantry\n\
+  currency unit of the battlefield\n\
+  cheap but in effective en mass\n\
+  weak unit but advances with courage\n\
+\n\
+Rocket Infantry\n\
+  fires a fragmentation rocket that deals high damage\n\
+  effective against tight troop formations and buildings\n\
+  able to see enemies from twice the distance of other infantry\n\
+\n\
+Engineer Infantry\n\
+  very weak\n\
+  builds new structures by laying down a scaffold\n\
+  construction site is occupied by PistolInfantry\n\
+    each structure has to be occupied by a required number of PistolInfantry\n\
+    before it can be fully constructed"
+);
 };
 //*/
 

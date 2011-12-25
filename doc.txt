@@ -1,6 +1,9 @@
+MICROARMY
+  Team wins if a unit reaches the opposing team's edge
+
 CommCenter
   contains PistolInfantry and RocketInfantry supply
-//  panic attack when severely damaged
+  panic attack when severely damaged
   explodes when destroyed
 
 Barracks
