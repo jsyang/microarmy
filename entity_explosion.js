@@ -21,7 +21,7 @@ function Explosion() {
   
   this.alive=function(){
     if(this.frame.current++>this.frame.last) return this.corpsetime=0;
-    var h=world.xHash.getNBucketsByCoord(this.x,2);
+    var h=world.xHash.getNBucketsByCoord(this.x,4);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
       var dx=this.x-(unit.x-(unit.img.w>>1));     // point object.
@@ -62,7 +62,7 @@ function HEAPExplosion(x,y) {
   this.x=x; this.y=y;
   this.imgSheet=preloader.getFile('exp2big');
   this.frame={ current:0, last:22 };
-  this.img={w:41, h:28, hDist2: 400 };
+  this.img={w:41, h:28, hDist2: 460 };
   this.damage=$.R(65,95);
   this.damageDecay=1;
   soundManager.play('exp2big');

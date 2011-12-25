@@ -1,6 +1,6 @@
 CommCenter
   contains PistolInfantry and RocketInfantry supply
-  panic attack when severely damaged
+//  panic attack when severely damaged
   explodes when destroyed
 
 Barracks
@@ -9,8 +9,15 @@ Barracks
   
 Pillbox
   crew capacity of 8, reload time decreases with capacity
+  small repairs made when crew supply is replenished
   fires bursts of MGBullets
   can be occupied by enemy forces if unmanned
+
+Small Turret
+  automated heavy sentry with cannon weapon
+  cannot be commandeered by enemy troops
+  high resistance to small arms fire
+  effective against vehicles
 
 PistolInfantry
   currency unit of the battlefield

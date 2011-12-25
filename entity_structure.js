@@ -235,7 +235,7 @@ function CommCenter(x,y,team) {
       }
       soundManager.play('missile1');
       world.addPawn(
-        new HomingMissile(this.x,this.y-20,this.team,_.target,0,-7,0 )
+        new HomingMissile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
       );
       _.ammo.clip--;
     }
@@ -259,8 +259,9 @@ function CommCenter(x,y,team) {
     if(!_.target) return true;
     if($.r()<0.0039) {
       soundManager.play('missile1');
+      // magic dx,dy numbers!
       world.addPawn(
-        new _.projectile(this.x,this.y-20,this.team,_.target,_.direction,-7.6,0 )
+        new _.projectile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
       );
       _.ammo.clip--;
     }
@@ -268,7 +269,7 @@ function CommCenter(x,y,team) {
   };
   
   this._={
-    sight:        20,
+    sight:        16,
     ammo:         { clip: 6, max:6 },
     reload:       { ing:0, time:Infinity },
     projectile:   HomingMissile,
@@ -341,7 +342,7 @@ function Pillbox(x,y,team) {
   this.team=team;
   
   this.img={ w:19, h:8, hDist2:64 };
-  this.imgSheet=preloader.getFile('pillbox_');//+TEAM.NAMES[team]);  
+  this.imgSheet=preloader.getFile('pillbox_');
   
   // Can only see objects in front of it
   this.findTarget=function(){ var _=this._;

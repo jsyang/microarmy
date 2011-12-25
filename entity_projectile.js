@@ -163,9 +163,9 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.img={ w:15, h:15, frame:0, sheet:preloader.getFile('missilered') };
   
   this.maxSpeed=90;
-  this.range=280;
-  this.dspeed=0.64;
-  this.ddy=0.13;
+  this.range=180;
+  this.dspeed=0.84;
+  this.ddy=0.21;
   
   this.getGFX=function(){
     return {
@@ -186,7 +186,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   
   this.findTarget=function(){
     this.target=undefined;
-    var h=world.xHash.getNBucketsByCoord(this.x,6);
+    var h=world.xHash.getNBucketsByCoord(this.x,18);
     for(var i=0, minDist=Infinity; i<h.length; i++) {
       if(h[i].team==this.team) continue;
       if(h[i].isDead()) continue;
@@ -203,7 +203,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     }
     
     // Smoke trail
-    if(this.range>272)
+    if(this.range>174)
       world.addPawn(new SmokeCloud(this.x-this.dx,this.y-this.dy));
     
     // Hit enemy.
@@ -218,27 +218,30 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
       this.explode();
       return false;
     }
-    
+
     // Hit ground
-    if(world.isOutside(this)) {      
+    if(world.isOutside(this)) {
       this.x-=this.dx>>1;
       this.y=world.getHeight(this.x>>0);
       this.explode();
-      return false;
-    }
+      return false;      
+    }      
         
     // Homing.
-    if(this.target && !this.target.isDead()) {
-      this.dx+=this.target.x<this.x? -this.dspeed: this.dspeed;
-      this.dy+=this.target.y<this.y? -this.dspeed: this.dspeed;
-      if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed)
-        this.dx-=this.target.x<this.x? -this.dspeed: this.dspeed;        
-      if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed)
-        this.dy-=this.target.y<this.y? -this.dspeed: this.dspeed;      
-    } else {      
-      // Gravity
-      this.dy+=this.ddy;      
-      this.findTarget();
+    if( this.range<171 )
+    {  // turn on homing function after delay
+      if(this.target && !this.target.isDead()) {
+        this.dx+=this.target.x<this.x? -this.dspeed: this.dspeed;
+        this.dy+=this.target.y<this.y? -this.dspeed: this.dspeed;
+        if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed) {
+          this.dy*=$.R(30,50)/100; // need this to control better
+          this.dx*=$.R(70,80)/100;
+        }
+      } else {      
+        // Gravity
+        this.dy+=this.ddy;
+        this.findTarget();
+      }
     }
     
     // Projectile angle graphics
