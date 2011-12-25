@@ -217,32 +217,9 @@ function CommCenter(x,y,team) {
       else
         _.reinforce.supply[t]=0;
     }
-    
-    // Panic attack: launch homing missile from hell.
-    if(_.health.current<0.3*_.health.max && _.ammo.clip>0
-       && $.r()<0.13 ) {
-      var h=world.xHash.getNBucketsByCoord(this.x,8);
-      for(var i=0, maxDist=-Infinity; i<h.length; i++) {
-        if(h[i]==_.target)        continue;
-        if(h[i].team==this.team)  continue;
-        if(h[i].isDead())         continue;
-        if(_.target && Math.abs(h[i].x-_.target.x)<60) continue;
-        else { _.target=h[i]; maxDist=Math.abs(h[i].x-this.x); break; }
-        if(Math.abs(h[i].x-this.x)>maxDist) {          
-            _.target=h[i]; maxDist=Math.abs(h[i].x-this.x);
-            if($.r()<0.11) break; // just pick this one NOW
-        }
-      }
-      soundManager.play('missile1');
-      world.addPawn(
-        new HomingMissile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
-      );
-      _.ammo.clip--;
-    }
-    
-    return this._.health.current-=d;
+    return _.health.current-=d;
   };
-  
+      
   this.deathEvent=function(){
     var w2=this.img.w>>1, h2=this.img.h>>1;
     world.addPawn(new SmallExplosion(this.x,this.y-h2));    
@@ -254,8 +231,9 @@ function CommCenter(x,y,team) {
     );
   };
   
-  // Special attack--just for fun!
+  // Panic attack: launch homing missile from hell.
   this.attack=function() { var _=this._;
+    if(_.health.current>0.7*_.health.max) return true;
     if(!_.target) return true;
     if($.r()<0.0039) {
       soundManager.play('missile1');
@@ -401,22 +379,7 @@ function SmallTurret(x,y,team) {
   
   // Rotation handling
   this.checkState=function(){ var _=this._;
-    if(_.health.current<0.5*_.health.max) this.state=STRUCTURE.STATE.BAD;
-    if(!_.target) return;    
-    if((_.target.x-this.x)*_.direction>=0) return;
-    if(!_.turn.ing) {
-      _.projectile=undefined;
-      _.turn.ing=1;
-      _.turn.current=0;
-    } else {
-      _.turn.current++;
-      if(_.turn.current>_.turn.last) {
-        _.projectile=SmallShell;
-        _.turn.ing=_.turn.current=0;
-        _.direction*=-1;
-        _.target=undefined;
-      }
-    }
+    
   };  
   
   // Rotation gfx
@@ -439,6 +402,51 @@ function SmallTurret(x,y,team) {
     world.addPawn(new SmallExplosion(this.x,this.y-(this.img.h>>1)));    
   };
   
+  
+  this.alive=function() { var _=this._;    
+    if(this.isDead()) {
+      if(this.state!=STRUCTURE.STATE.WRECK) {
+        this.state=STRUCTURE.STATE.WRECK;
+        this.deathEvent();
+      }
+      return false;
+    } else {      
+      if(_.health.current<0.5*_.health.max) this.state=STRUCTURE.STATE.BAD;      
+      if(_.projectile) {
+        // If reloading, don't do anything else. 
+        if(_.ammo.clip==0) {
+          // Attack more frequently if better stocked          
+          _.reload.ing=_.crew?
+            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
+            :_.reload.time;
+          _.ammo.clip=_.ammo.max;
+          _.target=undefined;     // reprioritize
+          return true;
+        }
+        if(_.reload.ing) { _.reload.ing--; return true; }
+        if(!_.target || _.target.isDead() || !this.seeTarget() )
+          this.findTarget();        
+        
+        if(_.target && (_.target.x-this.x)*_.direction<0) {
+          if(!_.turn.ing) {            
+            _.turn.ing=1;
+            _.turn.current=0;
+          } else {
+            _.turn.current++;
+            if(_.turn.current>_.turn.last) {
+              _.turn.ing=_.turn.current=0;
+              _.direction*=-1;
+            }            
+          }
+          return true;
+        }
+        
+        this.attack();
+      }
+      return true;
+    }    
+  };
+  
   this._={
     sight:            8,
     health:           { current:$.R(1900,2100), max:$.R(2100,2300) },
@@ -446,7 +454,7 @@ function SmallTurret(x,y,team) {
     projectileSpeed:  7,
     direction:        TEAM.GOALDIRECTION[team],
     reload:           { ing:0, time: 90 },
-    ammo:             { clip:0, max: 1 },
+    ammo:             { clip:1, max: 1 },
     shootHeight:      6,
     turn:             { ing: 0, current:0, last:4 },    
     
