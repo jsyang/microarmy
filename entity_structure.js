@@ -220,7 +220,15 @@ function CommCenter(x,y,team) {
     }
     return _.health.current-=d;
   };
-      
+  
+  this.checkState=function(){ var _=this._;
+    if(_.health.current<0.6*_.health.max) this.state=STRUCTURE.STATE.BAD;
+    if(_.health.current>0.4*_.health.max) return true;
+    _.projectile=HomingMissile;
+  };
+  
+  
+  
   this.deathEvent=function(){
     var w2=this.img.w>>1, h2=this.img.h>>1;
     world.addPawn(new SmallExplosion(this.x,this.y-h2));    
@@ -233,9 +241,7 @@ function CommCenter(x,y,team) {
   };
   
   // Panic attack: launch homing missile from hell.
-  this.attack=function() { var _=this._;
-    if(_.health.current>0.4*_.health.max) return true;
-    _.projectile=HomingMissile;
+  this.attack=function() { var _=this._;    
     if(!_.target) return true;
     if($.r()<0.0093) {
       soundManager.play('missile1');
