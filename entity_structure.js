@@ -67,7 +67,8 @@ function Structure() {
       _.health.current+=2*h[i]._.health;
       if(_.health.current>_.health.max) _.health.current=_.health.max;
       h[i].remove(); _.crew.current++;
-      soundManager.play('sliderack1');
+      if(this instanceof Pillbox) soundManager.play('sliderack1');
+      else soundManager.play('feed');
       break;
     }
   };
@@ -233,9 +234,10 @@ function CommCenter(x,y,team) {
   
   // Panic attack: launch homing missile from hell.
   this.attack=function() { var _=this._;
-    if(_.health.current>0.7*_.health.max) return true;
+    if(_.health.current>0.4*_.health.max) return true;
+    _.projectile=HomingMissile;
     if(!_.target) return true;
-    if($.r()<0.0039) {
+    if($.r()<0.0093) {
       soundManager.play('missile1');
       // magic dx,dy numbers!
       world.addPawn(
@@ -250,13 +252,13 @@ function CommCenter(x,y,team) {
     sight:        16,
     ammo:         { clip: 6, max:6 },
     reload:       { ing:0, time:Infinity },
-    projectile:   HomingMissile,
+    projectile:   undefined,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 290,
                     types:  [PistolInfantry,RocketInfantry],
-                    supply: [120,80],                    
+                    supply: [320,180],                    
                     chances:[1,0.27]
                   },
     
@@ -311,7 +313,67 @@ function Barracks(x,y,team) {
   };
 }
 
-// Defensive structures
+Scaffold.prototype=new Structure;
+function Scaffold(x,y,team) {
+  soundManager.play('tack');
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  
+  this.img={ w:16, h:8, hDist2:64 };
+  this.imgSheet=preloader.getFile('scaffold_');
+  
+  // Any damage has a chance of killing everyone inside.
+  this.takeDamage=function(d){
+    if($.r()<0.13) {
+      var killed=$.R(2,this._.crew.max);
+      if(this._.crew.current-killed>0)
+        this._.crew.current-=killed;
+      else
+        this._.crew.current=0;
+    }
+    return this._.health.current-=d;
+  };
+  
+  this.alive=function() { var _=this._;    
+    if(this.isDead()) {
+      this.deathEvent();
+      this.corpsetime=0;
+      return false;
+    } else {      
+      this.checkState();      
+      if(_.crew.current<_.crew.max) this.findCrew();
+      else {
+        world.addPawn(new _.build.type(this.x,world.getHeight(this.x),this.team));
+        this.corpsetime=0;
+        return false;
+      }
+      if(!_.crew.current){
+        // Enemies should not attack an unoccupied scaffold
+        this.imgSheet=_.crew.empty; return false;
+      } else {
+        this.imgSheet=_.crew.occupied(this);
+      }
+      return true;
+    }    
+  };
+  
+  this._={
+    health:       { current:$.R(360,400), max:$.R(400,450) },
+    direction:    TEAM.GOALDIRECTION[team],
+    build:        {type:undefined},
+    crew:         { current: 1, max:2,
+                    occupied: function(o){
+                      return preloader.getFile('scaffold'+TEAM.NAMES[o.team]);
+                    },
+                    empty: preloader.getFile('scaffold_') },
+
+    target:       undefined
+  }
+}
+
+
+// Defensive structures ////////////////////////////////////////////////////////
 
 Pillbox.prototype=new Structure;
 function Pillbox(x,y,team) {
@@ -377,11 +439,6 @@ function SmallTurret(x,y,team) {
   this.img={ w:22, h:9, hDist2:90 };
   this.imgSheet=preloader.getFile('turret'+TEAM.NAMES[team]);
   
-  // Rotation handling
-  this.checkState=function(){ var _=this._;
-    
-  };  
-  
   // Rotation gfx
   this.getGFX=function(){
     return {
@@ -400,8 +457,7 @@ function SmallTurret(x,y,team) {
   this.deathEvent=function(){
     soundManager.play('crumble');
     world.addPawn(new SmallExplosion(this.x,this.y-(this.img.h>>1)));    
-  };
-  
+  };  
   
   this.alive=function() { var _=this._;    
     if(this.isDead()) {
@@ -416,17 +472,16 @@ function SmallTurret(x,y,team) {
         // If reloading, don't do anything else. 
         if(_.ammo.clip==0) {
           // Attack more frequently if better stocked          
-          _.reload.ing=_.crew?
-            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
-            :_.reload.time;
+          _.reload.ing=_.reload.time;
           _.ammo.clip=_.ammo.max;
           _.target=undefined;     // reprioritize
           return true;
         }
         if(_.reload.ing) { _.reload.ing--; return true; }
         if(!_.target || _.target.isDead() || !this.seeTarget() )
-          this.findTarget();        
+          this.findTarget();
         
+        // Handle rotation
         if(_.target && (_.target.x-this.x)*_.direction<0) {
           if(!_.turn.ing) {            
             _.turn.ing=1;
@@ -438,10 +493,10 @@ function SmallTurret(x,y,team) {
               _.direction*=-1;
             }            
           }
-          return true;
-        }
+        } else
+          this.attack();
         
-        this.attack();
+        
       }
       return true;
     }    

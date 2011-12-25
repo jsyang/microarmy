@@ -75,9 +75,10 @@ function World() {
     var ta=document.createElement("div");
     ta.setAttribute('id','msgbox');
     var s=ta.style;
-    s.position='absolute'; s.left=0; s.top=h; s.width=500;
-    s.fontFamily='lucida console'; s.fontSize='10px';
-    s.color='#ddd'; s.background='#555';    
+    s.position='absolute'; s.left=0; s.top=h;// s.height=100;
+    var db=document.body, de=document.documentElement;
+    s.width=Math.min(db.scrollWidth,db.offsetWidth,de.clientWidth,de.scrollWidth,de.offsetWidth);
+    s.fontFamily='lucida console'; s.fontSize='10px'; s.color='#ddd';
     window.onscroll=
       (function(s){return function(){s.left=document.body.scrollLeft;};})(s);
     document.body.appendChild(ta);
@@ -123,6 +124,7 @@ function World() {
   this.pause=function() { clearInterval(timer); };
   
   this.getHeight=function(x) { return (x>=0 && x<w) ? heightmap[x>>0] : 0; };
+  this.writeToMsgBox=function(t){ msgbox.innerText=t; };
   
   this.isOutside=function(obj) {
     var x=obj.x>>0, y=obj.y>>0;

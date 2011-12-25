@@ -19,13 +19,19 @@ Small Turret
   high resistance to small arms fire
   effective against vehicles
 
-PistolInfantry
+Pistol Infantry
   currency unit of the battlefield
   cheap but in effective en mass
   weak unit but advances with courage
   
-RocketInfantry
+Rocket Infantry
   fires a fragmentation rocket that deals high damage
   effective against tight troop formations and buildings
   able to see enemies from twice the distance of other infantry
 
+Engineer Infantry
+  very weak
+  builds new structures by laying down a scaffold
+  construction site is occupied by PistolInfantry
+    each structure has to be occupied by a required number of PistolInfantry
+    before it can be fully constructed

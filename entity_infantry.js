@@ -254,3 +254,69 @@ function RocketInfantry(x,y,team) {
 // for defensive structures. can also repair buildings. unit returns to
 // comm center / team edge when done. the scaffold structure is completed by
 // filling with pistolinfantry.
+
+EngineerInfantry.prototype=new Infantry;
+function EngineerInfantry(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  
+  this.correctDirection=function(){ var _=this._;
+    _.direction=_.build.x>this.x?1:-1;
+    _.frame.first=_.direction>0?  6 : 0;
+    _.frame.last =_.direction>0?  11: 5;
+  };
+  
+  this.alive=function(){ var _=this._;
+    if(this.isDead()) {
+      if(_.action<INFANTRY.ACTION.DEATH1) {
+        _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
+        _.frame.current=_.frame.first;
+        soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
+      } else {
+        if(_.frame.current<_.frame.last) _.frame.current++;
+        else this.corpsetime--;
+      }
+      return false;
+    }    
+    
+    this.correctDirection();
+    // repair damaged buildings if(!_.target) {}
+    
+    // Animation loop
+    if(++_.frame.current>_.frame.last) _.frame.current=_.frame.first;    
+    
+    if(_.build.x==this.x) {
+      var scaffold=new Scaffold(this.x,world.getHeight(this.x),this.team);
+      scaffold._.build.type=_.build.type;
+      
+      // How many workers do we need to construct this?
+      var type=_.build.type;
+      var crewCount=8;
+      if(type instanceof Pillbox)           crewCount=4;
+      else if(type instanceof SmallTurret)  crewCount=6;
+      else if(type instanceof Barracks)     crewCount=16;
+      else if(type instanceof CommCenter)   crewCount=60;
+      
+      scaffold._.crew.max=crewCount;
+      world.addPawn(scaffold);
+      this.remove();
+      return false;
+    }
+
+    this.move();
+    return true;
+  };
+  
+  this._={
+    action:     INFANTRY.ACTION.MOVEMENT,
+    frame:      { current:0, first:0, last:5 },
+    target:     undefined,
+    build:      { type:undefined, x:undefined },
+    direction:  TEAM.GOALDIRECTION[team],
+    
+    imgSheet:   preloader.getFile('engineer'+TEAM.NAMES[team]),
+    health:     $.R(20,50),
+    meleeDmg:   5
+  };
+}

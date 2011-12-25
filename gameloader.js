@@ -21,7 +21,7 @@ function mapPickRandom() {
         
         { obj: CommCenter, team: TEAM.GREEN, x: 2394 },
         { obj: Barracks, team: TEAM.GREEN, x: 2307 },
-        { obj: Pillbox, team: TEAM.GREEN, x: 2148 },
+        { obj: SmallTurret, team: TEAM.GREEN, x: 2148 },
         { obj: Pillbox, team: TEAM.GREEN, x: 1945 },
         { obj: Pillbox, team: TEAM.GREEN, x: 1482 },
     ]},
@@ -67,15 +67,18 @@ var preloader=(function() {
     'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png','exp2big*:gfx/exp2big.png',
     'smoke*:gfx/smoke.png',
     // infantry
-    'pistolblue*:gfx/pistol0.png', 'rocketblue*:gfx/rocket0.png',
-    'pistolgreen*:gfx/pistol1.png', 'rocketgreen*:gfx/rocket1.png',
+    'pistolblue*:gfx/pistol0.png', 'pistolgreen*:gfx/pistol1.png',
+    'rocketblue*:gfx/rocket0.png','rocketgreen*:gfx/rocket1.png',
+    'engineerblue*:gfx/engineer0.png', 'engineergreen*:gfx/engineer1.png',
     // structures
     'commblue*:gfx/commcenter0.png','commgreen*:gfx/commcenter1.png',
     'pillboxblue*:gfx/pillbox0.png','pillboxgreen*:gfx/pillbox1.png',
     'pillbox_*:gfx/pillbox_.png',    
     
     'barracksblue*:gfx/barracks0.png','barracksgreen*:gfx/barracks1.png',
-    'turretblue*:gfx/turret0.png','turretgreen*:gfx/turret1.png'
+    'turretblue*:gfx/turret0.png','turretgreen*:gfx/turret1.png',
+    'scaffoldblue*:gfx/scaffold0.png','scaffoldgreen*:gfx/scaffold1.png',
+    'scaffold_*:gfx/scaffold_.png'
     // todo: vehicles, aircraft
     
     // todo: campaign map elements
@@ -88,7 +91,7 @@ preloader.onfinish=function() {
     var list=(
       'pistol,mgburst,rocket,die1,die2,die3,die4,'+
       'expsmall,expfrag,accomp,crumble,sliderack1,'+
-      'tack,exp2big,missile1,turretshot'
+      'tack,exp2big,missile1,turretshot,feed'
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
@@ -100,7 +103,8 @@ preloader.onfinish=function() {
   // 3. Create the gameworld with map entities
   world=new World();
   world.go();
-  
+  world.writeToMsgBox("\nBlue has 1 turret ready to be built.\n"+
+                      "Select location to deploy.");
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,10 +117,19 @@ window.onclick=function(e){
 }
 //*/
 
+//window.onclick=function(e){  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));};
+
 // BOOM! HEH.
 //*
- window.onclick=function(e){
-  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX),TEAM.GREEN));
+var turrets=1;
+window.onclick=function(e){
+  if(!turrets) return;
+  var eng=new EngineerInfantry(0, world.getHeight(0),TEAM.BLUE);
+  eng._.build.type=SmallTurret;
+  eng._.build.x=e.pageX;
+  world.addPawn(eng);
+  turrets--;
+  world.writeToMsgBox("");
 };
 //*/
 
