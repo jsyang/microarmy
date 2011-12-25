@@ -1,0 +1,24 @@
+CommCenter
+  contains PistolInfantry and RocketInfantry supply
+  panic attack when severely damaged
+  explodes when destroyed
+
+Barracks
+  contains PistolInfantry supply
+  explodes when destroyed
+  
+Pillbox
+  crew capacity of 8, reload time decreases with capacity
+  fires bursts of MGBullets
+  can be occupied by enemy forces if unmanned
+
+PistolInfantry
+  currency unit of the battlefield
+  cheap but in effective en mass
+  weak unit but advances with courage
+  
+RocketInfantry
+  fires a fragmentation rocket that deals high damage
+  effective against tight troop formations and buildings
+  able to see enemies from twice the distance of other infantry
+

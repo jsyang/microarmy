@@ -150,7 +150,7 @@ function SmallShell(x,y,team,target,dx,dy,accuracy) {
   this.img.row=2;
   this.explosion=FragExplosion;
   this.range=70;
-  this.damage=60;
+  this.damage=70;
 }
 
 // Homing missile. Fired by a panicked CommCenter
@@ -162,9 +162,9 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.target=target;
   this.img={ w:15, h:15, frame:0, sheet:preloader.getFile('missilered') };
   
-  this.maxSpeed=100;
-  this.range=300;
-  this.dspeed=0.4;
+  this.maxSpeed=90;
+  this.range=280;
+  this.dspeed=0.64;
   this.ddy=0.13;
   
   this.getGFX=function(){
@@ -184,6 +184,18 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     this.corpsetime=0;
   };
   
+  this.findTarget=function(){
+    this.target=undefined;
+    var h=world.xHash.getNBucketsByCoord(this.x,6);
+    for(var i=0, minDist=Infinity; i<h.length; i++) {
+      if(h[i].team==this.team) continue;
+      if(h[i].isDead()) continue;
+      if(Math.abs(h[i].x-this.x)<minDist){
+        this.target=h[i]; minDist=Math.abs(h[i].x-this.x);
+      }
+    }
+  };
+  
   this.alive=function(){
     if(!this.range) {
       this.explode();
@@ -191,7 +203,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     }
     
     // Smoke trail
-    if(this.range>293)
+    if(this.range>272)
       world.addPawn(new SmokeCloud(this.x-this.dx,this.y-this.dy));
     
     // Hit enemy.
@@ -216,7 +228,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     }
         
     // Homing.
-    if(this.target) {
+    if(this.target && !this.target.isDead()) {
       this.dx+=this.target.x<this.x? -this.dspeed: this.dspeed;
       this.dy+=this.target.y<this.y? -this.dspeed: this.dspeed;
       if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed)
@@ -226,14 +238,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     } else {      
       // Gravity
       this.dy+=this.ddy;      
-      var h=world.xHash.getNBucketsByCoord(this.x,4);
-      for(var i=0, minDist=Infinity; i<h.length; i++) {
-        if(h[i].team==this.team) continue;
-        if(h[i].isDead()) continue;
-        if(Math.abs(h[i].x-this.x)<minDist){
-          this.target=h[i]; minDist=Math.abs(h[i].x-this.x);
-        }
-      }
+      this.findTarget();
     }
     
     // Projectile angle graphics

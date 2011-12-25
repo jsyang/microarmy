@@ -90,7 +90,7 @@ function Structure() {
       accuracy=[0.65,0.35]; strayDY=$.R(-12,12)/100;
     } else if(_.projectile==SmallShell) {
       soundManager.play('turretshot');
-      accuracy=[0.55,0.45]; strayDY=$.R(-9,9)/100;
+      accuracy=[0.50,0.50]; strayDY=$.R(-9,9)/100;
     }
     
     // Projectile origin relative to sprite
@@ -123,7 +123,7 @@ function Structure() {
   // this.remove;
   this.isDead=function(){ return this._.health.current<=0; };
   this.checkState=function(){ var _=this._;
-    if(_.health.current<0.7*_.health.max) this.state=STRUCTURE.STATE.BAD;
+    if(_.health.current<0.6*_.health.max) this.state=STRUCTURE.STATE.BAD;
   };
   
   // Play crumble sound by default.
@@ -180,6 +180,7 @@ function Structure() {
             (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
             :_.reload.time;
           _.ammo.clip=_.ammo.max;
+          _.target=undefined;     // reprioritize
           return true;
         }
         if(_.reload.ing) { _.reload.ing--; return true; }
@@ -219,8 +220,7 @@ function CommCenter(x,y,team) {
     
     // Panic attack: launch homing missile from hell.
     if(_.health.current<0.3*_.health.max && _.ammo.clip>0
-       && !(_.health.current % 6)) {
-      // Get all objects possibly within our sight
+       && $.r()<0.13 ) {
       var h=world.xHash.getNBucketsByCoord(this.x,8);
       for(var i=0, maxDist=-Infinity; i<h.length; i++) {
         if(h[i]==_.target)        continue;
@@ -254,8 +254,25 @@ function CommCenter(x,y,team) {
     );
   };
   
+  // Special attack--just for fun!
+  this.attack=function() { var _=this._;
+    if(!_.target) return true;
+    if($.r()<0.0039) {
+      soundManager.play('missile1');
+      world.addPawn(
+        new _.projectile(this.x,this.y-20,this.team,_.target,_.direction,-7.6,0 )
+      );
+      _.ammo.clip--;
+    }
+    return true;
+  };
+  
   this._={
-    ammo:         { clip: 2, max:2 },
+    sight:        20,
+    ammo:         { clip: 6, max:6 },
+    reload:       { ing:0, time:Infinity },
+    projectile:   HomingMissile,
+    
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 290,
@@ -383,7 +400,7 @@ function SmallTurret(x,y,team) {
   
   // Rotation handling
   this.checkState=function(){ var _=this._;
-    if(_.health.current<0.7*_.health.max) this.state=STRUCTURE.STATE.BAD;
+    if(_.health.current<0.5*_.health.max) this.state=STRUCTURE.STATE.BAD;
     if(!_.target) return;    
     if((_.target.x-this.x)*_.direction>=0) return;
     if(!_.turn.ing) {
@@ -423,11 +440,11 @@ function SmallTurret(x,y,team) {
   
   this._={
     sight:            8,
-    health:           { current:$.R(1700,1900), max:$.R(1900,2100) },
+    health:           { current:$.R(1900,2100), max:$.R(2100,2300) },
     projectile:       SmallShell,
     projectileSpeed:  7,
     direction:        TEAM.GOALDIRECTION[team],
-    reload:           { ing:0, time: 110 },
+    reload:           { ing:0, time: 90 },
     ammo:             { clip:0, max: 1 },
     shootHeight:      6,
     turn:             { ing: 0, current:0, last:4 },    

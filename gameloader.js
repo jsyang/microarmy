@@ -23,7 +23,7 @@ function mapPickRandom() {
         { obj: Barracks, team: TEAM.GREEN, x: 2307 },
         { obj: Pillbox, team: TEAM.GREEN, x: 2148 },
         { obj: Pillbox, team: TEAM.GREEN, x: 1945 },
-        { obj: Pillbox, team: TEAM.GREEN, x: 1352 },
+        { obj: Pillbox, team: TEAM.GREEN, x: 1482 },
     ]},
     
     { name: 'egypt', entities: [
