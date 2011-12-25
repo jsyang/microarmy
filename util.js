@@ -9,4 +9,14 @@ var $=new function() {
   this.sum=function(a) {
     for(var sum=0, i=a.length; i--; sum+=a[i] ); return sum;
   };
+    
+  // Used to reset the DOM for other screens.
+  this.removeWorld=function(){
+    world.pause();    
+    while(document.getElementsByTagName('canvas').length)    
+      document.body.removeChild(document.getElementsByTagName('canvas')[0]);
+    if(document.getElementById('msgbox'))
+      document.body.removeChild(document.getElementById('msgbox'));
+    world=undefined;
+  };
 }

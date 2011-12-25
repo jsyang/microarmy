@@ -24,10 +24,11 @@ function Structure() {
   }
   
   this.seeTarget=function(returnDist) { var _=this._;
+    var dist=Math.abs(_.target.x-this.x);
     return _.target?
       returnDist?
-        Math.abs(_.target.x-this.x)
-        : !(Math.abs(_.target.x-this.x)>>_.sight)
+        dist
+        : !(dist>>_.sight) && (dist>this.img.w>>1)
       : 0;
   }
   
@@ -36,10 +37,11 @@ function Structure() {
     // Get all objects possibly within our sight, sort by distance to us
     var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
     for(var i=0, minDist=Infinity; i<h.length; i++) {
-      if(h[i].team==this.team)              continue;
-      if(h[i].isDead())                     continue;
-      if(Math.abs(h[i].x-this.x)>>_.sight)  continue;
-      if(Math.abs(h[i].x-this.x)<minDist){
+      var dist=Math.abs(h[i].x-this.x);
+      if(h[i].team==this.team) continue;
+      if(h[i].isDead()) continue;
+      if(!(!(dist>>_.sight) && (dist>this.img.w>>1))) continue;
+      if(dist<minDist){
         _.target=h[i]; minDist=Math.abs(h[i].x-this.x);
       }
     }
@@ -51,7 +53,7 @@ function Structure() {
     for(var i=0; i<h.length; i++) {
       if(!(h[i] instanceof PistolInfantry))       continue;    
       if(h[i].isDead())                           continue;
-      if(Math.abs(h[i].x-this.x)>(this.img.w>>1)) continue;
+      if(Math.abs(h[i].x-this.x)>this.img.w>>1)   continue;
       
       if(h[i].team!=this.team) {
         // new ownership!
@@ -75,6 +77,7 @@ function Structure() {
     if(!_.target)     return true;
     if(_.target.team==this.team) this.findTarget();    
     if(!_.target)     return true;
+        
     var distTarget=this.seeTarget(1);
     
     // Close quarters melee
@@ -85,11 +88,15 @@ function Structure() {
     if(_.projectile==MGBullet) {
       soundManager.play('mgburst');
       accuracy=[0.65,0.35]; strayDY=$.R(-12,12)/100;
+    } else if(_.projectile==SmallShell) {
+      soundManager.play('turretshot');
+      accuracy=[0.55,0.45]; strayDY=$.R(-9,9)/100;
     }
     
     // Projectile origin relative to sprite
     var pDY= -_.shootHeight;
     var pDX=_.direction>0? (this.img.w>>1)-2 : -((this.img.w>>1)-2);
+    var pSpeed=!_.projectileSpeed? 4:_.projectileSpeed;
     
     // Distance penalties for chance to hit
     if(distTarget>40){  accuracy[0]-=0.06; accuracy[1]-=0.09; }
@@ -102,8 +109,9 @@ function Structure() {
         this.x+pDX,this.y+pDY,
         this.team,
         _.target,
-        _.direction*4,
-        ((_.target.y-(_.target.img.h>>1)-(this.y-(this.img.h>>1))-pDY)*4)/distTarget+strayDY,
+        _.direction*pSpeed,
+        ((_.target.y-(_.target.img.h>>1)-(this.y-(this.img.h>>1))-pDY)*pSpeed)
+        /distTarget+strayDY,
         accuracy
       )
     );
@@ -167,12 +175,14 @@ function Structure() {
       if(_.projectile) {
         // If reloading, don't do anything else. 
         if(_.ammo.clip==0) {
-          // Attack more frequently if better stocked
-          _.reload.ing=(_.reload.time*(1.2-_.crew.current/_.crew.max))>>0;
+          // Attack more frequently if better stocked          
+          _.reload.ing=_.crew?
+            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
+            :_.reload.time;
           _.ammo.clip=_.ammo.max;
           return true;
         }
-        if(_.reload.ing) { _.reload.ing--; return true; }      
+        if(_.reload.ing) { _.reload.ing--; return true; }
         if(!_.target || _.target.isDead() || !this.seeTarget() )
           this.findTarget();        
         
@@ -210,7 +220,7 @@ function CommCenter(x,y,team) {
     // Panic attack: launch homing missile from hell.
     if(_.health.current<0.3*_.health.max && _.ammo.clip>0
        && !(_.health.current % 6)) {
-      // Get all objects possibly within our sight, sort by distance to us
+      // Get all objects possibly within our sight
       var h=world.xHash.getNBucketsByCoord(this.x,8);
       for(var i=0, maxDist=-Infinity; i<h.length; i++) {
         if(h[i]==_.target)        continue;
@@ -297,7 +307,7 @@ function Barracks(x,y,team) {
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 190,
                     types:  [PistolInfantry],
-                    supply: [200],
+                    supply: [250],
                     chances:[1]
                   },
     
@@ -305,7 +315,7 @@ function Barracks(x,y,team) {
   };
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// Defensive structures
 
 Pillbox.prototype=new Structure;
 function Pillbox(x,y,team) {
@@ -315,6 +325,22 @@ function Pillbox(x,y,team) {
   
   this.img={ w:19, h:8, hDist2:64 };
   this.imgSheet=preloader.getFile('pillbox_');//+TEAM.NAMES[team]);  
+  
+  // Can only see objects in front of it
+  this.findTarget=function(){ var _=this._;
+    _.target=undefined;
+    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
+    for(var i=0, minDist=Infinity; i<h.length; i++) {
+      var dist=(h[i].x-this.x);
+      if(h[i].team==this.team)              continue;
+      if(h[i].isDead())                     continue;
+      if(_.direction*(h[i].x-this.x)<0)     continue;
+      if(Math.abs(h[i].x-this.x)>>_.sight)  continue;      
+      if(Math.abs(h[i].x-this.x)<minDist){
+        _.target=h[i]; minDist=Math.abs(h[i].x-this.x);
+      }
+    }
+  };
   
   // Large damage has a chance of killing everyone inside.
   this.takeDamage=function(d){
@@ -344,4 +370,68 @@ function Pillbox(x,y,team) {
 
     target:       undefined
   }
+}
+
+SmallTurret.prototype=new Structure;
+function SmallTurret(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  
+  this.img={ w:22, h:9, hDist2:90 };
+  this.imgSheet=preloader.getFile('turret'+TEAM.NAMES[team]);
+  
+  // Rotation handling
+  this.checkState=function(){ var _=this._;
+    if(_.health.current<0.7*_.health.max) this.state=STRUCTURE.STATE.BAD;
+    if(!_.target) return;    
+    if((_.target.x-this.x)*_.direction>=0) return;
+    if(!_.turn.ing) {
+      _.projectile=undefined;
+      _.turn.ing=1;
+      _.turn.current=0;
+    } else {
+      _.turn.current++;
+      if(_.turn.current>_.turn.last) {
+        _.projectile=SmallShell;
+        _.turn.ing=_.turn.current=0;
+        _.direction*=-1;
+        _.target=undefined;
+      }
+    }
+  };  
+  
+  // Rotation gfx
+  this.getGFX=function(){
+    return {
+      img:    this.imgSheet,
+      imgdx:  (this._.direction>0)? this.img.w:0,
+      imgdy:
+        this.state!=STRUCTURE.STATE.WRECK?
+          this.state*45+this.img.h*this._.turn.current
+          :90,
+      worldx: this.x-(this.img.w>>1),
+      worldy: this.y-this.img.h+1,
+      imgw:this.img.w, imgh:this.img.h
+    }
+  };
+  
+  this.deathEvent=function(){
+    soundManager.play('crumble');
+    world.addPawn(new SmallExplosion(this.x,this.y-(this.img.h>>1)));    
+  };
+  
+  this._={
+    sight:            8,
+    health:           { current:$.R(1700,1900), max:$.R(1900,2100) },
+    projectile:       SmallShell,
+    projectileSpeed:  7,
+    direction:        TEAM.GOALDIRECTION[team],
+    reload:           { ing:0, time: 110 },
+    ammo:             { clip:0, max: 1 },
+    shootHeight:      6,
+    turn:             { ing: 0, current:0, last:4 },    
+    
+    target:       undefined
+  }   
 }

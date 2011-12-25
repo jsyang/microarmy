@@ -116,7 +116,7 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
   this.imgSheet=preloader.getFile('shells');
   // ^^^ might have to clean that code up... a lot of repetition
   
-  this.ddy=0.31;
+  this.ddy=0.41;
   this.img.row=2;
   this.range=1;
   
@@ -137,7 +137,23 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
   };
 }
 
-// Homing missile fired by a panicked CommCenter
+// Used as shrap for now..
+SmallShell.prototype=new Projectile;
+function SmallShell(x,y,team,target,dx,dy,accuracy) {
+  this.x=x,   this.y=y;
+  this.dx=dx, this.dy=dy;
+  this.accuracy=accuracy;
+  this.team=team;
+  this.target=target;
+  this.imgSheet=preloader.getFile('shells');
+  
+  this.img.row=2;
+  this.explosion=FragExplosion;
+  this.range=70;
+  this.damage=60;
+}
+
+// Homing missile. Fired by a panicked CommCenter
 HomingMissile.prototype=new Projectile;
 function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;

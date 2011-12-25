@@ -73,6 +73,7 @@ function World() {
   
   var msgbox=(function(){
     var ta=document.createElement("div");
+    ta.setAttribute('id','msgbox');
     var s=ta.style;
     s.position='absolute'; s.left=0; s.top=h; s.width=500;
     s.fontFamily='lucida console'; s.fontSize='10px';
@@ -121,7 +122,8 @@ function World() {
   this.go=function() { timer=setInterval(cycle,40); };
   this.pause=function() { clearInterval(timer); };
   
-  this.getHeight=function(x) { x>>=0; return (x>=0 && x<w) ? heightmap[x] : 0; };
+  this.getHeight=function(x) { return (x>=0 && x<w) ? heightmap[x>>0] : 0; };
+  
   this.isOutside=function(obj) {
     var x=obj.x>>0, y=obj.y>>0;
     return x<0 || x>=w || y>heightmap[x]; // || y<0
@@ -147,4 +149,11 @@ function World() {
     if(obj instanceof Projectile) return projectiles.push(obj);
     if(obj instanceof Explosion)  return explosions.push(obj);
   };
+  
+  // Add map's entities.
+  while(map.entities.length) {
+    var j=map.entities.shift(); if(j)
+      this.addPawn( new (j.obj)(j.x,this.getHeight(j.x),j.team) );
+  }
+  
 };

@@ -1,6 +1,6 @@
 // Pick a random map: background + terrain + entities //////////////////////////
 
-var map=(function() {
+function mapPickRandom() {
   var m=[
     
     { name: 'spring', entities: [
@@ -49,20 +49,20 @@ var map=(function() {
     ]}
     
   ]; return m[$.R(0,m.length-1)];
-})();
+}
+
+var map=mapPickRandom();
 
 // Preload stuff ///////////////////////////////////////////////////////////////
 
-var preloader=(function() {
-  
-  document.title+=" -- "+map.name;
+var preloader=(function() {  
   
   // 1. Preload gfx
   return new html5Preloader(
     // current map
     "bgterrain*:maps/"+map.name+"_terrain.png",
     "bgprops*:maps/"+map.name+"_props.png",
-    // special-fx
+    // special-fx, debris, smoke, etc
     'shells*:gfx/fire0.png','missilered*:gfx/missilered.png',
     'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png','exp2big*:gfx/exp2big.png',
     'smoke*:gfx/smoke.png',
@@ -72,11 +72,13 @@ var preloader=(function() {
     // structures
     'commblue*:gfx/commcenter0.png','commgreen*:gfx/commcenter1.png',
     'pillboxblue*:gfx/pillbox0.png','pillboxgreen*:gfx/pillbox1.png',
-    'pillbox_*:gfx/pillbox_.png',
+    'pillbox_*:gfx/pillbox_.png',    
     
-    'barracksblue*:gfx/barracks0.png','barracksgreen*:gfx/barracks1.png'
-    // todo: vehicles, aircraft, 
-    // Todo: Debris particles   
+    'barracksblue*:gfx/barracks0.png','barracksgreen*:gfx/barracks1.png',
+    'turretblue*:gfx/turret0.png','turretgreen*:gfx/turret1.png'
+    // todo: vehicles, aircraft
+    
+    // todo: campaign map elements
   );
 })();
 
@@ -86,46 +88,17 @@ preloader.onfinish=function() {
     var list=(
       'pistol,mgburst,rocket,die1,die2,die3,die4,'+
       'expsmall,expfrag,accomp,crumble,sliderack1,'+
-      'tack,exp2big,missile1'
+      'tack,exp2big,missile1,turretshot'
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
     
     // [MUSIC CODE HERE] -- removed for now..
-    var list='decept,lof,march,otp,untamed'.split(',');
-    for(var i=list.length; i--;)
-      soundManager.createSound(list[i],'./mus/'+list[i]);
-    
-    // Very ugly, but will do for now; shuffle playlist.
-    for(var i=[], j=0; j<list.length; i.push(j),j++);
-    j=[]; do {
-      var k=$.R(0,i.length-1);
-      j=j.concat(i.splice(k,1));
-    } while (i.length);
-    
-    soundManager.play(list[j[0]],{volume:65, onfinish:function(){
-      soundManager.play(list[j[1]],{volume:65, onfinish:function(){
-        soundManager.play(list[j[2]],{volume:65, onfinish:function(){
-          soundManager.play(list[j[3]],{volume:65, onfinish:function(){     
-            soundManager.play(list[j[4]],{volume:65} );
-          }})
-        }})
-      }})
-    }})
-    
     
   });
     
-  // 3. Create the gameworld.
+  // 3. Create the gameworld with map entities
   world=new World();
-  
-  // 4. Add map's entities.
-  for(var i=map.entities.length; i-->0;) {
-    var j=map.entities[i]; if(j)
-      world.addPawn( new (j.obj)(j.x,world.getHeight(j.x),j.team) );
-  }
-  
-  // 5. START!
   world.go();
   
 };
@@ -141,11 +114,11 @@ window.onclick=function(e){
 //*/
 
 // BOOM! HEH.
-/* window.onclick=function(e){
-  world.addPawn(new MortarShell(
-    e.pageX,e.pageY,0,0,$.R(-4,4)/2,$.R(-18,-12)/4,0
-  ));
-};*/
+//*
+ window.onclick=function(e){
+  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX),TEAM.GREEN));
+};
+//*/
 
 /*
 window.onclick=function(e){

@@ -248,3 +248,9 @@ function RocketInfantry(x,y,team) {
     meleeDmg:   23
   };
 }
+
+// Make a Builder Infantry class. Carries out build orders from the player.
+// Weak, expensive but is the only unit capable of carrying out build orders
+// for defensive structures. can also repair buildings. unit returns to
+// comm center / team edge when done. the scaffold structure is completed by
+// filling with pistolinfantry.
