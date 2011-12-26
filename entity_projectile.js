@@ -105,7 +105,7 @@ function SmallRocket(x,y,team,target,dx,dy,accuracy) {
   this.img.row=1    
   this.explosion=FragExplosion;
   this.range=90;
-  this.damage=20;
+  this.damage=24;
 }
 
 // Used as shrap for now..
@@ -150,7 +150,7 @@ function SmallShell(x,y,team,target,dx,dy,accuracy) {
   this.img.row=2;
   this.explosion=FragExplosion;
   this.range=70;
-  this.damage=70;
+  this.damage=90;
 }
 
 // Homing missile. Fired by a panicked CommCenter

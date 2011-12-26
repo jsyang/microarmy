@@ -91,7 +91,7 @@ function Structure() {
       accuracy=[0.65,0.35]; strayDY=$.R(-12,12)/100;
     } else if(_.projectile==SmallShell) {
       soundManager.play('turretshot');
-      accuracy=[0.50,0.50]; strayDY=$.R(-9,9)/100;
+      accuracy=[0.60,0.50]; strayDY=$.R(-12,9)/100; // upwards tendency
     }
     
     // Projectile origin relative to sprite
@@ -155,8 +155,8 @@ function Structure() {
       if(_.reinforce) {        
         if(_.reinforce.next>0) _.reinforce.next--; else {
           // Dump reinforcements faster if shit is hitting the fan.
-          _.reinforce.next=$.R(20,
-            (_.reinforce.time*_.health.current/_.health.max)>>0);
+          _.reinforce.next=$.R(30,
+            (_.reinforce.time*(1.25-_.health.current/_.health.max))>>0);
           
           for(var i=0; i<=this.state; i++) {            
             // Dirty, but working for now--we'll want to build this later
@@ -230,6 +230,7 @@ function CommCenter(x,y,team) {
   
   
   this.deathEvent=function(){
+    soundManager.play('crumble');
     var w2=this.img.w>>1, h2=this.img.h>>1;
     world.addPawn(new SmallExplosion(this.x,this.y-h2));    
     var shrap=$.R(5,10);
@@ -243,21 +244,19 @@ function CommCenter(x,y,team) {
   // Panic attack: launch homing missile from hell.
   this.attack=function() { var _=this._;    
     if(!_.target) return true;
-    if($.r()<0.0093) {
-      soundManager.play('missile1');
-      // magic dx,dy numbers!
-      world.addPawn(
-        new _.projectile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
-      );
-      _.ammo.clip--;
-    }
+    soundManager.play('missile1');
+    // magic dx,dy numbers!
+    world.addPawn(
+      new _.projectile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
+    );
+    _.ammo.clip--;
     return true;
   };
   
   this._={
     sight:        16,
     ammo:         { clip: 6, max:6 },
-    reload:       { ing:0, time:Infinity },
+    reload:       { ing:0, time:220 },
     projectile:   undefined,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
@@ -265,7 +264,7 @@ function CommCenter(x,y,team) {
     reinforce:    { next: 0, time: 290,
                     types:  [PistolInfantry,RocketInfantry],
                     supply: [320,180],                    
-                    chances:[1,0.27]
+                    chances:[0.7,0.27]
                   },
     
     target:       undefined
