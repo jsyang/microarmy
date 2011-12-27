@@ -122,7 +122,7 @@ window.onclick=function(e){
 // BOOM! HEH.
 window.onclick=function(e){
   world.addPawn(
-    new MortarShell(e.pageX,e.pageY, TEAM.NONE, 0, 0, -3, [0,0])
+    new HEAPExplosion(e.pageX,e.pageY)
   );
 };
 

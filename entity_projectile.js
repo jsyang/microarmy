@@ -137,7 +137,7 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
   };
 }
 
-// Used as shrap for now..
+// Fired by SmallTurret
 SmallShell.prototype=new Projectile;
 function SmallShell(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;
@@ -152,6 +152,9 @@ function SmallShell(x,y,team,target,dx,dy,accuracy) {
   this.range=70;
   this.damage=90;
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 // Homing missile. Fired by a panicked CommCenter
 HomingMissile.prototype=new Projectile;
@@ -214,7 +217,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
       if(unit.isDead())         continue;
       var dx=this.x-(unit.x-(unit.img.w>>1));
       var dy=this.y-(unit.y-(unit.img.h>>1));      
-      if(dx*dx+dy*dy>100)       continue;   // Not close enough!
+      if(dx*dx+dy*dy>81)       continue;   // Not close enough!
       this.explode();
       return false;
     }
@@ -249,7 +252,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     if(this.dx==0) this.dx=0.001;
     if(this.dy==0) this.dy=0.001;
     var dydx=Math.abs(this.dy/this.dx);
-    var fr; // cover 4 quadrants
+    var fr; 
     
     if(this.dx<0 && this.dy<0)      fr=[4,3,2,1,0];//[8,7,6,5,4];
     else if(this.dx<0 && this.dy>0) fr=[4,5,6,7,8];//[0,15,14,13,12];//
@@ -261,7 +264,6 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     if(dydx>=0.6681 && dydx<1.4966)  this.img.frame=fr[2];
     if(dydx>=1.4966 && dydx<5.0273)  this.img.frame=fr[3];
     if(dydx>=5.0273)                 this.img.frame=fr[4];
-    //console.log(this.img.frame);
     
     this.y+=this.dy;
     this.x+=this.dx;    

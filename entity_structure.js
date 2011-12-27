@@ -257,21 +257,20 @@ function CommCenter(x,y,team) {
   
   // Panic attack: launch homing missile from hell.
   this.attack=function() { var _=this._;    
-    if(!_.target) return true;
+    if(!_.target) { _.reload.time=$.R(10,1220); return true; }
     soundManager.play('missile1');
-    // magic dx,dy numbers!
     world.addPawn(
       new _.projectile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
     );
     _.ammo.clip--;
-    _.reload.time=$.R(40,220);
+    _.reload.time=$.R(10,1220);
     return true;
   };
   
   this._={
     sight:        16,
     ammo:         { clip: 1, max:1 },
-    reload:       { ing:0, time:$.R(110,220) },
+    reload:       { ing:0, time:$.R(10,1220) },
     projectile:   undefined,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
@@ -422,7 +421,7 @@ function Pillbox(x,y,team) {
   
   // Large damage has a chance of killing everyone inside.
   this.takeDamage=function(d){
-    if(d>24 && $.r()<0.23) {
+    if(d>23 && $.r()<0.25) {
       var killed=$.R(2,this._.crew.max);
       if(this._.crew.current-killed>0)
         this._.crew.current-=killed;
