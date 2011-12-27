@@ -42,7 +42,7 @@ function Structure() {
       if(h[i].isDead()) continue;
       if(!(!(dist>>_.sight) && (dist>this.img.w>>1))) continue;
       if(dist<minDist){
-        _.target=h[i]; minDist=Math.abs(h[i].x-this.x);
+        _.target=h[i]; minDist=dist;
       }
     }
   };
@@ -227,7 +227,21 @@ function CommCenter(x,y,team) {
     _.projectile=HomingMissile;
   };
   
-  
+  this.findTarget=function(){ var _=this._;
+    _.target=undefined;
+    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
+    for(var i=0, maxDist=0; i<h.length; i++) {
+      var dist=Math.abs(h[i].x-this.x);
+      if(h[i].team==this.team) continue;
+      if(h[i].isDead()) continue;
+      if(dist<100) continue;
+      if(!(!(dist>>_.sight) && (dist>this.img.w>>1))) continue;
+      if(dist>maxDist){
+        _.target=h[i]; maxDist=dist;
+        if($.r()<0.13) break;
+      }
+    }
+  };
   
   this.deathEvent=function(){
     soundManager.play('crumble');
@@ -250,13 +264,14 @@ function CommCenter(x,y,team) {
       new _.projectile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
     );
     _.ammo.clip--;
+    _.reload.time=$.R(40,220);
     return true;
   };
   
   this._={
     sight:        16,
-    ammo:         { clip: 6, max:6 },
-    reload:       { ing:0, time:220 },
+    ammo:         { clip: 1, max:1 },
+    reload:       { ing:0, time:$.R(110,220) },
     projectile:   undefined,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },

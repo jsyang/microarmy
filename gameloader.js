@@ -120,7 +120,13 @@ window.onclick=function(e){
 //window.onclick=function(e){  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));};
 
 // BOOM! HEH.
-//*
+window.onclick=function(e){
+  world.addPawn(
+    new MortarShell(e.pageX,e.pageY, TEAM.NONE, 0, 0, -3, [0,0])
+  );
+};
+
+/*
 var turrets=1;
 window.onclick=function(e){
   if(!turrets) return;

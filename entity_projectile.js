@@ -214,7 +214,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
       if(unit.isDead())         continue;
       var dx=this.x-(unit.x-(unit.img.w>>1));
       var dy=this.y-(unit.y-(unit.img.h>>1));      
-      if(dx*dx+dy*dy>169)       continue;   // Not close enough!
+      if(dx*dx+dy*dy>100)       continue;   // Not close enough!
       this.explode();
       return false;
     }
