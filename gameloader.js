@@ -55,34 +55,36 @@ var map=mapPickRandom();
 
 // Preload stuff ///////////////////////////////////////////////////////////////
 
-var preloader=(function() {  
-  
+var preloader=(function() {    
   // 1. Preload gfx
-  return new html5Preloader(
-    // current map
-    "bgterrain*:maps/"+map.name+"_terrain.png",
-    "bgprops*:maps/"+map.name+"_props.png",
-    // special-fx, debris, smoke, etc
-    'shells*:gfx/fire0.png','missilered*:gfx/missilered.png',
-    'exp1*:gfx/exp1.png','exp2*:gfx/exp2.png','exp2big*:gfx/exp2big.png',
-    'smoke*:gfx/smoke.png',
+  var a=new html5Preloader();
+  
+  var i= // current map
+    "bgterrain*:maps/"+map.name+"_terrain.png;"+
+    "bgprops*:maps/"+map.name+"_props.png";
+  
+  var u= // team-neutral stuff
+    'shells,missilered,exp1,exp2,exp2big,smoke,scaffold_,pillbox_'
+  .split(',');
+  
+  for(var j=0; j<u.length; j++)
+    i+=';'+u[j]+'*:gfx/'+u[j]+'.png';
+  
+  var u=( // stuff that has team-unique gfx
     // infantry
-    'pistolblue*:gfx/pistol0.png', 'pistolgreen*:gfx/pistol1.png',
-    'rocketblue*:gfx/rocket0.png','rocketgreen*:gfx/rocket1.png',
-    'engineerblue*:gfx/engineer0.png', 'engineergreen*:gfx/engineer1.png',
+    'pistol,rocket,engineer,'+
     // structures
-    'commblue*:gfx/commcenter0.png','commgreen*:gfx/commcenter1.png',
-    'pillboxblue*:gfx/pillbox0.png','pillboxgreen*:gfx/pillbox1.png',
-    'pillbox_*:gfx/pillbox_.png',    
+    'comm,pillbox,barracks,turret,depot,repair,helipad'
+  ).split(',');
+  
+  var maxTeams=2;
+  for(var j=0; j<u.length; j++)
+    for(var k=0; k<maxTeams; k++)
+      i+=';'+u[j]+TEAM.NAMES[k]+'*:gfx/'+u[j]+k+'.png';
     
-    'barracksblue*:gfx/barracks0.png','barracksgreen*:gfx/barracks1.png',
-    'turretblue*:gfx/turret0.png','turretgreen*:gfx/turret1.png',
-    'scaffoldblue*:gfx/scaffold0.png','scaffoldgreen*:gfx/scaffold1.png',
-    'scaffold_*:gfx/scaffold_.png'
-    // todo: vehicles, aircraft
-    
-    // todo: campaign map elements
-  );
+  a.addFiles.apply(a,i.split(';'));  
+  return a;
+
 })();
 
 preloader.onfinish=function() {  

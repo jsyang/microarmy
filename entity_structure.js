@@ -391,6 +391,23 @@ function Scaffold(x,y,team) {
   }
 }
 
+Depot.prototype=new Structure;
+function Depot(x,y,team) {
+  
+  
+}
+
+RepairYard.prototype=new Structure;
+function RepairYard(x,y,team) {
+  
+  
+}
+
+Helipad.prototype=new Structure;
+function Helipad(x,y,team) {
+  
+}
+
 
 // Defensive structures ////////////////////////////////////////////////////////
 

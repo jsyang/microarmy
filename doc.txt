@@ -38,3 +38,5 @@ Engineer Infantry
   construction site is occupied by PistolInfantry
     each structure has to be occupied by a required number of PistolInfantry
     before it can be fully constructed
+
+http://www.spriters-resource.com/arcade/af3sw3/index.html
