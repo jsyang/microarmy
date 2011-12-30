@@ -393,19 +393,34 @@ function Scaffold(x,y,team) {
 
 Depot.prototype=new Structure;
 function Depot(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
   
+  this.img={ w:19, h:8, hDist2:64 };
+  this.imgSheet=preloader.getFile('depot');
   
 }
 
 RepairYard.prototype=new Structure;
 function RepairYard(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
   
+  this.img={ w:19, h:8, hDist2:64 };
+  this.imgSheet=preloader.getFile('repair');  
   
 }
 
 Helipad.prototype=new Structure;
 function Helipad(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
   
+  this.img={ w:19, h:8, hDist2:64 };
+  this.imgSheet=preloader.getFile('helipad');
 }
 
 

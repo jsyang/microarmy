@@ -1,3 +1,12 @@
+var TEAM={
+  NONE:-1,
+  
+  BLUE: 0,
+  GREEN:1,  
+  GOALDIRECTION:[1,-1],
+  NAMES:'blue,green'.split(',')
+};
+
 // Base Entity /////////////////////////////////////////////////////////////////
 function Pawn() {
   this.x;

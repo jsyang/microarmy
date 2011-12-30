@@ -1,5 +1,30 @@
-MICROARMY
-  Team wins if a unit reaches the opposing team's edge
+_ microarmy ____________________________________________________________________
+
+  Team wins if a unit reaches the opposing team's edge.
+  
+  todo: Team wins if resources are depleted / cannot deploy reinforcements /
+        all units and structures are destroyed.
+  todo: Mission objective based win / lose conditions.
+
+_ Gameplay _____________________________________________________________________
+
+  Control outcome of battle by planning + deploying weapons.
+  Supply of troops usually capped. You don't purchase / manufacture any units
+  during a battle, instead you transfer them from a supply.
+  In addition, you get to salvage weaponry / equipment after a battle.
+  
+  Units can gain experience. Structures can be hardened / add functionality.
+  In the campaign map, you can choose locations for building a base.
+  You control a military.
+  
+  More a management game than a twitch game.
+  
+
+  Defeat opposing force / survive timed mission / complete objective(s).
+  Campaign features needed later... allows for multiplayer.
+
+_ Structures ___________________________________________________________________
+
 
 CommCenter
   contains PistolInfantry and RocketInfantry supply
@@ -22,6 +47,26 @@ Small Turret
   high resistance to small arms fire
   effective against vehicles
 
+Scaffold
+  construction site for structure to be built
+  can be occupied by enemy troops who may complete the construction
+    -- resulting in ownership of the finished structure
+  highly vulnerable to damage, any damage to the scaffold risks worker death
+
+RepairYard
+  repairs 2 ground vehicles at once to 80% - 90% of mint condition
+  vehicles cannot attach while under repair
+  once repair has finished, vehicles have a rearming delay before activating  
+
+Depot
+  vehicle deployment site
+
+Helipad
+  helicopter refueling site
+
+
+_ Infantry _____________________________________________________________________
+
 Pistol Infantry
   currency unit of the battlefield
   cheap but in effective en mass
@@ -38,5 +83,7 @@ Engineer Infantry
   construction site is occupied by PistolInfantry
     each structure has to be occupied by a required number of PistolInfantry
     before it can be fully constructed
+
+________________________________________________________________________________
 
 http://www.spriters-resource.com/arcade/af3sw3/index.html
