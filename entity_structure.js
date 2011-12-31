@@ -48,7 +48,6 @@ function Structure() {
   };
   
   this.findCrew=function() { var _=this._;
-    // Get all objects possibly within our sight
     var h=world.xHash.getNBucketsByCoord(this.x,2);
     for(var i=0; i<h.length; i++) {
       if(!(h[i] instanceof PistolInfantry))       continue;    
@@ -87,7 +86,7 @@ function Structure() {
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
     var strayDY=0;      // deviation in firing angle.
     if(_.projectile==MGBullet) {
-      soundManager.play('mgburst');
+      if(_.ammo.clip==_.ammo.max) soundManager.play('mgburst');
       accuracy=[0.65,0.35]; strayDY=$.R(-12,12)/100;
     } else if(_.projectile==SmallShell) {
       soundManager.play('turretshot');

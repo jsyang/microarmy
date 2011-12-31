@@ -10,7 +10,7 @@ function Explosion() {
   
   this.getGFX=function(){
     return {
-      img:    this.imgSheet,
+      img:    this.img.sheet,
       imgdx:  this.frame.current*this.img.w,
       imgdy:  0,
       worldx: this.x-(this.img.w>>1),
@@ -39,9 +39,8 @@ function Explosion() {
 SmallExplosion.prototype=new Explosion;
 function SmallExplosion(x,y) {
   this.x=x; this.y=y;
-  this.imgSheet=preloader.getFile('exp1');
   this.frame={ current:0, last:12 };
-  this.img={w:41, h:35, hDist2: 400 };
+  this.img={ w:41, h:35, hDist2: 400, sheet: preloader.getFile('exp1') };
   this.damage=$.R(28,55);
   soundManager.play('expsmall');
 }
@@ -49,9 +48,8 @@ function SmallExplosion(x,y) {
 FragExplosion.prototype=new Explosion;
 function FragExplosion(x,y) {
   this.x=x; this.y=y;
-  this.imgSheet=preloader.getFile('exp2');
   this.frame={ current:0, last:8 };
-  this.img={w:25, h:17, hDist2: 160 };
+  this.img={w:25, h:17, hDist2: 160, sheet: preloader.getFile('exp2') };
   this.damage=$.R(12,29);
   this.damageDecay=1;
   soundManager.play('expfrag');
@@ -60,9 +58,8 @@ function FragExplosion(x,y) {
 HEAPExplosion.prototype=new Explosion;
 function HEAPExplosion(x,y) {
   this.x=x; this.y=y;
-  this.imgSheet=preloader.getFile('exp2big');
   this.frame={ current:0, last:22 };
-  this.img={w:41, h:28, hDist2: 460 };
+  this.img={w:41, h:28, hDist2: 460, sheet: preloader.getFile('exp2big') };
   this.damage=$.R(65,95);
   this.damageDecay=1;
   soundManager.play('exp2big');
@@ -73,9 +70,8 @@ function HEAPExplosion(x,y) {
 SmokeCloud.prototype=new Explosion;
 function SmokeCloud(x,y) {
   this.x=x; this.y=y;
-  this.imgSheet=preloader.getFile('smoke');
   this.frame={ current:-1, last:22 };
-  this.img={w:19, h:17 };
+  this.img={w:19, h:17, sheet: preloader.getFile('smoke') };
   this.alive=function(){
     if(this.frame.current++>this.frame.last) return this.corpsetime=0;
     return false;

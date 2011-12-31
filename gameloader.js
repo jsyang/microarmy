@@ -71,15 +71,13 @@ var preloader=(function() {
     i+=';'+u[j]+'*:gfx/'+u[j]+'.png';
   
   var u=( // stuff that has team-unique gfx
-    // infantry
     'pistol,rocket,engineer,'+
-    // structures
+    'apc,'+
     'comm,pillbox,barracks,turret,depot,repair,helipad'
   ).split(',');
   
-  var maxTeams=2;
   for(var j=0; j<u.length; j++)
-    for(var k=0; k<maxTeams; k++)
+    for(var k=0; k<TEAM.MAX; k++)
       i+=';'+u[j]+TEAM.NAMES[k]+'*:gfx/'+u[j]+k+'.png';
     
   a.addFiles.apply(a,i.split(';'));  
@@ -102,98 +100,29 @@ preloader.onfinish=function() {
     
   });
     
-  // 3. Create the gameworld with map entities
+  // 3. Create the gameworld with map entities and run it!
   world=new World();
   world.go();
-  world.writeToMsgBox("\nBlue has 1 turret ready to be built.\n"+
-                      "Select location to deploy.");
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
 window.onclick=function(e){
-  var t=[PistolInfantry,RocketInfantry][Math.round($.r(0.8))];
-  //world.addPawn(new t(l[0],world.getHeight(l[0]), TEAM.BLUE));
-  world.addPawn(new t(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));
-}
+  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));
+};
 //*/
-
-//window.onclick=function(e){  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));};
 
 // BOOM! HEH.
 window.onclick=function(e){
+  var x=e.pageX;
   world.addPawn(
-    new HEAPExplosion(e.pageX,e.pageY)
+    new APC(x,world.getHeight(x),TEAM.GREEN)
   );
 };
 
-/*
-var turrets=1;
-window.onclick=function(e){
-  if(!turrets) return;
-  var eng=new EngineerInfantry(0, world.getHeight(0),TEAM.BLUE);
-  eng._.build.type=SmallTurret;
-  eng._.build.x=e.pageX;
-  world.addPawn(eng);
-  turrets--;
-  world.writeToMsgBox(
-"\nMICROARMY---------------------------------------------------\n\
-  Team wins if a unit reaches the opposing team's edge\n\
-\n\
-CommCenter\n\
-  contains PistolInfantry and RocketInfantry supply\n\
-  panic attack when severely damaged\n\
-  explodes when destroyed\n\
-\n\
-Barracks\n\
-  contains PistolInfantry supply\n\
-  explodes when destroyed\n\
-\n\
-Pillbox\n\
-  crew capacity of 8, reload time decreases with capacity\n\
-  small repairs made when crew supply is replenished\n\
-  fires bursts of MGBullets\n\
-  can be occupied by enemy forces if unmanned\n\
-\n\
-Small Turret\n\
-  automated heavy sentry with cannon weapon\n\
-  cannot be commandeered by enemy troops\n\
-  high resistance to small arms fire\n\
-  effective against vehicles\n\
-\n\
-Pistol Infantry\n\
-  currency unit of the battlefield\n\
-  cheap but in effective en mass\n\
-  weak unit but advances with courage\n\
-\n\
-Rocket Infantry\n\
-  fires a fragmentation rocket that deals high damage\n\
-  effective against tight troop formations and buildings\n\
-  able to see enemies from twice the distance of other infantry\n\
-\n\
-Engineer Infantry\n\
-  very weak\n\
-  builds new structures by laying down a scaffold\n\
-  construction site is occupied by PistolInfantry\n\
-    each structure has to be occupied by a required number of PistolInfantry\n\
-    before it can be fully constructed"
-);
-};
-//*/
-
-/*
-window.onclick=function(e){
-  soundManager.play('missile1');
-  world.addPawn(new HomingMissile(
-    e.pageX,e.pageY,TEAM.NONE,undefined,
-    0,-6,0
-  ));
-};
-*/
-
 //window.ondblclick=function(e){  alert(e.pageX); };
-// window.onclick=function(e){  alert(e.pageX); };
 
 
 /* [MUSIC CODE] Start the music

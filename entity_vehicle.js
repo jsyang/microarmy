@@ -1,14 +1,18 @@
+var VEHICLE={
+  ACTION:{
+    IDLING:-1,
+    MOVING:0,
+    TURNING:1,
+    WRECK:2,
+    MAX:4
+  }
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
-Infantry.prototype=new Pawn;
-function Infantry() {
-  this.img={ w:8, h:8, hDist2:20 };
-  
-  this.correctDirection=function(){ var _=this._;
-    _.direction=_.target? (_.target.x>this.x)?1:-1 : TEAM.GOALDIRECTION[this.team];    
-    _.frame.first=_.direction>0?  6 : 0;
-    _.frame.last =_.direction>0?  11: 5;
-  };
+Vehicle.prototype=new Pawn;
+function Vehicle() {
   
   this.seeTarget=function(returnDist) { var _=this._;
     return _.target?
@@ -41,52 +45,31 @@ function Infantry() {
       world.pause();
     }
     // just disappear, walked off the map
-    _.action=INFANTRY.ACTION.DEATH1;
-    _.health=this.corpsetime=0;    
+    this.remove();
     return false;
   }
   
-  this.attack=function() { var _=this._;    
+  this.attack=function() { var _=this._;
+    if(!_.projectile) return true;
     var distTarget=this.seeTarget(1);
     
     // Melee distance: LESS than one body!
-    if(distTarget<this.img.w) {
-      if($.r()<_.berserk.chance) {
-        _.target.takeDamage(_.meleeDmg);
-        // Pretty hard to ignore someone punching your face
-        if(_.target._) _.target._.target=this;
-      }
-      return true;
-    }
-    
-    /* Berserk: moving toward the original target for some time without
-      regard to self-preservation or where the current target location is!
-      once berserk is done, standard actions resume. */
-    if($.r()<_.berserk.chance) {
-      _.berserk.ing=_.berserk.time;
-      return true;
-    }
+    // no melee for vehicles
     
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
     var strayDY=0;      // deviation in firing angle.
-    if(_.projectile==Bullet) {
-      if(_.frame.current==_.frame.first+1) soundManager.play('pistol');
-      if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
-      accuracy=[0.15,0.85]; strayDY=$.R(-15,15)/100;      
-    } else if(_.projectile==SmallRocket) {
-      if(distTarget<24) return true;  // don't shoot rockets if too close!
-      if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
-      else soundManager.play('rocket');
-      accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
-    } else {
-      return true;      // melee only
+    var fSpeed=0;
+    if(_.projectile==MGBullet) {
+      if(_.ammo.clip==_.ammo.max) soundManager.play('mgburst');
+      accuracy=[0.65,0.35]; strayDY=$.R(-15,15)/100; fSpeed=4;
     }
     
     // Projectile origin relative to sprite
-    var pDY=_.action==INFANTRY.ACTION.ATTACK_PRONE? -2: -4;
-    var pDX=_.direction>0?                          2 : -2;
+    var pDY=-this.img.h>>1;
+    var pDX=_.direction*4;
     
     // Distance penalties for chance to hit
+    // this should probably be moved inside the projectile class
     if(distTarget>50){  accuracy[0]-=0.02; accuracy[1]-=0.15; }
     if(distTarget>120){ accuracy[0]-=0.01; accuracy[1]-=0.18; }
     if(distTarget>180){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
@@ -107,73 +90,105 @@ function Infantry() {
     return true;
   }
   
-  this.corpsetime=180;
+  this.corpsetime=240;
   this.takeDamage=function(d){ return this._.health-=d; };
   this.isDead=function(){ return this._.health<=0; };
   
   this.remove=function(){ // silently remove the Pawn.
     this.corpsetime=this._.health=0;
-    this._.action=INFANTRY.ACTION.DEATH1;
+    this._.action=VEHICLE.ACTION.WRECK;
     this._.frame.current=0;
   };
   
-  
-  this.getGFX=function(){ var _=this._; return {
-      img:    _.imgSheet,
-      imgdx:  _.frame.current*this.img.w,
-      imgdy:  _.action*this.img.w,
-      worldx: this.x-(this.img.w>>1), worldy: this.y-this.img.h+1,
-      imgw: this.img.w,               imgh: this.img.h
-  }; };
-  
+  // Rotation gfx
+  this.getGFX=function(){ var _=this._;
+    return {
+      img:    this.img.sheet,
+      imgdx:  _.direction>0? this.img.w:0,
+      imgdy:
+        _.action==VEHICLE.ACTION.WRECK?
+          6*this.img.h
+          :_.action==VEHICLE.ACTION.TURNING?
+            (_.frame.current+3)*this.img.h
+            :_.frame.current*this.img.h,
+      worldx: this.x-(this.img.w>>1),
+      worldy: this.y-this.img.h+1,
+      imgw:this.img.w, imgh:this.img.h
+    }
+  };
+
   this.alive=function(){ var _=this._;
     if(this.isDead()) {
-      if(_.action<INFANTRY.ACTION.DEATH1) {
-        _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
-        this.correctDirection();
-        _.frame.current=_.frame.first;
-        soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
-      } else {
-        if(_.frame.current<_.frame.last) _.frame.current++;
-        else this.corpsetime--;
+      if(_.action<VEHICLE.ACTION.WRECK) {
+        _.action=VEHICLE.ACTION.WRECK;
+        //soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);        
       }
       return false;
-    }
+    } else {
     
-    // If reloading, don't do anything else.     
-    if(_.reload.ing) { _.reload.ing--; return true; }
-    else if(_.ammo.clip==0) {
-      _.reload.ing=_.reload.time;
-      _.frame.current=_.frame.first;
-      _.ammo.clip=_.ammo.max;
-      return true;
-    }
-    
-    // If berserking, don't try anything else! 
-    if(_.berserk.ing) {
-      _.action=INFANTRY.ACTION.MOVEMENT;
-      _.berserk.ing--;
-      //if(_.berserk.ing==0) this.findTarget();
-    } else {      
+      // If reloading, don't do anything else.     
+      if(_.reload.ing) { _.reload.ing--; return true; }
+      else if(_.ammo.clip==0) {
+        _.reload.ing=_.reload.time;
+        _.ammo.clip=_.ammo.max;
+        return true;
+      }
+      
+      // Try to find a valid target!
       if(!_.target || _.target.isDead() ||
          !this.seeTarget() || _.target.team==this.team) this.findTarget();
-      else if(_.action==INFANTRY.ACTION.MOVEMENT)
-        _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,INFANTRY.ACTION.ATTACK_PRONE);          
+      
+      if(_.target) {
+        // Handle rotation
+        if(_.target && (_.target.x-this.x)*_.direction<0) {
+          if(!_.turn.ing) {            
+            _.turn.ing=1;
+            _.turn.current=0;
+          } else {
+            _.turn.current++;
+            if(_.turn.current>_.turn.last) {
+              _.turn.ing=_.turn.current=0;
+              _.direction*=-1;
+            }            
+          }
+        } else return this.attack();
+      } else this.move();
+      
+      // Animation loop -- only for moving or turning, not attacking
+      if(_.action==VEHICLE.ACTION.MOVING || _.action==VEHICLE.ACTION.TURNING)
+        if(++_.frame.current>_.frame.last)
+          _.frame.current=_.frame.first;
+  
+      return true;
     }
-    this.correctDirection();
-    if(!_.target) _.action=INFANTRY.ACTION.MOVEMENT;
-    
-    // Animation loop
-    if(++_.frame.current>_.frame.last) _.frame.current=_.frame.first;    
-    
-    switch(_.action) {
-      case INFANTRY.ACTION.MOVEMENT:         return this.move();
-      case INFANTRY.ACTION.ATTACK_CROUCHING:
-      case INFANTRY.ACTION.ATTACK_PRONE:
-      case INFANTRY.ACTION.ATTACK_STANDING:  return this.attack();
-    }
-    
-    return true;
+  };  
+}
+
+
+
+APC.prototype=new Vehicle;
+function APC(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  this.img={
+    w:21, h:11, hDist2: 81, sheet: preloader.getFile('apc'+TEAM.NAMES[team])
   };
   
+  // to do: this object has to do with unit-specific behavior,
+  // use selectors and decorators to build a nice behavior tree
+  this._={
+    action:     VEHICLE.ACTION.MOVING,
+    frame:      { current:0, first:0, last:2 },
+    target:     undefined,
+    direction:  TEAM.GOALDIRECTION[team],
+    
+    projectile: MGBullet,
+    turn:       { ing:0, current:0, last: 2 },
+    sight:      7,
+    health:     $.R(560,720),
+    reload:     { ing:0, time:40 },
+    ammo:       { clip:6, max:6 }
+  };
+
 }

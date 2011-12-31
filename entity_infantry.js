@@ -56,8 +56,7 @@ function Infantry() {
       world.pause();
     }
     // just disappear, walked off the map
-    _.action=INFANTRY.ACTION.DEATH1;
-    _.health=this.corpsetime=0;    
+    this.remove();
     return false;
   }
   
@@ -89,7 +88,7 @@ function Infantry() {
       if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
       accuracy=[0.15,0.85]; strayDY=$.R(-15,15)/100;      
     } else if(_.projectile==SmallRocket) {
-      if(distTarget<24) return true;  // don't shoot rockets if too close!
+      if(distTarget<32) return true;  // don't shoot rockets if too close!
       if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
       else soundManager.play('rocket');
       accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
@@ -194,7 +193,10 @@ function Infantry() {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
 // Sight in pixels = 1<<_.sight
+// May want to change this to sight in actual pixels...
+
 
 PistolInfantry.prototype=new Infantry;
 function PistolInfantry(x,y,team) {

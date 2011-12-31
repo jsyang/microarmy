@@ -1,8 +1,10 @@
 var TEAM={
-  NONE:-1,
-  
+  NONE:-1,  
   BLUE: 0,
-  GREEN:1,  
+  GREEN:1,
+  
+  MAX:2,
+  
   GOALDIRECTION:[1,-1],
   NAMES:'blue,green'.split(',')
 };
@@ -15,16 +17,16 @@ function Pawn() {
   this.corpsetime;
   this.img={
     w:undefined, h:undefined,
-    hDist2: undefined           // radius^2 for collision testing
+    hDist2: undefined,        // hit radius^2 for collision testing
+    sheet: undefined          // sprite sheet
   };
   this.alive=function(){};
   this.getGFX=function(){};
 }
 
 // X-coord obj hash: avoid checking hits on faraway stuff //////////////////////
-function XHash(worldWidth) {  
-  // divide world into 1<<6 == 64 pixel buckets    
-  var bucketWidth=6;
+function XHash(worldWidth) {    
+  var bucketWidth=6; // divide world into 1<<6 == 64 pixel buckets
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
   
@@ -42,6 +44,8 @@ function XHash(worldWidth) {
 var world;
 
 function World() {
+  if(!map) return alert("No map specified for world!");
+  
   var w=2490, h=192;
   var heightmap=[];     // how high is the ground at this x.
   
@@ -49,7 +53,7 @@ function World() {
   var projectiles=[];
   var explosions=[];
   var infantry=[];  
-  //var vehicles=[];
+  var vehicles=[];
   //var aircraft=[];
   var structures=[];
   
@@ -80,13 +84,15 @@ function World() {
     return cv.getContext("2d");    
   })(w,h);  
   
+  // Msgbox to display combat messages
   var msgbox=(function(){
     var ta=document.createElement("div");
     ta.setAttribute('id','msgbox');
     var s=ta.style;
     s.position='absolute'; s.left=0; s.top=h;// s.height=100;
     var db=document.body, de=document.documentElement;
-    s.width=Math.min(db.scrollWidth,db.offsetWidth,de.clientWidth,de.scrollWidth,de.offsetWidth);
+    s.width=Math.min(db.scrollWidth,db.offsetWidth,
+                     de.clientWidth,de.scrollWidth,de.offsetWidth);
     s.fontFamily='lucida console'; s.fontSize='10px'; s.color='#ddd';
     window.onscroll=
       (function(s){return function(){s.left=document.body.scrollLeft;};})(s);
@@ -94,8 +100,8 @@ function World() {
     return ta;
   })();
   
-  function processInstances(newXHash,vx,vw,instances) {
-    // Process Pawns -- generic code
+  // Process Pawns -- generic code
+  function processInstances(newXHash,vx,vw,instances) {    
     for(var i=0, newInstances=[];i<instances.length;i++) {
       var a=instances[i];
       if(a.alive())           newXHash.insert(a);
@@ -111,25 +117,23 @@ function World() {
     return newInstances;
   }
   
-  function cycle() {
-    // Run 1 cycle of the game loop.
+  // Run 1 cycle of the game loop.
+  function cycle() {    
     FG.clearRect(0,0,w,h);
     var viewWidth=window.innerWidth, viewLeft=document.body.scrollLeft;
     var xHash_=new XHash(w);
     
     structures=processInstances(xHash_,viewLeft,viewWidth,structures);
+    vehicles=processInstances(xHash_,viewLeft,viewWidth,vehicles);
     infantry=processInstances(xHash_,viewLeft,viewWidth,infantry);
     projectiles=processInstances(xHash_,viewLeft,viewWidth,projectiles);
     explosions=processInstances(xHash_,viewLeft,viewWidth,explosions);    
     
-    world.xHash=xHash_;
-    
-    //msgbox.innerText=world.getCommCenterInfo();
-    
-  };
+    world.xHash=xHash_;    
+  }
   
   var timer;
-  this.go=function() { timer=setInterval(cycle,40); };
+  this.go=function()    { timer=setInterval(cycle,40); };
   this.pause=function() { clearInterval(timer); };
   
   this.getHeight=function(x) { return (x>=0 && x<w) ? heightmap[x>>0] : 0; };
@@ -140,21 +144,9 @@ function World() {
     return x<0 || x>=w || y>heightmap[x]; // || y<0
   };
   
-  this.getCommCenterInfo=function(){
-    for(var i=0, s=""; i<structures.length; i++) {
-      var j=structures[i];
-      if(j instanceof CommCenter)
-        s+="____________________________________________\n"+
-          TEAM.NAMES[j.team].toUpperCase()+" CommCenter\n"+          
-          "Reinforcements remaining:\n"+
-          "PistolInfantry: "+j._.reinforce.supply[0]+"\n"+
-          "RocketInfantry: "+j._.reinforce.supply[1]+"\n"+
-        "\n";
-    }
-    return s;
-  };
   
   this.addPawn=function(obj) {
+    if(obj instanceof Vehicle)    return vehicles.push(obj);
     if(obj instanceof Structure)  return structures.push(obj);
     if(obj instanceof Infantry)   return infantry.push(obj);
     if(obj instanceof Projectile) return projectiles.push(obj);

@@ -1,4 +1,4 @@
-_ microarmy ____________________________________________________________________
+_ Microarmy ____________________________________________________________________
 
   Team wins if a unit reaches the opposing team's edge.
   
@@ -14,10 +14,21 @@ _ Gameplay _____________________________________________________________________
   In addition, you get to salvage weaponry / equipment after a battle.
   
   Units can gain experience. Structures can be hardened / add functionality.
+  (upgrade / downgrade -- to get resources and funding for other stuff, when 
+  you need to build bases / fortify bases)
+  
+  Vehicles/personnel are secondary currencies in non-battle view.
+  
   In the campaign map, you can choose locations for building a base.
-  You control a military.
+  You control a military. Indirectly control the units as well.
+  
+  MAIN ORDER, location of main order and the units will figure out how to
+  accomplish the order on their own -- emergent.
   
   More a management game than a twitch game.
+  
+  Should have pluggable properties (more so than now) and abilities so you can
+  create a unit that is a combination.
   
 
   Defeat opposing force / survive timed mission / complete objective(s).
@@ -87,3 +98,4 @@ Engineer Infantry
 ________________________________________________________________________________
 
 http://www.spriters-resource.com/arcade/af3sw3/index.html
+
