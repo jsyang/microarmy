@@ -108,12 +108,6 @@ preloader.onfinish=function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
-window.onclick=function(e){
-  world.addPawn(new SmallTurret(e.pageX,world.getHeight(e.pageX), TEAM.GREEN));
-};
-//*/
-
 // BOOM! HEH.
 window.onclick=function(e){
   var x=e.pageX;
@@ -123,27 +117,3 @@ window.onclick=function(e){
 };
 
 //window.ondblclick=function(e){  alert(e.pageX); };
-
-
-/* [MUSIC CODE] Start the music
-    var list='decept,lof,march,otp,untamed'.split(',');
-    for(var i=list.length; i--;)
-      soundManager.createSound(list[i],'./mus/'+list[i]);
-    
-    // Very ugly, but will do for now; shuffle playlist.
-    for(var i=[], j=0; j<list.length; i.push(j),j++);
-    j=[]; do {
-      var k=$.R(0,i.length-1);
-      j=j.concat(i.splice(k,1));
-    } while (i.length);
-    
-    soundManager.play(list[j[0]],{volume:40, onfinish:function(){
-      soundManager.play(list[j[1]],{volume:40, onfinish:function(){
-        soundManager.play(list[j[2]],{volume:40, onfinish:function(){
-          soundManager.play(list[j[3]],{volume:40, onfinish:function(){     
-            soundManager.play(list[j[4]],{volume:40} );
-          }})
-        }})
-      }})
-    }})
-    //*/

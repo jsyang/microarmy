@@ -6,6 +6,8 @@ _ Microarmy ____________________________________________________________________
         all units and structures are destroyed.
   todo: Mission objective based win / lose conditions.
 
+  todo: Move all entity behaviors into behavior tree.
+
 _ Gameplay _____________________________________________________________________
 
   Control outcome of battle by planning + deploying weapons.

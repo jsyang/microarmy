@@ -1,3 +1,5 @@
+// strategic view //////////////////////////////////////////////////////////////
+
 var Campaign=new function () {
 /* campaign map has elements:
   cities - civilian centers, funding, research

@@ -30,6 +30,9 @@ function XHash(worldWidth) {
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
   
+  // todo: optimize this code: usually we're looking for the closest
+  // enemy / friendly to the current entity, so instead of getting the entire
+  // range of buckets, we should go for layers, starting from the center...
   this.getNBucketsByCoord=function(x,n) {
     for(var bucketsN=[],i=-(n>>1),index=x>>bucketWidth; i<(n>>1)+1; i++)
       if(buckets[index+i]!=undefined)
@@ -47,7 +50,7 @@ function World() {
   if(!map) return alert("No map specified for world!");
   
   var w=2490, h=192;
-  var heightmap=[];     // how high is the ground at this x.
+  var heightmap=[];
   
   // instanceLists: gameworld's things
   var projectiles=[];
