@@ -17,8 +17,8 @@ var Behavior={
   */
   
   Execute:function(tree,thisArg){
-    if(!tree.strat) return alert('No strategy specified!');
-    switch(tree.strat) {
+    if(!tree.id) return alert('No strategy specified!');
+    switch(tree.id) {
       
       case 'sequence':  // Quit on first FAIL
         for(var i=0; i<tree.children.length; i++)
@@ -41,8 +41,10 @@ var Behavior={
         if(!Behavior.Custom[tree.id])
           return alert('Custom behavior not found!');
         var result=Behavior.Custom[tree.id](thisArg);
-        if(result!=Behavior.RESULT.OK) return result;
-        else if(tree.children) Behavior.Execute(tree.children[0]);
+        if(tree.children && result==Behavior.RESULT.OK)
+          return Behavior.Execute(tree.children[0]);
+        else
+          return result;
     }
     return alert('ERROR: You are not supposed to see this!');
   },
@@ -50,9 +52,25 @@ var Behavior={
 // Custom decorators and tasks /////////////////////////////////////////////////
   Custom:{
     
-    isAlive:function(obj) {
-      return obj._.health>0? Behavior.RESULT.OK : Behavior.RESULT.FAIL;
+    isDead:function(obj) {
+      return obj._.health<=0? Behavior.RESULT.OK : Behavior.RESULT.FAIL;
+    },
+    
+    isOutsideWorld:function(obj) {
+      return world.isOutside(this)? Behavior.RESULT.OK : Behavior.RESULT.FAIL;
+    },
+    
+    loopAnimation:function(obj) {
+      if(++_.frame.current>_.frame.last) _.frame.current=_.frame.first;
+      return Behavior.RESULT.OK;
+    },
+    
+    movePawn:function(obj) {
+      obj.x+=obj._.direction;
+      obj.y=world.getHeight(obj.x);
     }
     
   }
 };
+
+

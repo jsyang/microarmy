@@ -164,8 +164,10 @@ function Vehicle() {
   };  
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 
+// The APC will be the first Pawn to have behavior tree AI
 APC.prototype=new Vehicle;
 function APC(x,y,team) {
   this.x=x;
@@ -174,9 +176,7 @@ function APC(x,y,team) {
   this.img={
     w:21, h:11, hDist2: 81, sheet: preloader.getFile('apc'+TEAM.NAMES[team])
   };
-  
-  // to do: this object has to do with unit-specific behavior,
-  // use selectors and decorators to build a nice behavior tree
+
   this._={
     action:     VEHICLE.ACTION.MOVING,
     frame:      { current:0, first:0, last:2 },
@@ -190,5 +190,22 @@ function APC(x,y,team) {
     reload:     { ing:0, time:40 },
     ammo:       { clip:6, max:6 }
   };
-
+  
+  this.btree={
+    id:'selector', 
+    children:[
+      {id:'isDead'},
+      {
+        id:'selector',
+        children:[
+          {id:'isOutsideWorld'},
+          {id:'movePawn'}
+        ]
+      }
+    ]
+  };
+  
+  this.alive=function(){
+    return Behavior.Execute(this.btree,this);
+  }
 }
