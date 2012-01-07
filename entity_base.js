@@ -30,9 +30,27 @@ function XHash(worldWidth) {
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
   
-  // todo: get nearest enemy
-  this.getClosestEnemy=function(obj){
-    
+  this.getNearEnemy=function(obj){
+    var sight=obj._.sight;
+    var center=obj.x>>bucketWidth;
+    var minDist=Infinity;    
+    obj._.target=undefined;    
+    // buckets left,right of the center.
+    for(var left=right=center; sight; left--,right++) {
+      var shell=[];
+      if(buckets[left])                 shell=shell.concat(buckets[left]);
+      if(left!=right && buckets[right]) shell=shell.concat(buckets[right]);
+      
+      for(var i=0; i<shell.length; i++) {
+        var entity=shell[i];          
+        if(entity.team==obj.team || entity.isDead()) continue;
+        var dist=Math.abs(entity.x-obj.x);
+        if(!(dist>>sight) && dist<minDist){
+          obj._.target=entity; minDist=dist;
+        }
+      }
+      if(obj._.target) break;
+    }
   };
   
   // todo: get farthest enemy
