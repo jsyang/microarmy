@@ -30,6 +30,17 @@ function XHash(worldWidth) {
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
   
+  // todo: get nearest enemy
+  this.getClosestEnemy=function(obj){
+    
+  };
+  
+  // todo: get farthest enemy
+  this.getFarEnemy=function(obj){
+    
+  };
+  
+  
   // todo: optimize this code: usually we're looking for the closest
   // enemy / friendly to the current entity, so instead of getting the entire
   // range of buckets, we should go for layers, starting from the center...

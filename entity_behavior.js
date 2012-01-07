@@ -55,13 +55,13 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
 */  
   
   ConvertShortHand:function(code){
-    return code
+    return eval(code
     .replace(/\[/g,'{id:"')
     .replace(/\]/g,'"}')
     .replace(/\(/g,'{id:"selector",children:[')
     .replace(/</g,'{id:"sequence",children:[')
     .replace(/>/g,']}')
-    .replace(/\)/g,']}');
+    .replace(/\)/g,']}'));
   },
   
 // Custom decorators and tasks /////////////////////////////////////////////////
@@ -171,14 +171,14 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
       if(dist>180){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
       if(dist>200){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
       
-      // Flight speed = 1<<2.
       world.addPawn(
         new _.projectile(
           obj.x+pDX,obj.y+pDY,
           obj.team,
           _.target,
-          _.direction*4,
-          ((_.target.y-(_.target.img.h>>1)-(obj.y-(obj.img.h>>1))-pDY)*4)/dist+strayDY,
+          _.direction*fSpeed,
+          ((_.target.y-(_.target.img.h>>1)-(obj.y-(obj.img.h>>1))-pDY)*fSpeed)
+          /dist+strayDY,
           accuracy
         )
       );
@@ -199,7 +199,7 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
 };
 
 
-
+/*
 
 function testConversion(){
 var a="\
@@ -216,3 +216,22 @@ var a="\
 )";
 return Behavior.ConvertShortHand(a);
 }
+
+
+btree for APC
+
+(
+  [isReloading],
+  <[foundTarget],(
+    <[!isFacingTarget],[loopAnimation]>,
+    <[seeTarget],[attack]>
+  )>,
+  <[movePawn],[loopAnimation],<
+    [isOutsideWorld],
+    [walkingOffMapCheck]
+  >>
+)
+
+*/
+
+

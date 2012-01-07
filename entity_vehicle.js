@@ -18,7 +18,7 @@ function Vehicle() {
   this.takeDamage=function(d){ return this._.health-=d; };
   this.isDead=function(){ return this._.health<=0; };
   
-  this.remove=function(){ // silently remove the Pawn.
+  this.remove=function(){
     this.corpsetime=this._.health=0;
     this._.action=VEHICLE.ACTION.WRECK;
     this._.frame.current=0;
@@ -48,17 +48,14 @@ function Vehicle() {
         //soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);        
       }
       return false;
-    } else {
-      Behavior.Execute(this.behavior,this);
-      return true;
     }
+    Behavior.Execute(this.behavior,this);
+    return true;
   };  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-// The APC will be the first Pawn to have behavior tree AI
 APC.prototype=new Vehicle;
 function APC(x,y,team) {
   this.x=x;
