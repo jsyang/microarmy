@@ -54,13 +54,11 @@ function XHash(worldWidth) {
   };
   
   // todo: get farthest enemy
-  this.getFarEnemy=function(obj){
-  };
+  this.getFarEnemy=function(obj){};
 
   // todo: get enemy crowd, pick a target that is near lots of other enemies
   // to maximize splash damage
-  this.getCrowdedEnemy=function(obj){
-  };
+  this.getCrowdedEnemy=function(obj){};
   
   // todo: optimize this code: usually we're looking for the closest
   // enemy / friendly to the current entity, so instead of getting the entire

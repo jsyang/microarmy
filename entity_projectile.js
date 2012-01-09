@@ -108,7 +108,7 @@ function SmallRocket(x,y,team,target,dx,dy,accuracy) {
   this.damage=24;
 }
 
-// Used as shrap for now..
+// Used as explosive shrap giblet for now..
 MortarShell.prototype=new Projectile;
 function MortarShell(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;

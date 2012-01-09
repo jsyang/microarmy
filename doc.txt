@@ -109,13 +109,18 @@ Infantry:
   [isReloading],
   <
     [isBerserking],
-    [move]
+    [moveAndBoundsCheck]    
   >,
   <
     [foundTarget],
-    (
-    
-    )
+    [seeTarget],
+    [setFacingTarget],
+    [attack],
+    [loopAnimation]
+  >,
+  <
+    [setFacingTarget],
+    [moveAndBoundsCheck]
   >
 )
 
@@ -137,12 +142,5 @@ APC:
       >
     )
   >,
-  <
-    [move],
-    [loopAnimation],
-    <
-      [isOutsideWorld],
-      [walkingOffMapCheck]
-    >
-  >
+  [moveAndBoundsCheck]
 )

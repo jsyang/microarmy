@@ -9,24 +9,25 @@ var Behavior={
         for(var i=0; i<tree.children.length; i++)
           if(!Behavior.Execute(tree.children[i],thisArg)) return false;
         return true;
-        break;
       
       case 'selector':  // Quit on first true
         for(var i=0; i<tree.children.length; i++)
           if(Behavior.Execute(tree.children[i],thisArg)) return true;
         return false;
-        break;
       
-      case 'lookup':    // to do: lookup decorator
-        break;
-      
-      default:          // Custom node behavior and decorators.
-        var realId=tree.id.charAt(0)==='!'?tree.id.slice(1):tree.id;
-        if(!Behavior.Custom[realId])
-          return alert('Custom behavior not found!');        
-        return realId==tree.id?
-          Behavior.Custom[realId](thisArg)
-          : !Behavior.Custom[realId](thisArg);
+      default:          // Custom behavior and decorators
+                        // lookup trees in the behavior tree library.
+        var invert=tree.id.charAt(0)==='!';
+        var realId=invert?tree.id.slice(1):tree.id;
+        var behavior=Behavior.Custom[realId];
+        if(behavior)
+          return invert? !behavior(thisArg) : behavior(thisArg);
+        var subtree=Behavior.Library[realId];
+        if(subtree)
+          return invert?
+            !Behavior.Execute(subtree, thisArg)
+            :Behavior.Execute(subtree, thisArg);
+        return alert("Custom decorator / subtree not found!");
     }
     return alert('ERROR: You are not supposed to see this!');
   },
@@ -121,31 +122,36 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
     },
     
         
-    foundTarget:function(obj) { var t=obj._.target, _=obj._;
+    foundTarget:function(obj) { var t=obj._.target;
       // Try to find a valid target!
       if(!t || Behavior.Custom.isDead(t) ||
          !Behavior.Custom.seeTarget(obj) || t.team==obj.team)
         world.xHash.getNearEnemy(obj);
       
-      return _.target? true:false;
+      return obj._.target? true:false;
     },
-      /*
-      {
-        /* obsolete code... delete on next commit.
-        _.target=undefined;
-        var h=world.xHash.getNBucketsByCoord(obj.x,(_.sight-5)*2+2)
-        for(var i=0, minDist=Infinity; i<h.length; i++) {
-          if(h[i].team==obj.team) continue;
-          if(Behavior.Custom.isDead(h[i])) continue;
-          var dist=Math.abs(h[i].x-obj.x);
-          if(dist>>_.sight) continue;
-          if(dist<minDist){ _.target=h[i]; minDist=dist; }
-        }
+
+    // Face the target -- Infantry
+    setFacingTarget:function(obj) { var _=obj._;
+      if(_.target) {
+        _.direction=_.target.x>obj.x?1:-1;
+        // Randomize attack stance -- Infantry
+        if(_.action==INFANTRY.ACTION.MOVEMENT)
+          _.action=$.R(
+            INFANTRY.ACTION.ATTACK_STANDING,
+            INFANTRY.ACTION.ATTACK_PRONE);
+      } else {
+        _.action=INFANTRY.ACTION.MOVEMENT;
+        _.direction=TEAM.GOALDIRECTION[this.team];
       }
-      */
+      
+      _.frame.first=_.direction>0?  6 : 0;
+      _.frame.last =_.direction>0?  11: 5;
+      return true;
+    },    
     
-    // Only for Vehicles -- Handle rotation to face target
-    isFacingTarget:function(obj) { var _=obj._;
+    // Handle rotation to face target -- Vehicles
+    isVehicleFacingTarget:function(obj) { var _=obj._;
       if(_.target && (_.target.x-obj.x)*_.direction<0) {
         if(!_.turn.ing) {            
           _.turn.ing=1;
@@ -169,24 +175,47 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
       obj.y=world.getHeight(obj.x);
       return true;
     },
-    
-    // this attack function came from Vehicle class.
+
+    // this attack function came from Vehicle class; added Infantry stuff.
     attack:function(obj) { var _=obj._;
       //if(!_.projectile) return true;
       var dist=Math.abs(_.target.x-obj.x);      
       
+      if(obj instanceof Infantry) {
+        // Melee distance: LESS than one body!
+        if(dist<obj.img.w) {
+          if($.r()<_.berserk.chance) {
+            _.target.takeDamage(_.meleeDmg);
+            // Pretty hard to ignore someone punching your face
+            if(_.target._) _.target._.target=obj;
+          }
+          return true;
+        }
+      }
+      
       var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
       var strayDY=0;      // deviation in firing angle.
-      var fSpeed=0;       // projectile speed.
+      var fSpeed=4;       // projectile speed.
       
       if(_.projectile==MGBullet) {
         if(_.ammo.clip==_.ammo.max) soundManager.play('mgburst');
-        accuracy=[0.65,0.35]; strayDY=$.R(-15,15)/100; fSpeed=4;
+        accuracy=[0.65,0.35]; strayDY=$.R(-15,15)/100;
+      } else if(_.projectile==Bullet) {
+        if(_.ammo.clip==_.ammo.max) soundManager.play('pistol');
+        if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
+        accuracy=[0.15,0.85]; strayDY=$.R(-15,15)/100;
+      } else if(_.projectile==SmallRocket) {
+        if(dist<48) return true;            // don't shoot rockets if too close!
+        if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
+        else soundManager.play('rocket');
+        accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
       }
       
       // Projectile origin relative to sprite
       var pDY=-obj.img.h>>1;
       var pDX=_.direction*4;
+      if(obj instanceof Infantry)
+        var pDY=_.action==INFANTRY.ACTION.ATTACK_PRONE? -2: -4;
       
       // Distance penalties for chance to hit
       // this should probably be moved inside the projectile class
@@ -226,7 +255,10 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
 
 // Predefined trees for various classes
 Behavior.Library={
-  APC:"([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,<[move],[loopAnimation],<[isOutsideWorld],[walkingOffMapCheck]>>)",
+  moveAndBoundsCheck:"<[move],[loopAnimation],<[isOutsideWorld],[walkingOffMapCheck]>>",
+  
+  
+  APC:"([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck]>>)",
   Infantry:
   "(\
     [isReloading],\
