@@ -36,7 +36,7 @@ function XHash(worldWidth) {
     var minDist=Infinity;    
     obj._.target=undefined;    
     // buckets left,right of the center.
-    for(var left=right=center; sight; left--,right++) {
+    for(var left=right=center; sight; left--,right++, sight--) {
       var shell=[];
       if(buckets[left])                 shell=shell.concat(buckets[left]);
       if(left!=right && buckets[right]) shell=shell.concat(buckets[right]);
@@ -55,9 +55,12 @@ function XHash(worldWidth) {
   
   // todo: get farthest enemy
   this.getFarEnemy=function(obj){
-    
   };
-  
+
+  // todo: get enemy crowd, pick a target that is near lots of other enemies
+  // to maximize splash damage
+  this.getCrowdedEnemy=function(obj){
+  };
   
   // todo: optimize this code: usually we're looking for the closest
   // enemy / friendly to the current entity, so instead of getting the entire
@@ -150,7 +153,7 @@ function World() {
   }
   
   // Run 1 cycle of the game loop.
-  function cycle() {    
+  function cycle() {
     FG.clearRect(0,0,w,h);
     var viewWidth=window.innerWidth, viewLeft=document.body.scrollLeft;
     var xHash_=new XHash(w);

@@ -87,6 +87,24 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
       return false;
     },
     
+    /* Berserk: moving toward target for some time regardless of 
+      self-preservation or target's current location! */
+    isBerserking:function(obj) { var _=obj._;
+      if(_.berserk.ing) {
+        if(obj instanceof Infantry) _.action=INFANTRY.ACTION.MOVEMENT;
+        if(obj instanceof Vehicle)  _.action=VEHICLE.ACTION.MOVING;
+        _.berserk.ing--;
+        return true;
+      }
+      return false;
+    },
+    
+    tryBerserking:function(obj) { var _=obj._;
+      if($.r()<_.berserk.chance)
+        _.berserk.ing=_.berserk.time;      
+      return true;
+    },    
+    
     isVehicleMoving:function(obj) { var _=obj._;
       return  _.action==VEHICLE.ACTION.MOVING ||
               _.action==VEHICLE.ACTION.TURNING;
@@ -106,7 +124,14 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
     foundTarget:function(obj) { var t=obj._.target, _=obj._;
       // Try to find a valid target!
       if(!t || Behavior.Custom.isDead(t) ||
-         !Behavior.Custom.seeTarget(obj) || t.team==obj.team) {
+         !Behavior.Custom.seeTarget(obj) || t.team==obj.team)
+        world.xHash.getNearEnemy(obj);
+      
+      return _.target? true:false;
+    },
+      /*
+      {
+        /* obsolete code... delete on next commit.
         _.target=undefined;
         var h=world.xHash.getNBucketsByCoord(obj.x,(_.sight-5)*2+2)
         for(var i=0, minDist=Infinity; i<h.length; i++) {
@@ -117,8 +142,7 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
           if(dist<minDist){ _.target=h[i]; minDist=dist; }
         }
       }
-      return _.target? true:false;
-    },
+      */
     
     // Only for Vehicles -- Handle rotation to face target
     isFacingTarget:function(obj) { var _=obj._;
@@ -140,7 +164,7 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
       return true;
     },
     
-    movePawn:function(obj) {
+    move:function(obj) {
       obj.x+=obj._.direction;
       obj.y=world.getHeight(obj.x);
       return true;
@@ -199,23 +223,27 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
 };
 
 
+
+// Predefined trees for various classes
+Behavior.Library={
+  APC:"([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,<[move],[loopAnimation],<[isOutsideWorld],[walkingOffMapCheck]>>)",
+  Infantry:
+  "(\
+    [isReloading],\
+    \
+  )"
+};
+
+// Convert predefined shorthand code into btree code.
+(function() {
+  for(var i in Behavior.Library)
+    Behavior.Library[i]=Behavior.ConvertShortHand(Behavior.Library[i]);
+})();
+
+
 /*
 
-function testConversion(){
-var a="\
-(\n\
-  [isReloading],\n\
-  <[foundTarget],(\n\
-    <[!isFacingTarget],[loopAnimation]>,\n\
-    <[seeTarget],[attack]>\n\
-  )>,\n\
-  <[movePawn],[loopAnimation],<\n\
-    [isOutsideWorld],\n\
-    [walkingOffMapCheck]\n\
-  >>\n\
-)";
-return Behavior.ConvertShortHand(a);
-}
+
 
 
 btree for APC

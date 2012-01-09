@@ -23,29 +23,7 @@ function Infantry() {
     _.direction=_.target? (_.target.x>this.x)?1:-1 : TEAM.GOALDIRECTION[this.team];    
     _.frame.first=_.direction>0?  6 : 0;
     _.frame.last =_.direction>0?  11: 5;
-  };
-  
-  this.seeTarget=function(returnDist) { var _=this._;
-    return _.target?
-      returnDist?
-        Math.abs(_.target.x-this.x)
-        : !(Math.abs(_.target.x-this.x)>>_.sight)
-      : 0;
-  };
-  
-  this.findTarget=function() { var _=this._;
-    _.target=undefined;
-    // Get all objects possibly within our sight, don't care about dist
-    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2)
-    for(var i=0, minDist=Infinity; i<h.length; i++) {
-      if(h[i].team==this.team) continue;
-      if(h[i].isDead()) continue;                   // already dead!
-      if(Math.abs(h[i].x-this.x)>>_.sight) continue;   // can't see closest!      
-      if(Math.abs(h[i].x-this.x)<minDist){
-        _.target=h[i]; minDist=Math.abs(h[i].x-this.x);
-      }
-    }    
-  }
+  };  
   
   this.move=function() { var _=this._;
     this.x+=_.direction;
@@ -73,13 +51,8 @@ function Infantry() {
       return true;
     }
     
-    /* Berserk: moving toward the original target for some time without
-      regard to self-preservation or where the current target location is!
-      once berserk is done, standard actions resume. */
-    if($.r()<_.berserk.chance) {
-      _.berserk.ing=_.berserk.time;
-      return true;
-    }
+    
+    
     
     var accuracy=[0,0]; // chance to hit, [periphery, target bonus]
     var strayDY=0;      // deviation in firing angle.
@@ -152,15 +125,9 @@ function Infantry() {
         else this.corpsetime--;
       }
       return false;
-    }
-    
-    // If reloading, don't do anything else.     
-    if(_.reload.ing) { _.reload.ing--; return true; }
-    else if(_.ammo.clip==0) {
-      _.reload.ing=_.reload.time;
-      _.frame.current=_.frame.first;
-      _.ammo.clip=_.ammo.max;
-      return true;
+    } else {
+      Behavior.Execute(Behavior.Library.Infantry,this);
+      return true;      
     }
     
     // If berserking, don't try anything else! 

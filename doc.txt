@@ -101,3 +101,48 @@ ________________________________________________________________________________
 
 http://www.spriters-resource.com/arcade/af3sw3/index.html
 
+_ Behavior Trees _______________________________________________________________
+
+Infantry:
+
+(
+  [isReloading],
+  <
+    [isBerserking],
+    [move]
+  >,
+  <
+    [foundTarget],
+    (
+    
+    )
+  >
+)
+
+
+APC:
+
+(
+  [isReloading],
+  <
+    [foundTarget],
+    (
+      <
+        [!isFacingTarget],
+        [loopAnimation]
+      >,
+      <
+        [seeTarget],
+        [attack]
+      >
+    )
+  >,
+  <
+    [move],
+    [loopAnimation],
+    <
+      [isOutsideWorld],
+      [walkingOffMapCheck]
+    >
+  >
+)

@@ -1,3 +1,5 @@
+// todo: maybe we can do this a bit better... but for now this will do
+
 var VEHICLE={
   ACTION:{
     IDLING:-1,
@@ -45,7 +47,8 @@ function Vehicle() {
     if(Behavior.Custom.isDead(this)) {
       if(_.action<VEHICLE.ACTION.WRECK) {
         _.action=VEHICLE.ACTION.WRECK;
-        //soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);        
+        world.addPawn(new SmallExplosion(this.x,this.y-this.img.h+1));
+        //soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
       }
       return false;
     }
@@ -80,14 +83,31 @@ function APC(x,y,team) {
   };
   
   this.behavior={id:"selector",children:[
-  {id:"isReloading"},
-  {id:"sequence",children:[{id:"foundTarget"},{id:"selector",children:[
-    {id:"sequence",children:[{id:"!isFacingTarget"},{id:"loopAnimation"}]},
-    {id:"sequence",children:[{id:"seeTarget"},{id:"attack"}]}
-  ]}]},
-  {id:"sequence",children:[{id:"movePawn"},{id:"loopAnimation"},{id:"sequence",children:[
-    {id:"isOutsideWorld"},
-    {id:"walkingOffMapCheck"}
-  ]}]}
-]};
+    
+    {id:"isReloading"},
+    
+    {id:"sequence",children:[
+      {id:"foundTarget"},
+      {id:"selector",children:[
+        {id:"sequence",children:[
+          {id:"!isFacingTarget"},
+          {id:"loopAnimation"}
+        ]},
+        {id:"sequence",children:[
+          {id:"seeTarget"},
+          {id:"attack"}
+        ]}
+      ]}
+    ]},
+    
+    {id:"sequence",children:[
+      {id:"movePawn"},
+      {id:"loopAnimation"},
+      {id:"sequence",children:[
+        {id:"isOutsideWorld"},
+        {id:"walkingOffMapCheck"}
+      ]}
+    ]}
+    
+  ]};
 }
