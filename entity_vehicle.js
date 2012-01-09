@@ -52,7 +52,7 @@ function Vehicle() {
       }
       return false;
     }
-    Behavior.Execute(this.behavior,this);
+    Behavior.Execute(_.behavior,this);
     return true;
   };  
 }
@@ -73,6 +73,7 @@ function APC(x,y,team) {
     frame:      { current:0, first:0, last:2 },
     target:     undefined,
     direction:  TEAM.GOALDIRECTION[team],
+    behavior:   Behavior.Library.APC,
     
     projectile: MGBullet,
     turn:       { ing:0, current:0, last: 2 },
@@ -80,34 +81,5 @@ function APC(x,y,team) {
     health:     $.R(560,720),
     reload:     { ing:0, time:40 },
     ammo:       { clip:6, max:6 }
-  };
-  
-  this.behavior={id:"selector",children:[
-    
-    {id:"isReloading"},
-    
-    {id:"sequence",children:[
-      {id:"foundTarget"},
-      {id:"selector",children:[
-        {id:"sequence",children:[
-          {id:"!isFacingTarget"},
-          {id:"loopAnimation"}
-        ]},
-        {id:"sequence",children:[
-          {id:"seeTarget"},
-          {id:"attack"}
-        ]}
-      ]}
-    ]},
-    
-    {id:"sequence",children:[
-      {id:"movePawn"},
-      {id:"loopAnimation"},
-      {id:"sequence",children:[
-        {id:"isOutsideWorld"},
-        {id:"walkingOffMapCheck"}
-      ]}
-    ]}
-    
-  ]};
+  };  
 }

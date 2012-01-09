@@ -27,7 +27,7 @@ var Behavior={
           return invert?
             !Behavior.Execute(subtree, thisArg)
             :Behavior.Execute(subtree, thisArg);
-        return alert("Custom decorator / subtree not found!");
+        return alert("Custom decorator / subtree '"+realId+"'not found!");
     }
     return alert('ERROR: You are not supposed to see this!');
   },
@@ -56,13 +56,13 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
 */  
   
   ConvertShortHand:function(code){
-    return eval(code
+    return eval('('+code
     .replace(/\[/g,'{id:"')
     .replace(/\]/g,'"}')
     .replace(/\(/g,'{id:"selector",children:[')
     .replace(/</g,'{id:"sequence",children:[')
     .replace(/>/g,']}')
-    .replace(/\)/g,']}'));
+    .replace(/\)/g,']}')+')');
   },
   
 // Custom decorators and tasks /////////////////////////////////////////////////
@@ -83,6 +83,8 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
       } else if(_.ammo.clip==0) {
         _.reload.ing=_.reload.time;
         _.ammo.clip=_.ammo.max;
+        if(obj instanceof Infantry) // todo: get rid of this hack
+          _.frame.current=_.frame.first;
         return true;
       }
       return false;
@@ -142,7 +144,7 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
             INFANTRY.ACTION.ATTACK_PRONE);
       } else {
         _.action=INFANTRY.ACTION.MOVEMENT;
-        _.direction=TEAM.GOALDIRECTION[this.team];
+        _.direction=TEAM.GOALDIRECTION[obj.team];
       }
       
       _.frame.first=_.direction>0?  6 : 0;
@@ -258,12 +260,8 @@ Behavior.Library={
   moveAndBoundsCheck:"<[move],[loopAnimation],<[isOutsideWorld],[walkingOffMapCheck]>>",
   
   
-  APC:"([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck]>>)",
-  Infantry:
-  "(\
-    [isReloading],\
-    \
-  )"
+  APC:"([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
+  Infantry:"([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)"
 };
 
 // Convert predefined shorthand code into btree code.
@@ -271,27 +269,3 @@ Behavior.Library={
   for(var i in Behavior.Library)
     Behavior.Library[i]=Behavior.ConvertShortHand(Behavior.Library[i]);
 })();
-
-
-/*
-
-
-
-
-btree for APC
-
-(
-  [isReloading],
-  <[foundTarget],(
-    <[!isFacingTarget],[loopAnimation]>,
-    <[seeTarget],[attack]>
-  )>,
-  <[movePawn],[loopAnimation],<
-    [isOutsideWorld],
-    [walkingOffMapCheck]
-  >>
-)
-
-*/
-
-

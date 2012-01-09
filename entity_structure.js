@@ -32,26 +32,16 @@ function Structure() {
       : 0;
   }
   
-  this.findTarget=function(){ var _=this._;
-    _.target=undefined;
-    // Get all objects possibly within our sight, sort by distance to us
-    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
-    for(var i=0, minDist=Infinity; i<h.length; i++) {
-      var dist=Math.abs(h[i].x-this.x);
-      if(h[i].team==this.team) continue;
-      if(h[i].isDead()) continue;
-      if(!(!(dist>>_.sight) && (dist>this.img.w>>1))) continue;
-      if(dist<minDist){
-        _.target=h[i]; minDist=dist;
-      }
-    }
+  this.findTarget=function(){
+    Behavior.Custom.foundTarget(this);
   };
+
   
   this.findCrew=function() { var _=this._;
     var h=world.xHash.getNBucketsByCoord(this.x,2);
     for(var i=0; i<h.length; i++) {
       if(!(h[i] instanceof PistolInfantry))       continue;    
-      if(h[i].isDead())                           continue;
+      if(Behavior.Custom.isDead(h[i]))            continue;
       if(Math.abs(h[i].x-this.x)>this.img.w>>1)   continue;
       
       if(h[i].team!=this.team) {
@@ -184,7 +174,7 @@ function Structure() {
           return true;
         }
         if(_.reload.ing) { _.reload.ing--; return true; }
-        if(!_.target || _.target.isDead() || !this.seeTarget() )
+        if(!_.target || Behavior.Custom.isDead(_.target) || !this.seeTarget() )
           this.findTarget();        
         
         // Attack!
@@ -232,7 +222,7 @@ function CommCenter(x,y,team) {
     for(var i=0, maxDist=0; i<h.length; i++) {
       var dist=Math.abs(h[i].x-this.x);
       if(h[i].team==this.team) continue;
-      if(h[i].isDead()) continue;
+      if(Behavior.Custom.isDead(h[i])) continue;
       if(dist<100) continue;
       if(!(!(dist>>_.sight) && (dist>this.img.w>>1))) continue;
       if(dist>maxDist){
@@ -441,7 +431,7 @@ function Pillbox(x,y,team) {
     for(var i=0, minDist=Infinity; i<h.length; i++) {
       var dist=(h[i].x-this.x);
       if(h[i].team==this.team)              continue;
-      if(h[i].isDead())                     continue;
+      if(Behavior.Custom.isDead(h[i]))      continue;
       if(_.direction*(h[i].x-this.x)<0)     continue;
       if(Math.abs(h[i].x-this.x)>>_.sight)  continue;      
       if(Math.abs(h[i].x-this.x)<minDist){

@@ -37,10 +37,9 @@ function Infantry() {
   }; };
   
   this.alive=function(){ var _=this._;
-    if(this.isDead()) {
+    if(Behavior.Custom.isDead(this)) {
       if(_.action<INFANTRY.ACTION.DEATH1) {
         _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
-        this.correctDirection();
         _.frame.current=_.frame.first;
         soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
       } else {
@@ -49,7 +48,7 @@ function Infantry() {
       }
       return false;
     } else {
-      Behavior.Execute(Behavior.Library.Infantry,this);
+      Behavior.Execute(_.behavior,this);
       return true;      
     }
   };
@@ -57,8 +56,8 @@ function Infantry() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Sight in XHash buckets = sight*(1<<6)
-// May want to change this to sight in actual pixels...
+// Sight in XHash buckets = sight*(1<<6) pixels
+////////////////////////////////////////////////////////////////////////////////
 
 PistolInfantry.prototype=new Infantry;
 function PistolInfantry(x,y,team) {
@@ -71,10 +70,11 @@ function PistolInfantry(x,y,team) {
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
     direction:  TEAM.GOALDIRECTION[team],
+    behavior:   Behavior.Library.Infantry,
     
     imgSheet:   preloader.getFile('pistol'+TEAM.NAMES[team]),
     projectile: Bullet,
-    sight:      7,
+    sight:      8,
     health:     $.R(30,70),
     reload:     { ing:0, time:40 },
     berserk:    { ing:0, time:$.R(10,26), chance:$.r(0.59) },
@@ -94,10 +94,11 @@ function RocketInfantry(x,y,team) {
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
     direction:  TEAM.GOALDIRECTION[team],
+    behavior:   Behavior.Library.Infantry,
     
     imgSheet:   preloader.getFile('rocket'+TEAM.NAMES[team]),
     projectile: SmallRocket,
-    sight:      8,
+    sight:      12,
     health:     $.R(60,90),
     reload:     { ing:0, time:$.R(90,120) },
     berserk:    { ing:0, time:$.R(6,21), chance:0.08+$.r(0.35) },

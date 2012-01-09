@@ -41,7 +41,7 @@ function Projectile() {
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
       if(unit.team==this.team)  continue;
-      if(unit.isDead())         continue;      
+      if(Behavior.Custom.isDead(unit))         continue;      
       
       var dx=this.x-unit.x;
       var dy=this.y-(unit.y-(unit.img.h>>1));

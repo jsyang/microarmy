@@ -103,6 +103,17 @@ http://www.spriters-resource.com/arcade/af3sw3/index.html
 
 _ Behavior Trees _______________________________________________________________
 
+moveAndBoundsCheck:
+
+<
+  [move],
+  [loopAnimation],
+  <
+    [isOutsideWorld],
+    [walkingOffMapCheck]
+  >
+>
+
 Infantry:
 
 (
@@ -116,6 +127,7 @@ Infantry:
     [seeTarget],
     [setFacingTarget],
     [attack],
+    [tryBerserking]
     [loopAnimation]
   >,
   <
@@ -133,7 +145,7 @@ APC:
     [foundTarget],
     (
       <
-        [!isFacingTarget],
+        [!isVehicleFacingTarget],
         [loopAnimation]
       >,
       <

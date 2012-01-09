@@ -43,7 +43,7 @@ function XHash(worldWidth) {
       
       for(var i=0; i<shell.length; i++) {
         var entity=shell[i];          
-        if(entity.team==obj.team || entity.isDead()) continue;
+        if(entity.team==obj.team || entity._.health<=0) continue;
         var dist=Math.abs(entity.x-obj.x);
         if(!(dist>>sight) && dist<minDist){
           obj._.target=entity; minDist=dist;

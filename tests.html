@@ -1,5 +1,9 @@
 <html><title>Test Code / Suites for microarmy</title>
+<script src=entity_behavior.js></script>
 <script>
+
+function getID(id){ return document.getElementById(id); }
+
 function testConversion(){
   var a=
   "(\n\
@@ -31,10 +35,19 @@ function testConversion(){
 
 // regex for whitespace removal: string.replace(/ +?/g,'');
 
+function convertCodeText() {
+  var codeBox=getID('btreecode');
+  codeBox.value=Behavior.ConvertShortHand(codeBox.value);
+}
+
 </script><body>
 
+Copy and paste your behavior tree code in here.<br>
+Double-click to strip all whitespace.<hr>
 <textarea rows=24 cols=80
-ondblclick="(function(o){o.value=o.value.replace(/ +?/g,'');})(this)">
-</textarea>
+id='btreecode'
+ondblclick="(function(o){o.value=o.value.replace(/[\n +?]/g,'');})(this)">
+</textarea><br>
+<a href="javascript:convertCodeText()">Convert</a>
 
 </body></html>
