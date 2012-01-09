@@ -103,9 +103,11 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
     },
     
     tryBerserking:function(obj) { var _=obj._;
-      if($.r()<_.berserk.chance)
-        _.berserk.ing=_.berserk.time;      
-      return true;
+      if($.r()<_.berserk.chance) {
+        _.berserk.ing=_.berserk.time;
+        return true;
+      }
+      return false;
     },    
     
     isVehicleMoving:function(obj) { var _=obj._;
@@ -261,7 +263,9 @@ Behavior.Library={
   
   
   APC:"([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
-  Infantry:"([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)"
+  // todo: oops... inserted tryBerserking into wrong place.. berserk behavior
+  // is making them act weird...
+  Infantry:"([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)"
 };
 
 // Convert predefined shorthand code into btree code.
