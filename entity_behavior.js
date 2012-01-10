@@ -234,7 +234,7 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
           obj.team,
           _.target,
           _.direction*fSpeed,
-          ((_.target.y-(_.target.img.h>>1)-(obj.y-(obj.img.h>>1))-pDY)*fSpeed)
+          ((_.target.y-(_.target.img.h>>1)-(obj.y-(obj.img.h>>1))+pDY)*fSpeed)
           /dist+strayDY,
           accuracy
         )
