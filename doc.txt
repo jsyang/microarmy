@@ -1,5 +1,15 @@
 _ Microarmy ____________________________________________________________________
 
+
+_ Tools ________________________________________________________________________
+
+  todo: build out a behavior tree creation tool, with logic minimization and
+  visualization (in game testing)
+  
+  --> http://thejit.org/static/v20/Jit/Examples/Spacetree/example3.code.html
+  
+_ General ______________________________________________________________________
+
   Team wins if a unit reaches the opposing team's edge.
   
   todo: Team wins if resources are depleted / cannot deploy reinforcements /

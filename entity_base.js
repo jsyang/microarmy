@@ -24,7 +24,7 @@ function Pawn() {
   this.getGFX=function(){};
 }
 
-// X-coord obj hash: avoid checking hits on faraway stuff //////////////////////
+// X-coord spatial hash: avoid checking hits on faraway stuff //////////////////
 function XHash(worldWidth) {    
   var bucketWidth=6; // divide world into 1<<6 == 64 pixel buckets
   var buckets=[];
@@ -98,6 +98,10 @@ function World() {
     cv.width=w; cv.height=h;
     document.body.appendChild(cv);
     var ctx=cv.getContext("2d");
+    
+    // todo: bg gradient stuff and clouds.
+    // var BGimg=generate.BG(ctx,w,h);
+    
     ctx.drawImage(preloader.getFile("bgterrain"),0,0);
     var data=ctx.getImageData(0,0,w,h).data;
     for(var x=0;x<w;x++) {

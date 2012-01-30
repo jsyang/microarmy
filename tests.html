@@ -1,53 +1,43 @@
 <html><title>Test Code / Suites for microarmy</title>
+<script src=util.js></script>
+<script src=generate.js></script>
+<script src=entity_base.js></script>
 <script src=entity_behavior.js></script>
 <script>
-
 function getID(id){ return document.getElementById(id); }
 
-function testConversion(){
-  var a=
-  "(\n\
-    [isReloading],\n\
-    <[foundTarget],(\n\
-      <[!isFacingTarget],[loopAnimation]>,\n\
-      <[seeTarget],[attack]>\n\
-    )>,\n\
-    <[movePawn],[loopAnimation],<\n\
-      [isOutsideWorld],\n\
-      [walkingOffMapCheck]\n\
-    >>\n\
-  )";
+var test_BehaviorTreeShorthand=new function(){
+  this.init=function(){
+    document.body.innerHTML+=
+    "Copy and paste your behavior tree code in here.<br>"+
+    "Double-click to strip all whitespace.<hr>"+
+    "<textarea rows=24 cols=80 id='btreecode'></textarea><br>"+
+    "<a href='javascript:test_BehaviorTreeShorthand.convertCodeText()'>"+
+    "Convert</a>";
+  };
   
-  var o={id:"selector",children:[
-    {id:"isReloading"},
-    {id:"sequence",children:[{id:"foundTarget"},{id:"selector",children:[
-      {id:"sequence",children:[{id:"!isFacingTarget"},{id:"loopAnimation"}]},
-      {id:"sequence",children:[{id:"seeTarget"},{id:"attack"}]}
-    ]}]},
-    {id:"sequence",children:[{id:"movePawn"},{id:"loopAnimation"},{id:"sequence",children:[
-      {id:"isOutsideWorld"},
-      {id:"walkingOffMapCheck"}
-    ]}]}
-  ]};
-  
-  return Behavior.ConvertShortHand(a)==o;
-}
+  this.convertCodeText=function(){
+    var codeBox=getID('btreecode');
+    codeBox.value=Behavior.ConvertShortHand(
+      codeBox.value.replace(/[\n +?]/g,'')
+    );
+  }
+};
 
-// regex for whitespace removal: string.replace(/ +?/g,'');
+var heightmap, peaks;
+var test_proceduralGameWorld=new function(){
+  this.init=function(){
+    var cv=document.createElement("canvas");
+    cv.width=2490; cv.height=192;
+    document.body.appendChild(cv);
+    var ctx=cv.getContext("2d");
+    var BG=generate.BG(ctx,cv.width,cv.height);    
+    ctx.putImageData(BG,0,0);
+    var FG=generate.FG(ctx,cv.width,cv.height);
+    ctx.putImageData(FG.imgdata_,0,0);
+    heightmap=FG.heightmap_;
+    peaks=FG.peaks_;
+  };
+};
 
-function convertCodeText() {
-  var codeBox=getID('btreecode');
-  codeBox.value=Behavior.ConvertShortHand(codeBox.value);
-}
-
-</script><body>
-
-Copy and paste your behavior tree code in here.<br>
-Double-click to strip all whitespace.<hr>
-<textarea rows=24 cols=80
-id='btreecode'
-ondblclick="(function(o){o.value=o.value.replace(/[\n +?]/g,'');})(this)">
-</textarea><br>
-<a href="javascript:convertCodeText()">Convert</a>
-
-</body></html>
+</script><body bgcolor=gray onload="test_proceduralGameWorld.init()"></body></html>
