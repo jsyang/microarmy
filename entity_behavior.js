@@ -31,29 +31,6 @@ var Behavior={
     }
     return alert('ERROR: You are not supposed to see this!');
   },
-
-/* notes on behavior tree shorthand:
-
-() = selector
-<> = sequence
-!token = run the decorator but return with logically opposite result
-
-you don't actually need chained decorators, since you can just use a sequence
-and inverts to do the same thing
-
-decorator-filter1
- decorator-filter2
-   decorator-filter3
-     shootMachineGun
-
-is identical to
-<decorator-filter1,decorator-filter2,decorator-filter3>
-
-should not allow stuff to happen during corpse time, which is what
-the if(isDead) clause catches.
-if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
-
-*/  
   
   ConvertShortHand:function(code){
     return eval('('+code
@@ -248,7 +225,6 @@ if(isDead) { doCorpsething; } else: (do stuff in the behavior tree)
         soundManager.play('accomp');
         world.pause();
       }
-      // just disappear, walked off the map
       obj.remove();
       return true;
     }

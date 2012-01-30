@@ -67,6 +67,8 @@ function Projectile() {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 Bullet.prototype=new Projectile;
 function Bullet(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;

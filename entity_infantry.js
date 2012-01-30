@@ -7,7 +7,7 @@ var INFANTRY={
     DEATH1:           4,
     DEATH2:           5
   },
-  SHOTFRAME:{
+  SHOTFRAME:{ // in which frames do we want to spawn projectiles?
     PISTOL:[0,1,0,1,0,0,  0,1,0,1,0,0],
     ROCKET:[0,0,0,1,0,0,  0,0,0,1,0,0]
   }
@@ -107,12 +107,6 @@ function RocketInfantry(x,y,team) {
   };
 }
 
-// Make a Builder Infantry class. Carries out build orders from the player.
-// Weak, expensive but is the only unit capable of carrying out build orders
-// for defensive structures. can also repair buildings. unit returns to
-// comm center / team edge when done. the scaffold structure is completed by
-// filling with pistolinfantry.
-
 EngineerInfantry.prototype=new Infantry;
 function EngineerInfantry(x,y,team) {
   this.x=x;
@@ -151,7 +145,7 @@ function EngineerInfantry(x,y,team) {
       // How many workers do we need to construct this?
       var type=_.build.type;
       var crewCount=8;
-      if(type instanceof Pillbox)           crewCount=4;
+           if(type instanceof Pillbox)      crewCount=4;
       else if(type instanceof SmallTurret)  crewCount=6;
       else if(type instanceof Barracks)     crewCount=16;
       else if(type instanceof CommCenter)   crewCount=60;

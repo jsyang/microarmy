@@ -1,5 +1,5 @@
 // todo: maybe we can do this a bit better... but for now this will do
-
+// @pastself: not sure what you're talking about!
 var VEHICLE={
   ACTION:{
     IDLING:-1,
@@ -9,7 +9,6 @@ var VEHICLE={
     MAX:4
   }
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
