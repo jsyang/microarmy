@@ -1,6 +1,6 @@
 // Generic generating functions -- procedural terrain, etc.
 
-var generate={
+var Generate={
   
   BG:function(ctx,w,h) {
     var imgData=ctx.createImageData(w,h);
@@ -100,13 +100,13 @@ var generate={
           dy=0;          
         }
       }
-      heightmap.push(Math.round(current.height));
+      heightmap.push(h-Math.round(current.height));
       current.height+=dy;
     }
     
     for(var x=0; x<w; x++) {
-      for(var height=heightmap[x],shadeMin=0; height--; shadeMin--) {
-        var c=4*((h-height-1)*w+x);
+      for(var height=heightmap[x],shadeMin=0; height<h; height++, shadeMin--) {
+        var c=4*((height+1)*w+x);
         var color=colors.bedrock;
         //if(height<$.R(60,80)) color=colors.topsoil;
         //if(height<$.R(10,30)) color=colors.bedrock;

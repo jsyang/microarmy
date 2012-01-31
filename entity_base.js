@@ -20,7 +20,7 @@ function Pawn() {
     hDist2: undefined,        // hit radius^2 for collision testing
     sheet: undefined          // sprite sheet
   };
-  this.alive=function(){};
+  this.alive=function(){};    // cycling-function while active
   this.getGFX=function(){};
 }
 
@@ -80,9 +80,8 @@ function World() {
   if(!map) return alert("No map specified for world!");
   
   var w=2490, h=192;
-  var heightmap=[];
   
-  // instanceLists: gameworld's things
+  // Pawn collections
   var projectiles=[];
   var explosions=[];
   var infantry=[];  
@@ -92,52 +91,26 @@ function World() {
   
   this.xHash=new XHash(w);
   
-  // Draw map terrain, find heightmap.
-  var BG=(function(w,h,heightmap) {
-    var cv=document.createElement("canvas");
-    cv.width=w; cv.height=h;
-    document.body.appendChild(cv);
-    var ctx=cv.getContext("2d");
-    
-    // todo: bg gradient stuff and clouds.
-    // var BGimg=generate.BG(ctx,w,h);
-    
-    ctx.drawImage(preloader.getFile("bgterrain"),0,0);
-    var data=ctx.getImageData(0,0,w,h).data;
-    for(var x=0;x<w;x++) {
-      for(var y=h-1; data[(y*w+x)*4+3];) y--;
-      heightmap.push(y);
-    }
-    ctx.drawImage(preloader.getFile("bgprops"),0,0);
-    ctx.drawImage(preloader.getFile("bgterrain"),0,0);
-    return ctx;
-  })(w,h,heightmap);
+  var canvasElement=document.createElement("canvas");
+  canvasElement.width=w; canvasElement.height=w;  
+  var FG=canvasElement.getContext('2d');
   
-  // Drawing context for all the stuff that moves around
-  var FG=(function(w,h) {
-    var cv=document.createElement("canvas");
-    cv.width=w; cv.height=h;
-    document.body.appendChild(cv);
-    return cv.getContext("2d");    
-  })(w,h);  
+  // to avoid having 2 canvases, use a single one to
+  // generate the background and then clear it for FG
+  var imgElement=document.createElement("img");
+  imgElement.className="BG";
   
-  // Msgbox to display combat messages
-  var msgbox=(function(){
-    var ta=document.createElement("div");
-    ta.setAttribute('id','msgbox');
-    var s=ta.style;
-    s.position='absolute'; s.left=0; s.top=h;// s.height=100;
-    var db=document.body, de=document.documentElement;
-    s.width=Math.min(db.scrollWidth,db.offsetWidth,
-                     de.clientWidth,de.scrollWidth,de.offsetWidth);
-    s.fontFamily='lucida console'; s.fontSize='10px'; s.color='#ddd';
-    window.onscroll=
-      (function(s){return function(){s.left=document.body.scrollLeft;};})(s);
-    document.body.appendChild(ta);
-    return ta;
-  })();
-  
-  // Process Pawns -- generic code
+  FG.putImageData(Generate.BG(FG,w,h),0,0);
+  var terrain=Generate.FG(FG,w,h);
+  FG.putImageData(terrain.imgdata_,0,0);  
+  imgElement.src=canvasElement.toDataURL("image/png");
+  document.body.appendChild(imgElement);
+  document.body.appendChild(canvasElement);    
+  FG.clearRect(0,0,w,h);
+
+  var heightmap=terrain.heightmap_;
+
+  // Process active Pawns
   function processInstances(newXHash,vx,vw,instances) {    
     for(var i=0, newInstances=[];i<instances.length;i++) {
       var a=instances[i];
@@ -160,11 +133,11 @@ function World() {
     var viewWidth=window.innerWidth, viewLeft=document.body.scrollLeft;
     var xHash_=new XHash(w);
     
-    structures=processInstances(xHash_,viewLeft,viewWidth,structures);
-    vehicles=processInstances(xHash_,viewLeft,viewWidth,vehicles);
-    infantry=processInstances(xHash_,viewLeft,viewWidth,infantry);
+    structures= processInstances(xHash_,viewLeft,viewWidth,structures);
+    vehicles=   processInstances(xHash_,viewLeft,viewWidth,vehicles);
+    infantry=   processInstances(xHash_,viewLeft,viewWidth,infantry);
     projectiles=processInstances(xHash_,viewLeft,viewWidth,projectiles);
-    explosions=processInstances(xHash_,viewLeft,viewWidth,explosions);    
+    explosions= processInstances(xHash_,viewLeft,viewWidth,explosions);    
     
     world.xHash=xHash_;    
   }
@@ -174,26 +147,40 @@ function World() {
   this.pause=function() { clearInterval(timer); };
   
   this.getHeight=function(x) { return (x>=0 && x<w) ? heightmap[x>>0] : 0; };
-  this.writeToMsgBox=function(t){ msgbox.innerText=t; };
   
   this.isOutside=function(obj) {
     var x=obj.x>>0, y=obj.y>>0;
     return x<0 || x>=w || y>heightmap[x]; // || y<0
   };
-  
-  
+    
   this.addPawn=function(obj) {
     if(obj instanceof Vehicle)    return vehicles.push(obj);
     if(obj instanceof Structure)  return structures.push(obj);
     if(obj instanceof Infantry)   return infantry.push(obj);
     if(obj instanceof Projectile) return projectiles.push(obj);
     if(obj instanceof Explosion)  return explosions.push(obj);
+    return false;
   };
   
-  // Add map's entities.
-  while(map.entities.length) {
-    var j=map.entities.shift(); if(j)
-      this.addPawn( new (j.obj)(j.x,this.getHeight(j.x),j.team) );
-  }
-  
+  // todo: Add map's entities, predefined only during runtime  
 };
+
+
+/*/ Msgbox to display combat messages //////////////////////////////////////////
+// Maybe this will get replaced later when battle-view interface is more fleshed
+// out...
+var msgbox=(function(){
+  var ta=document.createElement("div");
+  ta.setAttribute('id','msgbox');
+  var s=ta.style;
+  s.position='absolute'; s.left=0; s.top=h;// s.height=100;
+  var db=document.body, de=document.documentElement;
+  s.width=Math.min(db.scrollWidth,db.offsetWidth,
+                   de.clientWidth,de.scrollWidth,de.offsetWidth);
+  s.fontFamily='lucida console'; s.fontSize='10px'; s.color='#ddd';
+  window.onscroll=
+    (function(s){return function(){s.left=document.body.scrollLeft;};})(s);
+  document.body.appendChild(ta);
+  return ta;
+})();
+*/

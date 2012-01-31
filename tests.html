@@ -31,9 +31,9 @@ var test_proceduralGameWorld=new function(){
     cv.width=2490; cv.height=192;
     document.body.appendChild(cv);
     var ctx=cv.getContext("2d");
-    var BG=generate.BG(ctx,cv.width,cv.height);    
+    var BG=Generate.BG(ctx,cv.width,cv.height);    
     ctx.putImageData(BG,0,0);
-    var FG=generate.FG(ctx,cv.width,cv.height);
+    var FG=Generate.FG(ctx,cv.width,cv.height);
     ctx.putImageData(FG.imgdata_,0,0);
     heightmap=FG.heightmap_;
     peaks=FG.peaks_;

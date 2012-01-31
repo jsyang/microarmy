@@ -112,7 +112,7 @@ preloader.onfinish=function() {
 window.onclick=function(e){
   var x=e.pageX;
   world.addPawn(
-    new APC(x,world.getHeight(x),TEAM.GREEN)
+    new PistolInfantry(x,world.getHeight(x),TEAM.GREEN)
   );
 };
 
