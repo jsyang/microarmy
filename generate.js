@@ -41,7 +41,8 @@ var Generate={
     }
     return imgData;
   },
-  
+
+  // needs optimization -- very intensive on CPU  
   FG:function(ctx,w,h) {
     // overlay
     var imgData=ctx.getImageData(0,0,w,h);

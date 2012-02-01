@@ -1,7 +1,7 @@
 <html><title>Test Code / Suites for microarmy</title>
 <script src=util.js></script>
 <script src=generate.js></script>
-<script src=entity_base.js></script>
+<script src=entity_fs.js></script>
 <script src=entity_behavior.js></script>
 <script>
 function getID(id){ return document.getElementById(id); }
@@ -40,4 +40,8 @@ var test_proceduralGameWorld=new function(){
   };
 };
 
-</script><body bgcolor=gray onload="test_proceduralGameWorld.init()"></body></html>
+</script><body bgcolor='#666'></body>
+<script>
+  document.body.onload=test_proceduralGameWorld.init;
+</script>
+</html>

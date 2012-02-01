@@ -73,6 +73,19 @@ function XHash(worldWidth) {
   this.insert=function(obj){ buckets[obj.x>>bucketWidth].push(obj); };
 }
 
+// Win/loss event handler //////////////////////////////////////////////////////
+function Mission() {
+  this.ObjectivesLibrary={
+    ExitedMapLeftEdge:  function(caller){return caller.x<0;},
+    ExitedMapRightEdge: function(caller){return caller.x>=world.width;},
+    AllUnitsLost:       function(caller){return caller.units.length<=0;},
+    
+    max:undefined
+  };
+  
+  // Objectives sorted by caller class.
+}
+
 // Game world //////////////////////////////////////////////////////////////////
 var world;
 
@@ -80,6 +93,7 @@ function World() {
   if(!map) return alert("No map specified for world!");
   
   var w=2490, h=192;
+  this.width=w; this.height=h;
   
   // Pawn collections
   var projectiles=[];
@@ -164,23 +178,3 @@ function World() {
   
   // todo: Add map's entities, predefined only during runtime  
 };
-
-
-/*/ Msgbox to display combat messages //////////////////////////////////////////
-// Maybe this will get replaced later when battle-view interface is more fleshed
-// out...
-var msgbox=(function(){
-  var ta=document.createElement("div");
-  ta.setAttribute('id','msgbox');
-  var s=ta.style;
-  s.position='absolute'; s.left=0; s.top=h;// s.height=100;
-  var db=document.body, de=document.documentElement;
-  s.width=Math.min(db.scrollWidth,db.offsetWidth,
-                   de.clientWidth,de.scrollWidth,de.offsetWidth);
-  s.fontFamily='lucida console'; s.fontSize='10px'; s.color='#ddd';
-  window.onscroll=
-    (function(s){return function(){s.left=document.body.scrollLeft;};})(s);
-  document.body.appendChild(ta);
-  return ta;
-})();
-*/
