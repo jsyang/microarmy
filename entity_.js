@@ -9,6 +9,11 @@ var TEAM={
   NAMES:'blue,green'.split(',')
 };
 
+function Team(team){
+  this.units=[];
+  this.team=team;
+}
+
 // Base Entity /////////////////////////////////////////////////////////////////
 function Pawn() {
   this.x;
@@ -74,15 +79,35 @@ function XHash(worldWidth) {
 }
 
 // Win/loss event handler //////////////////////////////////////////////////////
-function Mission() {
-  this.ObjectivesLibrary={
-    ExitedMapLeftEdge:  function(caller){return caller.x<0;},
-    ExitedMapRightEdge: function(caller){return caller.x>=world.width;},
-    AllUnitsLost:       function(caller){return caller.units.length<=0;},
-    
-    max:undefined
-  };
+
+var ObjectivesLibrary={
+  ExitedMapLeftEdge:  function(caller){return caller.x<0;},
+  ExitedMapRightEdge: function(caller){return caller.x>=world.width;},
   
+  AllUnitsLost:       function(caller){return caller.units.length<=0;},
+  UnitDestroyed:      function(caller){return caller._.health<=0;}
+  // add a timer objective as well.
+};
+
+function Mission(team) {
+  this.team=team;
+  var conditions={ win:[], lose:[], tertiary:[] };
+  /*
+    win=[
+      { type:Infantry, eval:ObjectivesLibrary.AllUnitsLost, var}, ...
+    ];
+  */
+  var queue=[];
+  this.check=function(){
+    for(var i in queue) {
+      for(var j in conditions) {
+        var c=conditions[j];
+        for(var k=c.length; k--;) {
+          if(queue[i] instanceof c[k].type)
+        }
+      }
+    }
+  };
   // Objectives sorted by caller class.
 }
 
