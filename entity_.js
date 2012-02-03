@@ -9,11 +9,6 @@ var TEAM={
   NAMES:'blue,green'.split(',')
 };
 
-function Team(team){
-  this.units=[];
-  this.team=team;
-}
-
 // Base Entity /////////////////////////////////////////////////////////////////
 function Pawn() {
   this.x;
@@ -89,32 +84,58 @@ var ObjectivesLibrary={
   // add a timer objective as well.
 };
 
-function Mission(team) {
+
+
+var MISSION={
+  EVENT:{
+    DESTROYED:0,
+    BUILT:1,
+    CAPTURED:2,
+    EXITEDMAP:3,
+    REPAIRED:4,
+    PANICKED:5,
+    
+    VALUE
+  },
+  RESULT:{
+    NONE:0,
+    WIN:1,
+    LOSE:2,
+    INCREMENT:3,
+    DECREMENT:4
+  }
+};  
+
+/*
+  Scaffold completes and builds a commcenter
+  -> send message to world
+     (inserted as an extra step in the low-level behavior
+     or as a behavior itself)
+    -> scaffold's team, CommCenter, MISSION.EVENT.BUILT
+
+  world.cycle()
+  -> processInstances() (this is where the message is generated)
+  -> processMissionEvents()
+    -> produces results of the mission events
+
+*/
+
+function Team(team){
+  this.units=[];
   this.team=team;
-  var conditions={ win:[], lose:[], tertiary:[] };
-  /*
-    win=[
-      { type:Infantry, eval:ObjectivesLibrary.AllUnitsLost, var}, ...
-    ];
-  */
-  var queue=[];
-  this.check=function(){
-    for(var i in queue) {
-      for(var j in conditions) {
-        var c=conditions[j];
-        for(var k=c.length; k--;) {
-          if(queue[i] instanceof c[k].type)
-        }
-      }
-    }
+  this.missionvars={
+    unitsremaining:30
   };
-  // Objectives sorted by caller class.
+  this.mission=[ // collection of event results (condition for win/loss/score)
+    {trigger:MISSION.EVENT.DESTROYED, type:Infantry, result: MISSION.RESULT.DECREMENT, value:'unitsremaining'},
+    {trigger:MISSION.EVENT.DESTROYED, type:Infantry, result: MISSION.RESULT.CREMENT, value:30},
+  ];  
 }
 
 // Game world //////////////////////////////////////////////////////////////////
 var world;
 
-function World() {
+function World(map) {
   if(!map) return alert("No map specified for world!");
   
   var w=2490, h=192;
