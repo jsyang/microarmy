@@ -75,27 +75,17 @@ function XHash(worldWidth) {
 
 // Win/loss event handler //////////////////////////////////////////////////////
 
-var ObjectivesLibrary={
-  ExitedMapLeftEdge:  function(caller){return caller.x<0;},
-  ExitedMapRightEdge: function(caller){return caller.x>=world.width;},
-  
-  AllUnitsLost:       function(caller){return caller.units.length<=0;},
-  UnitDestroyed:      function(caller){return caller._.health<=0;}
-  // add a timer objective as well.
-};
-
-
-
 var MISSION={
   EVENT:{
     DESTROYED:0,
     BUILT:1,
     CAPTURED:2,
-    EXITEDMAP:3,
-    REPAIRED:4,
-    PANICKED:5,
+    EXITEDMAPLEFT:3,
+    EXITEDMAPRIGHT:4,
+    REPAIRED:5,
+    PANICKED:6,
     
-    VALUE
+    VAR_ISZERO:7    
   },
   RESULT:{
     NONE:0,
@@ -106,30 +96,54 @@ var MISSION={
   }
 };  
 
-/*
-  Scaffold completes and builds a commcenter
-  -> send message to world
-     (inserted as an extra step in the low-level behavior
-     or as a behavior itself)
-    -> scaffold's team, CommCenter, MISSION.EVENT.BUILT
-
-  world.cycle()
-  -> processInstances() (this is where the message is generated)
-  -> processMissionEvents()
-    -> produces results of the mission events
-
-*/
-
-function Team(team){
-  this.units=[];
-  this.team=team;
-  this.missionvars={
+function Team(){
+  var missionvars={
+    status:MISSION.RESULT.NONE,
     unitsremaining:30
   };
-  this.mission=[ // collection of event results (condition for win/loss/score)
-    {trigger:MISSION.EVENT.DESTROYED, type:Infantry, result: MISSION.RESULT.DECREMENT, value:'unitsremaining'},
-    {trigger:MISSION.EVENT.DESTROYED, type:Infantry, result: MISSION.RESULT.CREMENT, value:30},
-  ];  
+  
+  var won=false;
+  var lost=false;
+  
+  var objective=[ // collection of event results (condition for win/loss/score)
+    {trigger:MISSION.EVENT.DESTROYED, type:Infantry, missionvar:'unitsremaining', result: MISSION.RESULT.DECREMENT},
+    {trigger:MISSION.EVENT.VAR_ISZERO, type:Infantry, missionvar:'unitsremaining', result: MISSION.RESULT.LOSE}
+  ];
+  
+  var events=[];
+  
+  this.addEvent=function(e){ events.push(e); return events.length; };
+  /*  ex: Event firing for a PistolInfantry death
+          world.team[TEAM.NAMES[this.team]].addEvent(
+            {type:PistolInfantry, event:MISSION.EVENT.DESTROYED}
+          )
+  */
+  this.processEvents=function(){
+    while(events.length){
+      var e=events.shift();
+      for(var j=0;j<objective.length; j++) {
+        var o=objective[j];
+        if(e.type instanceof o.type)
+          if( (o.trigger==e.event) ||
+              (o.trigger==MISSION.EVENT.VAR_ISZERO &&
+               missionvars[o.missionvar]===0)
+          ) {
+            switch(o.result) {
+              case MISSION.RESULT.DECREMENT:
+                missionvars[o.missionvar]--; break;
+              case MISSION.RESULT.INCREMENT:
+                missionvars[o.missionvar]++; break;
+              case MISSION.RESULT.WIN:
+              case MISSION.RESULT.LOSE:
+                missionvars['status']=o.result; break;
+                // may want to return here if the team has won/lost
+              default:
+                alert("unexpected event result!"); break;
+            }            
+          }
+      }
+    }
+  };
 }
 
 // Game world //////////////////////////////////////////////////////////////////
