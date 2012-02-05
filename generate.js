@@ -2,6 +2,30 @@
 
 var Generate={
   
+  TEAM:function(team){
+    var strength=$.R(0,19)/20;
+    var base=[
+      // Capital pieces
+      {type:CommCenter, num:1},
+      {type:Barracks, num:(2*strength)>>0},
+      {type:Pillbox, num:(2*strength)>>0},
+      {type:SmallTurret, num:(2*strength)>>0}
+    ];
+    
+    if(team==TEAM.GREEN) {
+      var x=world.width-200;
+    } else {
+      var x=200;
+    }
+    
+    for(var i=0;i<base.length;i++){
+      for(;base[i].num;base[i].num--) {
+        world.addPawn(new (base[i].type)(x,world.getHeight(x),team));
+        x+=TEAM.GOALDIRECTION[team]*$.R(32,72);
+      }
+    }
+  },
+  
   BG:function(ctx,w,h) {
     var imgData=ctx.createImageData(w,h);
     var d=imgData.data;
@@ -33,9 +57,9 @@ var Generate={
     for(var y=0; y<h; y++,cR+=dR,cG+=dG,cB+=dB) {
       for(var x=0; x<w; x++) {
         var c=4*(y*w+x);
-        d[c+0]=Math.round(cR)+$.R(-3,3);
-        d[c+1]=Math.round(cG)+$.R(-3,3);
-        d[c+2]=Math.round(cB)+$.R(-3,3);
+        d[c+0]=Math.round(cR);//+$.R(-3,3);
+        d[c+1]=Math.round(cG);//+$.R(-3,3);
+        d[c+2]=Math.round(cB);//+$.R(-3,3);
         d[c+3]=0xFF;
       }
     }
@@ -65,7 +89,7 @@ var Generate={
     // todo: splines to smooth out the peaks
     
     var peaks=[];
-    for(var x=$.R(10,80);x<w;x+=$.R(200,800)) {
+    for(var x=$.R(10,80);x<w;x+=$.R(100,400)) {
       var major={
         x:      x,
         height: $.R(60,h-100)
@@ -82,6 +106,21 @@ var Generate={
     }
     peaks.sort(function(a,b){return a.x-b.x;});
     
+    // insert flat region of 400px at both ends
+    // change this later to reflect terrain of the campaign tiles.
+    function flatten(p,start,length) {      
+      for(var i=0;p[i].x<start;i++);
+      for(var j=0;j<p.length-1 && p[j].x<start+length;j++);
+      var avgHeight=(p[i].height+p[j].height)>>1;
+      p[i].height=avgHeight;
+      p[j].height=avgHeight;
+      p.splice(i+1,j-i-1);
+    }
+    
+    flatten(peaks,80,400);      // hard coded for now.
+    flatten(peaks,w-480,400);
+    
+    // continued
     var avgHeight=0;
     for(var i=peaks.length; i--;) avgHeight+=peaks[i].height;
     avgHeight/=peaks.length; avgHeight=Math.round(avgHeight);
@@ -111,9 +150,9 @@ var Generate={
         var color=colors.bedrock;
         //if(height<$.R(60,80)) color=colors.topsoil;
         //if(height<$.R(10,30)) color=colors.bedrock;
-        d[c+0]=color.r+$.R(-8,8)+shadeMin;
-        d[c+1]=color.g+$.R(-8,8)+shadeMin;
-        d[c+2]=color.b+$.R(-8,8)+shadeMin;
+        d[c+0]=color.r+shadeMin;//+$.R(-8,8);
+        d[c+1]=color.g+shadeMin;//+$.R(-8,8);
+        d[c+2]=color.b+shadeMin;//+$.R(-8,8);
       }
     }
     return {imgdata_:imgData, heightmap_: heightmap, peaks_:peaks};

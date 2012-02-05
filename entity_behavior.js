@@ -43,6 +43,7 @@ var Behavior={
   },
   
 // Custom decorators and tasks /////////////////////////////////////////////////
+// Custom implies low-level behavior; //////////////////////////////////////////
   Custom:{
     
     isDead:function(obj) {

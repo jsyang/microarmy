@@ -149,8 +149,10 @@ function Team(){
 // Game world //////////////////////////////////////////////////////////////////
 var world;
 
-function World(map) {
-  if(!map) return alert("No map specified for world!");
+function World(map,team) {
+  this.team=team; // todo: make this private.
+  
+  //if(!map) return alert("No map specified for world!");
   
   var w=2490, h=192;
   this.width=w; this.height=h;
@@ -235,6 +237,4 @@ function World(map) {
     if(obj instanceof Explosion)  return explosions.push(obj);
     return false;
   };
-  
-  // todo: Add map's entities, predefined only during runtime  
 };
