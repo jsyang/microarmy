@@ -9,13 +9,12 @@ function Projectile() {
   this.target;
   this.damage=0;
   this.explosion;
-  this.imgSheet;
   this.img={ w:3, h:3, row:0 };
   
   
   this.getGFX=function(){
     return {
-      img:    this.imgSheet,
+      img:    this.img.sheet,
       imgdx:  (this.dx>0)? 3:0,
       imgdy:  this.img.row*this.img.h,
       worldx: this.x-(this.img.w>>1),
@@ -76,7 +75,7 @@ function Bullet(x,y,team,target,dx,dy,accuracy) {
   this.accuracy=accuracy;
   this.team=team;
   this.target=target;  
-  this.imgSheet=preloader.getFile('shells');
+  this.img.sheet=preloader.getFile('shells');
 
   this.range=35;
   this.damage=15;
@@ -89,7 +88,7 @@ function MGBullet(x,y,team,target,dx,dy,accuracy) {
   this.accuracy=accuracy;
   this.team=team;
   this.target=target;
-  this.imgSheet=preloader.getFile('shells');
+  this.img.sheet=preloader.getFile('shells');
     
   this.range=60;
   this.damage=$.R(21,32);
@@ -102,9 +101,9 @@ function SmallRocket(x,y,team,target,dx,dy,accuracy) {
   this.accuracy=accuracy;
   this.team=team;
   this.target=target;
-  this.imgSheet=preloader.getFile('shells');
+  this.img.sheet=preloader.getFile('shells');
   
-  this.img.row=1    
+  this.img.row=1;
   this.explosion=FragExplosion;
   this.range=90;
   this.damage=24;
@@ -115,8 +114,7 @@ MortarShell.prototype=new Projectile;
 function MortarShell(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;
   this.dx=dx, this.dy=dy;
-  this.imgSheet=preloader.getFile('shells');
-  // ^^^ might have to clean that code up... a lot of repetition
+  this.img.sheet=preloader.getFile('shells');
   
   this.ddy=0.41;
   this.img.row=2;
@@ -147,7 +145,7 @@ function SmallShell(x,y,team,target,dx,dy,accuracy) {
   this.accuracy=accuracy;
   this.team=team;
   this.target=target;
-  this.imgSheet=preloader.getFile('shells');
+  this.img.sheet=preloader.getFile('shells');
   
   this.img.row=2;
   this.explosion=FragExplosion;

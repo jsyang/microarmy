@@ -228,7 +228,10 @@ var Behavior={
       }
       obj.remove();
       return true;
-    }
+    },
+    
+    TRUE:function(){return true;},  //$ man true
+    FALSE:function(){return false;}
   }
 };
 
@@ -236,7 +239,7 @@ var Behavior={
 
 // Predefined trees for various classes
 Behavior.Library={
-  moveAndBoundsCheck:"<[move],[loopAnimation],<[isOutsideWorld],[walkingOffMapCheck]>>",
+  moveAndBoundsCheck:"<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",
   
   
   APC:"([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
