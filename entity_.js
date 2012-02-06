@@ -190,17 +190,14 @@ function World(map,team) {
   function processInstances(newXHash,vx,vw,instances) {    
     for(var i=0, newInstances=[];i<instances.length;i++) {
       var a=instances[i];
-      var alive=a.alive();
-      if(a.corpsetime>0) {
-        newInstances.push(a);
-        if(alive) newXHash.insert(a);
-        if(a.x>vx && a.x<vx+vw) {
-          var gfx=a.getGFX();
-          FG.drawImage(gfx.img,
-            gfx.imgdx,  gfx.imgdy,  gfx.imgw,gfx.imgh,
-            gfx.worldx, gfx.worldy, gfx.imgw,gfx.imgh
-          );
-        }
+      if(a.alive()) newXHash.insert(a);
+      if(a.corpsetime>0) newInstances.push(a);
+      if(a.x>vx && a.x<vx+vw) {
+        var gfx=a.getGFX();
+        FG.drawImage(gfx.img,
+          gfx.imgdx,  gfx.imgdy,  gfx.imgw,gfx.imgh,
+          gfx.worldx, gfx.worldy, gfx.imgw,gfx.imgh
+        );
       }
     }
     return newInstances;

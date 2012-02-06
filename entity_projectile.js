@@ -83,22 +83,7 @@ function MortarShell(x,y,team,target,dx,dy,accuracy) {
   this.ddy=0.41;
   this.img.row=2;
   this.range=1;
-  
-  // Hit on contact with ground
-  this.alive=function(){
-    if(this.range==0) return false;
-    if(world.isOutside(this)) {      
-      this.x-=this.dx>>1;
-      this.y=world.getHeight(this.x>>0);
-      this.range=0;
-      world.addPawn(new FragExplosion(this.x,this.y));
-      return this.corpsetime=0;
-    }
-    this.y+=this.dy;
-    this.x+=this.dx;
-    this.dy+=this.ddy;
-    return false;
-  };
+  this.behavior=Behavior.Library.MortarShell;
 }
 
 // Fired by SmallTurret
@@ -178,7 +163,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
       if(unit.team==this.team)  continue;
-      if(unit.isDead())         continue;
+      if(Behavior.Custom.isDead(unit))         continue;
       var dx=this.x-(unit.x-(unit.img.w>>1));
       var dy=this.y-(unit.y-(unit.img.h>>1));      
       if(dx*dx+dy*dy>81)       continue;   // Not close enough!
@@ -197,7 +182,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     // Homing.
     if( this.range<171 )
     {  // turn on homing function after delay
-      if(this.target && !this.target.isDead()) {
+      if(this.target && !Behavior.Custom.isDead(this.target)) {
         this.dx+=this.target.x<this.x? -this.dspeed: this.dspeed;
         this.dy+=this.target.y<this.y? -this.dspeed: this.dspeed;
         if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed) {

@@ -30,6 +30,7 @@ function Infantry() {
   
   this.alive=function(){ var _=this._;
     if(Behavior.Custom.isDead(this)) {
+      if(!this.corpsetime) return false;
       if(_.action<INFANTRY.ACTION.DEATH1) {
         _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
         _.frame.current=_.frame.first;

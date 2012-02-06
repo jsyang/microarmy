@@ -43,13 +43,6 @@ var Behavior={
     .replace(/\)/g,']}')+')');
   },
   
-/* Custom decorators and tasks (implies low-level behavior)
-  Prefix convention:
-    is___   = condition check
-    try___  = attempt to set a condition based on another condition
-  
-  Tasks should always return true.
-*/
   Custom:{
     
     isDead:function(obj) {
@@ -78,8 +71,8 @@ var Behavior={
       return false;
     },
     
-    /* Berserk: moving toward target for some time regardless of 
-      self-preservation or target's current location! */
+    /* Berserk: move towards target for some time regardless of
+    self-preservation or target's current location! */
     isBerserking:function(obj) { var _=obj._;
       if(_.berserk.ing) {
         if(obj instanceof Infantry) _.action=INFANTRY.ACTION.MOVEMENT;
@@ -245,6 +238,15 @@ var Behavior={
     fly:function(obj){
       obj.y+=obj.dy;
       obj.x+=obj.dx;
+      if(obj instanceof MortarShell) obj.dy+=this.ddy;
+      return true;
+    },
+    
+    hitGroundProjectile:function(projectile){
+      projectile.x-=projectile.dx>>1;
+      projectile.y=world.getHeight(projectile.x>>0);
+      world.addPawn(new FragExplosion(this.x,this.y));
+      Behavior.Custom.stopProjectile(projectile);
       return true;
     },
     
@@ -298,12 +300,14 @@ var Behavior={
 
 // Predefined trees for various classes
 Behavior.Library={
-
-  moveAndBoundsCheck:
-    "<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",
   
   Projectile:
     "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)",
+  MortarShell:
+    "(<[isOutsideWorld],[hitGroundProjectile]>,[fly])",
+
+  moveAndBoundsCheck:
+    "<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",
   
   APC:
     "([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
