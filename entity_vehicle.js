@@ -16,14 +16,7 @@ Vehicle.prototype=new Pawn;
 function Vehicle() {
 
   this.corpsetime=240;
-  this.takeDamage=function(d){ return this._.health-=d; };
-  this.isDead=function(){ return this._.health<=0; };
-  
-  this.remove=function(){
-    this.corpsetime=this._.health=0;
-    this._.action=VEHICLE.ACTION.WRECK;
-    this._.frame.current=0;
-  };
+  this.takeDamage=function(d){ return this._.health.current-=d; };
   
   // Rotation gfx
   this.getGFX=function(){ var _=this._;
@@ -77,7 +70,7 @@ function APC(x,y,team) {
     projectile: MGBullet,
     turn:       { ing:0, current:0, last: 2 },
     sight:      7,
-    health:     $.R(560,720),
+    health:     { current:$.R(560,720) },
     reload:     { ing:0, time:40 },
     ammo:       { clip:6, max:6 }
   };  

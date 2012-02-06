@@ -115,6 +115,11 @@ var Behavior={
       return true;
     },
     
+    remove:function(obj) {      
+      obj._.health.current=obj.corpsetime=0;
+      return true;
+    },
+    
     tryBerserking:function(obj) { var _=obj._;
       if($.r()<_.berserk.chance) {
         _.berserk.ing=_.berserk.time;
@@ -173,7 +178,7 @@ var Behavior={
       obj.y=world.getHeight(obj.x);
       return true;
     },
-
+    
     // this attack function came from Vehicle class; added Infantry stuff.
     attack:function(obj) { var _=obj._;
       //if(!_.projectile) return true;
@@ -280,7 +285,7 @@ var Behavior={
         soundManager.play('accomp');
         world.pause();
       }
-      obj.remove();
+      Behavior.Custom.remove(obj);
       return true;
     },
     

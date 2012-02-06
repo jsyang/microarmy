@@ -55,7 +55,7 @@ function Structure() {
       // absorb health
       _.health.current+=2*h[i]._.health;
       if(_.health.current>_.health.max) _.health.current=_.health.max;
-      h[i].remove(); _.crew.current++;
+      Behavior.Custom.remove(h[i]); _.crew.current++;
       if(this instanceof Pillbox) soundManager.play('sliderack1');
       else soundManager.play('feed');
       break;

@@ -18,16 +18,8 @@ var INFANTRY={
 Infantry.prototype=new Pawn;
 function Infantry() {
   this.img={ w:8, h:8, hDist2:20 };
-   
   this.corpsetime=180;
-  this.takeDamage=function(d){ return this._.health-=d; };
-  
-  this.remove=function(){ // silently remove the Pawn.
-    this.corpsetime=this._.health=0;
-    this._.action=INFANTRY.ACTION.DEATH1;
-    this._.frame.current=0;
-  };  
-  
+  this.takeDamage=function(d){ return this._.health.current-=d; };
   this.getGFX=function(){ var _=this._; return {
       img:    _.imgSheet,
       imgdx:  _.frame.current*this.img.w,
@@ -152,7 +144,7 @@ function EngineerInfantry(x,y,team) {
       
       scaffold._.crew.max=crewCount;
       world.addPawn(scaffold);
-      this.remove();
+      Behavior.Custom.remove(this);
       return false;
     }
 
