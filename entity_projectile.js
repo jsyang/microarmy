@@ -10,7 +10,7 @@ function Projectile() {
   this.damage=0;
   this.explosion;
   this.img={ w:3, h:3, row:0 };
-  
+  this.behavior=Behavior.Library.Projectile;
   
   this.getGFX=function(){
     return {
@@ -24,45 +24,9 @@ function Projectile() {
   }
   
   this.alive=function(){    
-    
-    // Out of bounds or hit the ground!
-    if(world.isOutside(this)) this.range=0;
-    if(!this.range) {
-      this.corpsetime=0;
-      return false;
-    } else { this.range--; }
-    
-    this.y+=this.dy;
-    this.x+=this.dx;
-    
-    
-    var h=world.xHash.getNBucketsByCoord(this.x,0);    
-    for(var i=0; i<h.length; i++) {
-      var unit=h[i];
-      if(unit.team==this.team)  continue;
-      if(Behavior.Custom.isDead(unit))         continue;      
-      
-      var dx=this.x-unit.x;
-      var dy=this.y-(unit.y-(unit.img.h>>1));
-      
-      var chanceToHit=this.accuracy[0];
-      chanceToHit+=(unit==this.target)? this.accuracy[1]:0;
-      
-      if(unit instanceof Infantry) {
-        switch(unit._.action) { // Stance affects chance to be hit
-          case INFANTRY.ACTION.ATTACK_PRONE:      chanceToHit-=0.11;
-          case INFANTRY.ACTION.ATTACK_CROUCHING:  chanceToHit-=0.06;
-        }        
-      }      
-
-      if(dx*dx+dy*dy>unit.img.hDist2)   continue;
-      if($.r()>chanceToHit) continue;
-      // We've hit something!
-      if(this.explosion)    world.addPawn(new this.explosion(this.x,this.y));
-      unit.takeDamage(this.damage);      
-      return this.range=this.corpsetime=0;
-    }
-    return false;  // keep flying, you crazy bird
+    Behavior.Execute(this.behavior,this);
+    return false; // Projectiles cannot become the targets of other entities.
+                  // This may change.
   }
 }
 
@@ -74,7 +38,7 @@ function Bullet(x,y,team,target,dx,dy,accuracy) {
   this.dx=dx, this.dy=dy;
   this.accuracy=accuracy;
   this.team=team;
-  this.target=target;  
+  this.target=target;
   this.img.sheet=preloader.getFile('shells');
 
   this.range=35;
@@ -89,7 +53,7 @@ function MGBullet(x,y,team,target,dx,dy,accuracy) {
   this.team=team;
   this.target=target;
   this.img.sheet=preloader.getFile('shells');
-    
+  
   this.range=60;
   this.damage=$.R(21,32);
 }

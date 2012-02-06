@@ -20,9 +20,10 @@ var Behavior={
         var invert=tree.id.charAt(0)==='!';
         var realId=invert?tree.id.slice(1):tree.id;
         var behavior=Behavior.Custom[realId];
+        if(typeof(behavior)==="boolean") return behavior;
         if(behavior)
           return invert? !behavior(thisArg) : behavior(thisArg);
-        var subtree=Behavior.Library[realId];
+        var subtree=Behavior.Library[realId];        
         if(subtree)
           return invert?
             !Behavior.Execute(subtree, thisArg)
@@ -42,16 +43,25 @@ var Behavior={
     .replace(/\)/g,']}')+')');
   },
   
-// Custom decorators and tasks /////////////////////////////////////////////////
-// Custom implies low-level behavior; //////////////////////////////////////////
+/* Custom decorators and tasks (implies low-level behavior)
+  Prefix convention:
+    is___   = condition check
+    try___  = attempt to set a condition based on another condition
+  
+  Tasks should always return true.
+*/
   Custom:{
     
     isDead:function(obj) {
-      return obj._.health<=0;
+      return obj._.health.current<=0;
     },
     
     isOutsideWorld:function(obj) {
       return world.isOutside(obj);
+    },
+    
+    isProjectileOutOfRange:function(projectile) { // Cannot travel any further      
+      return projectile.range? !projectile.range--:true;
     },
     
     isReloading:function(obj) { var _=obj._;
@@ -80,6 +90,31 @@ var Behavior={
       return false;
     },
     
+    isVehicleMoving:function(obj) { var _=obj._;
+      return  _.action==VEHICLE.ACTION.MOVING ||
+              _.action==VEHICLE.ACTION.TURNING;
+    },
+    
+    // Handle rotation to face target -- Vehicles
+    isVehicleFacingTarget:function(obj) { var _=obj._;
+      if(_.target && (_.target.x-obj.x)*_.direction<0) {
+        if(!_.turn.ing) {            
+          _.turn.ing=1;
+          _.turn.current=0;
+          _.action=VEHICLE.ACTION.TURNING;
+        } else {
+          _.turn.current++;
+          if(_.turn.current>_.turn.last) {
+            _.turn.ing=_.turn.current=0;
+            _.direction*=-1;
+            _.action=VEHICLE.ACTION.MOVING;
+          }            
+        }
+        return false;
+      }
+      return true;
+    },
+    
     tryBerserking:function(obj) { var _=obj._;
       if($.r()<_.berserk.chance) {
         _.berserk.ing=_.berserk.time;
@@ -88,9 +123,10 @@ var Behavior={
       return false;
     },    
     
-    isVehicleMoving:function(obj) { var _=obj._;
-      return  _.action==VEHICLE.ACTION.MOVING ||
-              _.action==VEHICLE.ACTION.TURNING;
+    stopProjectile:function(projectile) {
+      projectile.range=0;
+      projectile.corpsetime=0;
+      return true;
     },
     
     loopAnimation:function(obj) { var _=obj._;
@@ -131,27 +167,7 @@ var Behavior={
       _.frame.last =_.direction>0?  11: 5;
       return true;
     },    
-    
-    // Handle rotation to face target -- Vehicles
-    isVehicleFacingTarget:function(obj) { var _=obj._;
-      if(_.target && (_.target.x-obj.x)*_.direction<0) {
-        if(!_.turn.ing) {            
-          _.turn.ing=1;
-          _.turn.current=0;
-          _.action=VEHICLE.ACTION.TURNING;
-        } else {
-          _.turn.current++;
-          if(_.turn.current>_.turn.last) {
-            _.turn.ing=_.turn.current=0;
-            _.direction*=-1;
-            _.action=VEHICLE.ACTION.MOVING;
-          }            
-        }
-        return false;
-      }
-      return true;
-    },
-    
+        
     move:function(obj) {
       obj.x+=obj._.direction;
       obj.y=world.getHeight(obj.x);
@@ -221,6 +237,44 @@ var Behavior={
       return true;
     },
     
+    fly:function(obj){
+      obj.y+=obj.dy;
+      obj.x+=obj.dx;
+      return true;
+    },
+    
+    tryHitProjectile:function(projectile){
+      var h=world.xHash.getNBucketsByCoord(projectile.x,0);    
+      for(var i=0; i<h.length; i++) {
+        var unit=h[i];
+        if(unit.team==projectile.team)  continue;
+        if(Behavior.Custom.isDead(unit))         continue;      
+        
+        var dx=projectile.x-unit.x;
+        var dy=projectile.y-(unit.y-(unit.img.h>>1));
+        
+        var chanceToHit=projectile.accuracy[0];
+        chanceToHit+=(unit==projectile.target)?
+          projectile.accuracy[1]:0;
+        
+        if(unit instanceof Infantry) {
+          switch(unit._.action) { // Stance affects chance to be hit
+            case INFANTRY.ACTION.ATTACK_PRONE:      chanceToHit-=0.11;
+            case INFANTRY.ACTION.ATTACK_CROUCHING:  chanceToHit-=0.06;
+          }        
+        }      
+  
+        if(dx*dx+dy*dy>unit.img.hDist2)   continue;
+        if($.r()>chanceToHit) continue;
+        // We've hit something!
+        if(projectile.explosion)
+          world.addPawn(new projectile.explosion(projectile.x,projectile.y));
+        unit.takeDamage(projectile.damage);
+        return true;
+      }
+      return false;
+    },
+    
     walkingOffMapCheck:function(obj) {
       if(TEAM.GOALDIRECTION[obj.team]==obj._.direction) {
         soundManager.play('accomp');
@@ -230,8 +284,8 @@ var Behavior={
       return true;
     },
     
-    TRUE:function(){return true;},  //$ man true
-    FALSE:function(){return false;}
+    TRUE:true,
+    FALSE:false
   }
 };
 
@@ -239,13 +293,19 @@ var Behavior={
 
 // Predefined trees for various classes
 Behavior.Library={
-  moveAndBoundsCheck:"<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",
+
+  moveAndBoundsCheck:
+    "<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",
   
+  Projectile:
+    "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)",
   
-  APC:"([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
-  // todo: oops... inserted tryBerserking into wrong place.. berserk behavior
-  // is making them act weird...
-  Infantry:"([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)"
+  APC:
+    "([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
+
+  Infantry:
+    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)"
+
 };
 
 // Convert predefined shorthand code into btree code.

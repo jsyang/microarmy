@@ -1,6 +1,6 @@
 // Preload stuff ///////////////////////////////////////////////////////////////
 
-var preloader=(function() {    
+preloader=(function() {    
   // 1. Preload gfx
   var a=new html5Preloader();  
   var i="";  
@@ -29,6 +29,7 @@ var preloader=(function() {
 preloader.onfinish=function() {  
   // 2. Preload sfx/music
   soundManager.onready(function() {
+    soundManager.defaultOptions.volume = 15;
     var list=(
       'pistol,mgburst,rocket,die1,die2,die3,die4,'+
       'expsmall,expfrag,accomp,crumble,sliderack1,'+
