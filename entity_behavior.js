@@ -45,9 +45,17 @@ var Behavior={
   
   Custom:{
     
+    // Not usually used in BTrees; as this is not a behavior.
+    takeDamage:function(obj,damage){
+      if(damage<0 || !damage) return true;
+      obj._.health.current-=damage;
+      return true;
+    },
+    
     isDead:function(obj) {
       return obj._.health.current<=0;
     },
+    
     
     isOutsideWorld:function(obj) {
       return world.isOutside(obj);
@@ -152,10 +160,10 @@ var Behavior={
       if(_.target) {
         _.direction=_.target.x>obj.x?1:-1;
         // Randomize attack stance -- Infantry
-        if(_.action==INFANTRY.ACTION.MOVEMENT)
-          _.action=$.R(
-            INFANTRY.ACTION.ATTACK_STANDING,
-            INFANTRY.ACTION.ATTACK_PRONE);
+        if(!(obj instanceof EngineerInfantry) &&
+           _.action==INFANTRY.ACTION.MOVEMENT)
+          _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,
+                       INFANTRY.ACTION.ATTACK_PRONE);
       } else {
         _.action=INFANTRY.ACTION.MOVEMENT;
         _.direction=TEAM.GOALDIRECTION[obj.team];
@@ -250,6 +258,28 @@ var Behavior={
       return true;
     },
     
+    tryBuilding:function(obj){ var _=obj._;
+      if(_.build.x==obj.x) {
+        var scaffold=new Scaffold(obj.x,world.getHeight(obj.x),obj.team);
+        scaffold._.build.type=_.build.type;
+        
+        // How many workers do we need to construct this?
+        var type=_.build.type;
+        var crewCount=8;
+             if(type instanceof Pillbox)      crewCount=4;
+        else if(type instanceof SmallTurret)  crewCount=6;
+        else if(type instanceof Barracks)     crewCount=16;
+        else if(type instanceof CommCenter)   crewCount=60;
+        
+        scaffold._.crew.max=crewCount;
+        world.addPawn(scaffold);
+        Behavior.Custom.remove(obj);
+        poo=scaffold;
+        return true;
+      }
+      return false;
+    },
+    
     tryHitProjectile:function(projectile){
       var h=world.xHash.getNBucketsByCoord(projectile.x,0);    
       for(var i=0; i<h.length; i++) {
@@ -313,7 +343,10 @@ Behavior.Library={
     "([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
 
   Infantry:
-    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)"
+    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",
+    
+  EngineerInfantry: //test this Btree
+    "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>"
 
 };
 

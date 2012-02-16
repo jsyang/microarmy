@@ -21,13 +21,13 @@ function Explosion() {
   
   this.alive=function(){
     if(this.frame.current++>this.frame.last) return this.corpsetime=0;
-    var h=world.xHash.getNBucketsByCoord(this.x,4);
+    var h=world.xHash.getNBucketsByCoord(this.x,2);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
       var dx=this.x-(unit.x-(unit.img.w>>1));     // point object.
       var dy=this.y-(unit.y-(unit.img.h>>1));      
       if(dx*dx+dy*dy>this.img.hDist2) continue;   // Not close enough!
-      unit.takeDamage(this.damage);
+      Behavior.Custom.takeDamage(unit,this.damage);
       // Make sure not to "give" anyone health because of this.
       if(this.damage-this.damageDecay<0) this.damage=0;
       else this.damage-=this.damageDecay;

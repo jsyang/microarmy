@@ -14,7 +14,7 @@ preloader=(function() {
   var u=( // stuff that has team-unique gfx
     'pistol,rocket,engineer,'+
     'apc,'+
-    'comm,pillbox,barracks,turret,depot,repair,helipad'
+    'comm,pillbox,barracks,turret,depot,repair,helipad,scaffold'
   ).split(',');
   
   for(var j=0; j<u.length; j++)
@@ -55,9 +55,11 @@ preloader.onfinish=function() {
 // BOOM! HEH.
 window.onclick=function(e){
   var x=e.pageX;
-  world.addPawn(
-    new HEAPExplosion(e.pageX,e.pageY)
-  );
+  var eng=new EngineerInfantry(x,world.getHeight(x),TEAM.BLUE);
+  eng._.build.type=Pillbox;
+  eng._.build.x=500;
+  world.addPawn(eng);
 };
 
+var poo;
 //window.ondblclick=function(e){  console.log(e.pageX); };
