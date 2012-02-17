@@ -29,6 +29,29 @@ function XHash(worldWidth) {
   var bucketWidth=6; // divide world into 1<<6 == 64 pixel buckets
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
+    
+  // Can look in the direction in which it's pointing.
+  this.getNearestEnemyRay=function(obj){ var _=obj._;
+    var center=obj.x>>bucketWidth;
+    var minDist=Infinity;    
+    _.target=undefined;        
+    for(var sight=_.sight; sight; sight--) {
+      var shell=buckets[center+_.direction*sight];
+      if(!shell) continue;      
+      for(var i=0; i<shell.length; i++) {
+        var entity=shell[i];          
+        if(entity.team==obj.team ||
+           Behavior.Custom.isDead(entity) ||
+           (_.direction*(entity.x-obj.x)<0) )
+          continue;
+        var dist=Math.abs(entity.x-obj.x);
+        if(!(dist>>sight) && dist<minDist){
+          _.target=entity; minDist=dist;
+        }
+      }
+      if(_.target) break;
+    }
+  },
   
   this.getNearestEnemy=function(obj){
     var sight=obj._.sight;

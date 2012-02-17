@@ -52,6 +52,15 @@ var Behavior={
       
       if(obj instanceof Structure) {
         
+        // Crewed structures
+        if(_.crew && damage>_.crew.damageThreshold) {
+          if($.r()<_.crew.damageChance) {
+            var killed=$.R(2,_.crew.max);
+            _.crew.current-=killed;
+            if(_.crew.current-killed<0) _.crew.current=0;
+          }
+        }
+        
         // Structures that supply troops
         if(_.reinforce && damage>_.reinforce.damageThreshold) {
           if($.r()<_.reinforce.damageChance) {
@@ -70,9 +79,13 @@ var Behavior={
       return obj._.health.current<=0;
     },
     
-    isStructureDamaged:function(structure){ var _=structure._;
-      if(_.health.current<0.6*_.health.max) structure.state=STRUCTURE.STATE.BAD;
-      
+    checkStructureState:function(structure){ var _=structure._;
+      if(_.health.current<0.6*_.health.max) {
+        structure.state=STRUCTURE.STATE.BAD;
+        // Panic: arm base with missile from hell!
+        if(structure instanceof CommCenter) _.projectile=HomingMissile;
+      }
+      return true;
     },
     
     isOutsideWorld:function(obj) {
@@ -81,6 +94,10 @@ var Behavior={
     
     isProjectileOutOfRange:function(projectile) { // Cannot travel any further      
       return projectile.range? !projectile.range--:true;
+    },
+    
+    isArmed:function(obj) {
+      return !!obj._.projectile;
     },
     
     isReloading:function(obj) { var _=obj._;
@@ -92,6 +109,16 @@ var Behavior={
         _.ammo.clip=_.ammo.max;
         if(obj instanceof Infantry) // todo: get rid of this hack
           _.frame.current=_.frame.first;
+        
+        // Attack more frequently if well crewed
+        if(obj instanceof Structure) {
+          _.reload.ing=_.crew?
+            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
+            :_.reload.time;
+          _.ammo.clip=_.ammo.max;
+          _.target=undefined;     // retarget
+        }
+        
         return true;
       }
       return false;
@@ -115,24 +142,24 @@ var Behavior={
     },
     
     // Handle rotation to face target -- Vehicles
-    isVehicleFacingTarget:function(obj) { var _=obj._;
+    isFacingTarget:function(obj) { var _=obj._;
       if(_.target && (_.target.x-obj.x)*_.direction<0) {
         if(!_.turn.ing) {            
           _.turn.ing=1;
           _.turn.current=0;
-          _.action=VEHICLE.ACTION.TURNING;
+          if(obj instanceof Vehicle) _.action=VEHICLE.ACTION.TURNING;
         } else {
           _.turn.current++;
           if(_.turn.current>_.turn.last) {
             _.turn.ing=_.turn.current=0;
             _.direction*=-1;
-            _.action=VEHICLE.ACTION.MOVING;
+            if(obj instanceof Vehicle) _.action=VEHICLE.ACTION.MOVING;
           }            
         }
         return false;
       }
       return true;
-    },
+    },    
     
     remove:function(obj) {      
       obj._.health.current=obj.corpsetime=0;
@@ -168,7 +195,10 @@ var Behavior={
       // Try to find a valid target!
       if(!t || Behavior.Custom.isDead(t) ||
          !Behavior.Custom.seeTarget(obj) || t.team==obj.team)
-        world.xHash.getNearestEnemy(obj);
+        if(obj instanceof Pillbox)
+          world.xHash.getNearestEnemyRay(obj);
+        else
+          world.xHash.getNearestEnemy(obj);
       
       return obj._.target? true:false;
     },
@@ -207,7 +237,7 @@ var Behavior={
         // Melee distance: LESS than one body!
         if(dist<obj.img.w) {
           if($.r()<_.berserk.chance) {
-            _.target.takeDamage(_.meleeDmg);
+            Behavior.Custom.takeDamage(_.target,_.meleeDmg);
             // Pretty hard to ignore someone punching your face
             if(_.target._) _.target._.target=obj;
           }
@@ -232,8 +262,13 @@ var Behavior={
         if(dist<48) return true; // don't shoot it's going to blow us up!
         if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
         else soundManager.play('rocket');
-        accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
+        accuracy=[0.28,0.68]; strayDY=$.R(-19,19)/100;
         
+      } else if(_.projectile==SmallShell) {
+        soundManager.play('turretshot');
+        fSpeed=7;
+        accuracy=[0.60,0.50]; strayDY=$.R(-12,9)/100; // upwards tendency
+      
       } else if(_.projectile==HomingMissile) {
         if(!_.target) {
           _.reload.time=$.R(_.reload.min,_.reload.max);
@@ -254,6 +289,12 @@ var Behavior={
       // Projectile origin relative to sprite
       var pDY=-obj.img.h>>1;
       var pDX=_.direction*4;
+      
+      if(obj instanceof Structure) {
+        var pDY= -_.shootHeight;
+        var pDX=_.direction>0? (obj.img.w>>1)-2 : -((obj.img.w>>1)-2);
+      }      
+      
       if(obj instanceof Infantry)
         var pDY=_.action==INFANTRY.ACTION.ATTACK_PRONE? -2: -4;
       
@@ -289,7 +330,7 @@ var Behavior={
     hitGroundProjectile:function(projectile){
       projectile.x-=projectile.dx>>1;
       projectile.y=world.getHeight(projectile.x>>0);
-      world.addPawn(new FragExplosion(this.x,this.y));
+      world.addPawn(new FragExplosion(projectile.x,projectile.y));
       Behavior.Custom.stopProjectile(projectile);
       return true;
     },
@@ -342,7 +383,7 @@ var Behavior={
         // We've hit something!
         if(projectile.explosion)
           world.addPawn(new projectile.explosion(projectile.x,projectile.y));
-        unit.takeDamage(projectile.damage);
+        Behavior.Custom.takeDamage(unit,projectile.damage);
         return true;
       }
       return false;
@@ -367,6 +408,82 @@ var Behavior={
       );
     },
     
+    tryCrewing:function(structure) { var _=structure._;
+      if(_.crew){
+        if(_.crew.current<_.crew.max) {
+          var h=world.xHash.getNBucketsByCoord(structure.x,2);
+          for(var i=0; i<h.length; i++) {
+            if(!(h[i] instanceof PistolInfantry) ||
+               Behavior.Custom.isDead(h[i]) ||
+               (Math.abs(h[i].x-structure.x)>structure.img.w>>1) )
+               continue;
+            
+            if(h[i].team!=structure.team) {
+              // new ownership!
+              if(_.crew.current==0) {
+                structure.team=h[i].team;
+                _.direction=TEAM.GOALDIRECTION[structure.team];
+              } else continue;
+            }
+            
+            // absorb health
+            _.health.current+=2*h[i]._.health;
+            if(_.health.current>_.health.max) _.health.current=_.health.max;
+            Behavior.Custom.remove(h[i]);
+            _.crew.current++;
+            if(structure instanceof Pillbox) soundManager.play('sliderack1');
+            else soundManager.play('feed');
+            break;
+          }
+        } else {
+          if(structure instanceof Scaffold) {
+            world.addPawn(
+              new _.build.type(
+                structure.x,
+                world.getHeight(structure.x),
+                structure.team
+              )
+            );
+            Behavior.Custom.remove(structure);
+            return true;
+          }
+        }
+        if(!_.crew.current){
+          // Enemies should not attack an empty pillbox
+          structure.imgSheet=_.crew.empty;
+        } else {
+          structure.imgSheet=_.crew.occupied(structure);
+        }        
+      }
+      return true;
+    },
+    
+    tryReinforcing:function(structure) { var _=structure._;
+      if(_.reinforce) {        
+        if(_.reinforce.next>0) _.reinforce.next--; else {
+          // Dump reinforcements faster if shit is hitting the fan.
+          _.reinforce.next=$.R(30,
+            (_.reinforce.time*(1.25-_.health.current/_.health.max))>>0);
+          
+          for(var i=0; i<=structure.state; i++) {            
+            // Dirty, but working for now--we'll want to build this later
+            var typePick=$.R(0,_.reinforce.types.length-1);
+            if(_.reinforce.supply[typePick]
+               && $.r()<_.reinforce.chances[typePick]) {
+              _.reinforce.supply[typePick]--;
+              world.addPawn(
+                new _.reinforce.types[typePick]
+                (structure.x,world.getHeight(structure.x),structure.team)
+              );
+            }
+          }
+        }
+      }
+      return true;
+    },
+    
+    
+    
     TRUE:true,
     FALSE:false
   }
@@ -386,77 +503,20 @@ Behavior.Library={
     "<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",
   
   APC:
-    "([isReloading],<[foundTarget],(<[!isVehicleFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
+    "([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
 
   Infantry:
-    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",
-    
+    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",    
   EngineerInfantry:
     "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>",
-
-/*
-this.checkState();
-      
-      if(_.crew){
-        if(_.crew.current<_.crew.max) this.findCrew();
-        if(!_.crew.current){
-          // Enemies should not attack an empty pillbox
-          this.imgSheet=_.crew.empty; return false;
-        } else {
-          this.imgSheet=_.crew.occupied(this);
-        }        
-      }
-      
-      // Give some reinforcements, if there are any to give
-      if(_.reinforce) {        
-        if(_.reinforce.next>0) _.reinforce.next--; else {
-          // Dump reinforcements faster if shit is hitting the fan.
-          _.reinforce.next=$.R(30,
-            (_.reinforce.time*(1.25-_.health.current/_.health.max))>>0);
-          
-          for(var i=0; i<=this.state; i++) {            
-            // Dirty, but working for now--we'll want to build this later
-            var typePick=$.R(0,_.reinforce.types.length-1);
-            if(_.reinforce.supply[typePick]
-               && $.r()<_.reinforce.chances[typePick]) {
-              _.reinforce.supply[typePick]--;
-              world.addPawn(
-                new _.reinforce.types[typePick]
-                (this.x,world.getHeight(this.x),this.team)
-              );
-            }
-          }
-        }
-      }
-      
-      if(_.projectile) {
-        // If reloading, don't do anything else. 
-        if(_.ammo.clip==0) {
-          // Attack more frequently if better stocked          
-          _.reload.ing=_.crew?
-            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
-            :_.reload.time;
-          _.ammo.clip=_.ammo.max;
-          _.target=undefined;     // reprioritize
-          return true;
-        }
-        if(_.reload.ing) { _.reload.ing--; return true; }
-        if(!_.target || Behavior.Custom.isDead(_.target) || !this.seeTarget() )
-          this.findTarget();        
-        
-        // Attack!
-        this.attack();
-      } 
- 
- 
-*/
   
   Structure:
-    "()",
+    "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
+  SmallTurret:
+    "<[checkStructureState],[!isReloading],<[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",
+  Scaffold:
+    "<[checkStructureState],[tryCrewing]>"
   
-  CommCenter:
-    "()"
-
 };
 
 // Convert predefined shorthand code into btree code.

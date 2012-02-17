@@ -16,7 +16,6 @@ Vehicle.prototype=new Pawn;
 function Vehicle() {
 
   this.corpsetime=240;
-  this.takeDamage=function(d){ return this._.health.current-=d; };
   
   // Rotation gfx
   this.getGFX=function(){ var _=this._;
