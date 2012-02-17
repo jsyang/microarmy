@@ -114,72 +114,19 @@ function Structure() {
   this.isDead=function(){ return this._.health.current<=0; };
   this.checkState=function(){ var _=this._;
     if(_.health.current<0.6*_.health.max) this.state=STRUCTURE.STATE.BAD;
-  };
-  
-  // Play crumble sound by default.
-  this.deathEvent=function(){ soundManager.play('crumble'); };
+  };  
   
   this.alive=function() { var _=this._;    
-    if(this.isDead()) {
+    if(Behavior.Custom.isDead(this)) {
       if(this.state!=STRUCTURE.STATE.WRECK) {
         this.state=STRUCTURE.STATE.WRECK;
-        this.deathEvent();
+        soundManager.play('crumble');
+        Behavior.Custom.throwShrapnel(this);
       }
       return false;
     } else {
       
-      this.checkState();
       
-      if(_.crew){
-        if(_.crew.current<_.crew.max) this.findCrew();
-        if(!_.crew.current){
-          // Enemies should not attack an empty pillbox
-          this.imgSheet=_.crew.empty; return false;
-        } else {
-          this.imgSheet=_.crew.occupied(this);
-        }        
-      }
-      
-      // Give some reinforcements, if there are any to give
-      if(_.reinforce) {        
-        if(_.reinforce.next>0) _.reinforce.next--; else {
-          // Dump reinforcements faster if shit is hitting the fan.
-          _.reinforce.next=$.R(30,
-            (_.reinforce.time*(1.25-_.health.current/_.health.max))>>0);
-          
-          for(var i=0; i<=this.state; i++) {            
-            // Dirty, but working for now--we'll want to build this later
-            var typePick=$.R(0,_.reinforce.types.length-1);
-            if(_.reinforce.supply[typePick]
-               && $.r()<_.reinforce.chances[typePick]) {
-              _.reinforce.supply[typePick]--;
-              world.addPawn(
-                new _.reinforce.types[typePick]
-                (this.x,world.getHeight(this.x),this.team)
-              );
-            }
-          }
-        }
-      }
-      
-      if(_.projectile) {
-        // If reloading, don't do anything else. 
-        if(_.ammo.clip==0) {
-          // Attack more frequently if better stocked          
-          _.reload.ing=_.crew?
-            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
-            :_.reload.time;
-          _.ammo.clip=_.ammo.max;
-          _.target=undefined;     // reprioritize
-          return true;
-        }
-        if(_.reload.ing) { _.reload.ing--; return true; }
-        if(!_.target || Behavior.Custom.isDead(_.target) || !this.seeTarget() )
-          this.findTarget();        
-        
-        // Attack!
-        this.attack();
-      }
       return true;
     }    
   };
@@ -196,78 +143,27 @@ function CommCenter(x,y,team) {
   
   this.img={ w:28, h:28, hDist2:196 };
   this.imgSheet=preloader.getFile('comm'+TEAM.NAMES[team]);  
-  
-  // Large damage has a chance of killing the supply of people inside.
-  this.takeDamage=function(d){ var _=this._;
-    if(d>18 && $.r()<0.4) {
-      var t=$.R(0,1);
-      var killed=$.R(2,16);
-      if(_.reinforce.supply[t]-killed>0)
-        _.reinforce.supply[t]-=killed;
-      else
-        _.reinforce.supply[t]=0;
-    }
-    return _.health.current-=d;
-  };
-  
-  this.checkState=function(){ var _=this._;
-    if(_.health.current<0.6*_.health.max) this.state=STRUCTURE.STATE.BAD;
-    if(_.health.current>0.4*_.health.max) return true;
-    _.projectile=HomingMissile;
-  };
-  
-  this.findTarget=function(){ var _=this._;
-    _.target=undefined;
-    var h=world.xHash.getNBucketsByCoord(this.x,(_.sight-5)*2+2);
-    for(var i=0, maxDist=0; i<h.length; i++) {
-      var dist=Math.abs(h[i].x-this.x);
-      if(h[i].team==this.team) continue;
-      if(Behavior.Custom.isDead(h[i])) continue;
-      if(dist<100) continue;
-      if(!(!(dist>>_.sight) && (dist>this.img.w>>1))) continue;
-      if(dist>maxDist){
-        _.target=h[i]; maxDist=dist;
-        if($.r()<0.13) break;
-      }
-    }
-  };
-  
-  this.deathEvent=function(){
-    soundManager.play('crumble');
-    var w2=this.img.w>>1, h2=this.img.h>>1;
-    world.addPawn(new SmallExplosion(this.x,this.y-h2));    
-    var shrap=$.R(5,10);
-    while(shrap--) world.addPawn(
-      new MortarShell(
-        this.x+$.R(-w2,w2),this.y-h2,0,0,
-        $.R(-4,4)/2,$.R(-18,-12)/4,0)
-    );
-  };
-  
+
   // Panic attack: launch homing missile from hell.
-  this.attack=function() { var _=this._;    
-    if(!_.target) { _.reload.time=$.R(10,1220); return true; }
-    soundManager.play('missile1');
-    world.addPawn(
-      new _.projectile(this.x,this.y-20,this.team,_.target,_.direction*4.6,-8.36,0 )
-    );
-    _.ammo.clip--;
-    _.reload.time=$.R(10,1220);
-    return true;
-  };
   
   this._={
     sight:        16,
     ammo:         { clip: 1, max:1 },
-    reload:       { ing:0, time:$.R(10,1220) },
+    reload:       { ing:0, time:$.R(20,1220), min:20, max: 1220 },
     projectile:   undefined,
+    
+    behavior:     Behavior.Library.CommCenter,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     reinforce:    { next: 0, time: 290,
                     types:  [PistolInfantry,RocketInfantry],
                     supply: [320,180],                    
-                    chances:[0.7,0.27]
+                    chances:[0.7,0.27],
+                    
+                    // big dmg kills reinforcements
+                    damageThreshold:  18,
+                    damageChance:     0.4
                   },
     
     target:       undefined

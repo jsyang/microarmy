@@ -1,7 +1,7 @@
 <html><title>Test Code / Suites for microarmy</title>
 <script src=util.js></script>
 <script src=generate.js></script>
-<script src=entity_fs.js></script>
+<script src=entity_.js></script>
 <script src=entity_behavior.js></script>
 <script>
 function getID(id){ return document.getElementById(id); }
@@ -40,8 +40,33 @@ var test_proceduralGameWorld=new function(){
   };
 };
 
+var test_listAllCustomBehaviors=new function(){
+  this.init=function(){
+    var list=document.createElement("select");    
+    list.setAttribute('multiple',true);
+    list.style.width=160;
+    var l=0;
+    for(var i in Behavior.Custom) {
+      var o=document.createElement("option");
+      o.text=i;
+      list.appendChild(o);
+      l++;      
+    }
+    list.setAttribute('size',l);
+    list.onchange=function(){
+      document.getElementById("def").value=
+      Behavior.Custom[this.options[this.selectedIndex].text].toString();
+    }
+    
+    var def=document.createElement("textarea");
+    def.id="def";
+    def.setAttribute('rows',l+1);
+    def.setAttribute('cols',120);
+    
+    document.body.appendChild(list);
+    document.body.appendChild(def);
+  };
+};
+
 </script><body bgcolor='#666'></body>
-<script>
-  document.body.onload=test_proceduralGameWorld.init;
-</script>
-</html>
+<script>document.body.onload=test_listAllCustomBehaviors.init;</script></html>

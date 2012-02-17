@@ -46,9 +46,23 @@ var Behavior={
   Custom:{
     
     // Not usually used in BTrees; as this is not a behavior.
-    takeDamage:function(obj,damage){
-      if(damage<0 || !damage) return true;
-      obj._.health.current-=damage;
+    takeDamage:function(obj,damage){ var _=obj._;
+      if(damage<0 || !damage || Behavior.Custom.isDead(obj)) return true;
+      _.health.current-=damage;
+      
+      if(obj instanceof Structure) {
+        
+        // Structures that supply troops
+        if(_.reinforce && damage>_.reinforce.damageThreshold) {
+          if($.r()<_.reinforce.damageChance) {
+            var type=$.R(0,_.reinforce.types.length-1);
+            var killed=$.R(2,16);
+            _.reinforce.supply[type]-=killed;
+            if(_.reinforce.supply[type]<0) _.reinforce.supply[type]=0;
+          }
+        }
+      }
+      
       return true;
     },
     
@@ -56,6 +70,10 @@ var Behavior={
       return obj._.health.current<=0;
     },
     
+    isStructureDamaged:function(structure){ var _=structure._;
+      if(_.health.current<0.6*_.health.max) structure.state=STRUCTURE.STATE.BAD;
+      
+    },
     
     isOutsideWorld:function(obj) {
       return world.isOutside(obj);
@@ -150,7 +168,7 @@ var Behavior={
       // Try to find a valid target!
       if(!t || Behavior.Custom.isDead(t) ||
          !Behavior.Custom.seeTarget(obj) || t.team==obj.team)
-        world.xHash.getNearEnemy(obj);
+        world.xHash.getNearestEnemy(obj);
       
       return obj._.target? true:false;
     },
@@ -178,7 +196,7 @@ var Behavior={
       obj.x+=obj._.direction;
       obj.y=world.getHeight(obj.x);
       return true;
-    },
+    },    
     
     // this attack function came from Vehicle class; added Infantry stuff.
     attack:function(obj) { var _=obj._;
@@ -204,15 +222,33 @@ var Behavior={
       if(_.projectile==MGBullet) {
         if(_.ammo.clip==_.ammo.max) soundManager.play('mgburst');
         accuracy=[0.65,0.35]; strayDY=$.R(-15,15)/100;
+        
       } else if(_.projectile==Bullet) {
         if(_.ammo.clip==_.ammo.max) soundManager.play('pistol');
         if(!INFANTRY.SHOTFRAME.PISTOL[_.frame.current]) return true;
         accuracy=[0.15,0.85]; strayDY=$.R(-15,15)/100;
+        
       } else if(_.projectile==SmallRocket) {
-        if(dist<48) return true;            // don't shoot rockets if too close!
+        if(dist<48) return true; // don't shoot it's going to blow us up!
         if(!INFANTRY.SHOTFRAME.ROCKET[_.frame.current]) return true;
         else soundManager.play('rocket');
         accuracy=[0.28,0.68]; strayDY=$.R(-21,21)/100;
+        
+      } else if(_.projectile==HomingMissile) {
+        if(!_.target) {
+          _.reload.time=$.R(_.reload.min,_.reload.max);
+        } else {
+          soundManager.play('missile1');
+          world.addPawn(
+            new HomingMissile(obj.x,obj.y-20,
+                              obj.team,_.target,
+                              _.direction*4.6,-8.36,0 )
+          );
+          _.ammo.clip--;
+          _.reload.time=$.R(10,1220);
+          
+        }
+        return true;
       }
       
       // Projectile origin relative to sprite
@@ -246,7 +282,7 @@ var Behavior={
     fly:function(obj){
       obj.y+=obj.dy;
       obj.x+=obj.dx;
-      if(obj instanceof MortarShell) obj.dy+=this.ddy;
+      if(obj instanceof MortarShell) obj.dy+=obj.ddy;
       return true;
     },
     
@@ -321,6 +357,16 @@ var Behavior={
       return true;
     },
     
+    throwShrapnel:function(obj) {
+      var w2=obj.img.w>>1, h2=obj.img.h>>1;
+      world.addPawn(new SmallExplosion(obj.x,obj.y-h2));    
+      for(var shrap=$.R(5,10); shrap; shrap--) world.addPawn(
+        new MortarShell(
+          obj.x+$.R(-w2,w2),obj.y-h2,0,0,
+          $.R(-4,4)/2,$.R(-18,-12)/4,0)
+      );
+    },
+    
     TRUE:true,
     FALSE:false
   }
@@ -345,8 +391,71 @@ Behavior.Library={
   Infantry:
     "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",
     
-  EngineerInfantry: //test this Btree
-    "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>"
+  EngineerInfantry:
+    "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>",
+
+/*
+this.checkState();
+      
+      if(_.crew){
+        if(_.crew.current<_.crew.max) this.findCrew();
+        if(!_.crew.current){
+          // Enemies should not attack an empty pillbox
+          this.imgSheet=_.crew.empty; return false;
+        } else {
+          this.imgSheet=_.crew.occupied(this);
+        }        
+      }
+      
+      // Give some reinforcements, if there are any to give
+      if(_.reinforce) {        
+        if(_.reinforce.next>0) _.reinforce.next--; else {
+          // Dump reinforcements faster if shit is hitting the fan.
+          _.reinforce.next=$.R(30,
+            (_.reinforce.time*(1.25-_.health.current/_.health.max))>>0);
+          
+          for(var i=0; i<=this.state; i++) {            
+            // Dirty, but working for now--we'll want to build this later
+            var typePick=$.R(0,_.reinforce.types.length-1);
+            if(_.reinforce.supply[typePick]
+               && $.r()<_.reinforce.chances[typePick]) {
+              _.reinforce.supply[typePick]--;
+              world.addPawn(
+                new _.reinforce.types[typePick]
+                (this.x,world.getHeight(this.x),this.team)
+              );
+            }
+          }
+        }
+      }
+      
+      if(_.projectile) {
+        // If reloading, don't do anything else. 
+        if(_.ammo.clip==0) {
+          // Attack more frequently if better stocked          
+          _.reload.ing=_.crew?
+            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
+            :_.reload.time;
+          _.ammo.clip=_.ammo.max;
+          _.target=undefined;     // reprioritize
+          return true;
+        }
+        if(_.reload.ing) { _.reload.ing--; return true; }
+        if(!_.target || Behavior.Custom.isDead(_.target) || !this.seeTarget() )
+          this.findTarget();        
+        
+        // Attack!
+        this.attack();
+      } 
+ 
+ 
+*/
+  
+  Structure:
+    "()",
+  
+  CommCenter:
+    "()"
 
 };
 

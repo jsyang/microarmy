@@ -19,7 +19,6 @@ Infantry.prototype=new Pawn;
 function Infantry() {
   this.img={ w:8, h:8, hDist2:20 };
   this.corpsetime=180;
-  this.takeDamage=function(d){ return this._.health.current-=d; };
   this.getGFX=function(){ var _=this._; return {
       img:    _.imgSheet,
       imgdx:  _.frame.current*this.img.w,

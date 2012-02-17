@@ -30,7 +30,7 @@ function XHash(worldWidth) {
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
   
-  this.getNearEnemy=function(obj){
+  this.getNearestEnemy=function(obj){
     var sight=obj._.sight;
     var center=obj.x>>bucketWidth;
     var minDist=Infinity;    
@@ -43,7 +43,7 @@ function XHash(worldWidth) {
       
       for(var i=0; i<shell.length; i++) {
         var entity=shell[i];          
-        if(entity.team==obj.team || entity._.health<=0) continue;
+        if(entity.team==obj.team || Behavior.Custom.isDead(entity)) continue;
         var dist=Math.abs(entity.x-obj.x);
         if(!(dist>>sight) && dist<minDist){
           obj._.target=entity; minDist=dist;
@@ -53,12 +53,34 @@ function XHash(worldWidth) {
     }
   };
   
-  // todo: get farthest enemy
-  this.getFarEnemy=function(obj){};
-
-  // todo: get enemy crowd, pick a target that is near lots of other enemies
-  // to maximize splash damage
-  this.getCrowdedEnemy=function(obj){};
+  // Get enemy crowd, pick a target that is near lots of other enemies
+  // to maximize splash damage, priority on farthest first.
+  this.getCrowdedEnemy=function(obj){ var _=obj._;
+    var center=obj.x>>bucketWidth;
+    var maxEnemies=0;
+    _.target=undefined;    
+    var DIRECTION={LEFT:-1,RIGHT:1,MAX:2};
+    
+    // search via direction rays
+    for(var dir=DIRECTION.LEFT; dir<DIRECTION.MAX; dir+=2) {
+      for(var sight=_.sight; sight; sight--) {
+        if(buckets[center+dir*sight]) {
+          var b=buckets[center+dir*sight];
+          var bucketEnemies=0;
+          for(var i=0; i<b.length; i++) {
+            var entity=b[i];
+            if(entity.team==obj.team || Behavior.Custom.isDead(entity))
+              continue;
+            bucketEnemies++;
+            if(bucketEnemies>maxEnemies)
+              _.target=entity;
+          }
+          if(bucketEnemies>maxEnemies) maxEnemies=bucketEnemies;          
+        }
+        if(_.target && maxEnemies>6) return true;
+      }
+    }
+  };
   
   // todo: optimize this code: usually we're looking for the closest
   // enemy / friendly to the current entity, so instead of getting the entire
