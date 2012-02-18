@@ -182,7 +182,7 @@ function Pillbox(x,y,team) {
   
   this._={
     behavior:     Behavior.Library.Pillbox,
-    sight:        4,
+    sight:        3,
     health:       { current:$.R(800,900), max:$.R(800,1100) },
     projectile:   MGBullet,
     direction:    TEAM.GOALDIRECTION[team],

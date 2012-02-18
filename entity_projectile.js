@@ -134,7 +134,17 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   };
   
   this.explode=function(){
+    
     world.addPawn(new HEAPExplosion(this.x,this.y));
+    var x=this.x+$.R(12,20);
+    world.addPawn(new HEAPExplosion(x,world.getHeight(x)));
+    var x=this.x-$.R(12,20);
+    world.addPawn(new HEAPExplosion(x,world.getHeight(x)));
+    var x=this.x-$.R(18,30);
+    world.addPawn(new SmallExplosion(x,world.getHeight(x)));
+    var x=this.x+$.R(18,30);
+    world.addPawn(new SmallExplosion(x,world.getHeight(x)));
+    
     this.range=0;
     this.corpsetime=0;
   };
