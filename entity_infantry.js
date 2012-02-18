@@ -66,7 +66,7 @@ function PistolInfantry(x,y,team) {
     
     imgSheet:   preloader.getFile('pistol'+TEAM.NAMES[team]),
     projectile: Bullet,
-    sight:      8,
+    sight:      3,
     health:     {current:$.R(30,70)},
     reload:     { ing:0, time:40 },
     berserk:    { ing:0, time:$.R(10,26), chance:$.r(0.59) },
@@ -90,7 +90,7 @@ function RocketInfantry(x,y,team) {
     
     imgSheet:   preloader.getFile('rocket'+TEAM.NAMES[team]),
     projectile: SmallRocket,
-    sight:      12,
+    sight:      6,
     health:     {current:$.R(60,90)},
     reload:     { ing:0, time:$.R(90,120) },
     berserk:    { ing:0, time:$.R(6,21), chance:0.08+$.r(0.35) },

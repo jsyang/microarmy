@@ -29,23 +29,25 @@ function XHash(worldWidth) {
   var bucketWidth=6; // divide world into 1<<6 == 64 pixel buckets
   var buckets=[];
   for(var i=(worldWidth>>bucketWidth)+1; i--;) buckets.push([]);
-    
+  
+  this.BUCKETWIDTH=1<<bucketWidth;
+  
   // Can look in the direction in which it's pointing.
   this.getNearestEnemyRay=function(obj){ var _=obj._;
     var center=obj.x>>bucketWidth;
     var minDist=Infinity;    
-    _.target=undefined;        
-    for(var sight=_.sight; sight; sight--) {
-      var shell=buckets[center+_.direction*sight];
+    _.target=undefined;
+    for(var d=0; d<_.sight; d++) {
+      var shell=buckets[center+_.direction*d];
       if(!shell) continue;      
       for(var i=0; i<shell.length; i++) {
         var entity=shell[i];          
         if(entity.team==obj.team ||
            Behavior.Custom.isDead(entity) ||
-           (_.direction*(entity.x-obj.x)<0) )
+           (entity.x-obj.x)*_.direction<0)
           continue;
         var dist=Math.abs(entity.x-obj.x);
-        if(!(dist>>sight) && dist<minDist){
+        if(dist<minDist){
           _.target=entity; minDist=dist;
         }
       }
@@ -66,9 +68,10 @@ function XHash(worldWidth) {
       
       for(var i=0; i<shell.length; i++) {
         var entity=shell[i];          
-        if(entity.team==obj.team || Behavior.Custom.isDead(entity)) continue;
+        if(entity.team==obj.team || Behavior.Custom.isDead(entity) ||
+           Behavior.Custom.isCrewed(entity) ) continue;
         var dist=Math.abs(entity.x-obj.x);
-        if(!(dist>>sight) && dist<minDist){
+        if(dist<minDist){
           obj._.target=entity; minDist=dist;
         }
       }
@@ -115,7 +118,10 @@ function XHash(worldWidth) {
     return bucketsN;
   };
 
-  this.insert=function(obj){ buckets[obj.x>>bucketWidth].push(obj); };
+  this.insert=function(obj){
+    if(buckets[obj.x>>bucketWidth])
+      buckets[obj.x>>bucketWidth].push(obj);
+  };
 }
 
 // Win/loss event handler //////////////////////////////////////////////////////

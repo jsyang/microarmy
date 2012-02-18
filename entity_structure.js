@@ -181,12 +181,12 @@ function Pillbox(x,y,team) {
   this.imgSheet=preloader.getFile('pillbox_');
   
   this._={
-    behavior:     Behavior.Library.Structure,
-    sight:        7,
+    behavior:     Behavior.Library.Pillbox,
+    sight:        4,
     health:       { current:$.R(800,900), max:$.R(800,1100) },
     projectile:   MGBullet,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 160 },
+    reload:       { ing:0, time: 50 },
     ammo:         { clip:6, max: 6 },
     shootHeight:  5,
     crew:         { current: 0, max:8,
@@ -228,7 +228,7 @@ function SmallTurret(x,y,team) {
   
   this._={
     behavior:         Behavior.Library.SmallTurret,
-    sight:            8,
+    sight:            5,
     health:           { current:$.R(1900,2100), max:$.R(2100,2300) },
     projectile:       SmallShell,
     projectileSpeed:  7,

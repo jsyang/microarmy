@@ -118,6 +118,9 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.range=180;
   this.dspeed=0.84;
   this.ddy=0.21;
+  this._={
+    sight:  10
+  };
   
   this.getGFX=function(){
     return {
@@ -137,15 +140,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   };
   
   this.findTarget=function(){
-    this.target=undefined;
-    var h=world.xHash.getNBucketsByCoord(this.x,18);
-    for(var i=0, minDist=Infinity; i<h.length; i++) {
-      if(h[i].team==this.team) continue;
-      if(h[i].isDead()) continue;
-      if(Math.abs(h[i].x-this.x)<minDist){
-        this.target=h[i]; minDist=Math.abs(h[i].x-this.x);
-      }
-    }
+    world.xHash.getCrowdedEnemy(this);    
   };
   
   this.alive=function(){
@@ -164,6 +159,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
       var unit=h[i];
       if(unit.team==this.team)  continue;
       if(Behavior.Custom.isDead(unit))         continue;
+      if(unit._.crew && unit._.crew.current==0) continue;
       var dx=this.x-(unit.x-(unit.img.w>>1));
       var dy=this.y-(unit.y-(unit.img.h>>1));      
       if(dx*dx+dy*dy>81)       continue;   // Not close enough!

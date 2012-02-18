@@ -100,6 +100,10 @@ var Behavior={
       return !!obj._.projectile;
     },
     
+    isCrewed:function(obj) {
+      return obj._.crew? obj._.crew.current: false;
+    },
+    
     isReloading:function(obj) { var _=obj._;
       if(_.reload.ing) {
         _.reload.ing--;
@@ -108,17 +112,7 @@ var Behavior={
         _.reload.ing=_.reload.time;
         _.ammo.clip=_.ammo.max;
         if(obj instanceof Infantry) // todo: get rid of this hack
-          _.frame.current=_.frame.first;
-        
-        // Attack more frequently if well crewed
-        if(obj instanceof Structure) {
-          _.reload.ing=_.crew?
-            (_.reload.time*(1.2-_.crew.current/_.crew.max))>>0
-            :_.reload.time;
-          _.ammo.clip=_.ammo.max;
-          _.target=undefined;     // retarget
-        }
-        
+          _.frame.current=_.frame.first;                
         return true;
       }
       return false;
@@ -186,11 +180,17 @@ var Behavior={
       return true;
     },
     
-    seeTarget:function(obj) { var t=obj._.target;
-      return t? !(Math.abs(t.x-obj.x)>>obj._.sight) : false;
+    
+    seeEntity:function(obj,t) { 
+      return t? Math.abs(t.x-obj.x)<obj._.sight*world.xHash.BUCKETWIDTH : false;
     },
     
-        
+    seeTarget:function(obj) {
+      return Behavior.Custom.seeEntity(obj,obj._.target);
+    },
+    
+    
+    
     foundTarget:function(obj) { var t=obj._.target;
       // Try to find a valid target!
       if(!t || Behavior.Custom.isDead(t) ||
@@ -288,12 +288,12 @@ var Behavior={
       
       // Projectile origin relative to sprite
       var pDY=-obj.img.h>>1;
-      var pDX=_.direction*4;
+      var pDX=_.direction*(obj.img.w>>1);
       
-      if(obj instanceof Structure) {
-        var pDY= -_.shootHeight;
+      /*if(obj instanceof Structure) {
+        var pDY=-_.shootHeight;
         var pDX=_.direction>0? (obj.img.w>>1)-2 : -((obj.img.w>>1)-2);
-      }      
+      } */     
       
       if(obj instanceof Infantry)
         var pDY=_.action==INFANTRY.ACTION.ATTACK_PRONE? -2: -4;
@@ -311,7 +311,7 @@ var Behavior={
           obj.team,
           _.target,
           _.direction*fSpeed,
-          ((_.target.y-(_.target.img.h>>1)-(obj.y-(obj.img.h>>1))+pDY)*fSpeed)
+          ((_.target.y-(_.target.img.h>>1)-(obj.y+pDY))*fSpeed)
           /dist+strayDY,
           accuracy
         )
@@ -426,9 +426,6 @@ var Behavior={
               } else continue;
             }
             
-            // absorb health
-            _.health.current+=2*h[i]._.health;
-            if(_.health.current>_.health.max) _.health.current=_.health.max;
             Behavior.Custom.remove(h[i]);
             _.crew.current++;
             if(structure instanceof Pillbox) soundManager.play('sliderack1');
@@ -512,6 +509,8 @@ Behavior.Library={
   
   Structure:
     "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
+  Pillbox:
+    "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",
   SmallTurret:
     "<[checkStructureState],[!isReloading],<[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",
   Scaffold:
