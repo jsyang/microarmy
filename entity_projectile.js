@@ -111,7 +111,6 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;
   this.dx=dx, this.dy=dy;  
   this.team=team;
-  this.target=target;
   this.img={ w:15, h:15, frame:0, sheet:preloader.getFile('missilered') };
   
   this.maxSpeed=90;
@@ -119,7 +118,8 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.dspeed=0.84;
   this.ddy=0.21;
   this._={
-    sight:  10
+    sight:  10,
+    target: target
   };
   
   this.getGFX=function(){
@@ -148,11 +148,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     this.range=0;
     this.corpsetime=0;
   };
-  
-  this.findTarget=function(){
-    world.xHash.getCrowdedEnemy(this);    
-  };
-  
+   
   this.alive=function(){
     if(!this.range) {
       this.explode();
@@ -169,7 +165,6 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
       var unit=h[i];
       if(unit.team==this.team)  continue;
       if(Behavior.Custom.isDead(unit))         continue;
-      if(unit._.crew && unit._.crew.current==0) continue;
       var dx=this.x-(unit.x-(unit.img.w>>1));
       var dy=this.y-(unit.y-(unit.img.h>>1));      
       if(dx*dx+dy*dy>81)       continue;   // Not close enough!
@@ -188,9 +183,9 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     // Homing.
     if( this.range<171 )
     {  // turn on homing function after delay
-      if(this.target && !Behavior.Custom.isDead(this.target)) {
-        this.dx+=this.target.x<this.x? -this.dspeed: this.dspeed;
-        this.dy+=this.target.y<this.y? -this.dspeed: this.dspeed;
+      if(this._.target && !Behavior.Custom.isDead(this._.target)) {
+        this.dx+=this._.target.x<this.x? -this.dspeed: this.dspeed;
+        this.dy+=this._.target.y<this.y? -this.dspeed: this.dspeed;
         if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed) {
           this.dy*=$.R(30,50)/100; // need this to control better
           this.dx*=$.R(70,80)/100;
@@ -198,7 +193,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
       } else {      
         // Gravity
         this.dy+=this.ddy;
-        this.findTarget();
+        world.xHash.getCrowdedEnemy(this);
       }
     }
     

@@ -100,10 +100,12 @@ function XHash(worldWidth) {
             bucketEnemies++;
             if(bucketEnemies>maxEnemies)
               _.target=entity;
+          }          
+          if(bucketEnemies>maxEnemies) {
+            maxEnemies=bucketEnemies;
+            console.log(maxEnemies);
           }
-          if(bucketEnemies>maxEnemies) maxEnemies=bucketEnemies;          
         }
-        if(_.target && maxEnemies>6) return true;
       }
     }
   };

@@ -41,6 +41,7 @@ function Vehicle() {
         world.addPawn(new SmallExplosion(this.x,this.y-this.img.h+1));
         //soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
       }
+      this.corpsetime--;
       return false;
     }
     Behavior.Execute(_.behavior,this);
@@ -67,10 +68,12 @@ function APC(x,y,team) {
     behavior:   Behavior.Library.APC,
     
     projectile: MGBullet,
+    shootHeight:8,
+    
     turn:       { ing:0, current:0, last: 2 },
-    sight:      7,
-    health:     { current:$.R(560,720) },
-    reload:     { ing:0, time:40 },
-    ammo:       { clip:6, max:6 }
+    sight:      2,
+    health:     { current:$.R(560,720), max:$.R(720,780) },
+    reload:     { ing:0, time:60 },
+    ammo:       { clip:4, max:4 }
   };  
 }

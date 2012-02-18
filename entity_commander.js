@@ -17,7 +17,9 @@ function Commander(team) {
   
   // a team won't have that many structures, so we keep the list as an array
   // for now. these are only for reference locations for units to reconviene at
-  this.structures=[];
+  this.comm=[];
+  this.repairFacility=[];
+  
   
   // 0-100 % rating of the high-level strength of the team in the current battle
   this.strength=100;

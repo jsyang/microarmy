@@ -287,7 +287,7 @@ var Behavior={
       }
       
       // Projectile origin relative to sprite
-      var pDY=-obj.img.h>>1;
+      var pDY=_.shootHeight? -_.shootHeight: -obj.img.h>>1;
       var pDX=_.direction*(obj.img.w>>1);
       
       /*if(obj instanceof Structure) {
@@ -329,8 +329,7 @@ var Behavior={
     
     hitGroundProjectile:function(projectile){
       projectile.x-=projectile.dx>>1;
-      projectile.y=world.getHeight(projectile.x>>0);
-      world.addPawn(new FragExplosion(projectile.x,projectile.y));
+      world.addPawn(new FragExplosion(projectile.x,world.getHeight(projectile.x>>0)));
       Behavior.Custom.stopProjectile(projectile);
       return true;
     },

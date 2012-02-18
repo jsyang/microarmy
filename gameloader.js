@@ -52,13 +52,37 @@ preloader.onfinish=function() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var MOUSEMODE={
+  EXPLOSION:0,
+  APC:1,
+  
+  NONE:Infinity
+};
+
+var mode=MOUSEMODE.NONE;
+
+window.onkeydown=function(e){
+  if(e.which<48 || e.which>58) return;
+  mode=e.which-49;
+  for(var i in MOUSEMODE)
+    if(MOUSEMODE[i]==mode) break;
+  console.log("Click = "+i);
+};
+
 // BOOM! HEH.
 window.onclick=function(e){
   var x=e.pageX, y=e.pageY;
+  var a;
+  switch(mode) {
+    case MOUSEMODE.APC: a=new APC(x,world.getHeight(x),TEAM.BLUE); break;
+    case MOUSEMODE.EXPLOSION: a=new SmallExplosion(x,y); break;
+    case MOUSEMODE.NONE:
+  }
+  
   //var eng=new EngineerInfantry(x,world.getHeight(x),TEAM.BLUE);
   //eng._.build.type=Pillbox;
   //eng._.build.x=500;
-  world.addPawn(new SmallExplosion(x,y));
+  world.addPawn(a);
 };
 
 var poo;
