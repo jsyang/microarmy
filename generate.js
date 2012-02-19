@@ -6,10 +6,12 @@ var Generate={
     var strength=$.R(0,19)/20;
     var base=[
       // Capital pieces
+      {type:SmallTurret, num:((2*strength)>>0)},
       {type:CommCenter, num:1},
-      {type:Barracks, num:(2*strength)>>0},
-      {type:Pillbox, num:(2*strength)>>0},
-      {type:SmallTurret, num:(2*strength)>>0}
+      {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
+      {type:Barracks, num:((3*strength)>>0)-Math.round($.r())},
+      {type:SmallTurret, num:$.R(0,(2*strength)>>0)},
+      {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
     ];
     
     if(team==TEAM.GREEN) {
@@ -19,7 +21,7 @@ var Generate={
     }
     
     for(var i=0;i<base.length;i++){
-      for(;base[i].num;base[i].num--) {
+      for(;base[i].num>0;base[i].num--) {
         world.addPawn(new (base[i].type)(x,world.getHeight(x),team));
         x+=TEAM.GOALDIRECTION[team]*$.R(32,72);
       }
@@ -144,15 +146,20 @@ var Generate={
       current.height+=dy;
     }
     
+    var color=colors.bedrock;
+    for(var terrainGradient=[], h_=0; h-h_; h_++) {
+      terrainGradient.push(color.r-h_);
+      terrainGradient.push(color.g-h_);
+      terrainGradient.push(color.b-h_);
+    }
+    
+    
     for(var x=0; x<w; x++) {
-      for(var height=heightmap[x],shadeMin=0; height<h; height++, shadeMin--) {
+      for(var height=heightmap[x],i=0; height<h; height++,i++) {
         var c=4*((height+1)*w+x);
-        var color=colors.bedrock;
-        //if(height<$.R(60,80)) color=colors.topsoil;
-        //if(height<$.R(10,30)) color=colors.bedrock;
-        d[c+0]=color.r+shadeMin;//+$.R(-8,8);
-        d[c+1]=color.g+shadeMin;//+$.R(-8,8);
-        d[c+2]=color.b+shadeMin;//+$.R(-8,8);
+        d[c+0]=terrainGradient[3*i+0];
+        d[c+1]=terrainGradient[3*i+1];
+        d[c+2]=terrainGradient[3*i+2];
       }
     }
     return {imgdata_:imgData, heightmap_: heightmap, peaks_:peaks};

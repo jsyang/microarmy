@@ -231,7 +231,7 @@ function World(map,team) {
   FG.putImageData(terrain.imgdata_,0,0);  
   imgElement.src=canvasElement.toDataURL("image/png");
   document.body.appendChild(imgElement);
-  document.body.appendChild(canvasElement);    
+  document.body.appendChild(canvasElement);
   FG.clearRect(0,0,w,h);
 
   var heightmap=terrain.heightmap_;
@@ -265,7 +265,7 @@ function World(map,team) {
     projectiles=processInstances(xHash_,viewLeft,viewWidth,projectiles);
     explosions= processInstances(xHash_,viewLeft,viewWidth,explosions);    
     
-    world.xHash=xHash_;    
+    world.xHash=xHash_;
   }
   
   var timer;

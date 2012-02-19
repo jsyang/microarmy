@@ -93,7 +93,7 @@ function Barracks(x,y,team) {
     direction:    TEAM.GOALDIRECTION[team],
     behavior:     Behavior.Library.Structure,
     
-    reinforce:    { next: 0, time: 190,
+    reinforce:    { next: 0, time: 280,
                     types:  [PistolInfantry],
                     supply: [250],
                     chances:[1],
