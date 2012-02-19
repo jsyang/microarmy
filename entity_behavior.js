@@ -230,7 +230,6 @@ var Behavior={
     
     // this attack function came from Vehicle class; added Infantry stuff.
     attack:function(obj) { var _=obj._;
-      //if(!_.projectile) return true;
       var dist=Math.abs(_.target.x-obj.x);      
       
       if(obj instanceof Infantry) {
@@ -273,10 +272,11 @@ var Behavior={
         if(!_.target) {
           _.reload.time=$.R(_.reload.min,_.reload.max);
         } else {
+          // Missile doesn't need a target: it finds its own!
           soundManager.play('missile1');
           world.addPawn(
             new HomingMissile(obj.x,obj.y-20,
-                              obj.team,_.target,
+                              obj.team,undefined,
                               _.direction*4.6,-8.36,0 )
           );
           _.ammo.clip--;
