@@ -348,6 +348,7 @@ var Behavior={
         else if(type instanceof CommCenter)   crewCount=60;
         
         scaffold._.crew.max=crewCount;
+        scaffold._.crew.current=1;
         world.addPawn(scaffold);
         Behavior.Custom.remove(obj);
         poo=scaffold;

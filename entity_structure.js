@@ -35,7 +35,10 @@ function Structure() {
       Behavior.Execute(_.behavior,this);
       
       // shouldn't be able to target an unoccupied building
-      if(_.crew && !_.crew.current) return false;
+      if(_.crew && !_.crew.current) {
+        this.imgSheet=_.crew.empty;
+        return false;
+      }
       return true;
     }    
   };
