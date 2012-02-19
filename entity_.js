@@ -84,7 +84,8 @@ function XHash(worldWidth) {
   this.getCrowdedEnemy=function(obj){ var _=obj._;
     var center=obj.x>>bucketWidth;
     var maxEnemies=0;
-    _.target=undefined;    
+    _.target=undefined;
+    var maxDist=0;
     var DIRECTION={LEFT:-1,RIGHT:1,MAX:2};
     
     // search via direction rays
@@ -98,8 +99,11 @@ function XHash(worldWidth) {
             if(entity.team==obj.team || Behavior.Custom.isDead(entity))
               continue;
             bucketEnemies++;
-            if(bucketEnemies>maxEnemies)
+            var dist=Math.abs(entity.x-obj.x);
+            if(bucketEnemies>maxEnemies && dist>maxDist) {
               _.target=entity;
+              maxDist=dist;
+            }
           }          
           if(bucketEnemies>maxEnemies) maxEnemies=bucketEnemies;
         }

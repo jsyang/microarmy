@@ -55,6 +55,7 @@ preloader.onfinish=function() {
 var MOUSEMODE={
   EXPLOSION:0,
   APC:1,
+  PRINTMOUSECOORDS:2,
   
   NONE:Infinity
 };
@@ -76,6 +77,7 @@ window.onclick=function(e){
   switch(mode) {
     case MOUSEMODE.APC: a=new APC(x,world.getHeight(x),TEAM.BLUE); break;
     case MOUSEMODE.EXPLOSION: a=new SmallExplosion(x,y); break;
+    case MOUSEMODE.PRINTMOUSECOORDS: console.log([x,y]); break;
     case MOUSEMODE.NONE:
   }
   
@@ -84,6 +86,3 @@ window.onclick=function(e){
   //eng._.build.x=500;
   world.addPawn(a);
 };
-
-var poo;
-//window.ondblclick=function(e){  console.log(e.pageX); };

@@ -3,10 +3,10 @@
 var Generate={
   
   TEAM:function(team){
-    var strength=$.R(0,19)/20;
+    var strength=$.r();
     var base=[
       // Capital pieces
-      {type:SmallTurret, num:((2*strength)>>0)},
+      {type:SmallTurret, num:1-Math.round(strength)},
       {type:CommCenter, num:1},
       {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
       {type:Barracks, num:((3*strength)>>0)-Math.round($.r())},
@@ -94,7 +94,7 @@ var Generate={
     for(var x=$.R(10,80);x<w;x+=$.R(100,400)) {
       var major={
         x:      x,
-        height: $.R(60,h-100)
+        height: $.R(30,h-100)
       };
       for(var j=$.R(1,12); j--;) {
         x+=$.R(24,120);
@@ -124,7 +124,7 @@ var Generate={
     
     // continued
     var avgHeight=0;
-    for(var i=peaks.length; i--;) avgHeight+=peaks[i].height;
+    for(var i=0; i<peaks.length;i++) avgHeight+=peaks[i].height;
     avgHeight/=peaks.length; avgHeight=Math.round(avgHeight);
     
     // todo: flattening sections in the heightmap... for base layout
