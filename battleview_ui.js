@@ -1,5 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-
 var MOUSEMODE={
   EXPLOSION:0,
   APC:1,
@@ -8,6 +6,8 @@ var MOUSEMODE={
   
   NONE:Infinity
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 var mode=MOUSEMODE.NONE;
 var clicks=[];
@@ -39,10 +39,6 @@ window.onclick=function(e){
       }
       break;
     case MOUSEMODE.NONE:
-  }
-  
-  //var eng=new EngineerInfantry(x,world.getHeight(x),TEAM.BLUE);
-  //eng._.build.type=Pillbox;
-  //eng._.build.x=500;
+  }  
   world.addPawn(a);
 };
