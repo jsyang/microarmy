@@ -145,6 +145,10 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     var x=this.x+$.R(18,30);
     world.addPawn(new SmallExplosion(x,world.getHeight(x)));
     
+    this.img.w=80;
+    Behavior.Custom.throwShrapnel(this);
+    this.img.w=15;
+    
     this.range=0;
     this.corpsetime=0;
   };

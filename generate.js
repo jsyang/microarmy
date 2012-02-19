@@ -34,7 +34,8 @@ var Generate={
     
     var skyGradient=[ // [RGB1, RGB2, ... hex colors]
       ["112111", "acacac"],
-      ["442151", "ffac2c"]
+      ["442151", "ffac2c"],
+      ["F2F8F8", "848B9A"]
     ];
     skyGradient=skyGradient[$.R(0,skyGradient.length-1)];
     
@@ -77,7 +78,9 @@ var Generate={
     var colors={
       moss:   "7DA774",
       topsoil:"5D3825",
-      bedrock:"8498A4"
+      bedrock:"8498A4",
+      steeps: "ADA159",
+      sand:   "9F9973"
     };
     for(var i in colors) {
       var j=colors[i];
@@ -132,8 +135,7 @@ var Generate={
     var heightmap=[];    
     while (peaks[0].x==0) peaks.shift();
     var current={height:avgHeight, peak:peaks[0]};
-    var dy=(current.peak.height-current.height)/current.peak.x;
-    for(var x=0, j=0; x<w; x++) {
+    for(var x=0, j=0, dy=0; x<w; x++) {
       if(current.peak.x==x) {
         if(++j<peaks.length) {
           current.peak=peaks[j];
@@ -146,7 +148,7 @@ var Generate={
       current.height+=dy;
     }
     
-    var color=colors.bedrock;
+    var color=[colors.bedrock,colors.moss,colors.topsoil,colors.sand,colors.steeps][$.R(0,4)];
     for(var terrainGradient=[], h_=0; h-h_; h_++) {
       terrainGradient.push(color.r-h_);
       terrainGradient.push(color.g-h_);

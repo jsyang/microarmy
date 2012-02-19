@@ -85,12 +85,11 @@ function XHash(worldWidth) {
     var center=obj.x>>bucketWidth;
     var maxEnemies=0;
     _.target=undefined;
-    var maxDist=0;
     var DIRECTION={LEFT:-1,RIGHT:1,MAX:2};
     
     // search via direction rays
     for(var dir=DIRECTION.LEFT; dir<DIRECTION.MAX; dir+=2) {
-      for(var sight=_.sight; sight; sight--) {
+      for(var sight=1; sight<_.sight; sight++) {
         if(buckets[center+dir*sight]) {
           var b=buckets[center+dir*sight];
           var bucketEnemies=0;
@@ -100,9 +99,8 @@ function XHash(worldWidth) {
               continue;
             bucketEnemies++;
             var dist=Math.abs(entity.x-obj.x);
-            if(bucketEnemies>maxEnemies && dist>maxDist) {
+            if(bucketEnemies>maxEnemies) {
               _.target=entity;
-              maxDist=dist;
             }
           }          
           if(bucketEnemies>maxEnemies) maxEnemies=bucketEnemies;
