@@ -101,10 +101,7 @@ function XHash(worldWidth) {
             if(bucketEnemies>maxEnemies)
               _.target=entity;
           }          
-          if(bucketEnemies>maxEnemies) {
-            maxEnemies=bucketEnemies;
-            console.log(maxEnemies);
-          }
+          if(bucketEnemies>maxEnemies) maxEnemies=bucketEnemies;
         }
       }
     }
@@ -207,7 +204,7 @@ function World(map,team) {
   
   //if(!map) return alert("No map specified for world!");
   
-  var w=2490, h=192;
+  var w=2490, h=256;
   this.width=w; this.height=h;
   
   // Pawn collections

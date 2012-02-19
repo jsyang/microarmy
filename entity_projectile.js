@@ -118,7 +118,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.dspeed=0.84;
   this.ddy=0.21;
   this._={
-    sight:  10,
+    sight:  12,
     target: target
   };
   
@@ -187,7 +187,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
         this.dx+=this._.target.x<this.x? -this.dspeed: this.dspeed;
         this.dy+=this._.target.y<this.y? -this.dspeed: this.dspeed;
         if(this.dx*this.dx+this.dy*this.dy>this.maxSpeed) {
-          this.dy*=$.R(30,50)/100; // need this to control better
+          this.dy*=$.R(30,50)/100; // normalize speed with feedback
           this.dx*=$.R(70,80)/100;
         }
       } else {      
