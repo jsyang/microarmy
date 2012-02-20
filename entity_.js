@@ -220,7 +220,7 @@ function World(map,team) {
   this.xHash=new XHash(w);
   
   var canvasElement=document.createElement("canvas");
-  canvasElement.width=w; canvasElement.height=w;  
+  canvasElement.width=w; canvasElement.height=h;  
   var FG=canvasElement.getContext('2d');
   
   // to avoid having 2 canvases, use a single one to

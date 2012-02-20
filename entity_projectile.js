@@ -116,7 +116,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.maxSpeed=90;
   this.range=180;
   this.dspeed=0.84;
-  this.ddy=0.21;
+  this.ddy=0.081;
   this._={
     sight:  16,
     target: target

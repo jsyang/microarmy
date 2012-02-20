@@ -20,7 +20,9 @@ function Explosion() {
   };
   
   this.alive=function(){
-    if(this.frame.current++>this.frame.last) return this.corpsetime=0;
+    if(this.frame.current==this.frame.last) return this.corpsetime=0;
+    else this.frame.current++;
+
     var h=world.xHash.getNBucketsByCoord(this.x,2);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
@@ -73,7 +75,8 @@ function SmokeCloud(x,y) {
   this.frame={ current:-1, last:22 };
   this.img={w:19, h:17, sheet: preloader.getFile('smoke') };
   this.alive=function(){
-    if(this.frame.current++>this.frame.last) return this.corpsetime=0;
+    if(this.frame.current==this.frame.last) return this.corpsetime=0;
+    else this.frame.current++;
     return false;
   };
 }
