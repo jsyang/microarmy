@@ -133,6 +133,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   
   this.maxSpeed=90;
   this.range=180;
+  this.rangeTravelled=0;
   this.dspeed=0.84;
   this.ddy=0.081;
   this._={
@@ -154,14 +155,18 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.explode=function(){
     
     world.addPawn(new HEAPExplosion(this.x,this.y));
-    var x=this.x+$.R(12,20);
-    world.addPawn(new HEAPExplosion(x,world.getHeight(x)));
-    var x=this.x-$.R(12,20);
-    world.addPawn(new HEAPExplosion(x,world.getHeight(x)));
-    var x=this.x-$.R(18,30);
-    world.addPawn(new SmallExplosion(x,world.getHeight(x)));
-    var x=this.x+$.R(18,30);
-    world.addPawn(new SmallExplosion(x,world.getHeight(x)));
+    var x=this.x+$.R(12,20); var y=this.y+$.R(-20,20);
+    if(y>world.getHeight(x)) y=world.getHeight(x);
+    world.addPawn(new HEAPExplosion(x,y));
+    var x=this.x-$.R(12,20); var y=this.y+$.R(-20,20);
+    if(y>world.getHeight(x)) y=world.getHeight(x);
+    world.addPawn(new HEAPExplosion(x,y));
+
+    var x=this.x+$.R(18,30); var y=this.y+$.R(-20,20);
+    if(y>world.getHeight(x)) y=world.getHeight(x);
+    var x=this.x-$.R(18,30); var y=this.y+$.R(-20,20);
+    if(y>world.getHeight(x)) y=world.getHeight(x);
+    world.addPawn(new HEAPExplosion(x,y));
     
     this.img.w=80;
     Behavior.Custom.throwShrapnel(this);
@@ -172,13 +177,14 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   };
    
   this.alive=function(){
+    this.rangeTravelled++;
     if(!this.range) {
       this.explode();
       return this.corpsetime=0;
     }
     
     // Smoke trail
-    if(this.range>174)
+    if(this.rangeTravelled<6)
       world.addPawn(new SmokeCloud(this.x-this.dx,this.y-this.dy));
     
     // Hit enemy.
@@ -203,7 +209,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     }      
         
     // Homing.
-    if( this.range<167 )
+    if( this.rangeTravelled>13 )
     {  // turn on homing function after delay
       if(this._.target && !Behavior.Custom.isDead(this._.target)) {
         this.dx+=this._.target.x<this.x? -this.dspeed: this.dspeed;
