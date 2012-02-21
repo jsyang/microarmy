@@ -107,15 +107,24 @@ var Behavior={
     isReloading:function(obj) { var _=obj._;
       if(_.reload.ing) {
         _.reload.ing--;
+        if(_.reload.ing==0)
+          _.ammo.clip=_.ammo.max;
         return true;
       } else if(_.ammo.clip==0) {
         _.reload.ing=_.reload.time;
-        _.ammo.clip=_.ammo.max;
         if(obj instanceof Infantry) // todo: get rid of this hack
           _.frame.current=_.frame.first;                
         return true;
       }
       return false;
+    },
+    
+    // For really long range attacks: if we can't find a target, force
+    // it to wait a bit before looking again: half the reload time.
+    forceFastReload:function(obj) { var _=obj._;
+      _.reload.ing=_.reload.time>>1;
+      _.ammo.clip=_.ammo.max;
+      return true;
     },
     
     /* Berserk: move towards target for some time regardless of
@@ -511,6 +520,8 @@ Behavior.Library={
   
   Structure:
     "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
+  MissileRack:
+    "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceFastReload])>",
   Pillbox:
     "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",
   SmallTurret:

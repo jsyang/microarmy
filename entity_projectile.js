@@ -203,7 +203,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     }      
         
     // Homing.
-    if( this.range<171 )
+    if( this.range<167 )
     {  // turn on homing function after delay
       if(this._.target && !Behavior.Custom.isDead(this._.target)) {
         this.dx+=this._.target.x<this.x? -this.dspeed: this.dspeed;

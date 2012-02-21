@@ -4,6 +4,7 @@ var MOUSEMODE={
   PRINTMOUSECOORDS:2,
   ENGINEERBUILDPILLBOX:3,
   SMALLMINE:4,
+  MISSILERACK:5,
   
   NONE:Infinity
 };
@@ -41,6 +42,8 @@ window.onclick=function(e){
       break;
     case MOUSEMODE.SMALLMINE:
       a=new SmallMine(x,world.getHeight(x),TEAM.BLUE);
+    case MOUSEMODE.MISSILERACK:
+      a=new MissileRack(x,world.getHeight(x),TEAM.BLUE);
     case MOUSEMODE.NONE:
   }  
   world.addPawn(a);

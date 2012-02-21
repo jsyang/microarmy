@@ -263,3 +263,38 @@ function SmallTurret(x,y,team) {
     target:       undefined
   }   
 }
+
+MissileRack.prototype=new Structure;
+function MissileRack(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  
+  this.img={ w:5, h:9, hDist2:64 };
+  this.imgSheet=preloader.getFile('missilerack'+TEAM.NAMES[this.team]);
+  
+  // Check if missile's been fired only.
+  this.getGFX=function(){ var _=this._;
+    return {
+      img:    this.imgSheet,
+      imgdx:  _.direction>0? this.img.w:0,
+      imgdy:  _.reload.ing<50 || _.ammo.clip? 0:this.img.h,
+      worldx: this.x-(this.img.w>>1),
+      worldy: this.y-this.img.h+1,
+      imgw:this.img.w, imgh:this.img.h
+    }
+  };
+  
+  this._={
+    behavior:     Behavior.Library.MissileRack,
+    sight:        14,
+    health:       { current:$.R(200,280), max:$.R(280,300) },
+    projectile:   HomingMissile,
+    direction:    TEAM.GOALDIRECTION[team],
+    reload:       { ing:0, time: 2600 },
+    ammo:         { clip:1, max: 1 },
+    shootHeight:  3,
+    
+    target:       undefined
+  }
+}
