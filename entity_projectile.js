@@ -102,6 +102,24 @@ function SmallShell(x,y,team,target,dx,dy,accuracy) {
   this.damage=90;
 }
 
+// MINES ////////////////////////////////////////////////////////////////////////
+SmallMine.prototype=new Projectile;
+function SmallMine(x,y,team) {
+  this.x=x,   this.y=y;
+  this.team=team;
+  this.accuracy=[0.6,0];
+  this.explosion=FragExplosion;
+  this.damage=20;
+  this.behavior=Behavior.Library.SmallMine;
+  this.img={
+    w:5,
+    h:2,
+    sheet:preloader.getFile('mine'+TEAM.NAMES[this.team]),
+    row: 0
+  };
+  
+  soundManager.play('sliderack1');
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

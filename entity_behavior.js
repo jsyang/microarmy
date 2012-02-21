@@ -495,6 +495,8 @@ Behavior.Library={
     "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)",
   MortarShell:
     "(<[isOutsideWorld],[hitGroundProjectile]>,[fly])",
+  SmallMine:
+    "<[tryHitProjectile],[stopProjectile]>",
 
   moveAndBoundsCheck:
     "<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>",

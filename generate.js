@@ -7,7 +7,8 @@ var Generate={
     var base=[
       // Capital pieces
       {type:SmallTurret, num:1-Math.round(strength)},
-      {type:CommCenter, num:1},
+      {type:CommCenter, num:1-Math.round(strength)},
+      {type:CommRelay, num:Math.round(strength)},
       {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
       {type:Barracks, num:((3*strength)>>0)-Math.round($.r())},
       {type:SmallTurret, num:$.R(0,(2*strength)>>0)},
@@ -23,7 +24,7 @@ var Generate={
     for(var i=0;i<base.length;i++){
       for(;base[i].num>0;base[i].num--) {
         world.addPawn(new (base[i].type)(x,world.getHeight(x),team));
-        x+=TEAM.GOALDIRECTION[team]*$.R(32,72);
+        x+=TEAM.GOALDIRECTION[team]*$.R(32,60);
       }
     }
   },

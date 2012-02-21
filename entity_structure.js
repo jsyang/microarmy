@@ -171,6 +171,25 @@ function Helipad(x,y,team) {
   this.imgSheet=preloader.getFile('helipad');
 }
 
+CommRelay.prototype=new Structure;
+function CommRelay(x,y,team) {
+  this.x=x;
+  this.y=y;
+  this.team=team;
+  
+  this.img={ w:15, h:27, hDist2:220 };
+  this.imgSheet=preloader.getFile('relay'+TEAM.NAMES[team]);
+  
+  this._={
+    direction:    TEAM.GOALDIRECTION[team],
+    behavior:     Behavior.Library.Structure,
+    health:       { current:$.R(560,600), max:$.R(600,750) },
+    target:       undefined
+  };
+}
+
+// todo: missile rack, also btree for missile rack: needs a controller
+// otherwise it can't fire
 
 // Defensive structures ////////////////////////////////////////////////////////
 

@@ -4,9 +4,10 @@ preloader=(function() {
   // 1. Preload gfx
   var a=new html5Preloader();  
   var i="";  
-  var u= // team-neutral stuff
-    'shells,missilered,exp1,exp2,exp2big,smoke,scaffold_,pillbox_'
-  .split(',');
+  var u=( // team-neutral stuff
+    'shells,missilered,exp1,exp2,exp2big,smoke,'+
+    'scaffold_,pillbox_,missilerack_'
+  ).split(',');
   
   for(var j=0; j<u.length; j++)
     i+=';'+u[j]+'*:gfx/'+u[j]+'.png';
@@ -14,7 +15,9 @@ preloader=(function() {
   var u=( // stuff that has team-unique gfx
     'pistol,rocket,engineer,'+
     'apc,'+
-    'comm,pillbox,barracks,turret,depot,repair,helipad,scaffold'
+    'mine,'+
+    'comm,pillbox,barracks,turret,depot,repair,helipad,'+
+    'scaffold,missilerack,relay'
   ).split(',');
   
   for(var j=0; j<u.length; j++)
