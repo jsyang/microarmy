@@ -3,7 +3,7 @@
 var Generate={
   
   TEAM:function(team){
-    var strength=$.r();
+    var strength=$.r();    
     var base=[
       // Capital pieces
       {type:SmallTurret, num:1-Math.round(strength)},
@@ -12,7 +12,7 @@ var Generate={
       {type:MissileRack, num:1-Math.round(strength)},
       {type:MissileRack, num:1-Math.round(strength)},
       {type:CommRelay, num:1},
-      {type:Barracks, num:((3*strength)>>0)-Math.round($.r())},
+      {type:Barracks, num:$.R(0,3)-Math.round($.r())},
       {type:SmallTurret, num:$.R(0,(2*strength)>>0)},
       {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
       {type:Pillbox, num:1}
