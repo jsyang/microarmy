@@ -81,9 +81,7 @@ var Behavior={
     
     checkStructureState:function(structure){ var _=structure._;
       if(_.health.current<0.6*_.health.max) {
-        structure.state=STRUCTURE.STATE.BAD;
-        // Panic: arm base with missile from hell!
-        if(structure instanceof CommCenter) _.projectile=HomingMissile;
+        structure.state=STRUCTURE.STATE.BAD;        
       }
       return true;
     },

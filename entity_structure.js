@@ -28,7 +28,7 @@ function Structure() {
       if(this.state!=STRUCTURE.STATE.WRECK) {
         this.state=STRUCTURE.STATE.WRECK;
         soundManager.play('crumble');
-        Behavior.Custom.throwShrapnel(this);
+        if(_.deathExplode) Behavior.Custom.throwShrapnel(this);
       }
       return false;
     } else {
@@ -61,9 +61,7 @@ function CommCenter(x,y,team) {
   this._={
     sight:        16,
     ammo:         { clip: 1, max:1 },
-    reload:       { ing:0, time:$.R(20,1220), min:20, max: 1220 },
-    projectile:   undefined,
-    
+    reload:       { ing:0, time:$.R(20,1220), min:20, max: 1220 },    
     behavior:     Behavior.Library.Structure,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
@@ -77,7 +75,7 @@ function CommCenter(x,y,team) {
                     damageThreshold:  18,
                     damageChance:     0.4
                   },
-    
+    deathExplode: true,
     target:       undefined
   };
 }
@@ -219,7 +217,7 @@ function Pillbox(x,y,team) {
                     damageThreshold:  23,
                     damageChance:     0.25
                   },
-
+    deathExplode: true,
     target:       undefined
   }
 }
@@ -259,8 +257,8 @@ function SmallTurret(x,y,team) {
     ammo:             { clip:1, max: 1 },
     shootHeight:      6,
     turn:             { ing: 0, current:0, last:4 },    
-    
-    target:       undefined
+    deathExplode:     true,
+    target:           undefined
   }   
 }
 
@@ -287,14 +285,14 @@ function MissileRack(x,y,team) {
   
   this._={
     behavior:     Behavior.Library.MissileRack,
-    sight:        14,
+    sight:        13,
     health:       { current:$.R(200,280), max:$.R(280,300) },
     projectile:   HomingMissile,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 2600 },
+    reload:       { ing:0, time: 3600 },
     ammo:         { clip:1, max: 1 },
     shootHeight:  3,
-    
+    deathExplode: true,
     target:       undefined
   }
 }

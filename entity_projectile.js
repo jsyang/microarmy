@@ -137,7 +137,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.dspeed=0.84;
   this.ddy=0.081;
   this._={
-    sight:  6,
+    sight:  8,
     target: target
   };
   
@@ -168,7 +168,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     if(y>world.getHeight(x)) y=world.getHeight(x);
     world.addPawn(new HEAPExplosion(x,y));
     
-    this.img.w=80;
+    this.img.w=40;
     Behavior.Custom.throwShrapnel(this);
     this.img.w=15;
     

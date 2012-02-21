@@ -8,11 +8,12 @@ var Generate={
       // Capital pieces
       {type:SmallTurret, num:1-Math.round(strength)},
       {type:CommCenter, num:1-Math.round(strength)},
-      {type:MissileRack, num:1-Math.round(strength)},
-      {type:MissileRack, num:1-Math.round(strength)},
-      {type:MissileRack, num:1-Math.round(strength)},
+      {type:MissileRack, num:$.R(0,1)},
+      {type:MissileRack, num:$.R(0,1)},
+      {type:MissileRack, num:$.R(0,1)},
       {type:CommRelay, num:1},
-      {type:Barracks, num:$.R(0,3)-Math.round($.r())},
+      {type:Barracks, num:1},
+      {type:Barracks, num:$.R(0,1)},
       {type:SmallTurret, num:$.R(0,(2*strength)>>0)},
       {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
       {type:Pillbox, num:1}
@@ -29,7 +30,8 @@ var Generate={
         world.addPawn(new (base[i].type)(x,world.getHeight(x),team));
         if(base[i].type==MissileRack &&
            base[i+1] &&
-           base[i+1].type==MissileRack)
+           base[i+1].type==MissileRack &&
+           base[i+1].num>0)
           x+=TEAM.GOALDIRECTION[team]*3;
         else
           x+=TEAM.GOALDIRECTION[team]*$.R(32,60);
