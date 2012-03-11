@@ -119,8 +119,8 @@ var Behavior={
     
     // For really long range attacks: if we can't find a target, force
     // it to wait a bit before looking again: half the reload time.
-    forceFastReload:function(obj) { var _=obj._;
-      _.reload.ing=_.reload.time>>1;
+    forceReload:function(obj) { var _=obj._;
+      _.reload.ing=_.reload.time;
       _.ammo.clip=_.ammo.max;
       return true;
     },
@@ -519,7 +519,7 @@ Behavior.Library={
   Structure:
     "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
   MissileRack:
-    "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceFastReload])>",
+    "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",
   Pillbox:
     "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",
   SmallTurret:

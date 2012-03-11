@@ -41,9 +41,9 @@ window.onclick=function(e){
       }
       break;
     case MOUSEMODE.SMALLMINE:
-      a=new SmallMine(x,world.getHeight(x),TEAM.BLUE);
+      a=new SmallMine(x,world.getHeight(x),TEAM.BLUE); break;
     case MOUSEMODE.MISSILERACK:
-      a=new MissileRack(x,world.getHeight(x),TEAM.BLUE);
+      a=new MissileRack(x,world.getHeight(x),TEAM.BLUE); break;
     case MOUSEMODE.NONE:
   }  
   world.addPawn(a);
