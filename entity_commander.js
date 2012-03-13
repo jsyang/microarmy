@@ -8,22 +8,52 @@ var COMMANDER={
     ESCORT:4,
     REPAIR:5,
     EVACUATE:6
+  },
+  
+  SQUADTEMPLATE:{
+    DEFENSIVE1:[
+      PistolInfantry,
+      PistolInfantry,
+      PistolInfantry,
+      PistolInfantry,
+      PistolInfantry
+    ],
+    DEFENSIVE2:[
+      RocketInfantry,
+      RocketInfantry,
+      PistolInfantry,
+      PistolInfantry,
+      PistolInfantry
+    ],
+    
+    OFFENSIVE1:[
+      RocketInfantry,
+      RocketInfantry,
+      RocketInfantry,
+      RocketInfantry,
+      PistolInfantry
+    ]
   }
 }
 
 Commander.prototype=new Pawn;
 function Commander(team) {
-  this.goal=COMMANDER.GOAL.IDLE;
-  
-  // a team won't have that many structures, so we keep the list as an array
-  // for now. these are only for reference locations for units to reconviene at
-  this.comm=[];
-  this.repairFacility=[];
-  
-  
-  // 0-100 % rating of the high-level strength of the team in the current battle
-  this.strength=100;
-  
+
+  this.alive=function() {
+    
+    // Build stuff, issue orders
+    return false;
+  };
+
+  this._={
+    goal:       COMMANDER.GOAL.IDLE,
+    strength:   $.R(3,20),  // limit on # squads they can manage simultaneously
+    
+    comm:   [],   // Comm(ander) relays = stations that broadcast orders
+    repair: [],   // repair facilities
+    depot:  []    // caches of resources, abstract or real
+  };
+ 
 }
 
 
@@ -61,45 +91,6 @@ the battle.
 
 each commander should tied to a comm___ structure, when destroyed, the
 corresponding commander should be removed / die (maybe a chance of dying).
-
---------------------------------------------------------------------------------
-
-more weapons types -- more gameplay variety -- like mines (but not specifically
-touch traps)
-
--- in this vein -- inherently emergent gameplay elements -----------------------
-
-RETURN-TO-SENDER mechanic (homing radar jammer)
-unit that has this property that is targeted by a homingmissile has a chance of
-jamming the homing function and redirecting the missile to attack units friendly
-to owner
-
-physical wall structure prevents enemy units from penetrating beyond the limits
-of the cordoned areas
-
--------------------------------------------------------------------------------
-
-for campaign view, column units move with flock AI? such level of complexity is
-probably not necessary
-
-weapons cache locations -- able to supply/upgrade units with resources from these
-locations if the location is captured intact
-
--------------------------------------------------------------------------------
-
-lower class systems are zero-sum, so they effectively bootstrap to survive
-higher class systems are not (like printers of fiat currency), and thus benefit
-from the side effects of lower classes' bootstrapping
-
--------------------------------------------------------------------------------
-
-make game music video for microarmy to mr. sandman
-time "bum"s to various things exploding
-
-deformable terrain? if terrain below a large structure is deformed to much,
-structure collapses
-
-
 
 */
 
