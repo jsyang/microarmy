@@ -187,7 +187,7 @@ var Behavior={
       return true;
     },
     
-    
+    // Sight is in multiples of XHash buckwidths!
     seeEntity:function(obj,t) { 
       return t? Math.abs(t.x-obj.x)<obj._.sight*world.xHash.BUCKETWIDTH : false;
     },
@@ -496,6 +496,8 @@ var Behavior={
 
 
 // Predefined trees for various classes
+// Maybe we can load these in from a server somewhere. So that it's not baked in
+// and therefore tweaking can happen independent of game version.
 Behavior.Library={
   
   Projectile:
