@@ -24,6 +24,12 @@ function Pawn() {
   this.getGFX=function(){};
 }
 
+function PawnController(){
+  this.alive=function(){};
+  this.getGFX=function(){};   // headshot / icon of controlling entity
+  this.team;
+}
+
 // X-coord spatial hash: avoid checking hits on faraway stuff //////////////////
 function XHash(worldWidth) {    
   var bucketWidth=6; // divide world into 1<<6 == 64 pixel buckets
@@ -113,6 +119,7 @@ function XHash(worldWidth) {
   // enemy / friendly to the current entity, so instead of getting the entire
   // range of buckets, we should go for layers, starting from the center...
   this.getNBucketsByCoord=function(x,n) {
+    // todo: is this function deprecated?
     for(var bucketsN=[],i=-(n>>1),index=x>>bucketWidth; i<(n>>1)+1; i++)
       if(buckets[index+i]!=undefined)
         bucketsN=bucketsN.concat(buckets[index+i]);
@@ -198,7 +205,7 @@ function Team(){
   };
 }
 
-// Game world //////////////////////////////////////////////////////////////////
+// Game world / Scene graph ////////////////////////////////////////////////////
 var world;
 
 function World(map,team) {

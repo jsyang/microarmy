@@ -123,7 +123,6 @@ function SmallMine(x,y,team) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Homing missile. Fired by a panicked CommCenter
 HomingMissile.prototype=new Projectile;
 function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.x=x,   this.y=y;
