@@ -66,10 +66,11 @@ function CommCenter(x,y,team) {
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
-    reinforce:    { next: 0, time: 290,
+    
+    reinforce:    { next: 0, time: 10,
+                    size:   {current:0, max:6},
                     types:  [PistolInfantry,RocketInfantry],
-                    supply: [320,180],                    
-                    chances:[0.7,0.27],
+                    supply: [320,180],
                     
                     // big dmg kills reinforcements
                     damageThreshold:  18,

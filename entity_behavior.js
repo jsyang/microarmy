@@ -462,12 +462,13 @@ var Behavior={
       return true;
     },
     
+
+
     tryReinforcing:function(structure) { var _=structure._;
       if(_.reinforce) {        
         if(_.reinforce.next>0) _.reinforce.next--; else {
           // Dump reinforcements faster if shit is hitting the fan.
-          _.reinforce.next=$.R(30,
-            (_.reinforce.time*(1.25-_.health.current/_.health.max))>>0);
+          _.reinforce.next=_.reinforce.time;
           
           for(var i=0; i<=structure.state; i++) {            
             // Dirty, but working for now--we'll want to build this later
@@ -486,7 +487,13 @@ var Behavior={
       return true;
     },
     
-    
+    checkSupplyOrder:function(structure){ var _=structure._;
+      if(_.reinforce.size.current==_.reinforce.size.max) {
+        _.reinforce.size.current=0;
+        _.behavior=Behavior.Library.Structure;
+      }
+      return true;
+    },
     
     TRUE:true,
     FALSE:false
@@ -499,7 +506,7 @@ var Behavior={
 // Maybe we can load these in from a server somewhere. So that it's not baked in
 // and therefore tweaking can happen independent of game version.
 Behavior.Library={
-  
+
   Projectile:
     "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)",
   MortarShell:
@@ -518,8 +525,11 @@ Behavior.Library={
   EngineerInfantry:
     "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>",
   
+  StructureSupply:
+    "<[checkStructureState],[checkSupplyOrder],[tryReinforcing]>",
   Structure:
-    "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
+    "<[checkStructureState],[tryCrewing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
+    
   MissileRack:
     "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",
   Pillbox:
