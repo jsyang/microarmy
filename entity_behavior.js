@@ -515,7 +515,7 @@ var Behavior={
       if($.r()<0.011) {
         Behavior.Custom.createSquad(
           commander,
-          ["PistolInfantry","RocketInfantry"][$.R(0,1)]
+          ["PistolInfantry","RocketInfantry"][$.R(0,Math.round($.r(0.7)))]
         );
       }
     },

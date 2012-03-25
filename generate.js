@@ -5,7 +5,7 @@ var Generate={
   TEAM:function(team){
     // Controllers first, then pile the strategic structures in.
     var c=new Commander(team);
-    world.addController(c);
+    world.addController(c);    
     
     var strength=$.r();    
     var base=[
@@ -48,7 +48,7 @@ var Generate={
       }
     }
     
-    
+    console.log(TEAM.NAMES[team]+" Commander Skill: "+c._.strength+" -- Base Strength: "+strength);
   },
   
   BG:function(ctx,w,h) {

@@ -26,7 +26,7 @@ function Commander(team) {
 
   this._={
     behavior:   Behavior.Library.CommanderIdle,
-    strength:   $.R(2,20),  // limit on # squads they can manage simultaneously
+    strength:   $.R(2,30),  // limit on # squads they can manage simultaneously
 
     squads: [],   // length should be no more than (strength, as above)
     
