@@ -3,6 +3,10 @@
 var Generate={
   
   TEAM:function(team){
+    // Controllers first, then pile the strategic structures in.
+    var c=new Commander(team);
+    world.addController(c);
+    
     var strength=$.r();    
     var base=[
       // Capital pieces
@@ -27,7 +31,13 @@ var Generate={
     
     for(var i=0;i<base.length;i++){
       for(;base[i].num>0;base[i].num--) {
-        world.addPawn(new (base[i].type)(x,world.getHeight(x),team));
+        var nextStructure=new (base[i].type)(x,world.getHeight(x),team);
+        world.addPawn(nextStructure);
+        
+        // Add into the structures.
+        if(nextStructure instanceof CommCenter || nextStructure instanceof Barracks)
+          c._.depot.push(nextStructure);
+        
         if(base[i].type==MissileRack &&
            base[i+1] &&
            base[i+1].type==MissileRack &&
@@ -37,6 +47,8 @@ var Generate={
           x+=TEAM.GOALDIRECTION[team]*$.R(32,60);
       }
     }
+    
+    
   },
   
   BG:function(ctx,w,h) {

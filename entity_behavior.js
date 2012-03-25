@@ -63,12 +63,12 @@ var Behavior={
         
         // Structures that supply troops
         if(_.reinforce && damage>_.reinforce.damageThreshold) {
-          if($.r()<_.reinforce.damageChance) {
-            var type=$.R(0,_.reinforce.types.length-1);
-            var killed=$.R(2,16);
-            _.reinforce.supply[type]-=killed;
-            if(_.reinforce.supply[type]<0) _.reinforce.supply[type]=0;
-          }
+          for(var i in _.reinforce.types)
+            if($.r()<_.reinforce.damageChance) {
+              var killed=$.R(2,16);
+              _.reinforce.types[i].qty-=killed;
+              if(_.reinforce.types[i].qty<0) _.reinforce.types[i].qty=0;
+            }
         }
       }
       
@@ -464,35 +464,69 @@ var Behavior={
     
 
 
-    tryReinforcing:function(structure) { var _=structure._;
-      if(_.reinforce) {        
-        if(_.reinforce.next>0) _.reinforce.next--; else {
-          // Dump reinforcements faster if shit is hitting the fan.
-          _.reinforce.next=_.reinforce.time;
-          
-          for(var i=0; i<=structure.state; i++) {            
-            // Dirty, but working for now--we'll want to build this later
-            var typePick=$.R(0,_.reinforce.types.length-1);
-            if(_.reinforce.supply[typePick]
-               && $.r()<_.reinforce.chances[typePick]) {
-              _.reinforce.supply[typePick]--;
-              world.addPawn(
-                new _.reinforce.types[typePick]
-                (structure.x,world.getHeight(structure.x),structure.team)
-              );
-            }
-          }
+    tryReinforcing:function(structure) { var _=structure._.reinforce;
+      if(_) {
+        if(_.ing>0) _.ing--; else {
+          if(_.supplyNumber==0 || !_.parentSquad || !_.supplyType) return true;
+          if(!_.types[_.supplyType].qty) return true;
+          _.ing=_.time;
+          _.types[_.supplyType].qty--;
+          _.supplyNumber--;
+          var unit=new _.types[_.supplyType].make
+            (structure.x,world.getHeight(structure.x),structure.team);          
+          unit._.squad=_.parentSquad;
+          _.parentSquad._.members.push(unit);
+          if(!_.supplyNumber) _.parentSquad._.allMembersJoined=true;
+          world.addPawn(unit);
         }
       }
       return true;
     },
     
-    checkSupplyOrder:function(structure){ var _=structure._;
-      if(_.reinforce.size.current==_.reinforce.size.max) {
-        _.reinforce.size.current=0;
-        _.behavior=Behavior.Library.Structure;
+    createSquad:function(commander,type) { var _=commander._;
+      if(_.squads.length<_.strength){
+        for(var i=0,d=_.depot; i<d.length; i++)
+          if(!d[i]._.reinforce.supplyNumber)
+            for(var j in d[i]._.reinforce.types)
+              if(type==j) {
+                
+                var s=new Squad(commander.team);
+                _.squads.push(s);
+                world.addController(s);
+                
+                d[i]._.reinforce.supplyType=type;
+                d[i]._.reinforce.supplyNumber=4;                
+                d[i]._.reinforce.parentSquad=s;
+                
+                return true;
+              }
       }
       return true;
+    },
+    
+    idleCommander:function(commander) { var _=commander._;
+      
+      for(var i=0, newSquads=[];i<_.squads.length;i++)
+        if(!Behavior.Custom.isSquadDead(_.squads[i]))
+          newSquads.push(_.squads[i]);      
+      _.squads=newSquads;
+      
+      // Build stuff...
+      if($.r()<0.011) {
+        Behavior.Custom.createSquad(
+          commander,
+          ["PistolInfantry","RocketInfantry"][$.R(0,1)]
+        );
+      }
+    },
+    
+    isSquadDead:function(squad) { var _=squad._;
+      if(!_.allMembersJoined) return false;
+      for(var i=0,newMembers=[]; i<_.members.length; i++)
+        if(!Behavior.Custom.isDead(_.members[i]))
+          newMembers.push(_.members[i]);
+      _.members=newMembers;
+      return !_.members.length;
     },
     
     TRUE:true,
@@ -505,7 +539,14 @@ var Behavior={
 // Predefined trees for various classes
 // Maybe we can load these in from a server somewhere. So that it's not baked in
 // and therefore tweaking can happen independent of game version.
+// Though realisticly, they are pretty tied to Behavior.Custom{}
 Behavior.Library={
+
+  CommanderIdle:
+    "<[idleCommander]>",
+    
+  SquadAttack:
+    "<[!isSquadDead]>",
 
   Projectile:
     "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)",
@@ -524,11 +565,9 @@ Behavior.Library={
     "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",    
   EngineerInfantry:
     "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>",
-  
-  StructureSupply:
-    "<[checkStructureState],[checkSupplyOrder],[tryReinforcing]>",
+
   Structure:
-    "<[checkStructureState],[tryCrewing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
+    "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
     
   MissileRack:
     "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",

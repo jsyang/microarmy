@@ -12,30 +12,21 @@ var COMMANDER={
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/*
-  GOAL states -- each of these should be a behavior tree, rather than an 
-  enum'd list of states.
-
-  IDLE, BUILD, ATTACK, DEFEND, ESCORT, REPAIR, EVACUATE
-
-*/
-
 
 Commander.prototype=new PawnController;
 function Commander(team) {
+  this.team=team;
   // No icon for now.
   // this.getGFX=function(){};
   
   this.alive=function() {
     Behavior.Execute(this._.behavior,this);
-    // Build stuff, issue orders
-    return false;
+    return true;
   };
 
   this._={
-    behavior:   undefined,
-    goal:       COMMANDER.GOAL.IDLE,
-    strength:   $.R(3,20),  // limit on # squads they can manage simultaneously
+    behavior:   Behavior.Library.CommanderIdle,
+    strength:   $.R(2,20),  // limit on # squads they can manage simultaneously
 
     squads: [],   // length should be no more than (strength, as above)
     
@@ -51,12 +42,12 @@ function Squad(team) {
   // this.getGFX=function(){ return; };
   
   this.alive=function(){
-    Behavior.Execute(this._.behavior,this);
-    return false;
+    return Behavior.Execute(this._.behavior,this);
   }
   
   this._={
-    behavior: undefined,
-    members:  []
+    behavior:         Behavior.Library.SquadAttack,
+    allMembersJoined: false,
+    members:          []
   };
 }

@@ -57,6 +57,7 @@ function PistolInfantry(x,y,team) {
     action:     INFANTRY.ACTION.MOVEMENT,
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
+    squad:      undefined,
     direction:  TEAM.GOALDIRECTION[team],
     behavior:   Behavior.Library.Infantry,
     
@@ -81,6 +82,7 @@ function RocketInfantry(x,y,team) {
     action:     INFANTRY.ACTION.MOVEMENT,
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
+    squad:      undefined,
     direction:  TEAM.GOALDIRECTION[team],
     behavior:   Behavior.Library.Infantry,
     
@@ -105,6 +107,7 @@ function EngineerInfantry(x,y,team) {
     action:     INFANTRY.ACTION.MOVEMENT,
     frame:      { current:0, first:0, last:5 },
     target:     undefined,
+    squad:      undefined,
     build:      { type:undefined, x:undefined },
     direction:  TEAM.GOALDIRECTION[team],
     behavior:   Behavior.Library.EngineerInfantry,

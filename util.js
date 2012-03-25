@@ -9,7 +9,8 @@ var $=new function() {
   this.sum=function(a) {
     for(var sum=0, i=a.length; i--; sum+=a[i] ); return sum;
   };
-    
+  this.sumObj=function(a) { var sum=0; for(var i in a) sum+=a[i]; return sum; }
+  
   // Used to reset the DOM for other screens.
   this.removeWorld=function(){
     world.pause();    

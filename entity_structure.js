@@ -59,18 +59,21 @@ function CommCenter(x,y,team) {
   // Panic attack: launch homing missile from hell.
   
   this._={
-    sight:        16,
-    ammo:         { clip: 1, max:1 },
-    reload:       { ing:0, time:$.R(20,1220), min:20, max: 1220 },    
     behavior:     Behavior.Library.Structure,
     
     health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
     direction:    TEAM.GOALDIRECTION[team],
     
-    reinforce:    { next: 0, time: 10,
-                    size:   {current:0, max:6},
-                    types:  [PistolInfantry,RocketInfantry],
-                    supply: [320,180],
+    reinforce:    { ing: 0, time: 10,
+                    types:  {
+                      PistolInfantry:   {qty:320, make:PistolInfantry},
+                      RocketInfantry:   {qty:180, make:RocketInfantry},
+                      EngineerInfantry: {qty:20,  make:EngineerInfantry}
+                    },
+                    
+                    supplyType:   undefined,
+                    supplyNumber: 0,
+                    parentSquad:  undefined, // squad unit belongs to when it's created
                     
                     // big dmg kills reinforcements
                     damageThreshold:  18,
@@ -95,10 +98,14 @@ function Barracks(x,y,team) {
     direction:    TEAM.GOALDIRECTION[team],
     behavior:     Behavior.Library.Structure,
     
-    reinforce:    { next: 0, time: 280,
-                    types:  [PistolInfantry],
-                    supply: [250],
-                    chances:[1],
+    reinforce:    { ing: 0, time: 10,
+                    types: {
+                      PistolInfantry:{qty:250,make:PistolInfantry}
+                    },
+                    
+                    supplyType:   undefined,
+                    supplyNumber: 0,
+                    parentSquad: undefined, // squad unit belongs to when it's created
                     
                     // big dmg kills reinforcements
                     damageThreshold:  24,
@@ -186,9 +193,6 @@ function CommRelay(x,y,team) {
     target:       undefined
   };
 }
-
-// todo: missile rack, also btree for missile rack: needs a controller
-// otherwise it can't fire
 
 // Defensive structures ////////////////////////////////////////////////////////
 

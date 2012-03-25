@@ -216,6 +216,8 @@ function World(map,team) {
   var w=2490, h=256;
   this.width=w; this.height=h;
   
+  var controllers=[];
+  
   // Pawn collections
   var projectiles=[];
   var explosions=[];
@@ -223,7 +225,7 @@ function World(map,team) {
   var vehicles=[];
   //var aircraft=[];
   var structures=[];
-  
+
   this.xHash=new XHash(w);
   
   var canvasElement=document.createElement("canvas");
@@ -244,6 +246,14 @@ function World(map,team) {
   FG.clearRect(0,0,w,h);
 
   var heightmap=terrain.heightmap_;
+
+  // Commanders / Squads -- higher level AI
+  function processControllers(controllers) {
+    for(var i=0, newControllers=[]; i<controllers.length; i++)
+      if(controllers[i].alive())
+        newControllers.push(controllers[i]);
+    return newControllers;
+  }
 
   // Process active Pawns
   function processInstances(newXHash,vx,vw,instances) {    
@@ -274,6 +284,8 @@ function World(map,team) {
     projectiles=processInstances(xHash_,viewLeft,viewWidth,projectiles);
     explosions= processInstances(xHash_,viewLeft,viewWidth,explosions);    
     
+    controllers=processControllers(controllers);
+    
     world.xHash=xHash_;
   }
   
@@ -294,6 +306,11 @@ function World(map,team) {
     if(obj instanceof Infantry)   return infantry.push(obj);
     if(obj instanceof Projectile) return projectiles.push(obj);
     if(obj instanceof Explosion)  return explosions.push(obj);
+    return false;
+  };
+  
+  this.addController=function(obj) {
+    if(obj instanceof PawnController) return controllers.push(obj);
     return false;
   };
 };
