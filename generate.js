@@ -10,18 +10,23 @@ var Generate={
     var strength=$.r();    
     var base=[
       // Capital pieces
-      {type:SmallTurret, num:1-Math.round(strength)},
-      {type:CommCenter, num:1-Math.round(strength)},
+      {type:SmallTurret, num:Math.round(strength)},
+      {type:CommCenter, num:Math.round(c._.strength>>3)>1?1:0},
+      {type:MissileRack, num:1-Math.round(strength)},
       {type:MissileRack, num:$.R(0,1)},
       {type:MissileRack, num:$.R(0,1)},
-      {type:MissileRack, num:$.R(0,1)},
-      {type:CommRelay, num:1},
+      {type:CommRelay, num:1-Math.round(strength)},
       {type:Barracks, num:1},
-      {type:Barracks, num:$.R(0,1)},
+      {type:Barracks, num:$.R(0,1)+Math.round(strength)},
       {type:SmallTurret, num:$.R(0,(2*strength)>>0)},
       {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
-      {type:Pillbox, num:1}
+      {type:Pillbox, num:Math.round(strength)}
     ];
+    
+    // Prune structures that won't be built.
+    for(var b=[],i=0;i<base.length;i++)
+      if(base[i].num) b.push(base[i]);
+    base=b;
     
     if(team==TEAM.GREEN) {
       var x=world.width-200;
@@ -44,11 +49,11 @@ var Generate={
            base[i+1].num>0)
           x+=TEAM.GOALDIRECTION[team]*3;
         else
-          x+=TEAM.GOALDIRECTION[team]*$.R(32,60);
+          x+=TEAM.GOALDIRECTION[team]*$.R(36,50);
       }
     }
     
-    console.log(TEAM.NAMES[team]+" Commander Skill: "+c._.strength+" -- Base Strength: "+strength);
+    console.log(TEAM.NAMES[team]+" Commander Skill: "+c._.strength+" -- Base Rating: "+Math.floor(strength*1e4)/100+"%");
   },
   
   BG:function(ctx,w,h) {

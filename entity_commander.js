@@ -48,6 +48,7 @@ function Squad(team) {
   this._={
     behavior:         Behavior.Library.SquadAttack,
     allMembersJoined: false,
-    members:          []
+    members:          [],
+    minX:             Infinity
   };
 }

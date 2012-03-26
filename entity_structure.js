@@ -294,7 +294,7 @@ function MissileRack(x,y,team) {
     health:       { current:$.R(200,280), max:$.R(280,300) },
     projectile:   HomingMissile,
     direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 3600 },
+    reload:       { ing:0, time: 5600 },
     ammo:         { clip:1, max: 1 },
     shootHeight:  3,
     deathExplode: true,

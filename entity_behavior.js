@@ -121,7 +121,6 @@ var Behavior={
     // it to wait a bit before looking again: half the reload time.
     forceReload:function(obj) { var _=obj._;
       _.reload.ing=_.reload.time;
-      _.ammo.clip=_.ammo.max;
       return true;
     },
     
@@ -523,9 +522,17 @@ var Behavior={
     isSquadDead:function(squad) { var _=squad._;
       if(!_.allMembersJoined) return false;
       for(var i=0,newMembers=[]; i<_.members.length; i++)
-        if(!Behavior.Custom.isDead(_.members[i]))
+        if(!Behavior.Custom.isDead(_.members[i])) {
           newMembers.push(_.members[i]);
+          _.minX=_.members[i].x;
+        }
       _.members=newMembers;
+      
+      /*/ Scroll to place where squad met its end.
+      if(DEMO_ACTION.CHECKACTION && !_.members.length && isFinite(_.minX))
+        DEMO_ACTION.X=_.minX;
+      */
+      
       return !_.members.length;
     },
     
