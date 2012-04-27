@@ -10,17 +10,15 @@ var Generate={
     var strength=$.r();    
     var base=[
       // Capital pieces
-      {type:SmallTurret, num:Math.round(strength)},
-      {type:CommCenter, num:Math.round(c._.strength>>3)>1?1:0},
-      {type:MissileRack, num:1-Math.round(strength)},
+      {type:SmallTurret, num:$.R(0,1))},
+      {type:CommCenter, num:$.R(0,1)},
       {type:MissileRack, num:$.R(0,1)},
       {type:MissileRack, num:$.R(0,1)},
-      {type:CommRelay, num:1-Math.round(strength)},
-      {type:Barracks, num:1},
-      {type:Barracks, num:$.R(0,1)+Math.round(strength)},
-      {type:SmallTurret, num:$.R(0,(2*strength)>>0)},
-      {type:Pillbox, num:((2*strength)>>0)-Math.round($.r())},
-      {type:Pillbox, num:Math.round(strength)}
+      {type:MissileRack, num:$.R(0,1)},
+      {type:CommRelay, num:$.R(0,1)},
+      {type:Barracks, num:$.R(1,3)},
+      {type:SmallTurret, num:$.R(0,1)},
+      {type:Pillbox, num:$.R(0,3)}
     ];
     
     // Prune structures that won't be built.
@@ -53,7 +51,6 @@ var Generate={
       }
     }
     
-    console.log(TEAM.NAMES[team]+" Commander Skill: "+c._.strength+" -- Base Rating: "+Math.floor(strength*1e4)/100+"%");
   },
   
   BG:function(ctx,w,h) {
