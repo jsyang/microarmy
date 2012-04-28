@@ -10,9 +10,8 @@ var Generate={
     var strength=$.r();    
     var base=[
       // Capital pieces
-      {type:SmallTurret, num:$.R(0,1))},
-      {type:CommCenter, num:$.R(0,1)},
-      {type:MissileRack, num:$.R(0,1)},
+      {type:SmallTurret, num:$.R(0,1)},
+      {type:CommCenter, num:$.R(0,2)},
       {type:MissileRack, num:$.R(0,1)},
       {type:MissileRack, num:$.R(0,1)},
       {type:CommRelay, num:$.R(0,1)},
@@ -50,7 +49,7 @@ var Generate={
           x+=TEAM.GOALDIRECTION[team]*$.R(36,50);
       }
     }
-    
+    console.log(TEAM.NAMES[team].toUpperCase()+" Commander Skill: "+c._.strength);
   },
   
   BG:function(ctx,w,h) {
