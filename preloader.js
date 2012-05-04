@@ -47,8 +47,8 @@ preloader.onfinish=function() {
     
   // 3. Create the gameworld with map entities and run it!
   world=new World();
-  Generate.TEAM(TEAM.BLUE);
-  Generate.TEAM(TEAM.GREEN);
+  //Generate.TEAM(TEAM.BLUE);
+  //Generate.TEAM(TEAM.GREEN);
   world.go();
 
 };

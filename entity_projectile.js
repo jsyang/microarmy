@@ -131,7 +131,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   this.img={ w:15, h:15, frame:0, sheet:preloader.getFile('missilered') };
   
   this.maxSpeed=90;
-  this.range=180;
+  this.range=280;
   this.rangeTravelled=0;
   this.dspeed=0.84;
   this.ddy=0.081;
@@ -153,7 +153,7 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
   
   this.explode=function(){
     
-    world.addPawn(new HEAPExplosion(this.x,this.y));
+    world.addPawn(new SmallExplosion(this.x,this.y));
     var x=this.x+$.R(12,20); var y=this.y+$.R(-20,20);
     if(y>world.getHeight(x)) y=world.getHeight(x);
     world.addPawn(new HEAPExplosion(x,y));
@@ -161,14 +161,25 @@ function HomingMissile(x,y,team,target,dx,dy,accuracy) {
     if(y>world.getHeight(x)) y=world.getHeight(x);
     world.addPawn(new HEAPExplosion(x,y));
 
+    // smoke..
+    for(var i=12; i--;) {
+      var x=this.x+$.R(-60,60); var y=this.y+$.R(-20,20);
+      if(y>world.getHeight(x)) y=world.getHeight(x);
+      world.addPawn(new SmokeCloud(x,y));
+    }
+
     var x=this.x+$.R(18,30); var y=this.y+$.R(-20,20);
     if(y>world.getHeight(x)) y=world.getHeight(x);
+    world.addPawn(new HEAPExplosion(x,y));
     var x=this.x-$.R(18,30); var y=this.y+$.R(-20,20);
     if(y>world.getHeight(x)) y=world.getHeight(x);
     world.addPawn(new HEAPExplosion(x,y));
     
-    this.img.w=40;
-    Behavior.Custom.throwShrapnel(this);
+    
+    
+    // Don't throw shrapnel, way too overpowered..
+    //this.img.w=40;
+    //Behavior.Custom.throwShrapnel(this);
     this.img.w=15;
     
     this.range=0;

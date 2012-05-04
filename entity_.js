@@ -246,7 +246,15 @@ function World(map,team) {
   FG.clearRect(0,0,w,h);
 
   var heightmap=terrain.heightmap_;
-
+  
+  // reset the structure heights
+  for(var i=0; i<terrain.structs_.length; i++) {
+    terrain.structs_[i].y=heightmap[terrain.structs_[i].x];
+    structures.push(terrain.structs_[i]);
+  }
+  // add the controllers.
+  controllers=terrain.control_.slice(0);
+  
   // Commanders / Squads -- higher level AI
   function processControllers(controllers) {
     for(var i=0, newControllers=[]; i<controllers.length; i++)

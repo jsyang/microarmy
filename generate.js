@@ -5,19 +5,20 @@ var Generate={
   TEAM:function(team){
     // Controllers first, then pile the strategic structures in.
     var c=new Commander(team);
-    world.addController(c);    
+    //world.addController(c);
     
-    var strength=$.r();    
     var base=[
       // Capital pieces
       {type:SmallTurret, num:$.R(0,1)},
       {type:CommCenter, num:$.R(0,2)},
-      {type:MissileRack, num:$.R(0,1)},
-      {type:MissileRack, num:$.R(0,1)},
+      {type:MissileRack, num:$.R(0,2)},
+      {type:MissileRack, num:$.R(0,2)},
+      {type:MissileRack, num:$.R(0,2)},
       {type:CommRelay, num:$.R(0,1)},
-      {type:Barracks, num:$.R(1,3)},
+      {type:Barracks, num:$.R(1,5)},
       {type:SmallTurret, num:$.R(0,1)},
-      {type:Pillbox, num:$.R(0,3)}
+      {type:Pillbox, num:$.R(0,2)},
+      {type:SmallMine, num:$.R(0,8)}
     ];
     
     // Prune structures that won't be built.
@@ -26,15 +27,20 @@ var Generate={
     base=b;
     
     if(team==TEAM.GREEN) {
-      var x=world.width-200;
+      var x=2490-200;
     } else {
       var x=200;
     }
     
+    var flatRegions=[];
+    var startingStructures=[];
     for(var i=0;i<base.length;i++){
       for(;base[i].num>0;base[i].num--) {
-        var nextStructure=new (base[i].type)(x,world.getHeight(x),team);
-        world.addPawn(nextStructure);
+        var nextStructure=new (base[i].type)(x,0,team);
+        //world.addPawn(nextStructure);
+        if(!(nextStructure instanceof SmallMine))
+          flatRegions.push({'x':x});
+        startingStructures.push(nextStructure);
         
         // Add into the structures.
         if(nextStructure instanceof CommCenter || nextStructure instanceof Barracks)
@@ -45,11 +51,17 @@ var Generate={
            base[i+1].type==MissileRack &&
            base[i+1].num>0)
           x+=TEAM.GOALDIRECTION[team]*3;
+        else if(base[i].type==SmallMine && base[i].num>1)
+          x+=TEAM.GOALDIRECTION[team]*$.R(8,20);
         else
           x+=TEAM.GOALDIRECTION[team]*$.R(36,50);
       }
     }
     console.log(TEAM.NAMES[team].toUpperCase()+" Commander Skill: "+c._.strength);
+    return {  'flatRegions':  flatRegions,
+              'structures':   startingStructures,
+              'controller':   c
+    };
   },
   
   BG:function(ctx,w,h) {
@@ -92,6 +104,78 @@ var Generate={
     }
     return imgData;
   },
+  
+  // todo: clean this up...
+  PEAKS:function(w,h,flatRegions) {
+    var peaks=[];
+    for(var x=$.R(10,80);x<w;x+=$.R(100,400)) {
+      var major={
+        x:      x,
+        height: $.R(20,h-120)
+      };
+      peaks.push(major);
+      for(var j=$.R(1,12); j--;) {
+        x+=$.R(10,50);
+        var minor={
+          x:      x,
+          height: major.height+$.R(-12,16)
+        };
+        if(x<w) peaks.push(minor);
+      }
+    }
+    // no need to sort as generation already happens in order
+    // peaks.sort(function(a,b){return a.x-b.x;});
+    
+    // insert flat region of 400px at both ends
+    // change this later to reflect terrain of the campaign tiles.
+    function flatten(p,start,end) {
+      for(var i=0;p[i].x<start;i++);
+      for(var j=i;j<p.length && p[j].x<end;j++);
+      j++;
+      var avgHeight;
+      if(!p[j]) avgHeight=p[i].height;
+      else      avgHeight=(p[i].height+p[j].height)>>1;
+      p.splice(i,   0,{ x: start, height: avgHeight, flat:true });
+      p.splice(j,   0,{ x: end,   height: avgHeight, flat:true});
+      p.splice(i+1,j-i-1);
+    }
+    
+    // merge the flatRegions which overlap.
+    var flatInterval=[];
+    var flatRadius=24;
+    flatRegions.sort(function(a,b){return a.x-b.x;});
+    for(var i=0; i<flatRegions.length; i++) {
+      var start=flatRegions[i].x-flatRadius;
+      var end=flatRegions[i].x+flatRadius;
+      for(var j=i; j<flatRegions.length && flatRegions[i].x+72>=flatRegions[j].x-72; j++){
+        end=flatRegions[j].x+flatRadius;
+        i=j;
+      }
+      if(!flatInterval.length || flatInterval[flatInterval.length-1].start!=start)
+        flatInterval.push({'start':start, 'end':end});
+      //console.log(start,'--',end);
+    }
+    
+    for(var i=0; i<flatInterval.length; i++)
+      flatten(peaks,flatInterval[i].start,flatInterval[i].end);
+    
+    // todo: delete slopes that are too steep -- do this better
+    // removes peaks that are too close together and too steep
+    for(var i=0; i<peaks.length-1; i++)
+      if( (!peaks[i].flat) && // don't touch the flat regions
+          (Math.abs(peaks[i].x-peaks[i+1].x)<32) &&
+          (1.6*Math.abs(peaks[i].x-peaks[i+1].x) <
+           Math.abs(peaks[i].height-peaks[i+1].height))
+        )
+        peaks[i].height=Infinity;
+    for(var i=0, newPeaks=[]; i<peaks.length; i++)
+      if(isFinite(peaks[i].height))
+        newPeaks.push(peaks[i]);
+    peaks=newPeaks;
+    //peaks.sort(function(a,b){return a.x-b.x;});
+    
+    return peaks;
+  },
 
   // needs optimization -- very intensive on CPU  
   FG:function(ctx,w,h) {
@@ -115,50 +199,14 @@ var Generate={
       };
     }
     
-    // todo: splines to smooth out the peaks
+    // generate structures then go through and reset their heights later
+    var teamBlue=Generate.TEAM(TEAM.BLUE);
+    var teamGreen=Generate.TEAM(TEAM.GREEN);
+    var combinedFlats=teamBlue.flatRegions.concat(teamGreen.flatRegions);
+    var peaks=Generate.PEAKS(w,h,combinedFlats);
     
-    var peaks=[];
-    for(var x=$.R(10,80);x<w;x+=$.R(100,400)) {
-      var major={
-        x:      x,
-        height: $.R(30,h-100)
-      };
-      for(var j=$.R(1,12); j--;) {
-        x+=$.R(24,120);
-        var minor={
-          x:      x,
-          height: major.height+$.R(0,24)
-        };
-        if(x<w) peaks.push(minor);
-      }
-      peaks.push(major);
-    }
-    peaks.sort(function(a,b){return a.x-b.x;});
-    
-    // insert flat region of 400px at both ends
-    // change this later to reflect terrain of the campaign tiles.
-    function flatten(p,start,length) {      
-      for(var i=0;p[i].x<start;i++);
-      for(var j=0;j<p.length-1 && p[j].x<start+length;j++);
-      var avgHeight=(p[i].height+p[j].height)>>1;
-      p[i].height=avgHeight;
-      p[j].height=avgHeight;
-      p.splice(i+1,j-i-1);
-    }
-    
-    flatten(peaks,80,400);      // hard coded for now.
-    flatten(peaks,w-480,400);
-    
-    // continued
-    var avgHeight=0;
-    for(var i=0; i<peaks.length;i++) avgHeight+=peaks[i].height;
-    avgHeight/=peaks.length; avgHeight=Math.round(avgHeight);
-    
-    // todo: flattening sections in the heightmap... for base layout
-    
-    var heightmap=[];    
-    while (peaks[0].x==0) peaks.shift();
-    var current={height:avgHeight, peak:peaks[0]};
+    var heightmap=[];
+    var current={height:peaks[0].height, peak:peaks[0]};
     for(var x=0, j=0, dy=0; x<w; x++) {
       if(current.peak.x==x) {
         if(++j<peaks.length) {
@@ -171,6 +219,7 @@ var Generate={
       heightmap.push(h-Math.round(current.height));
       current.height+=dy;
     }
+    //console.log(heightmap);
     
     var color=[colors.bedrock,colors.moss,colors.topsoil,colors.sand,colors.steeps][$.R(0,4)];
     for(var terrainGradient=[], h_=0; h-h_; h_++) {
@@ -178,7 +227,6 @@ var Generate={
       terrainGradient.push(color.g-h_);
       terrainGradient.push(color.b-h_);
     }
-    
     
     for(var x=0; x<w; x++) {
       for(var height=heightmap[x],i=0; height<h; height++,i++) {
@@ -188,6 +236,11 @@ var Generate={
         d[c+2]=terrainGradient[3*i+2];
       }
     }
-    return {imgdata_:imgData, heightmap_: heightmap, peaks_:peaks};
+    return {  imgdata_:   imgData,
+              heightmap_: heightmap,
+              peaks_:     peaks,
+              structs_:   teamBlue.structures.concat(teamGreen.structures),
+              control_:   [teamBlue.controller,teamGreen.controller]
+    };
   }  
 };
