@@ -45,6 +45,31 @@ var Behavior={
   
   Custom:{
     
+    isCrumblingStructure : function(obj) { return obj._.state==STRUCTURE.STATE.WRECK; },
+    
+    crumbleStructure : function(obj) { var _=obj._;
+      _.state=STRUCTURE.STATE.WRECK;
+      soundManager.play('crumble');
+      return true;
+    },
+    
+    hasCorpseTime : function(obj) { return !obj._.corpsetime; },
+    
+    isDyingInfantry : function(obj) { return !(obj._.action<INFANTRY.ACTION.DEATH1); },
+    
+    animateDyingInfantry : function(obj) { var _=obj._;
+      _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
+      _.frame.current=_.frame.first;
+      soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
+      return true;
+    },
+    
+    rotCorpse : function(obj) { var _=obj._;
+      if(_.frame.current<_.frame.last) _.frame.current++;
+      else _.corpsetime--;
+      return true;
+    },
+    
     // Not usually used in BTrees; as this is not a behavior.
     takeDamage:function(obj,damage){ var _=obj._;
       if(damage<0 || !damage || Behavior.Custom.isDead(obj)) return true;
@@ -75,13 +100,11 @@ var Behavior={
       return true;
     },
     
-    isDead:function(obj) {
-      return obj._.health.current<=0;
-    },
+    isDead:function(obj) { return obj._.health.current<=0; },
     
     checkStructureState:function(structure){ var _=structure._;
       if(_.health.current<0.6*_.health.max) {
-        structure.state=STRUCTURE.STATE.BAD;        
+        _.state=STRUCTURE.STATE.BAD;
       }
       return true;
     },
@@ -90,8 +113,9 @@ var Behavior={
       return world.isOutside(obj);
     },
     
-    isProjectileOutOfRange:function(projectile) { // Cannot travel any further      
-      return projectile.range? !projectile.range--:true;
+    isProjectileOutOfRange:function(projectile) { // Cannot travel any further
+      var _=projectile._;
+      return _.range? !_.range-- : true;
     },
     
     isArmed:function(obj) {
@@ -143,7 +167,7 @@ var Behavior={
     
     // Handle rotation to face target -- Vehicles
     isFacingTarget:function(obj) { var _=obj._;
-      if(_.target && (_.target.x-obj.x)*_.direction<0) {
+      if(_.target && (_.target._.x-_.x)*_.direction<0) {
         if(!_.turn.ing) {            
           _.turn.ing=1;
           _.turn.current=0;
@@ -187,8 +211,8 @@ var Behavior={
     },
     
     // Sight is in multiples of XHash buckwidths!
-    seeEntity:function(obj,t) { 
-      return t? Math.abs(t.x-obj.x)<obj._.sight*world.xHash.BUCKETWIDTH : false;
+    seeEntity:function(obj,t) { var _=obj._;
+      return t? Math.abs(t._.x-_.x)<_.sight*world.xHash.BUCKETWIDTH : false;
     },
     
     seeTarget:function(obj) {
@@ -200,7 +224,7 @@ var Behavior={
     foundTarget:function(obj) { var t=obj._.target;
       // Try to find a valid target!
       if(!t || Behavior.Custom.isDead(t) ||
-         !Behavior.Custom.seeTarget(obj) || t.team==obj.team)
+         !Behavior.Custom.seeTarget(obj) || t._.team==obj._.team)
         if(obj instanceof Pillbox)
           world.xHash.getNearestEnemyRay(obj);
         else
@@ -212,7 +236,7 @@ var Behavior={
     // Face the target -- Infantry
     setFacingTarget:function(obj) { var _=obj._;
       if(_.target) {
-        _.direction=_.target.x>obj.x?1:-1;
+        _.direction=_.target._.x>_.x?1:-1;
         // Randomize attack stance -- Infantry
         if(!(obj instanceof EngineerInfantry) &&
            _.action==INFANTRY.ACTION.MOVEMENT)
@@ -220,7 +244,7 @@ var Behavior={
                        INFANTRY.ACTION.ATTACK_PRONE);
       } else {
         _.action=INFANTRY.ACTION.MOVEMENT;
-        _.direction=TEAM.GOALDIRECTION[obj.team];
+        _.direction=TEAM.GOALDIRECTION[obj._.team];
       }
       
       _.frame.first=_.direction>0?  6 : 0;
@@ -228,19 +252,19 @@ var Behavior={
       return true;
     },    
         
-    move:function(obj) {
-      obj.x+=obj._.direction;
-      obj.y=world.getHeight(obj.x);
+    move:function(obj) { var _=obj._;
+      _.x+=_.direction;
+      _.y=world.getHeight(_.x);
       return true;
     },    
     
     // this attack function came from Vehicle class; added Infantry stuff.
     attack:function(obj) { var _=obj._;
-      var dist=Math.abs(_.target.x-obj.x);      
+      var dist=Math.abs(_.target._.x-_.x);      
       
       if(obj instanceof Infantry) {
         // Melee distance: LESS than one body!
-        if(dist<obj.img.w) {
+        if(dist<_.img.w) {
           if($.r()<_.berserk.chance) {
             Behavior.Custom.takeDamage(_.target,_.meleeDmg);
             // Pretty hard to ignore someone punching your face
@@ -281,9 +305,13 @@ var Behavior={
           // Missile doesn't need a target: it finds its own!
           soundManager.play('missile1');
           world.addPawn(
-            new HomingMissile(obj.x,obj.y-20,
-                              obj.team,undefined,
-                              _.direction*4.6,-8.36,0 )
+            new HomingMissile({
+              x:    _.x,
+              y:    _.y-20,
+              team: _.team,
+              dx:   _.direction*4.6,
+              dy:   -8.36
+            })
           );
           _.ammo.clip--;
           _.reload.time=$.R(10,1220);
@@ -293,8 +321,8 @@ var Behavior={
       }
       
       // Projectile origin relative to sprite
-      var pDY=_.shootHeight? -_.shootHeight: -obj.img.h>>1;
-      var pDX=_.direction*(obj.img.w>>1);
+      var pDY=_.shootHeight? -_.shootHeight: -_.img.h>>1;
+      var pDX=_.direction*(_.img.w>>1);
       
       /*if(obj instanceof Structure) {
         var pDY=-_.shootHeight;
@@ -312,70 +340,69 @@ var Behavior={
       if(dist>200){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
       
       world.addPawn(
-        new _.projectile(
-          obj.x+pDX,obj.y+pDY,
-          obj.team,
-          _.target,
-          _.direction*fSpeed,
-          ((_.target.y-(_.target.img.h>>1)-(obj.y+pDY))*fSpeed)
-          /dist+strayDY,
-          accuracy
-        )
+        new _.projectile({
+          x:        _.x+pDX,
+          y:        _.y+pDY,
+          team:     _.team,
+          target:   _.target,
+          dx:       _.direction*fSpeed,
+          dy:       ((_.target._.y-(_.target._.img.h>>1)-(_.y+pDY))*fSpeed)/dist+strayDY,
+          accuracy: accuracy
+        })
       );
       _.ammo.clip--;
       return true;
     },
     
-    fly:function(obj){
-      obj.y+=obj.dy;
-      obj.x+=obj.dx;
-      if(obj instanceof MortarShell) obj.dy+=obj.ddy;
+    fly:function(obj){ var _=obj._;
+      _.y+=_.dy;
+      _.x+=_.dx;
+      // Simulate gravity, add a speed limiter here later, for terminal velo.
+      if(obj instanceof MortarShell) _.dy+=_.ddy;
       return true;
     },
     
-    hitGroundProjectile:function(projectile){
-      projectile.x-=projectile.dx>>1;
-      world.addPawn(new FragExplosion(projectile.x,world.getHeight(projectile.x>>0)));
+    hitGroundProjectile:function(projectile){ var _=projectile._;
+      _.x-=_.dx>>1;
+      world.addPawn(
+        new FragExplosion({
+          x:  _.x,
+          y:  world.getHeight(_.x>>0)
+        })
+      );
       Behavior.Custom.stopProjectile(projectile);
       return true;
     },
     
     tryBuilding:function(obj){ var _=obj._;
-      if(_.build.x==obj.x) {
-        var scaffold=new Scaffold(obj.x,world.getHeight(obj.x),obj.team);
-        scaffold._.build.type=_.build.type;
-        
-        // How many workers do we need to construct this?
-        var type=_.build.type;
-        var crewCount=8;
-             if(type instanceof Pillbox)      crewCount=4;
-        else if(type instanceof SmallTurret)  crewCount=6;
-        else if(type instanceof Barracks)     crewCount=16;
-        else if(type instanceof CommCenter)   crewCount=60;
-        
-        scaffold._.crew.max=crewCount;
-        scaffold._.crew.current=1;
+      if(_.build.x==_.x) {
+        var scaffold=new Scaffold({
+          x:      _.x,
+          y:      world.getHeight(_.x),
+          team:   _.team,
+          build:  { type: _.build.type }
+        });
+        scaffold.setBuildCount.call(scaffold);
         world.addPawn(scaffold);
         Behavior.Custom.remove(obj);
-        poo=scaffold;
         return true;
       }
       return false;
     },
     
-    tryHitProjectile:function(projectile){
-      var h=world.xHash.getNBucketsByCoord(projectile.x,0);    
+    tryHitProjectile:function(projectile){ var _=projectile._;
+      var h=world.xHash.getNBucketsByCoord(_.x,0); 
       for(var i=0; i<h.length; i++) {
         var unit=h[i];
-        if(unit.team==projectile.team)  continue;
-        if(Behavior.Custom.isDead(unit))         continue;      
+        if(unit._.team==_.team) continue;
+        if(Behavior.Custom.isDead(unit)) continue;      
         
-        var dx=projectile.x-unit.x;
-        var dy=projectile.y-(unit.y-(unit.img.h>>1));
+        var dx=_.x-unit._.x;
+        var dy=_.y-(unit._.y-(unit._.img.h>>1));
         
-        var chanceToHit=projectile.accuracy[0];
-        chanceToHit+=(unit==projectile.target)?
-          projectile.accuracy[1]:0;
+        var chanceToHit=_.accuracy[0];
+        chanceToHit+=(unit==_.target)?
+          _.accuracy[1]:0;
         
         if(unit instanceof Infantry) {
           switch(unit._.action) { // Stance affects chance to be hit
@@ -384,19 +411,25 @@ var Behavior={
           }        
         }      
   
-        if(dx*dx+dy*dy>unit.img.hDist2)   continue;
+        if(dx*dx+dy*dy>unit._.img.hDist2)   continue;
         if($.r()>chanceToHit) continue;
         // We've hit something!
-        if(projectile.explosion)
-          world.addPawn(new projectile.explosion(projectile.x,projectile.y));
-        Behavior.Custom.takeDamage(unit,projectile.damage);
+        if(_.explosion)
+          world.addPawn(
+            new _.explosion({
+              x:  _.x,
+              y:  _.y
+            })
+          );
+        Behavior.Custom.takeDamage(unit,_.damage);
         return true;
       }
       return false;
     },
     
-    walkingOffMapCheck:function(obj) {
-      if(TEAM.GOALDIRECTION[obj.team]==obj._.direction) {
+    walkingOffMapCheck:function(obj) { var _=obj._;
+      // todo: this is not the only "game over"
+      if(TEAM.GOALDIRECTION[_.team]==_.direction) {
         soundManager.play('accomp');
         world.pause();
       }
@@ -404,48 +437,55 @@ var Behavior={
       return true;
     },
     
-    throwShrapnel:function(obj) {
-      var w2=obj.img.w>>1, h2=obj.img.h>>1;
-      world.addPawn(new SmallExplosion(obj.x,obj.y-h2));    
+    throwShrapnel:function(obj) { var _=obj._;
+      var w2=_.img.w>>1, h2=_.img.h>>1;
+      world.addPawn(new SmallExplosion({
+        x:  _.x,
+        y:  _.y-h2
+      }));    
       for(var shrap=$.R(5,10); shrap; shrap--) world.addPawn(
-        new MortarShell(
-          obj.x+$.R(-w2,w2),obj.y-h2,0,0,
-          $.R(-4,4)/2,$.R(-18,-12)/4,0)
+        new MortarShell({
+          x:  _.x+$.R(-w2,w2),
+          y:  _.y-h2,
+          dx: $.R(-4,4)/2,
+          dy: $.R(-18,-12)/4
+        })
       );
     },
     
     tryCrewing:function(structure) { var _=structure._;
       if(_.crew){
         if(_.crew.current<_.crew.max) {
-          var h=world.xHash.getNBucketsByCoord(structure.x,2);
+          var h=world.xHash.getNBucketsByCoord(_.x,2);
           for(var i=0; i<h.length; i++) {
-            if(!(h[i] instanceof PistolInfantry) ||
-               Behavior.Custom.isDead(h[i]) ||
-               (Math.abs(h[i].x-structure.x)>structure.img.w>>1) )
+            var unit=h[i];
+            if(!(unit instanceof PistolInfantry) ||
+               Behavior.Custom.isDead(unit) ||
+               (Math.abs(unit._.x-_.x)>_.img.w>>1) )
                continue;
             
-            if(h[i].team!=structure.team) {
-              // new ownership!
+            if(unit._.team!=_.team) {
+              // change ownership!
               if(_.crew.current==0) {
-                structure.team=h[i].team;
-                _.direction=TEAM.GOALDIRECTION[structure.team];
+                _.team=unit._.team;
+                _.direction=TEAM.GOALDIRECTION[_.team];
               } else continue;
             }
             
-            Behavior.Custom.remove(h[i]);
+            Behavior.Custom.remove(unit);
             _.crew.current++;
-            if(structure instanceof Pillbox) soundManager.play('sliderack1');
-            else soundManager.play('feed');
+            if(structure instanceof Pillbox)  soundManager.play('sliderack1');
+            if(structure instanceof Scaffold) soundManager.play('feed');
             break;
           }
         } else {
           if(structure instanceof Scaffold) {
             world.addPawn(
-              new _.build.type(
-                structure.x,
-                world.getHeight(structure.x),
-                structure.team
-              )
+              new _.build.type({
+                x:    _.x,
+                y:    world.getHeight(_.x),
+                team: _.team
+              })
             );
             Behavior.Custom.remove(structure);
             return true;
@@ -453,29 +493,32 @@ var Behavior={
         }
         if(!_.crew.current){
           // Enemies should not attack an empty pillbox
-          structure.imgSheet=_.crew.empty;
+          _.img.sheet=_.crew.empty;
         } else {
-          structure.imgSheet=_.crew.occupied(structure);
-        }        
+          _.img.sheet=_.crew.occupied(structure);
+        }
       }
       return true;
     },
     
 
 
-    tryReinforcing:function(structure) { var _=structure._.reinforce;
-      if(_) {
-        if(_.ing>0) _.ing--; else {
-          if(_.supplyNumber==0 || !_.parentSquad || !_.supplyType) return true;
-          if(!_.types[_.supplyType].qty) return true;
-          _.ing=_.time;
-          _.types[_.supplyType].qty--;
-          _.supplyNumber--;
-          var unit=new _.types[_.supplyType].make
-            (structure.x,world.getHeight(structure.x),structure.team);          
-          unit._.squad=_.parentSquad;
-          _.parentSquad._.members.push(unit);
-          if(!_.supplyNumber) _.parentSquad._.allMembersJoined=true;
+    tryReinforcing:function(structure) { var _r=structure._.reinforce, _=structure._;
+      if(_r) {
+        if(_r.ing>0) _r.ing--; else {
+          if(_r.supplyNumber==0 || !_r.parentSquad || !_r.supplyType) return true;
+          if(!_r.types[_r.supplyType].qty) return true;
+          _r.ing=_r.time;
+          _r.types[_r.supplyType].qty--;
+          _r.supplyNumber--;
+          var unit=new _r.types[_r.supplyType].make({
+            x:    _.x,
+            y:    world.getHeight(_.x),
+            team: _.team
+          });
+          unit._.squad=_r.parentSquad;
+          _r.parentSquad._.members.push(unit);
+          if(!_r.supplyNumber) _r.parentSquad._.allMembersJoined=true;
           world.addPawn(unit);
         }
       }
@@ -489,7 +532,7 @@ var Behavior={
             for(var j in d[i]._.reinforce.types)
               if(type==j) {
                 
-                var s=new Squad(commander.team);
+                var s=new Squad({ team: _.team });
                 _.squads.push(s);
                 world.addController(s);
                 
@@ -524,7 +567,7 @@ var Behavior={
       for(var i=0,newMembers=[]; i<_.members.length; i++)
         if(!Behavior.Custom.isDead(_.members[i])) {
           newMembers.push(_.members[i]);
-          _.minX=_.members[i].x;
+          _.minX=_.members[i]._.x;
         }
       _.members=newMembers;
       
@@ -569,13 +612,20 @@ Behavior.Library={
     "([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
 
   Infantry:
-    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",    
+    "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",
+  InfantryDead:
+    "<[hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>",
+    
   EngineerInfantry:
     "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>",
 
   Structure:
     "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>",
-    
+  StructureDead:
+    "<[!isCrumblingStructure],[crumbleStructure]>",
+  StructureDeadExplode:
+    "<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>",
+  
   MissileRack:
     "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",
   Pillbox:

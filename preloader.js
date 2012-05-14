@@ -1,5 +1,3 @@
-// Preload stuff ///////////////////////////////////////////////////////////////
-
 preloader=(function() {    
   // 1. Preload gfx
   var a=new html5Preloader();  
@@ -40,16 +38,10 @@ preloader.onfinish=function() {
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
-    
-    // [MUSIC CODE HERE] -- removed for now..
-    
   });
     
   // 3. Create the gameworld with map entities and run it!
   world=new World();
-  //Generate.TEAM(TEAM.BLUE);
-  //Generate.TEAM(TEAM.GREEN);
   world.go();
-
 };
 

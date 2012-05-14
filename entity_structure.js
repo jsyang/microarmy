@@ -6,298 +6,256 @@ var STRUCTURE={
   }
 };
 
-// Structure classes ///////////////////////////////////////////////////////////
-Structure.prototype=new Pawn;
-function Structure() {
-  this.state=STRUCTURE.STATE.GOOD;
-  this.corpsetime=Infinity;
-  
-  this.getGFX=function(){
+Structure = Pawn.extend({
+  init:function(params){
+    this._=$.extend({
+      corpsetime: Infinity,
+      state:      STRUCTURE.STATE.GOOD,
+      behavior:   { alive:Behavior.Library.Structure, dead:Behavior.Library.StructureDeadExplode }
+    },params);
+    this.setDirection();
+    this.setSpriteSheet(this._.img.sheet); // sheet is a string before here.
+  },
+  gfx:function(){ var _=this._;
     return {
-      img:    this.imgSheet,
-      imgdx:  (this._.direction>0)? this.img.w:0,
-      imgdy:  this.state*this.img.h,
-      worldx: this.x-(this.img.w>>1),
-      worldy: this.y-this.img.h+1,
-      imgw:this.img.w, imgh:this.img.h
+      img:    _.img.sheet,
+      imgdx:  _.direction>0? _.img.w : 0,
+      imgdy:  _.state*_.img.h,
+      worldx: _.x-(_.img.w>>1),
+      worldy: _.y-_.img.h+1,
+      imgw:_.img.w,
+      imgh:_.img.h
     }
-  }
-  
-  this.alive=function() { var _=this._;    
+  },
+  setSpriteSheet:function(structureType){
+    this._.img.sheet=preloader.getFile(structureType+TEAM.NAMES[this._team]);
+  },
+  setDirection:function(){
+    this._.direction=TEAM.GOALDIRECTION[this._.team];
+  },
+  alive:function(){ var _=this._;    
     if(Behavior.Custom.isDead(this)) {
-      if(this.state!=STRUCTURE.STATE.WRECK) {
-        this.state=STRUCTURE.STATE.WRECK;
-        soundManager.play('crumble');
-        if(_.deathExplode) Behavior.Custom.throwShrapnel(this);
-      }
+      Behavior.Execute(_.behavior.dead,this);
       return false;
     } else {
-      Behavior.Execute(_.behavior,this);
-      
+      Behavior.Execute(_.behavior.alive,this);      
       // shouldn't be able to target an unoccupied building
       if(_.crew && !_.crew.current) {
-        this.imgSheet=_.crew.empty;
+        _.img.sheet=_.crew.empty;
         return false;
       }
       return true;
-    }    
-  };
-}
+    }
+  }
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CommCenter.prototype=new Structure;
-function CommCenter(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  this.state=STRUCTURE.STATE.GOOD;
-  
-  this.img={ w:28, h:28, hDist2:196 };
-  this.imgSheet=preloader.getFile('comm'+TEAM.NAMES[team]);  
-
-  // Panic attack: launch homing missile from hell.
-  
-  this._={
-    behavior:     Behavior.Library.Structure,
-    
-    health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
-    direction:    TEAM.GOALDIRECTION[team],
-    
-    reinforce:    { ing: 0, time: 10,
-                    types:  {
-                      PistolInfantry:   {qty:320, make:PistolInfantry},
-                      RocketInfantry:   {qty:180, make:RocketInfantry},
-                      EngineerInfantry: {qty:20,  make:EngineerInfantry}
-                    },
-                    
-                    supplyType:   undefined,
-                    supplyNumber: 0,
-                    parentSquad:  undefined, // squad unit belongs to when it's created
-                    
-                    // big dmg kills reinforcements
-                    damageThreshold:  18,
-                    damageChance:     0.4
-                  },
-    deathExplode: true,
-    target:       undefined
-  };
-}
-
-Barracks.prototype=new Structure;
-function Barracks(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:32, h:12, hDist2:169 };
-  this.imgSheet=preloader.getFile('barracks'+TEAM.NAMES[team]);  
-    
-  this._={    
-    health:       { current:$.R(1800,1950), max:$.R(1950,2500) },
-    direction:    TEAM.GOALDIRECTION[team],
-    behavior:     Behavior.Library.Structure,
-    
-    reinforce:    { ing: 0, time: 10,
-                    types: {
-                      PistolInfantry:{qty:250,make:PistolInfantry}
-                    },
-                    
-                    supplyType:   undefined,
-                    supplyNumber: 0,
-                    parentSquad: undefined, // squad unit belongs to when it's created
-                    
-                    // big dmg kills reinforcements
-                    damageThreshold:  24,
-                    damageChance:     0.6
-                  },
-    
-    target:       undefined
-  };
-}
-
-Scaffold.prototype=new Structure;
-function Scaffold(x,y,team) {
-  soundManager.play('tack');
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:16, h:8, hDist2:64 };
-  this.imgSheet=preloader.getFile('scaffold_');
-  
-  this._={
-    behavior:     Behavior.Library.Scaffold,
-    health:       { current:$.R(360,400), max:$.R(400,450) },
-    direction:    TEAM.GOALDIRECTION[team],
-    build:        {type:undefined},
-    crew:         { current: 1, max:2,
-                    occupied: function(o){
-                      return preloader.getFile('scaffold'+TEAM.NAMES[o.team]);
-                    },
-                    empty: preloader.getFile('scaffold_'),
-                    
-                    damageThreshold:  5,
-                    damageChance:     1
-                  },
-
-    target:       undefined
+CommCenter = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:28, h:28, hDist2:196, sheet:'comm' },
+      health:       { current:$.R(2100,2500), max:$.R(2500,2600) },      
+      reinforce:    { ing: 0, time: 10,
+                      types:  {
+                        PistolInfantry:   {qty:320, make:PistolInfantry},
+                        RocketInfantry:   {qty:180, make:RocketInfantry},
+                        EngineerInfantry: {qty:20,  make:EngineerInfantry}
+                      },
+                      
+                      supplyType:   undefined,
+                      supplyNumber: 0,
+                      parentSquad:  undefined, // squad unit belongs to when it's created
+                      
+                      // big dmg kills reinforcements
+                      damageThreshold:  18,
+                      damageChance:     0.4
+                    }
+    },params);
+    this._super(this._);
   }
-}
+});
 
-Depot.prototype=new Structure;
-function Depot(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:19, h:8, hDist2:64 };
-  this.imgSheet=preloader.getFile('depot');
-  
-}
-
-RepairYard.prototype=new Structure;
-function RepairYard(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:19, h:8, hDist2:64 };
-  this.imgSheet=preloader.getFile('repair');  
-  
-}
-
-Helipad.prototype=new Structure;
-function Helipad(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:19, h:8, hDist2:64 };
-  this.imgSheet=preloader.getFile('helipad');
-}
-
-CommRelay.prototype=new Structure;
-function CommRelay(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:15, h:27, hDist2:220 };
-  this.imgSheet=preloader.getFile('relay'+TEAM.NAMES[team]);
-  
-  this._={
-    direction:    TEAM.GOALDIRECTION[team],
-    behavior:     Behavior.Library.Structure,
-    health:       { current:$.R(560,600), max:$.R(600,750) },
-    target:       undefined
-  };
-}
-
-// Defensive structures ////////////////////////////////////////////////////////
-
-Pillbox.prototype=new Structure;
-function Pillbox(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:19, h:8, hDist2:64 };
-  this.imgSheet=preloader.getFile('pillbox_');
-  
-  this._={
-    behavior:     Behavior.Library.Pillbox,
-    sight:        3,
-    health:       { current:$.R(800,900), max:$.R(800,1100) },
-    projectile:   MGBullet,
-    direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 50 },
-    ammo:         { clip:6, max: 6 },
-    shootHeight:  5,
-    crew:         { current: 0, max:8,
-                    occupied: function(o){
-                      return preloader.getFile('pillbox'+TEAM.NAMES[o.team]);
-                    },
-                    empty: preloader.getFile('pillbox_'),
-                    damageThreshold:  23,
-                    damageChance:     0.25
-                  },
-    deathExplode: true,
-    target:       undefined
+Barracks = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:32, h:12, hDist2:169, sheet:'barracks' },
+      health:       { current:$.R(1800,1950), max:$.R(1950,2500) },
+      reinforce:    { ing: 0, time: 10,
+                      types: {
+                        PistolInfantry:{qty:250,make:PistolInfantry}
+                      },
+                      
+                      supplyType:   undefined,
+                      supplyNumber: 0,
+                      parentSquad: undefined, // squad unit belongs to when it's created
+                      
+                      // big dmg kills reinforcements
+                      damageThreshold:  24,
+                      damageChance:     0.6
+                    }
+    },params);
+    this._super(this._);
   }
-}
+});
 
-SmallTurret.prototype=new Structure;
-function SmallTurret(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:22, h:9, hDist2:90 };
-  this.imgSheet=preloader.getFile('turret'+TEAM.NAMES[team]);
-  
-  // Rotation gfx
-  this.getGFX=function(){
+Scaffold = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:16, h:8, hDist2:64, sheet:'scaffold_' },
+      behavior:     { alive:Behavior.Library.Scaffold, dead:Behavior.Library.StructureDead },
+      health:       { current:$.R(360,400), max:$.R(400,450) },
+      build:        { type:undefined },
+      crew:         { current: 1, max:2,
+                      occupied: function(o){
+                        return preloader.getFile('scaffold'+TEAM.NAMES[o._.team]);
+                      },
+                      empty: preloader.getFile('scaffold_'),
+                      
+                      damageThreshold:  5,
+                      damageChance:     1
+                    }
+    },params);
+    this._super(this._);
+    soundManager.play('tack');
+  },
+  // How many workers do we need to construct this?
+  setBuildCrewCount:function(){ var _=this._;
+    var t=_.build.type;
+    var crewCount=8;
+    if(t instanceof Pillbox)      crewCount=4;
+    if(t instanceof SmallTurret)  crewCount=6;
+    if(t instanceof Barracks)     crewCount=16;
+    if(t instanceof CommCenter)   crewCount=60;
+    _.crew.current=1;
+    _.crew.max=crewCount;
+  }
+});
+
+CommRelay = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:15, h:27, hDist2:220, sheet:'relay' },
+      health:       { current:$.R(560,600), max:$.R(600,750) }
+    },params);
+    this._super(this._);
+    soundManager.play('tack');
+  }
+});
+
+// todo
+Depot = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:19, h:8, hDist2:64, sheet:'depot' },
+      target:       undefined
+    },params);
+    this._super(this._);
+  }
+});
+
+// todo
+RepairYard = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:19, h:8, hDist2:64, sheet:'repair' },
+      target:       undefined
+    },params);
+    this._super(this._);
+  }
+});
+
+// todo
+Helipad = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:19, h:8, hDist2:64, sheet:'helipad' },
+      target:       undefined
+    },params);
+    this._super(this._);
+  }
+});
+
+// Defensive structures
+Pillbox = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:19, h:8, hDist2:64, sheet:'pillbox_' },
+      behavior:     { alive:Behavior.Library.Pillbox, dead: Behavior.Library.StructureDeadExplode },
+      sight:        3,
+      health:       { current:$.R(800,900), max:$.R(800,1100) },
+      projectile:   MGBullet,
+      reload:       { ing:0, time: 50 },
+      ammo:         { clip:6, max: 6 },
+      shootHeight:  5,
+      crew:         { current: 0, max:4,
+                      occupied: function(o){
+                        return preloader.getFile('pillbox'+TEAM.NAMES[o._.team]);
+                      },
+                      empty: preloader.getFile('pillbox_'),
+                      damageThreshold:  23,
+                      damageChance:     0.25
+                    }
+    },params);
+    this._super(this._);
+  }
+});
+
+SmallTurret = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:22, h:9, hDist2:90, sheet:'turret' },
+      behavior:     { alive:Behavior.Library.SmallTurret, dead: Behavior.Library.StructureDeadExplode },
+      sight:            5,
+      health:           { current:$.R(1900,2100), max:$.R(2100,2300) },
+      projectile:       SmallShell,
+      projectileSpeed:  7,
+      reload:           { ing:0, time: 90 },
+      ammo:             { clip:1, max: 1 },
+      shootHeight:      6,
+      turn:             { ing: 0, current:0, last:4 }
+    },params);
+    this._super(this._);
+  },
+  gfx:function(){ var _=this._;
     return {
-      img:    this.imgSheet,
-      imgdx:  (this._.direction>0)? this.img.w:0,
+      img:    _.img.sheet,
+      imgdx:  (_.direction>0)? _.img.w:0,
       imgdy:
-        this.state!=STRUCTURE.STATE.WRECK?
-          this.state*45+this.img.h*this._.turn.current
+        _.state!=STRUCTURE.STATE.WRECK?
+          _.state*45+_.img.h*_.turn.current
           :90,
-      worldx: this.x-(this.img.w>>1),
-      worldy: this.y-this.img.h+1,
-      imgw:this.img.w, imgh:this.img.h
-    }
-  };
-  
-  this._={
-    behavior:         Behavior.Library.SmallTurret,
-    sight:            5,
-    health:           { current:$.R(1900,2100), max:$.R(2100,2300) },
-    projectile:       SmallShell,
-    projectileSpeed:  7,
-    direction:        TEAM.GOALDIRECTION[team],
-    reload:           { ing:0, time: 90 },
-    ammo:             { clip:1, max: 1 },
-    shootHeight:      6,
-    turn:             { ing: 0, current:0, last:4 },    
-    deathExplode:     true,
-    target:           undefined
-  }   
-}
-
-MissileRack.prototype=new Structure;
-function MissileRack(x,y,team) {
-  this.x=x;
-  this.y=y;
-  this.team=team;
-  
-  this.img={ w:5, h:9, hDist2:64 };
-  this.imgSheet=preloader.getFile('missilerack'+TEAM.NAMES[this.team]);
-  
-  // Check if missile's been fired only.
-  this.getGFX=function(){ var _=this._;
-    return {
-      img:    this.imgSheet,
-      imgdx:  _.direction>0? this.img.w:0,
-      imgdy:  _.reload.ing<50 || _.ammo.clip? 0:this.img.h,
-      worldx: this.x-(this.img.w>>1),
-      worldy: this.y-this.img.h+1,
-      imgw:this.img.w, imgh:this.img.h
-    }
-  };
-  
-  this._={
-    behavior:     Behavior.Library.MissileRack,
-    sight:        13,
-    health:       { current:$.R(200,280), max:$.R(280,300) },
-    projectile:   HomingMissile,
-    direction:    TEAM.GOALDIRECTION[team],
-    reload:       { ing:0, time: 5600 },
-    ammo:         { clip:1, max: 1 },
-    shootHeight:  3,
-    deathExplode: true,
-    target:       undefined
+      worldx: _.x-(_.img.w>>1),
+      worldy: _.y-_.img.h+1,
+      imgw:_.img.w,
+      imgh:_.img.h
+    };
   }
-}
+});
+
+MissileRack = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:5, h:9, hDist2:64, sheet:'missilerack' },
+      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
+      sight:        13,
+      health:       { current:$.R(200,280), max:$.R(280,300) },
+      projectile:   HomingMissile,
+      reload:       { ing:0, time: 5600 },
+      ammo:         { clip:1, max: 1 },
+      shootHeight:  3
+    },params);
+    this._super(this._);
+  },
+  gfx:function(){ var _=this._;
+    return {
+      img:    _.img.sheet,
+      imgdx:  _.direction>0? _.img.w:0,
+      imgdy:  _.reload.ing<50 || _.ammo.clip? 0:_.img.h,
+      worldx: _.x-(_.img.w>>1),
+      worldy: _.y-_.img.h+1,
+      imgw:_.img.w,
+      imgh:_.img.h
+    };
+  }
+});

@@ -13,42 +13,31 @@ var COMMANDER={
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Commander.prototype=new PawnController;
-function Commander(team) {
-  this.team=team;
-  // No icon for now.
-  // this.getGFX=function(){};
-  
-  this.alive=function() {
-    Behavior.Execute(this._.behavior,this);
-    return true;
-  };
+Commander = Pawn.extend({
+  init:function(params){
+    this._=$.extend({
+      //img:    {}, // no icon for now
+      behavior: { alive:Behavior.Library.CommanderIdle, dead:undefined },
+      strength: $.R(1,60),  // limit on # squads they can manage simultaneously
+      squads:   [],
+      comm:     [],   // Comm(ander) relays = stations that broadcast orders
+      repair:   [],   // repair facilities
+      depot:    []    // caches of resources, abstract or real
+    },params);
+  },
+  alive:function(){ Behavior.Execute(this._.behavior.alive,this); return true; }
+});
 
-  this._={
-    behavior:   Behavior.Library.CommanderIdle,
-    strength:   $.R(1,60),  // limit on # squads they can manage simultaneously
 
-    squads: [],   // length should be no more than (strength, as above)
-    
-    comm:   [],   // Comm(ander) relays = stations that broadcast orders
-    repair: [],   // repair facilities
-    depot:  []    // caches of resources, abstract or real
-  };
- 
-}
-
-Squad.prototype=new PawnController;
-function Squad(team) {
-  // this.getGFX=function(){ return; };
-  
-  this.alive=function(){
-    return Behavior.Execute(this._.behavior,this);
-  }
-  
-  this._={
-    behavior:         Behavior.Library.SquadAttack,
-    allMembersJoined: false,
-    members:          [],
-    minX:             Infinity
-  };
-}
+Squad = Pawn.extend({
+  init:function(params){
+    this._=$.extend({
+      //img:            {}, // no icon for now
+      behavior:         { alive:Behavior.Library.SquadAttack, dead:undefined },
+      members:          [],
+      minX:             Infinity,
+      allMembersJoined: false
+    },params);
+  },
+  alive:function(){ Behavior.Execute(this._.behavior.alive,this); return true; }
+});
