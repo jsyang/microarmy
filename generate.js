@@ -1,5 +1,3 @@
-// Generic generating functions -- procedural terrain, etc.
-
 var Generate={
   
   TEAM:function(team){

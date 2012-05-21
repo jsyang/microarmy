@@ -12,8 +12,14 @@ var COMMANDER={
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+PawnController = Pawn.extend({
+  init: function(){},
+  alive:function(){},
+  gfx:  function(){}
+})
 
-Commander = Pawn.extend({
+
+Commander = PawnController.extend({
   init:function(params){
     this._=$.extend({
       //img:    {}, // no icon for now
@@ -29,7 +35,7 @@ Commander = Pawn.extend({
 });
 
 
-Squad = Pawn.extend({
+Squad = PawnController.extend({
   init:function(params){
     this._=$.extend({
       //img:            {}, // no icon for now
