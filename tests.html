@@ -1,10 +1,29 @@
 <html><title>Test Code / Suites for microarmy</title>
-<script src=util.js></script>
-<script src=generate.js></script>
+<script src="util.js"></script>
+<script src="html5preloader/html5Preloader.js"></script>
+<script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
+<script> soundManager.url='./soundmanager2/'; </script>
+
 <script src=entity_.js></script>
-<script src=entity_behavior.js></script>
-<script src=campaign_.js></script>
+<script src='entity_behavior.js'></script>
+
+<!--<script src=generate.js></script>-->
+
 <script src=battle_.js></script>
+<script src=battle_projectile.js></script>
+<script src=battle_infantry.js></script>
+<script src=battle_vehicle.js></script>
+<script src=battle_explosion.js></script>
+<script src=battle_structure.js></script>
+
+<script src=battle_commander.js></script>
+
+<script src=campaign_.js></script>
+
+
+<script src=preloader.js></script>
+<script src=battleview_ui.js></script>
+
 <script>
 function getID(id){ return document.getElementById(id); }
 

@@ -28,7 +28,7 @@ Structure = Pawn.extend({
     }
   },
   setSpriteSheet:function(structureType){
-    this._.img.sheet=preloader.getFile(structureType+TEAM.NAMES[this._team]);
+    this._.img.sheet=preloader.getFile(structureType+TEAM.NAMES[this._.team]);
   },
   setDirection:function(){
     this._.direction=TEAM.GOALDIRECTION[this._.team];

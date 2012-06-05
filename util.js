@@ -156,7 +156,7 @@ XHash = Class.extend({
   // So, is this function deprecated? no.
   getNBucketsByCoord:function(x,n) { var _=this._;
     for(var bucketsN=[],i=-(n>>1),index=x>>_.bucketWidth; i<(n>>1)+1; i++)
-      if(buckets[index+i]!=undefined)
+      if(_.buckets[index+i]!=undefined)
         bucketsN=bucketsN.concat(_.buckets[index+i]);
     return bucketsN;
   },

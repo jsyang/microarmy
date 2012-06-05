@@ -41,7 +41,9 @@ preloader.onfinish=function() {
   });
     
   // 3. Create the gameworld with map entities and run it!
-  world=new World();
-  world.go();
+  
+  world=new Battle();
+  world.initWorld();
+  world.cycle();
 };
 

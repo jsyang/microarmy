@@ -212,7 +212,7 @@ var Behavior={
     
     // Sight is in multiples of XHash buckwidths!
     seeEntity:function(obj,t) { var _=obj._;
-      return t? Math.abs(t._.x-_.x)<_.sight*world.xHash.BUCKETWIDTH : false;
+      return t? Math.abs(t._.x-_.x)<_.sight*world._.xHash._.BUCKETWIDTH : false;
     },
     
     seeTarget:function(obj) {
@@ -226,9 +226,9 @@ var Behavior={
       if(!t || Behavior.Custom.isDead(t) ||
          !Behavior.Custom.seeTarget(obj) || t._.team==obj._.team)
         if(obj instanceof Pillbox)
-          world.xHash.getNearestEnemyRay(obj);
+          world._.xHash.getNearestEnemyRay(obj);
         else
-          world.xHash.getNearestEnemy(obj);
+          world._.xHash.getNearestEnemy(obj);
       
       return obj._.target? true:false;
     },
@@ -391,7 +391,7 @@ var Behavior={
     },
     
     tryHitProjectile:function(projectile){ var _=projectile._;
-      var h=world.xHash.getNBucketsByCoord(_.x,0); 
+      var h=world._.xHash.getNBucketsByCoord(_.x,0); 
       for(var i=0; i<h.length; i++) {
         var unit=h[i];
         if(unit._.team==_.team) continue;
@@ -456,7 +456,7 @@ var Behavior={
     tryCrewing:function(structure) { var _=structure._;
       if(_.crew){
         if(_.crew.current<_.crew.max) {
-          var h=world.xHash.getNBucketsByCoord(_.x,2);
+          var h=world._.xHash.getNBucketsByCoord(_.x,2);
           for(var i=0; i<h.length; i++) {
             var unit=h[i];
             if(!(unit instanceof PistolInfantry) ||
