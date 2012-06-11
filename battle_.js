@@ -117,106 +117,149 @@ Battle = Class.extend({
   },
 
 
-  generatePeaksAndHeightMap:function(params) {
+
+/***********************************************************************************************************************
+Flatten terrain.
+
+          [ structure ]
+               x
+     |---------'---------|
+                   ^ structure radius = Math.ceil(_.img.w / 2)
+
+        |---,---|         struct 1
+              |---,---|   struct 2
+              |=|         overlapping area that needs to be flattened.
+
+        |-------------|   merged area.
+
+***********************************************************************************************************************/
+
+  defineFlatRegions : function(structureList) {
+    var _=this._;
+    structureList.sort(function(a,b){return a._.x-b._.x;});
+
+    var radiusPadding = 36; // padding.    
+    var flatRegions=[];
+    for( var i=0; i<structureList.length; i++) {
+      var s=structureList[i];
+      var start = s._.x - Math.ceil(s._.img.w*0.5) - radiusPadding;
+      var end =   s._.x + Math.ceil(s._.img.w*0.5) + radiusPadding;
+      
+      for(var j=i;
+          j<structureList.length &&
+          end >= structureList[j]._.x - Math.ceil(structureList[j]._.img.w*0.5) - radiusPadding; j++){
+        end = structureList[j]._.x + Math.ceil(structureList[j]._.img.w*0.5) + radiusPadding;
+        i=j;
+      }
+      
+      //if(!structureList.length || structureList[structureList.length-1].start!=start)
+      flatRegions.push({ start: start, end: end });
+    }
+    
+    return flatRegions;
+  },
+
+  flattenPeaks : function(peaks, region) {
+    var start=  region.start;
+    var end=    region.end;
+    
+    for(var i=0;peaks[i] && peaks[i].x<start;i++); i--;
+    for(var j=i;j<peaks.length && peaks[j].x<end;j++);
+    if(i==j) return;
+    
+    var avgHeight;
+    if(!peaks[j]) {
+      avgHeight=peaks[i].height;
+    } else {
+      avgHeight=(peaks[i].height+peaks[j].height)>>1; 
+    }
+    peaks.splice(i+1, 0,{ x: start, height: avgHeight, flat:true });
+    peaks.splice(j+1,   0,{ x: end,   height: avgHeight, flat:true });
+    while(!peaks[i+2].flat)
+      peaks.splice(i+2, 1);
+  },
+  
+  removeDupPeaks : function(peaks) {
+    for(var i=1; i<peaks.length; i++) {
+      if(peaks[i-1].x === peaks[i].x) {
+        peaks.splice(i,1);
+        i=1;
+      }
+    }
+  },
+  
+  smoothRoughPeaks : function(peaks) {    
+    var maxSlope = 1.8;
+    for(var i=0; i<peaks.length; i++) {
+      if(i==0 || (peaks[i].flat && peaks[i-1].flat)) continue;
+      
+      // assuming ascending order X
+      var dX = peaks[i].x-peaks[i-1].x;
+      var dY = Math.abs(peaks[i].height-peaks[i-1].height);
+      while(dY>maxSlope*dX) {
+        if(peaks[i].height>peaks[i-1].height) {
+          if(!peaks[i].flat)    peaks[i].height   -= dY>>2;
+          if(!peaks[i-1].flat)  peaks[i-1].height += dY>>2;
+        } else {
+          if(!peaks[i].flat)    peaks[i].height   += dY>>2;
+          if(!peaks[i-1].flat)  peaks[i-1].height -= dY>>2;
+        }        
+        dY = Math.abs(peaks[i].height-peaks[i-1].height);
+      }
+    }
+  },
+
+  generatePeaksAndHeightMap : function(params) {
     var _=$.extend({
-      startingStructures: [],
+      flatRegions:        [],
 
-      numMinor:           12,
-
-      peakMajor:          function(x){ return { x: x, height: $.R(20,370) }; },
+      numMinor:           9,
+      peakMajor:          function(x){ return { x: x, height: $.R(20,270) }; },
       peakMajorStep:      function(){ return $.R(100,400); },
 
       peakMinor:          function(x, majorHeight){ return { x:x, height: majorHeight+$.R(-12,16) }; },
-      peakMinorStep:      function(){ return $.R(10,50); },
+      peakMinorStep:      function(){ return $.R(10,50); }
 
-      radius:             72
-      /*
-            [ structure ]
-                 x
-       |---------'---------|
-                     ^ structure radius
-
-          |---,---|         struct 1
-                |---,---|   struct 2
-                |=|         overlapping area that needs to be flattened.
-
-          |-------------|   merged area.
-
-      */
     }, params);
 
     // Make some peaks
-    for(var peaks=[], x=$.R(10,80); x<_.w; x+=_.peakMajorStep()) {
+    for(var peaks=[], x=_.peakMinorStep(); x<_.w; x+=_.peakMajorStep()) {
       var major = _.peakMajor(x);
       peaks.push(major);
-      for(var i=$.R(1,_.numMinor); i--; x+=_.peakMinorStep())
+      x+=_.peakMinorStep();
+      for(var i=$.R(2,_.numMinor); i--; x+=_.peakMinorStep())
         if(x<_.w)
           peaks.push(_.peakMinor(x, major.height));
     }
 
+    for(var i=0; i<_.flatRegions.length; i++)
+      this.flattenPeaks(peaks, _.flatRegions[i]);
+    peaks.sort(function(a,b){return a.x-b.x;});
 
-    function mergeFlatAreas(structs) {
-      structs.sort(function(a,b){return a._.x-b._.x;});
-      for(var i=0, flats=[]; i<structs.length; i++) {
-        var s=structs[i];
-        var start = s._.x - _.radius;
-        var end =   s._.x + _.radius;
-        for(var j=i; j<structs.length && s._.x+72>=structs[j]._.x-72; j++){
-          end=structs[j]._.x + _.radius;
-          i=j;
-        }
-        if(!structs.length || structs[structs.length-1].start!=start)
-          flats.push({ start: start, end: end });
-      }
-      return flats;
-    }
-
-    function flattenPeaks(p,start,end) { // p = peaks[]
-      for(var i=0;p[i].x<start;i++);
-      for(var j=i;j<p.length && p[j].x<end;j++);
-      j++;
-      var avgHeight;
-      if(!p[j]) avgHeight=p[i].height;
-      else      avgHeight=(p[i].height+p[j].height)>>1;
-      p.splice(i,   0,{ x: start, height: avgHeight, flat:true });
-      p.splice(j,   0,{ x: end,   height: avgHeight, flat:true });
-      p.splice(i+1,j-i-1);
-    }
-
-    for(var i=0, flats=mergeFlatAreas(_.startingStructures); i<flats.length; i++)
-      flattenPeaks(peaks, flats[i].start, flats[i].end);
-
-    // todo: delete slopes that are too steep -- do this better
-    // removes peaks that are too close together and too steep
-    for(var i=0; i<peaks.length-1; i++)
-      if( (!peaks[i].flat) && // don't touch the flat regions
-          (Math.abs(peaks[i].x-peaks[i+1].x)<32) &&
-          (1.6*Math.abs(peaks[i].x-peaks[i+1].x) <
-           Math.abs(peaks[i].height-peaks[i+1].height))
-        )
-        peaks[i].height=Infinity;
-    for(var i=0, newPeaks=[]; i<peaks.length; i++)
-      if(isFinite(peaks[i].height))
-        newPeaks.push(peaks[i]);
-    peaks=newPeaks;
+    this.removeDupPeaks(peaks);
+    this.smoothRoughPeaks(peaks);
 
     this._.heightmap=[];
-    var current={height:peaks[0].height, peak:peaks[0]};
+    var currentPeak=peaks.shift();
+    var currentHeight=currentPeak.height;
     for(var x=0, j=0, dy=0; x<_.w; x++) {
-      if(current.peak.x==x) {
-        if(++j<peaks.length) {
-          current.peak=peaks[j];
-          dy=(current.peak.height-current.height)/(current.peak.x-x);
+      if(x>=currentPeak.x) {
+        if(peaks.length) {
+          var currentPeak=peaks.shift();
+          dy=(currentPeak.height-currentHeight)/(currentPeak.x-x);
         } else {
           dy=0;
         }
       }
-      this._.heightmap.push(_.h-Math.round(current.height));
-      current.height+=dy;
+      this._.heightmap.push(_.h-Math.round(currentHeight));
+      currentHeight+=dy;
     }
   },
 
-  initBase:function(t){
+  generateBase:function(t){
+    var _=this._;
+    var baseDistFromEdge = 200;
+    
     var base = function(raw){
       for(var pruned=[], i=0; i<raw.length; i++)
         if(raw[i].num)
@@ -235,7 +278,7 @@ Battle = Class.extend({
       {type:SmallMine,    num:$.R(0,8)}
     ]);
 
-    var x = t==TEAM.GREEN? 2490 - 200 : 200; // Which edge of the world do we start building the base from?
+    var x = t==TEAM.GREEN? _.w - baseDistFromEdge : baseDistFromEdge;
     for(var i=0, newBase=[]; i<base.length; i++)
       for(var p=base[i]; p.num>0; p.num--) {
         newBase.push(
@@ -264,14 +307,14 @@ Battle = Class.extend({
     
     _.view.initBG();
     
-    var greenBase = this.initBase(TEAM.GREEN);
-    var blueBase  = this.initBase(TEAM.BLUE);
+    var greenBase = this.generateBase(TEAM.GREEN);
+    var blueBase  = this.generateBase(TEAM.BLUE);
     var startingStructures = greenBase.concat(blueBase); 
     
     this.generatePeaksAndHeightMap({
-      'startingStructures': startingStructures,
-      w: this._.w,
-      h: this._.h
+      flatRegions: this.defineFlatRegions(startingStructures),
+      w: _.w,
+      h: _.h
     });
     
     for(var i=0; i<startingStructures.length; i++)
@@ -319,7 +362,7 @@ Battle = Class.extend({
     if(pawn instanceof Infantry)        return _.infantry.push(pawn);
     if(pawn instanceof Projectile)      return _.projectile.push(pawn);
     if(pawn instanceof Explosion)       return _.explosion.push(pawn);
-    if(pawn instanceof Aircraft)        return _.aircraft.push(pawn);
+    //if(pawn instanceof Aircraft)        return _.aircraft.push(pawn);
     if(pawn instanceof PawnController)  return _.pawncontroller.push(pawn);
     return false;
   },
@@ -330,7 +373,10 @@ Battle = Class.extend({
     return x<0 || x>=_.w || y>_.heightmap[x];
   },
 
-  go:function(){ this._.timer=setInterval(this.cycle,40); },
+  go:function(){
+    var self=this;
+    this._.timer=setInterval(this.cycle.call(self),40);
+  },
   pause:function(){ clearInterval(this._timer); }
 
 });

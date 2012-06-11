@@ -44,6 +44,6 @@ preloader.onfinish=function() {
   
   world=new Battle();
   world.initWorld();
-  world.cycle();
+  world.go();
 };
 

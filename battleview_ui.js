@@ -65,12 +65,12 @@ window.onclick=function(e){
   var x=e.pageX, y=e.pageY;
   var a;
   switch(mode) {
-    case MOUSEMODE.APC: a=new APC(x,world.getHeight(x),TEAM.BLUE); break;
+    case MOUSEMODE.APC: a=new APC(x,world.height(x),TEAM.BLUE); break;
     case MOUSEMODE.EXPLOSION: a=new SmallExplosion(x,y); break;
     case MOUSEMODE.PRINTMOUSECOORDS: console.log([x,y]); break;
     case MOUSEMODE.ENGINEERBUILDPILLBOX:
       if(clicks.length){
-        a=new EngineerInfantry(x,world.getHeight(x),TEAM.BLUE);
+        a=new EngineerInfantry(x,world.height(x),TEAM.BLUE);
         a._.build={ type:Pillbox, x:clicks[0][0] };
         a._.target=a._.build;
         clicks=[];
@@ -80,10 +80,10 @@ window.onclick=function(e){
       }
       break;
     case MOUSEMODE.SMALLMINE:
-      a=new SmallMine(x,world.getHeight(x),TEAM.BLUE); break;
+      a=new SmallMine(x,world.height(x),TEAM.BLUE); break;
     case MOUSEMODE.MISSILERACK:
-      a=new MissileRack(x,world.getHeight(x),TEAM.BLUE); break;
+      a=new MissileRack(x,world.height(x),TEAM.BLUE); break;
     case MOUSEMODE.NONE:
   }  
-  world.addPawn(a);
+  world.add(a);
 };
