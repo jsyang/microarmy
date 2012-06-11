@@ -5,9 +5,8 @@
 <script> soundManager.url='./soundmanager2/'; </script>
 
 <script src=entity_.js></script>
-<script src='entity_behavior.js'></script>
+<script src=entity_behavior.js></script>
 
-<!--<script src=generate.js></script>-->
 
 <script src=battle_.js></script>
 <script src=battle_projectile.js></script>
@@ -18,11 +17,12 @@
 
 <script src=battle_commander.js></script>
 
+
 <script src=campaign_.js></script>
+<script src=campaign_ui.js></script>
 
+<!--<script src=preloader.js></script>-->
 
-<script src=preloader.js></script>
-<script src=battleview_ui.js></script>
 
 <script>
 function getID(id){ return document.getElementById(id); }
@@ -89,5 +89,6 @@ var test_listAllCustomBehaviors=new function(){
   };
 };
 
+
 </script><body bgcolor='#666'></body>
-<script>/*document.body.onload=test_listAllCustomBehaviors.init;*/</script></html>
+<script>world=new Campaign;</script></html>

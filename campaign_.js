@@ -44,6 +44,36 @@ CampaignView = Class.extend({
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+  },
+  
+  colorHighlight:function(){
+    this._.display._.ctx.fillStyle='#33e833';
+  },
+  
+  colorNormal:function(){
+    this._.display._.ctx.fillStyle='#dee88a';
+  },
+  
+  highlight:function(rx,ry){ var _=this._;
+    var d=_.display;
+    var ctx=d._.ctx;
+    d.clear();
+    
+    // Find out which hex is highlighted, based on raw X,Y
+    var hX=(rx/_.N)>>0;
+    var hY=(ry/_.E)>>0;    
+    console.log(hX,hY);
+    
+    for(var i=0, y=0; i<_.h; y+=_.E, i++) {
+      for(var j=0, offset=[_.E2,-_.E2], x=0; j<_.w; x+=_.E2+_.N, y+=offset[j%2], j++) {
+        if(hX==j && hY==i) {
+          this.colorHighlight();
+        } else {
+          this.colorNormal();
+        }
+        this.drawTile(ctx,x,y);
+      }
+    }
   }
 });
 
@@ -61,6 +91,7 @@ CampaignView = Class.extend({
 Campaign = Class.extend({
   init:function(params){
     this._=$.extend({
+      mode: MOUSEMODE.SELECT,
       view: new CampaignView
       // world stuff
     },params);
