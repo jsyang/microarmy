@@ -186,7 +186,7 @@ var Behavior={
     },    
     
     remove:function(obj) {      
-      obj._.health.current=obj.corpsetime=0;
+      obj._.health.current=obj._.corpsetime=0;
       return true;
     },
     
@@ -199,8 +199,9 @@ var Behavior={
     },    
     
     stopProjectile:function(projectile) {
-      projectile.range=0;
-      projectile.corpsetime=0;
+      var _=projectile._;
+      _.range=0;
+      _.corpsetime=0;
       return true;
     },
     
@@ -212,10 +213,11 @@ var Behavior={
     
     // Sight is in multiples of XHash buckwidths!
     seeEntity:function(obj,t) { var _=obj._;
-      return t? Math.abs(t._.x-_.x)<_.sight*world._.xHash._.BUCKETWIDTH : false;
+      return t? Math.abs(t._.x-_.x)<_.sight*world._.xHash._.bucketWidth : false;
     },
     
     seeTarget:function(obj) {
+      
       return Behavior.Custom.seeEntity(obj,obj._.target);
     },
     
@@ -614,7 +616,7 @@ Behavior.Library={
   Infantry:
     "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>,<[setFacingTarget],[moveAndBoundsCheck]>)",
   InfantryDead:
-    "<[hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>",
+    "<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>",
     
   EngineerInfantry:
     "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>",

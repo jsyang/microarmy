@@ -187,7 +187,7 @@ XHash = Class.extend({
     }
   },
 
-  getNearestEnemy:function(pawn){ var _=this._;
+  getNearestEnemy:function(pawn){ var _=pawn._;
     var pawnIndex=_.x>>this._.bucketWidth;
     var minDist=Infinity;
     _.target=undefined;
@@ -195,7 +195,7 @@ XHash = Class.extend({
     for(var left=right=pawnIndex, sight=_.sight; sight; left--,right++, sight--) {
       var shell=[];
       if(this._.buckets[left])                shell=shell.concat(this._.buckets[left]);
-      if(left!=right && this._buckets[right]) shell=shell.concat(this._.buckets[right]);
+      if(left!=right && this._.buckets[right]) shell=shell.concat(this._.buckets[right]);
 
       for(var i=0; i<shell.length; i++) {
         var a=shell[i];

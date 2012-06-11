@@ -99,13 +99,15 @@ Battle = Class.extend({
       w: 2490,              // Battle world dimensions in pixels.
       h: 480,
       pawns: {
-        projectile: [],
-        explosion: [],
-        infantry: [],
-        vehicle: [],
+        pawncontroller: [],  // Commanders / Squads -- higher level AI
+        
         aircraft: [],
         structure: [],
-        pawncontroller: []  // Commanders / Squads -- higher level AI
+        vehicle: [],
+        infantry: [],
+        projectile: [],
+        explosion: []
+        
       },
       heightmap: [],
       timer: undefined
@@ -152,7 +154,6 @@ Flatten terrain.
         i=j;
       }
       
-      //if(!structureList.length || structureList[structureList.length-1].start!=start)
       flatRegions.push({ start: start, end: end });
     }
     

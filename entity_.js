@@ -9,7 +9,7 @@ var TEAM={
   NAMES:'blue,green'.split(',')
 };
 
-// Your basic abstract gamepiece.
+// Basic abstract gamepiece.
 Pawn = Class.extend({
   init:function(params){
     this._=$.extend({
