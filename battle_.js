@@ -203,8 +203,11 @@ Flatten terrain.
         } else {
           if(!peaks[i].flat)    peaks[i].height   += dY>>2;
           if(!peaks[i-1].flat)  peaks[i-1].height -= dY>>2;
-        }        
+        }
+        old_dY = dY;
         dY = Math.abs(peaks[i].height-peaks[i-1].height);
+        
+        if(dX<2) break; // don't stall on close peaks
       }
     }
   },
@@ -308,7 +311,17 @@ Flatten terrain.
     _.view.initBG();
     
     var greenBase = this.generateBase(TEAM.GREEN);
+      for(var greenDepots=[], i=0; i<greenBase.length; i++){
+        if(greenBase[i] instanceof CommCenter || greenBase[i] instanceof Barracks)
+          greenDepots.push(greenBase[i]);
+      }
+    var greenCmdr = new Commander({depot:greenDepots});
     var blueBase  = this.generateBase(TEAM.BLUE);
+      for(var blueDepots=[], i=0; i<blueBase.length; i++){
+        if(blueBase[i] instanceof CommCenter || blueBase[i] instanceof Barracks)
+          blueDepots.push(blueBase[i]);
+      }
+    var blueCmdr = new Commander({depot:blueDepots});
     var startingStructures = greenBase.concat(blueBase); 
     
     this.generatePeaksAndHeightMap({
@@ -321,6 +334,9 @@ Flatten terrain.
       startingStructures[i]._.y = this.height(startingStructures[i]._.x);
     for(var i=0; i<startingStructures.length; i++)
       this.add(startingStructures[i]);
+    
+    this.add(greenCmdr);
+    this.add(blueCmdr);
     
     _.view.initTerrain(_.heightmap);
   },
@@ -369,13 +385,13 @@ Flatten terrain.
 
   height:function(x){ var _=this._; return (x>=0 && x<_.w) ? _.heightmap[x>>0] : 0; },
   isOutside:function(pawn){ var _=this._;
-    var x=obj._.x>>0, y=obj._.y>>0;
+    var x=pawn._.x>>0, y=pawn._.y>>0;
     return x<0 || x>=_.w || y>_.heightmap[x];
   },
 
   go:function(){
     var self=this;
-    this._.timer=setInterval(this.cycle.call(self),40);
+    this._.timer=setInterval(function(){self.cycle()},40);
   },
   pause:function(){ clearInterval(this._timer); }
 

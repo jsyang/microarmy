@@ -30,7 +30,7 @@ Infantry = Pawn.extend({
     this._.direction=TEAM.GOALDIRECTION[this._.team];
   },
   setSpriteSheet:function(infantryType){
-    this._.img.sheet=preloader.getFile(infantryType+TEAM.NAMES[this._team]);
+    this._.img.sheet=preloader.getFile(infantryType+TEAM.NAMES[this._.team]);
   }
 });
 

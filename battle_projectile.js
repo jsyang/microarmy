@@ -148,24 +148,24 @@ HomingMissile = Projectile.extend({
   explode:function(){ var _=this._;
     world.addPawn(new SmallExplosion(_.x,_.y));
     var x=_.x+$.R(12,20); var y=_.y+$.R(-20,20);
-    if(y>world.getHeight(x)) y=world.getHeight(x);
+    if(y>world.height(x)) y=world.height(x);
     world.addPawn(new HEAPExplosion(x,y));
     var x=_.x-$.R(12,20); var y=_.y+$.R(-20,20);
-    if(y>world.getHeight(x)) y=world.getHeight(x);
+    if(y>world.height(x)) y=world.height(x);
     world.addPawn(new HEAPExplosion(x,y));
 
     // smoke..
     for(var i=12; i--;) {
       var x=_.x+$.R(-60,60); var y=_.y+$.R(-20,20);
-      if(y>world.getHeight(x)) y=world.getHeight(x);
+      if(y>world.height(x)) y=world.height(x);
       world.addPawn(new SmokeCloud(x,y));
     }
 
     var x=_.x+$.R(18,30); var y=_.y+$.R(-20,20);
-    if(y>world.getHeight(x)) y=world.getHeight(x);
+    if(y>world.height(x)) y=world.height(x);
     world.addPawn(new HEAPExplosion(x,y));
     var x=_.x-$.R(18,30); var y=_.y+$.R(-20,20);
-    if(y>world.getHeight(x)) y=world.getHeight(x);
+    if(y>world.height(x)) y=world.height(x);
     world.addPawn(new HEAPExplosion(x,y));
     
     _.img.w=15;
@@ -199,7 +199,7 @@ HomingMissile = Projectile.extend({
     // Hit ground
     if(world.isOutside(_)) {
       _.x-=_.dx>>1;
-      _.y=world.getHeight(_.x>>0);
+      _.y=world.height(_.x>>0);
       this.explode();
       return false;      
     }      

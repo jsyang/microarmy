@@ -99,6 +99,7 @@ CanvasDisplay = Class.extend({
   },
 
   draw:function(gfx){
+    if(!gfx.img) return;
     this._.ctx.drawImage(         gfx.img,
         gfx.imgdx,  gfx.imgdy,    gfx.imgw,gfx.imgh,
         gfx.worldx, gfx.worldy,   gfx.imgw,gfx.imgh

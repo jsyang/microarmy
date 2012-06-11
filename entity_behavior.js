@@ -254,7 +254,7 @@ var Behavior={
         
     move:function(obj) { var _=obj._;
       _.x+=_.direction;
-      _.y=world.getHeight(_.x);
+      _.y=world.height(_.x);
       return true;
     },    
     
@@ -304,7 +304,7 @@ var Behavior={
         } else {
           // Missile doesn't need a target: it finds its own!
           soundManager.play('missile1');
-          world.addPawn(
+          world.add(
             new HomingMissile({
               x:    _.x,
               y:    _.y-20,
@@ -339,7 +339,7 @@ var Behavior={
       if(dist>180){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
       if(dist>200){ accuracy[0]-=0.01; accuracy[1]-=0.08; }
       
-      world.addPawn(
+      world.add(
         new _.projectile({
           x:        _.x+pDX,
           y:        _.y+pDY,
@@ -364,10 +364,10 @@ var Behavior={
     
     hitGroundProjectile:function(projectile){ var _=projectile._;
       _.x-=_.dx>>1;
-      world.addPawn(
+      world.add(
         new FragExplosion({
           x:  _.x,
-          y:  world.getHeight(_.x>>0)
+          y:  world.height(_.x>>0)
         })
       );
       Behavior.Custom.stopProjectile(projectile);
@@ -378,12 +378,12 @@ var Behavior={
       if(_.build.x==_.x) {
         var scaffold=new Scaffold({
           x:      _.x,
-          y:      world.getHeight(_.x),
+          y:      world.height(_.x),
           team:   _.team,
           build:  { type: _.build.type }
         });
         scaffold.setBuildCount.call(scaffold);
-        world.addPawn(scaffold);
+        world.add(scaffold);
         Behavior.Custom.remove(obj);
         return true;
       }
@@ -415,7 +415,7 @@ var Behavior={
         if($.r()>chanceToHit) continue;
         // We've hit something!
         if(_.explosion)
-          world.addPawn(
+          world.add(
             new _.explosion({
               x:  _.x,
               y:  _.y
@@ -439,11 +439,11 @@ var Behavior={
     
     throwShrapnel:function(obj) { var _=obj._;
       var w2=_.img.w>>1, h2=_.img.h>>1;
-      world.addPawn(new SmallExplosion({
+      world.add(new SmallExplosion({
         x:  _.x,
         y:  _.y-h2
       }));    
-      for(var shrap=$.R(5,10); shrap; shrap--) world.addPawn(
+      for(var shrap=$.R(5,10); shrap; shrap--) world.add(
         new MortarShell({
           x:  _.x+$.R(-w2,w2),
           y:  _.y-h2,
@@ -480,10 +480,10 @@ var Behavior={
           }
         } else {
           if(structure instanceof Scaffold) {
-            world.addPawn(
+            world.add(
               new _.build.type({
                 x:    _.x,
-                y:    world.getHeight(_.x),
+                y:    world.height(_.x),
                 team: _.team
               })
             );
@@ -513,13 +513,13 @@ var Behavior={
           _r.supplyNumber--;
           var unit=new _r.types[_r.supplyType].make({
             x:    _.x,
-            y:    world.getHeight(_.x),
+            y:    world.height(_.x),
             team: _.team
           });
           unit._.squad=_r.parentSquad;
           _r.parentSquad._.members.push(unit);
           if(!_r.supplyNumber) _r.parentSquad._.allMembersJoined=true;
-          world.addPawn(unit);
+          world.add(unit);
         }
       }
       return true;
@@ -534,7 +534,7 @@ var Behavior={
                 
                 var s=new Squad({ team: _.team });
                 _.squads.push(s);
-                world.addController(s);
+                world.add(s);
                 
                 d[i]._.reinforce.supplyType=type;
                 d[i]._.reinforce.supplyNumber=4;                

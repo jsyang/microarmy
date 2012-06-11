@@ -22,7 +22,7 @@ Explosion = Pawn.extend({
   alive:function(){ var _=this._;
     if(_.frame.current==_.frame.last) return _.corpsetime=0;
     _.frame.current++;
-    var h=world.xHash.getNBucketsByCoord(_.x,2);
+    var h=world._.xHash.getNBucketsByCoord(_.x,2);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
       var dx=_.x-(unit._.x-(unit._.img.w>>1));     // point object.
