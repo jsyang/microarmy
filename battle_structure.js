@@ -34,7 +34,7 @@ Structure = Pawn.extend({
     this._.direction=TEAM.GOALDIRECTION[this._.team];
   },
   alive:function(){ var _=this._;    
-    if(Behavior.Custom.isDead(this)) {
+    if(Behavior.Custom.isDead.call(this)) {
       Behavior.Execute(_.behavior.dead,this);
       return false;
     } else {

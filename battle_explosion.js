@@ -28,7 +28,7 @@ Explosion = Pawn.extend({
       var dx=_.x-(unit._.x-(unit._.img.w>>1));     // point object.
       var dy=_.y-(unit._.y-(unit._.img.h>>1));      
       if(dx*dx+dy*dy>_.img.hDist2) continue;   // Not close enough!
-      Behavior.Custom.takeDamage(unit,_.damage);
+      Behavior.Custom.takeDamage.call(unit,_.damage);
       // Make sure not to "give" anyone health because of this.
       if(_.damage-_.damageDecay<0) _.damage=0;
       else _.damage-=_.damageDecay;

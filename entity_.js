@@ -11,28 +11,29 @@ var TEAM={
 
 // Basic abstract gamepiece.
 Pawn = Class.extend({
+  
   init:function(params){
     this._=$.extend({
-      x:undefined,
-      y:undefined,
-      team: undefined,
-      corpsetime:undefined,
+      x:          undefined,
+      y:          undefined,
+      team:       undefined,
+      corpsetime: undefined,
       img: {
-        w:undefined,
-        h:undefined,
-        hDist2:undefined,     // hit radius^2 for collision testing
-        sheet:undefined       // sprite sheet
+        w:      undefined,
+        h:      undefined,
+        hDist2: undefined,    // hit radius^2 for collision testing (circular)
+        sheet:  undefined     // sprite sheet
       },
       behavior: {
-        alive: undefined,
-        dead: undefined
+        alive:  undefined,
+        dead:   undefined
       }
     },params);
   },
 
   // Should the world keep track of this instance?
-  alive:function(){ var _=this._;
-    if(Behavior.Custom.isDead(this)) {
+  alive : function(){ var _=this._;
+    if(Behavior.Custom.isDead.call(this)) {
       Behavior.Execute(_.behavior.dead,this);
       return false;
     } else {
@@ -42,21 +43,19 @@ Pawn = Class.extend({
   },
 
   gfx:function(){
-    // taken from infantry class.
     var _=this._; return {
       img:    _.img.sheet,
       imgdx:  _.frame.current*_.img.w,
       imgdy:  _.action*_.img.w,
       worldx: _.x-(_.img.w>>1),
       worldy: _.y-_.img.h+1,
-      imgw: _.img.w,
-      imgh: _.img.h
+      imgw:   _.img.w,
+      imgh:   _.img.h
     };
   }
 });
 
 // todo.
-// X-coord spatial hash: avoid checking hits on faraway stuff //////////////////
 
 // Win/loss event handler //////////////////////////////////////////////////////
 

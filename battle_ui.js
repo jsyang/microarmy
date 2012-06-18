@@ -80,9 +80,19 @@ window.onclick=function(e){
       }
       break;
     case MOUSEMODE.SMALLMINE:
-      a=new SmallMine(x,world.height(x),TEAM.BLUE); break;
+      a=new SmallMine({
+        x:    x,
+        y:    world.height(x),
+        team: TEAM.BLUE
+      });
+      break;
     case MOUSEMODE.MISSILERACK:
-      a=new MissileRack(x,world.height(x),TEAM.BLUE); break;
+      a=new MissileRack({
+        x:    x,
+        y:    world.height(x),
+        team: TEAM.BLUE
+      });
+      break;
     case MOUSEMODE.NONE:
   }  
   world.add(a);

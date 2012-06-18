@@ -66,7 +66,7 @@ MGBullet = Projectile.extend({
 SmallRocket = Projectile.extend({
   init:function(params){
     this._=$.extend({
-      explosion: FragExplosion,
+      explosion: SmallExplosion,
       range: 90,
       damage:24
     },params);
@@ -92,7 +92,7 @@ MortarShell = Projectile.extend({
 SmallShell = Projectile.extend({
   init:function(params){
     this._=$.extend({
-      explosion: FragExplosion,
+      explosion: SmallExplosion,
       range: 70,
       damage:90
     },params);
@@ -120,6 +120,7 @@ SmallMine = Projectile.extend({
 ////////////////////////////////////////////////////////////////////////////////
 // Specials.
 
+// todo: clean this up.
 HomingMissile = Projectile.extend({
   init:function(params){
     this._=$.extend({
@@ -146,32 +147,51 @@ HomingMissile = Projectile.extend({
     }
   },
   explode:function(){ var _=this._;
-    world.addPawn(new SmallExplosion(_.x,_.y));
+    world.add(new SmallExplosion({
+      x: _.x,
+      y: _.y
+    }));
     var x=_.x+$.R(12,20); var y=_.y+$.R(-20,20);
     if(y>world.height(x)) y=world.height(x);
-    world.addPawn(new HEAPExplosion(x,y));
+    world.add(new HEAPExplosion({
+      x: x,
+      y: y
+    }));
     var x=_.x-$.R(12,20); var y=_.y+$.R(-20,20);
     if(y>world.height(x)) y=world.height(x);
-    world.addPawn(new HEAPExplosion(x,y));
+    world.add(new HEAPExplosion({
+      x: x,
+      y: y
+    }));
 
     // smoke..
     for(var i=12; i--;) {
       var x=_.x+$.R(-60,60); var y=_.y+$.R(-20,20);
       if(y>world.height(x)) y=world.height(x);
-      world.addPawn(new SmokeCloud(x,y));
+      world.add(new SmokeCloud({
+        x: x,
+        y: y
+      }));
     }
 
     var x=_.x+$.R(18,30); var y=_.y+$.R(-20,20);
     if(y>world.height(x)) y=world.height(x);
-    world.addPawn(new HEAPExplosion(x,y));
+    world.add(new HEAPExplosion({
+      x: x,
+      y: y
+    }));
     var x=_.x-$.R(18,30); var y=_.y+$.R(-20,20);
     if(y>world.height(x)) y=world.height(x);
-    world.addPawn(new HEAPExplosion(x,y));
+    world.add(new HEAPExplosion({
+      x: x,
+      y: y
+    }));
     
     _.img.w=15;
     _.range=0;
     _.corpsetime=0;
   },
+  
   alive:function(){ var _=this._;
     _.rangeTravelled++;
     if(!_.range) {
@@ -181,14 +201,17 @@ HomingMissile = Projectile.extend({
     
     // Smoke trail
     if(_.rangeTravelled<6)
-      world.addPawn(new SmokeCloud(_.x-_.dx,_.y-_.dy));
+      world.add(new SmokeCloud({
+        x: _.x-_.dx,
+        y: _.y-_.dy
+      }));
     
     // Hit enemy.
-    var h=world.xHash.getNBucketsByCoord(_.x,0);    
+    var h=world._.xHash.getNBucketsByCoord(_.x,0);    
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
       if(unit._.team==_.team)  continue;
-      if(Behavior.Custom.isDead(unit))         continue;
+      if(Behavior.Custom.isDead.call(unit))         continue;
       var dx=_.x-(unit._.x-(unit._.img.w>>1));
       var dy=_.y-(unit._.y-(unit._.img.h>>1));      
       if(dx*dx+dy*dy>81)       continue;   // Not close enough!
@@ -197,7 +220,7 @@ HomingMissile = Projectile.extend({
     }
 
     // Hit ground
-    if(world.isOutside(_)) {
+    if(world.isOutside(this)) {
       _.x-=_.dx>>1;
       _.y=world.height(_.x>>0);
       this.explode();
@@ -207,7 +230,7 @@ HomingMissile = Projectile.extend({
     // Homing.
     if( _.rangeTravelled>13 )
     {  // turn on homing function after delay
-      if(_.target && !Behavior.Custom.isDead(_.target)) {
+      if(_.target && !Behavior.Custom.isDead.call(_.target)) {
         _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
         _.dy+=_.target._.y<_.y? -_.dspeed: _.dspeed;
         if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed) {
@@ -217,7 +240,7 @@ HomingMissile = Projectile.extend({
       } else {      
         // Gravity
         _.dy+=_.ddy;
-        world.xHash.getCrowdedEnemy(this);
+        world._.xHash.getCrowdedEnemy(this);
       }
     }
     
