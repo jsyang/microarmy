@@ -78,10 +78,10 @@ XHash = Class.extend({
     var maxEnemies=0;
     _.target=undefined;
     // search via direction rays
-    for(var dirs=[-1,1], dir=dirs.pop(); dirs.length; dir=dirs.pop()) {
+    for(var dir=-1; dir<2; dir+=2) {
       for(var sight=1; sight<_.sight; sight++) {
-        if(this._.buckets[pawnIndex+dir*_.sight]) {
-          var b=this._.buckets[pawnIndex+dir*_.sight];
+        var b=this._.buckets[pawnIndex+dir*sight];
+        if(b) {          
           var bucketEnemies=0;
           for(var i=0; i<b.length; i++) {
             var a=b[i];

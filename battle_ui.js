@@ -90,7 +90,7 @@ window.onclick=function(e){
       a=new MissileRack({
         x:    x,
         y:    world.height(x),
-        team: TEAM.BLUE
+        team: TEAM.GREEN
       });
       break;
     case MOUSEMODE.NONE:

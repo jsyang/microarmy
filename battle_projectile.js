@@ -228,7 +228,7 @@ HomingMissile = Projectile.extend({
     }      
         
     // Homing.
-    if( _.rangeTravelled>13 )
+    if( _.rangeTravelled>12 )
     {  // turn on homing function after delay
       if(_.target && !Behavior.Custom.isDead.call(_.target)) {
         _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
@@ -239,6 +239,7 @@ HomingMissile = Projectile.extend({
         }
       } else {      
         // Gravity
+        //why does green missilerack fail?
         _.dy+=_.ddy;
         world._.xHash.getCrowdedEnemy(this);
       }
