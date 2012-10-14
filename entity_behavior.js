@@ -325,9 +325,10 @@ Behavior.Custom = {
           _.ammo.clip--;
           _.ammo.supply--;
           _.reload.time=$.R(10,1220);
+          _.reload.ing = _.reload.time;
         } else {
           // todo: make engineers reload these
-          _.reload.time = Infinity;
+          _.reload.ing = Infinity;
           _.ammo.clip = 0;
         }
       }
