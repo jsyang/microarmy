@@ -257,7 +257,7 @@ MissileRack = Structure.extend({
     return {
       img:    _.img.sheet,
       imgdx:  _.direction>0? _.img.w:0,
-      imgdy:  _.health<=0 || !_.ammo.clip || (!_.ammo.clip && _.reload.ing<50)? _.img.h:0,
+      imgdy:  _.health<=0 || !_.ammo.clip || (_.ammo.clip && _.reload.ing>50)? _.img.h:0,
       worldx: _.x-(_.img.w>>1),
       worldy: _.y-_.img.h+1,
       imgw:_.img.w,
