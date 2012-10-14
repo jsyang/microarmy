@@ -594,7 +594,7 @@ Behavior.Custom = {
           [MissileRack,Pillbox,SmallTurret][$.R(0,2)]
         );
       }
-    } else if(_.urgency>40 && $.R(0,3000)<23) {
+    } else if(_.urgency>17 && $.R(0,3000)<23) {
       if(_.attention.length==2) {
         // Send an engineer to build a pillbox or missilerack at a chokepoint
         Behavior.Custom.createSquad.call(this,
