@@ -310,20 +310,25 @@ Behavior.Custom = {
       if(!_.target) {
         _.reload.time=$.R(_.reload.min,_.reload.max);
       } else {
-        // Missile doesn't need a target: it finds its own!
-        soundManager.play('missile1');
-        world.add(
-          new HomingMissile({
-            x:    _.x,
-            y:    _.y-20,
-            team: _.team,
-            dx:   _.direction*4.6,
-            dy:   -8.36
-          })
-        );
-        _.ammo.clip--;
-        _.reload.time=$.R(10,1220);
-        
+        if(_.ammo.supply>0) {
+          // Missile doesn't need a target: it finds its own!
+          soundManager.play('missile1');
+          world.add(
+            new HomingMissile({
+              x:    _.x,
+              y:    _.y-20,
+              team: _.team,
+              dx:   _.direction*4.6,
+              dy:   -8.36
+            })
+          );
+          _.ammo.clip--;
+          _.ammo.supply--;
+          _.reload.time=$.R(10,1220);
+        } else {
+          // todo: make engineers reload these
+          _.reload.time=Infinity;
+        }
       }
       return true;
     }
@@ -594,7 +599,7 @@ Behavior.Custom = {
           [MissileRack,Pillbox,SmallTurret][$.R(0,2)]
         );
       }
-    } else if(_.urgency>17 && $.R(0,3000)<23) {
+    } else if(_.urgency>27 && $.R(0,3000)<23) {
       if(_.attention.length==2) {
         // Send an engineer to build a pillbox or missilerack at a chokepoint
         Behavior.Custom.createSquad.call(this,

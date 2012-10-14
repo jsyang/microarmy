@@ -41,7 +41,7 @@ function smoothAutoScroll() {
 
 var mode=MOUSEMODE.NONE;
 var clicks=[];
-window.onkeydown=function(e){
+window.onkeyup=function(e){
   /*
   if(e.which==DEMO_ACTION.SPACEBAR)
     if(DEMO_ACTION.CHECKACTION) {
@@ -52,9 +52,15 @@ window.onkeydown=function(e){
       DEMO_ACTION.CHECKACTION=setInterval(smoothAutoScroll,3000);
       console.log("Auto-scrolling enabled.");
     }
-  */  
+  */
+  switch(e.which) {
+    case 32:
+      console.log(world._.pawns.commander[0]._.attention+'/'+world._.pawns.commander[0]._.urgency+'<--->'+world._.pawns.commander[1]._.attention+'/'+world._.pawns.commander[1]._.urgency);
+  }
+  
   if(e.which<48 || e.which>58) return;
   mode=e.which-49;
+  
   for(var i in MOUSEMODE)
     if(MOUSEMODE[i]==mode) break;
   console.log("Click = "+i);
