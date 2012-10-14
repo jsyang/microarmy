@@ -100,22 +100,22 @@ Battle = Class.extend({
       h: 480,
       pawns: {
         pawncontroller: [],  // Commanders / Squads -- higher level AI
-        
-        aircraft: [],
-        structure: [],
-        vehicle: [],
-        infantry: [],
-        projectile: [],
-        explosion: []
-        
+        commander     : [],
+        aircraft      : [],
+        structure     : [],
+        vehicle       : [],
+        infantry      : [],
+        projectile    : [],
+        explosion     : []
       },
       heightmap: [],
       timer: undefined
     },params);
 
-    var _=this._;
-    _.xHash=new XHash({ w: _.w });
-    _.view=new BattleView({ w: _.w, h: _.h });
+    var _         = this._;
+    _.xHash       = new XHash     ({ w: _.w });
+    _.deathHash   = new SimpleHash({ w: _.w });
+    _.view        = new BattleView({ w: _.w, h: _.h });
   },
 
 
@@ -213,6 +213,7 @@ Flatten terrain.
     }
   },
 
+  // todo : break this off into util/peakGenerator.js
   generatePeaksAndHeightMap : function(params) {
     var _=$.extend({
       flatRegions:        [],
@@ -260,6 +261,7 @@ Flatten terrain.
     }
   },
 
+  // todo : break this off into util/baseGenerator.js
   generateBase:function(t){
     var _=this._;
     var baseDistFromEdge = 200;
@@ -316,13 +318,21 @@ Flatten terrain.
         if(greenBase[i] instanceof CommCenter || greenBase[i] instanceof Barracks)
           greenDepots.push(greenBase[i]);
       }
-    var greenCmdr = new Commander({depot:greenDepots});
+    var greenCmdr = new Commander({
+      depot:greenDepots,
+      team: TEAM.GREEN
+    });
+    
     var blueBase  = this.generateBase(TEAM.BLUE);
       for(var blueDepots=[], i=0; i<blueBase.length; i++){
         if(blueBase[i] instanceof CommCenter || blueBase[i] instanceof Barracks)
           blueDepots.push(blueBase[i]);
       }
-    var blueCmdr = new Commander({depot:blueDepots});
+    var blueCmdr = new Commander({
+      depot:blueDepots,
+      team: TEAM.BLUE
+    });
+    
     var startingStructures = greenBase.concat(blueBase); 
     
     this.generatePeaksAndHeightMap({
@@ -338,6 +348,10 @@ Flatten terrain.
     
     this.add(greenCmdr);
     this.add(blueCmdr);
+    
+    // todo remove this hardcoded stuff
+    _.pawns.commander[TEAM.BLUE]  = blueCmdr;
+    _.pawns.commander[TEAM.GREEN] = greenCmdr;
     
     _.view.initTerrain(_.heightmap);
   },
@@ -371,6 +385,7 @@ Flatten terrain.
       _.pawns[type]=newPawns;
     }
     _.xHash=newXHash;
+    _.deathHash.cycle();
   },
 
   add:function(pawn) { var _=this._.pawns;

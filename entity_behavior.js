@@ -65,7 +65,9 @@ Behavior.Custom = {
   logMsg:                 function(){ console.log('msg'); return true; },
 
   hasCorpseTime:          function(){ return !this._.corpsetime; },
-  remove:                 function(){ this._.health.current = this._.corpsetime = 0; return true; },
+  remove:                 function(){
+    this._.health.current = this._.corpsetime = 0; return true;
+  },
 
   seeTarget:              function(){ return Behavior.Custom.seeEntity.call(this,this._.target); },
 
@@ -90,13 +92,17 @@ Behavior.Custom = {
   animateDyingInfantry : function() { var _=this._;
     _.action=$.R(INFANTRY.ACTION.DEATH1,INFANTRY.ACTION.DEATH2);
     _.frame.current=_.frame.first;
+    world._.deathHash.insert(this);
     soundManager.play('die1,die2,die3,die4'.split(',')[$.R(0,3)]);
     return true;
   },
   
   rotCorpse : function() { var _=this._;
-    if(_.frame.current<_.frame.last) _.frame.current++;
-    else _.corpsetime--;
+    if(_.frame.current<_.frame.last) {
+      _.frame.current++;
+    } else {
+      _.corpsetime--;
+    }
     return true;
   },
   
@@ -175,17 +181,19 @@ Behavior.Custom = {
   // Handle rotation to face target -- Vehicles
   isFacingTarget:function() { var _ = this._;
     if(_.target && (_.target._.x-_.x)*_.direction<0) {
-      if(!_.turn.ing) {            
-        _.turn.ing=1;
-        _.turn.current=0;
-        if(this instanceof Vehicle) _.action = VEHICLE.ACTION.TURNING;
-      } else {
-        _.turn.current++;
-        if(_.turn.current>_.turn.last) {
-          _.turn.ing=_.turn.current=0;
-          _.direction*=-1;
-          if(this instanceof Vehicle) _.action = VEHICLE.ACTION.MOVING;
-        }            
+      if(_.turn) {
+        if(!_.turn.ing) {            
+          _.turn.ing=1;
+          _.turn.current=0;
+          if(this instanceof Vehicle) _.action = VEHICLE.ACTION.TURNING;
+        } else {
+          _.turn.current++;
+          if(_.turn.current>_.turn.last) {
+            _.turn.ing=_.turn.current=0;
+            _.direction*=-1;
+            if(this instanceof Vehicle) _.action = VEHICLE.ACTION.MOVING;
+          }            
+        }
       }
       return false;
     }
@@ -231,12 +239,16 @@ Behavior.Custom = {
   // Face the target -- Infantry
   setFacingTarget : function() { var _ = this._;
     if(_.target) {
-      _.direction=_.target._.x>_.x?1:-1;
-      // Randomize attack stance -- Infantry
-      if(!(this instanceof EngineerInfantry) &&
-         _.action==INFANTRY.ACTION.MOVEMENT)
+      if(this instanceof EngineerInfantry) {
+        _.direction=_.target.x>_.x?1:-1;
+        
+      } else if(_.action==INFANTRY.ACTION.MOVEMENT){
+        _.direction=_.target._.x>_.x?1:-1;
+        // Randomize attack stance -- Infantry 
         _.action=$.R(INFANTRY.ACTION.ATTACK_STANDING,
                      INFANTRY.ACTION.ATTACK_PRONE);
+      }
+      
     } else {
       _.action=INFANTRY.ACTION.MOVEMENT;
       _.direction=TEAM.GOALDIRECTION[_.team];
@@ -380,7 +392,7 @@ Behavior.Custom = {
         team:   _.team,
         build:  { type: _.build.type }
       });
-      scaffold.setBuildCount.call(scaffold);
+      scaffold.setBuildCrewCount.call(scaffold);
       world.add(scaffold);
       Behavior.Custom.remove.call(this);
       return true;
@@ -485,7 +497,7 @@ Behavior.Custom = {
               team: _.team
             })
           );
-          Behavior.Custom.remove();
+          Behavior.Custom.remove.call(this);
           return true;
         }
       }
@@ -507,11 +519,25 @@ Behavior.Custom = {
         _r.ing=_r.time;
         _r.types[_r.supplyType].qty--;
         _r.supplyNumber--;
-        var unit=new _r.types[_r.supplyType].make({
-          x:    _.x,
-          y:    world.height(_.x),
-          team: _.team
-        });
+        if(_r.supplyType=="EngineerInfantry") {
+          var unit=new _r.types[_r.supplyType].make({
+            x:      _.x,
+            y:      world.height(_.x),
+            team:   _.team,
+            build:  {
+              type: _r.engineerBuild,
+              x:    _r.rallyPoint
+            }
+          });
+          _r.ing=_r.time+60;
+        } else {
+          var unit=new _r.types[_r.supplyType].make({
+            x:    _.x,
+            y:    world.height(_.x),
+            team: _.team
+          });
+        }
+        
         unit._.squad=_r.parentSquad;
         _r.parentSquad._.members.push(unit);
         if(!_r.supplyNumber) _r.parentSquad._.allMembersJoined=true;
@@ -521,7 +547,8 @@ Behavior.Custom = {
     return true;
   },
   
-  createSquad:function(type) { var _ = this._;
+  createSquad:function(type, number, rallyPoint, engineerBuild) {
+    var _ = this._;
     if(_.squads.length<_.strength){
       for(var i=0,d=_.depot; i<d.length; i++)
         if(!d[i]._.reinforce.supplyNumber)
@@ -532,9 +559,11 @@ Behavior.Custom = {
               _.squads.push(s);
               world.add(s);
               
-              d[i]._.reinforce.supplyType=type;
-              d[i]._.reinforce.supplyNumber=4;                
-              d[i]._.reinforce.parentSquad=s;
+              d[i]._.reinforce.supplyType     = type;
+              d[i]._.reinforce.supplyNumber   = number;
+              d[i]._.reinforce.rallyPoint     = rallyPoint;
+              d[i]._.reinforce.engineerBuild  = engineerBuild;
+              d[i]._.reinforce.parentSquad    = s;
               
               return true;
             }
@@ -552,8 +581,29 @@ Behavior.Custom = {
     // Build stuff...
     if($.r()<0.011) {
       Behavior.Custom.createSquad.call(this,
-        ["PistolInfantry","RocketInfantry"][$.R(0,Math.round($.r(0.7)))]
+        ["PistolInfantry","RocketInfantry"][$.R(0,Math.round($.r(0.7)))],
+        $.R(4,7)
       );
+    } else if($.R(0,30000)<23) {
+      if(_.attention.length==2) {
+        // Send an engineer to build a pillbox or missilerack at a chokepoint
+        Behavior.Custom.createSquad.call(this,
+          "EngineerInfantry",
+          1,
+          $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(32,128)),
+          [MissileRack,Pillbox,SmallTurret][$.R(0,2)]
+        );
+      }
+    } else if(_.urgency>40 && $.R(0,3000)<23) {
+      if(_.attention.length==2) {
+        // Send an engineer to build a pillbox or missilerack at a chokepoint
+        Behavior.Custom.createSquad.call(this,
+          "EngineerInfantry",
+          1,
+          $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(32,128)),
+          [MissileRack,Pillbox,SmallTurret][$.R(0,2)]
+        );
+      }
     }
   },
   

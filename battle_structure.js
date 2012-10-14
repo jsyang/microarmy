@@ -65,6 +65,8 @@ CommCenter = Structure.extend({
                       
                       supplyType:   undefined,
                       supplyNumber: 0,
+                      rallyPoint:   undefined,
+                      engineerBuild:undefined,
                       parentSquad:  undefined, // squad unit belongs to when it's created
                       
                       // big dmg kills reinforcements
@@ -83,12 +85,15 @@ Barracks = Structure.extend({
       health:       { current:$.R(1800,1950), max:$.R(1950,2500) },
       reinforce:    { ing: 0, time: 10,
                       types: {
-                        PistolInfantry:{qty:250,make:PistolInfantry}
+                        PistolInfantry:   {qty:250,make:PistolInfantry},
+                        EngineerInfantry: {qty:2,make:EngineerInfantry}
                       },
                       
                       supplyType:   undefined,
                       supplyNumber: 0,
-                      parentSquad: undefined, // squad unit belongs to when it's created
+                      rallyPoint:   undefined,
+                      engineerBuild:undefined,
+                      parentSquad:  undefined, // squad unit belongs to when it's created
                       
                       // big dmg kills reinforcements
                       damageThreshold:  24,
@@ -123,10 +128,11 @@ Scaffold = Structure.extend({
   setBuildCrewCount:function(){ var _=this._;
     var t=_.build.type;
     var crewCount=8;
-    if(t instanceof Pillbox)      crewCount=4;
-    if(t instanceof SmallTurret)  crewCount=6;
-    if(t instanceof Barracks)     crewCount=16;
-    if(t instanceof CommCenter)   crewCount=60;
+    if(t instanceof Pillbox)            crewCount=4;
+    else if(t instanceof MissileRack)   crewCount=8;
+    else if(t instanceof SmallTurret)   crewCount=6;
+    else if(t instanceof Barracks)      crewCount=16;
+    else if(t instanceof CommCenter)    crewCount=60;
     _.crew.current=1;
     _.crew.max=crewCount;
   }

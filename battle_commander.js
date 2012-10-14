@@ -25,10 +25,13 @@ Commander = PawnController.extend({
       //img:    {}, // no icon for now
       behavior: { alive:Behavior.Library.CommanderIdle, dead:undefined },
       strength: $.R(1,60),  // limit on # squads they can manage simultaneously
+      attention:[],         // [minX, maxX] range of where the hotspot is
+      urgency:  0,          // how bad is this area?
+      
       squads:   [],
-      comm:     [],   // Comm(ander) relays = stations that broadcast orders
-      repair:   [],   // repair facilities
-      depot:    []    // caches of resources, abstract or real
+      comm:     [],         // Comm(ander) relays = stations that broadcast orders
+      repair:   [],         // repair facilities
+      depot:    []          // caches of resources, abstract or real
     },params);
   },
   alive:function(){ Behavior.Execute(this._.behavior.alive,this); return true; }
