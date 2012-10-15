@@ -1,5 +1,4 @@
-// Like XHash. But only for counts (death event count) check every so often
-// todo rename this as death hash?
+// Like XHash. But only for event tallies (death event count) for every xxx cycles
 
 SimpleHash = Class.extend({
   init:function(params){

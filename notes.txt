@@ -1,0 +1,9 @@
+Game design notes
+http://androidarts.com/xcom/rebelsquad.htm
+
+Various damage tables and other inspiration for game structure
+http://www.ufopaedia.org/
+
+- generate background (not just the sky and heightmap)
+- optimize generation of the peaks and terrain colors; we don't have to calculate
+  the color gradient every single time...

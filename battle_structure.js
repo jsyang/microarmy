@@ -146,7 +146,9 @@ CommRelay = Structure.extend({
   init:function(params){
     this._=$.extend({
       img:          { w:15, h:27, hDist2:220, sheet:'relay' },
-      health:       { current:$.R(560,600), max:$.R(600,750) }
+      health:       { current:$.R(560,600), max:$.R(600,750) },
+      // todo guide missile racks / other comm
+      //behavior:     { alive:Behavior.Library.CommRelay, dead: Behavior.Library.StructureDeadExplode },
     },params);
     this._super(this._);
     soundManager.play('tack');
