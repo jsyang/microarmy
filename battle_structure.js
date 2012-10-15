@@ -58,9 +58,9 @@ CommCenter = Structure.extend({
       health:       { current:$.R(2100,2500), max:$.R(2500,2600) },      
       reinforce:    { ing: 0, time: 10,
                       types:  {
-                        PistolInfantry:   {qty:320, make:PistolInfantry},
-                        RocketInfantry:   {qty:180, make:RocketInfantry},
-                        EngineerInfantry: {qty:20,  make:EngineerInfantry}
+                        PistolInfantry:   {qty:400, make:PistolInfantry},
+                        RocketInfantry:   {qty:600, make:RocketInfantry},
+                        EngineerInfantry: {qty:40,  make:EngineerInfantry}
                       },
                       
                       supplyType:   undefined,
@@ -85,8 +85,8 @@ Barracks = Structure.extend({
       health:       { current:$.R(1800,1950), max:$.R(1950,2500) },
       reinforce:    { ing: 0, time: 10,
                       types: {
-                        PistolInfantry:   {qty:250,make:PistolInfantry},
-                        EngineerInfantry: {qty:2,make:EngineerInfantry}
+                        PistolInfantry:   {qty:275, make:PistolInfantry},
+                        EngineerInfantry: {qty:10,   make:EngineerInfantry}
                       },
                       
                       supplyType:   undefined,
@@ -101,6 +101,10 @@ Barracks = Structure.extend({
                     }
     },params);
     this._super(this._);
+    
+    // todo hardcoded
+    if(world._.pawns.commander[this._.team])
+      world._.pawns.commander[this._.team]._.depot.unshift(this);
   }
 });
 
@@ -246,9 +250,10 @@ MissileRack = Structure.extend({
       behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
       sight:        13,
       health:       { current:$.R(200,280), max:$.R(280,300) },
+      corpsetime:   1,
       projectile:   HomingMissile,
-      reload:       { ing:0, time: 5600 },
-      ammo:         { clip:1, max: 1, supply: 3 },
+      reload:       { ing:240, time: 2900 },
+      ammo:         { clip:1, max: 1, supply: 4 },
       shootHeight:  3
     },params);
     this._super(this._);

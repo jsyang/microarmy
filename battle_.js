@@ -96,7 +96,7 @@ BattleView = Class.extend({
 Battle = Class.extend({
   init:function(params){
     this._=$.extend({
-      w: 2490,              // Battle world dimensions in pixels.
+      w: 3200,               // Battle world dimensions in pixels.
       h: 480,
       pawns: {
         pawncontroller: [],  // Commanders / Squads -- higher level AI
@@ -272,14 +272,15 @@ Flatten terrain.
           pruned.push(raw[i]);
       return pruned;
     }([
+      {type:MissileRack,  num:$.R(0,4)},
       {type:SmallTurret,  num:$.R(0,1)},
       {type:CommCenter,   num:$.R(0,2)},
-      {type:MissileRack,  num:$.R(0,2)},
-      {type:MissileRack,  num:$.R(0,2)},
-      {type:MissileRack,  num:$.R(0,2)},
+      {type:MissileRack,  num:$.R(0,4)},
       {type:CommRelay,    num:$.R(0,1)},
       {type:Barracks,     num:$.R(1,5)},
+      {type:MissileRack,  num:$.R(0,4)},
       {type:SmallTurret,  num:$.R(0,1)},
+      {type:Barracks,     num:$.R(0,2)},
       {type:Pillbox,      num:$.R(0,2)},
       {type:SmallMine,    num:$.R(0,8)}
     ]);

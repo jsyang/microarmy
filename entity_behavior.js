@@ -307,9 +307,7 @@ Behavior.Custom = {
       accuracy=[0.60,0.50]; strayDY=$.R(-12,9)/100; // upwards tendency
     
     } else if(_.projectile==HomingMissile) {
-      if(!_.target) {
-        _.reload.time=$.R(_.reload.min,_.reload.max);
-      } else {
+      if(_.target) {
         if(_.ammo.supply>0) {
           // Missile doesn't need a target: it finds its own!
           soundManager.play('missile1');
@@ -324,8 +322,7 @@ Behavior.Custom = {
           );
           _.ammo.clip--;
           _.ammo.supply--;
-          _.reload.time=$.R(10,1220);
-          _.reload.ing = _.reload.time;
+          _.reload.ing = $.R(30,_.reload.time);
         } else {
           // todo: make engineers reload these
           _.reload.ing = Infinity;
@@ -607,8 +604,8 @@ Behavior.Custom = {
         Behavior.Custom.createSquad.call(this,
           "EngineerInfantry",
           1,
-          $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(32,128)),
-          [MissileRack,Pillbox,SmallTurret][$.R(0,2)]
+          $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(64,256)),
+          [MissileRack,Pillbox,Barracks][$.R(0,2)]
         );
       }
     }
