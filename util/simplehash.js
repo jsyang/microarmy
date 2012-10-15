@@ -8,6 +8,7 @@ SimpleHash = Class.extend({
       buckets           : [],
       CYCLESBEFOREFLUSH : 100,
       cycles            : 0,
+      totalDeaths       : 0
     },params);
     
     this.flush();
@@ -23,6 +24,8 @@ SimpleHash = Class.extend({
   insert:function(pawn){
     var _=this._;
     if(_.buckets[pawn._.x>>_.BUCKETWIDTH]) {
+      _.totalDeaths++;
+      
       if(!_.buckets[pawn._.x>>_.BUCKETWIDTH][pawn._.team]) {
         _.buckets[pawn._.x>>_.BUCKETWIDTH][pawn._.team] = 1;
       } else {
@@ -80,6 +83,8 @@ SimpleHash = Class.extend({
       greenCommander.urgency    = greenSituation.severity;
       
       this.flush();
+      
+      console.log('Casualties '+_.totalDeaths);
     }
   }
 });
