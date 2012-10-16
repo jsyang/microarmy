@@ -222,7 +222,7 @@ MineFieldSmall = Structure.extend({
   },
   alive:function(){ var _=this._;
     var mineX = _.x + $.R(0,128) - $.R(0,128);
-    for(var numMines = $.R(3,5); numMines-->0;) {
+    for(var numMines = $.R(2,4); numMines-->0;) {
       mineX += 7;
       world.add(new SmallMine({
         x:    mineX,
@@ -334,7 +334,7 @@ MissileRack = Structure.extend({
       corpsetime:   1,
       projectile:   HomingMissile,
       reload:       { ing:240, time: 2900 },
-      ammo:         { clip:1, max: 1, supply: 4, maxsupply: 4 },
+      ammo:         { clip:1, max: 1, supply: 3, maxsupply: 3 },
       shootHeight:  3
     },params);
     this._super(this._);
@@ -356,13 +356,13 @@ MissileRackSmall = Structure.extend({
   init:function(params){
     this._=$.extend({
       img:          { w:4, h:7, hDist2:18, sheet:'missileracksmall' },
-      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDead },
+      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
       sight:        9,
       health:       { current:$.R(100,180), max:$.R(180,200) },
       corpsetime:   1,
       projectile:   HomingMissileSmall,
       reload:       { ing:20, time: 90 },
-      ammo:         { clip:1, max: 1, supply: 24, maxsupply: 24 },
+      ammo:         { clip:2, max: 2, supply: 24, maxsupply: 24 },
       shootHeight:  2
     },params);
     this._super(this._);

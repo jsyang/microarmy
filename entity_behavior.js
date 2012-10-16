@@ -664,7 +664,7 @@ Behavior.Custom = {
           "EngineerInfantry",
           1,
           $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(64,256)),
-          [MissileRackSmall,MineFieldSmall,AmmoDumpSmall][$.R(0,2)]
+          [MissileRack,MissileRackSmall,MineFieldSmall,AmmoDumpSmall][$.R(0,3)]
         );
       }
     }
