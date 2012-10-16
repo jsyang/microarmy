@@ -288,8 +288,8 @@ HomingMissileSmall = HomingMissile.extend({
   },
   explode:function(){ var _=this._;
     for(var i=$.R(1,2); i-->0;) {
-      var x = _.x+$.R(2,11)-$.R(2,11);
-      var y = _.y+$.R(2,11)-$.R(2,11);
+      var x = _.x+$.R(0,24)-$.R(0,24);
+      var y = _.y+$.R(0,24)-$.R(0,24);
       if(y>world.height(x)) y=world.height(x);
       
       world.add(new SmallExplosion({

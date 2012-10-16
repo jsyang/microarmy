@@ -170,10 +170,10 @@ Behavior.Custom = {
   
   isOutOfSupplies:function(){ var _ = this._;
     if(_.totalSupply>0) {
-      return true;
+      return false;
     } else {
       Behavior.Custom.remove.call(this);
-       return false;
+      return true;
     }
   },
   
@@ -737,7 +737,6 @@ Behavior.Library={
     "<[!isOutOfSupplies],[!isReloading],<[foundSupplyTarget],[supply]>>",
   
   MissileRack:
-    //"<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",
     "<[!isReloading],<[foundTarget],[seeTarget],[attack]>>",
   Pillbox:
     "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",

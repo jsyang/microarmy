@@ -361,8 +361,8 @@ MissileRackSmall = Structure.extend({
       health:       { current:$.R(100,180), max:$.R(180,200) },
       corpsetime:   1,
       projectile:   HomingMissileSmall,
-      reload:       { ing:20, time: 90 },
-      ammo:         { clip:2, max: 2, supply: 24, maxsupply: 24 },
+      reload:       { ing:60, time: 190 },
+      ammo:         { clip:1, max: 1, supply: 24, maxsupply: 24 },
       shootHeight:  2
     },params);
     this._super(this._);
