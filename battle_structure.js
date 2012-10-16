@@ -137,6 +137,7 @@ Scaffold = Structure.extend({
     else if(t instanceof SmallTurret)   crewCount=6;
     else if(t instanceof Barracks)      crewCount=16;
     else if(t instanceof CommCenter)    crewCount=60;
+    else if(t instanceof SmallMine)     crewCount=1;
     _.crew.current=1;
     _.crew.max=crewCount;
   }
