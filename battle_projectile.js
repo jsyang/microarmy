@@ -131,6 +131,7 @@ HomingMissile = Projectile.extend({
       ddy:            0.081,
       dspeed:         0.84,
       sight:          8,
+      homingDelay:    12,
       target:         undefined
     },params);
     this._super(this._);
@@ -228,7 +229,7 @@ HomingMissile = Projectile.extend({
     }      
         
     // Homing.
-    if( _.rangeTravelled>12 )
+    if( _.rangeTravelled>_.homingDelay )
     {  // turn on homing function after delay
       if(_.target && !Behavior.Custom.isDead.call(_.target)) {
         _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
@@ -239,7 +240,6 @@ HomingMissile = Projectile.extend({
         }
       } else {      
         // Gravity
-        //why does green missilerack fail?
         _.dy+=_.ddy;
         world._.xHash.getCrowdedEnemy(this);
       }
@@ -269,4 +269,31 @@ HomingMissile = Projectile.extend({
     _.range--;
     return false;
   }
+});
+
+HomingMissileSmall = HomingMissile.extend({
+  init:function(params){
+    this._=$.extend({
+      img:            { w:10, h:10, frame:0, sheet:preloader.getFile('missileorange') },
+      maxSpeed:       130,
+      range:          30,
+      rangeTravelled: 0,
+      ddy:            0.081,
+      dspeed:         0.24,
+      homingDelay:    8,
+      sight:          4,
+      target:         undefined
+    },params);
+    this._super(this._);
+  },
+  explode:function(){ var _=this._;
+    world.add(new SmallExplosion({
+      x: _.x,
+      y: _.y
+    }));
+    //_.img.w=15;
+    _.range=0;
+    _.corpsetime=0;
+  }
+  
 });

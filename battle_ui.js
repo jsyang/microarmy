@@ -73,6 +73,7 @@ window.onclick=function(e){
   switch(mode) {
     case MOUSEMODE.APC: a=new APC(x,world.height(x),TEAM.BLUE); break;
     case MOUSEMODE.EXPLOSION: a=new SmallExplosion({x:x,y:y}); break;
+    case MOUSEMODE.PISTOL: a=new PistolInfantry({x:x,y:world.height(x),team:$.R(0,1)}); break;
     case MOUSEMODE.PRINTMOUSECOORDS: console.log([x,y]); break;
     case MOUSEMODE.ENGINEERBUILDPILLBOX:
       if(clicks.length){

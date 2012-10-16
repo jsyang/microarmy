@@ -132,12 +132,12 @@ Scaffold = Structure.extend({
   setBuildCrewCount:function(){ var _=this._;
     var t=_.build.type;
     var crewCount=8;
-    if(t instanceof Pillbox)            crewCount=4;
-    else if(t instanceof MissileRack)   crewCount=8;
-    else if(t instanceof SmallTurret)   crewCount=6;
-    else if(t instanceof Barracks)      crewCount=16;
-    else if(t instanceof CommCenter)    crewCount=60;
-    else if(t instanceof SmallMine)     crewCount=1;
+    if(t instanceof Pillbox)              crewCount=4;
+    else if(t instanceof MissileRack)     crewCount=8;
+    else if(t instanceof SmallTurret)     crewCount=6;
+    else if(t instanceof Barracks)        crewCount=16;
+    else if(t instanceof CommCenter)      crewCount=60;
+    else if(t instanceof MineFieldSmall)  crewCount=1;
     _.crew.current=1;
     _.crew.max=crewCount;
   }
@@ -153,6 +153,66 @@ CommRelay = Structure.extend({
     },params);
     this._super(this._);
     soundManager.play('tack');
+  }
+});
+
+WatchTower = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:13, h:21, hDist2:196, sheet:'watchtower' },
+      health:       { current:$.R(300,350), max:$.R(360,400) },
+      behavior:     { alive:Behavior.Library.WatchTower, dead: Behavior.Library.StructureDead },
+      sight:        13
+    },params);
+    this._super(this._);
+    soundManager.play('tack');
+  }
+});
+
+AmmoDump = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:18, h:9, hDist2:100, sheet:'ammodump' },
+      health:       { current:$.R(80,120), max:$.R(130,150) },
+      behavior:     { alive:Behavior.Library.AmmoDump, dead: Behavior.Library.StructureDeadExplode },
+      reload:       { ing: 0, time: 300 },
+      sight:        7
+    },params);
+    this._super(this._);
+  }
+});
+
+AmmoDumpSmall = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:4, h:6, hDist2:25, sheet:'ammodumpsmall' },
+      health:       { current:$.R(80,120), max:$.R(130,150) },
+      behavior:     { alive:Behavior.Library.AmmoDumpSmall, dead: Behavior.Library.StructureDeadExplode },
+      reload:       { ing: 0, time: 300 },
+      sight:        7
+    },params);
+    this._super(this._);
+  }
+});
+
+MineFieldSmall = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:200, h: 1 },
+      corpsetime:   0
+    },params);
+  },
+  alive:function(){ var _=this._;
+    var mineX = _.x + $.R(0,128) - $.R(0,128);
+    for(var numMines = $.R(3,5); numMines-->0;) {
+      mineX += 7;
+      world.add(new SmallMine({
+        x:    mineX,
+        y:    world.height(mineX),
+        team: _.team
+      }));
+    }
+    return false;
   }
 });
 
@@ -256,7 +316,7 @@ MissileRack = Structure.extend({
       corpsetime:   1,
       projectile:   HomingMissile,
       reload:       { ing:240, time: 2900 },
-      ammo:         { clip:1, max: 1, supply: 4 },
+      ammo:         { clip:1, max: 1, supply: 4, maxsupply: 4 },
       shootHeight:  3
     },params);
     this._super(this._);
@@ -266,6 +326,34 @@ MissileRack = Structure.extend({
       img:    _.img.sheet,
       imgdx:  _.direction>0? _.img.w:0,
       imgdy:  (_.health.current>0 && _.ammo.supply) || (!_.ammo.clip && _.reload.ing<50)? 0:_.img.h,
+      worldx: _.x-(_.img.w>>1),
+      worldy: _.y-_.img.h+1,
+      imgw:_.img.w,
+      imgh:_.img.h
+    };
+  }
+});
+
+MissileRackSmall = Structure.extend({
+  init:function(params){
+    this._=$.extend({
+      img:          { w:4, h:7, hDist2:18, sheet:'missileracksmall' },
+      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
+      sight:        9,
+      health:       { current:$.R(100,180), max:$.R(180,200) },
+      corpsetime:   1,
+      projectile:   HomingMissileSmall,
+      reload:       { ing:240, time: 200 },
+      ammo:         { clip:2, max: 2, supply: 12, maxsupply: 12 },
+      shootHeight:  2
+    },params);
+    this._super(this._);
+  },
+  gfx:function(){ var _=this._;
+    return {
+      img:    _.img.sheet,
+      imgdx:  _.direction>0? _.img.w:0,
+      imgdy:  _.health.current>0? 0:_.img.h,
       worldx: _.x-(_.img.w>>1),
       worldy: _.y-_.img.h+1,
       imgw:_.img.w,

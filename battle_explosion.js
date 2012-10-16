@@ -96,3 +96,22 @@ SmokeCloud = Explosion.extend({
     return false;
   }
 });
+
+Flame = Explosion.extend({
+  init:function(params){
+    this._=$.extend({
+      frame:        { current:0, last:22 },
+      img:          { w:6, h:4, sheet: preloader.getFile('firesmall'+$.R(0,2)) },
+      cycles:       $.R(4,20)
+    },params);
+    this._super(this._);
+  },
+  alive:function(){ var _=this._;
+    if(_.frame.current==_.frame.last) {
+      _.frame.current = -1;
+      if(_.cycles==0) return _.corpsetime=0;
+    }
+    _.frame.current++;
+    return false;
+  }
+});

@@ -308,7 +308,7 @@ Behavior.Custom = {
     
     } else if(_.projectile==HomingMissile) {
       if(_.target) {
-        if(_.ammo.supply>0) {
+        if(_.ammo.clip>0) {
           // Missile doesn't need a target: it finds its own!
           soundManager.play('missile1');
           world.add(
@@ -320,13 +320,48 @@ Behavior.Custom = {
               dy:   -8.36
             })
           );
+          if(_)
           _.ammo.clip--;
-          _.ammo.supply--;
-          _.reload.ing = $.R(30,_.reload.time);
         } else {
-          // todo: make engineers reload these
-          _.reload.ing = Infinity;
-          _.ammo.clip = 0;
+          if(_.ammo.supply>0) {
+            if(_.ammo.max>=_.ammo.supply) {
+              _.ammo.clip = _.ammo.supply;
+              _.ammo.supply = 0;
+            } else {
+              _.ammo.clip = _.ammo.max;
+              _.ammo.supply -= _.ammo.max;
+            }            
+          }
+          _.reload.ing = $.R(30,_.reload.time);
+        }
+      }
+      return true;
+    } else if(_.projectile===HomingMissileSmall) {
+      if(_.target) {
+        if(_.ammo.clip>0) {
+          // Missile doesn't need a target: it finds its own!
+          soundManager.play('rocket');
+          world.add(
+            new HomingMissileSmall({
+              x:    _.x,
+              y:    _.y-20,
+              team: _.team,
+              dx:   _.direction*3.6,
+              dy:   -6.16
+            })
+          );
+          _.ammo.clip--;
+        } else {
+          if(_.ammo.supply>0) {
+            if(_.ammo.max>=_.ammo.supply) {
+              _.ammo.clip = _.ammo.supply;
+              _.ammo.supply = 0;
+            } else {
+              _.ammo.clip = _.ammo.max;
+              _.ammo.supply -= _.ammo.max;
+            }            
+          }
+          _.reload.ing = _.reload.time;
         }
       }
       return true;
@@ -595,7 +630,7 @@ Behavior.Custom = {
           "EngineerInfantry",
           1,
           $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(32,128)),
-          [MissileRack,Pillbox,SmallTurret][$.R(0,2)]
+          [MissileRackSmall,Pillbox,SmallTurret][$.R(0,2)]
         );
       }
     } else if(_.urgency>27 && $.R(0,3000)<23) {
@@ -605,7 +640,7 @@ Behavior.Custom = {
           "EngineerInfantry",
           1,
           $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(64,256)),
-          [MissileRack,SmallMine,Barracks][$.R(0,2)]
+          [MissileRackSmall,SmallMineField,Barracks][$.R(0,2)]
         );
       }
     }

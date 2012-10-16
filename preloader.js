@@ -3,8 +3,10 @@ preloader=(function() {
   var a=new html5Preloader();  
   var i="";  
   var u=( // team-neutral stuff
-    'shells,missilered,exp1,exp2,exp2big,smoke,'+
-    'scaffold_,pillbox_,missilerack_'
+    'shells,exp1,exp2,exp2big,smoke,'+
+    'scaffold_,pillbox_,missilerack_,'+
+    'missileorange,missilered,'+
+    'firesmall0,firesmall1,firesmall2'
   ).split(',');
   
   for(var j=0; j<u.length; j++)
@@ -14,8 +16,11 @@ preloader=(function() {
     'pistol,rocket,engineer,'+
     'apc,'+
     'mine,'+
+    'ammodump,ammodumpsmall,'+
+    'watchtower,'+
+    'missilerack,missileracksmall,'+
     'comm,pillbox,barracks,turret,depot,repair,helipad,'+
-    'scaffold,missilerack,relay'
+    'scaffold,relay'
   ).split(',');
   
   for(var j=0; j<u.length; j++)

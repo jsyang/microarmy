@@ -272,17 +272,17 @@ Flatten terrain.
           pruned.push(raw[i]);
       return pruned;
     }([
-      {type:MissileRack,  num:$.R(0,4)},
-      {type:SmallTurret,  num:$.R(0,1)},
-      {type:CommCenter,   num:$.R(0,2)},
-      {type:MissileRack,  num:$.R(0,4)},
-      {type:CommRelay,    num:$.R(0,1)},
-      {type:Barracks,     num:$.R(1,5)},
-      {type:MissileRack,  num:$.R(0,4)},
-      {type:SmallTurret,  num:$.R(0,1)},
-      {type:Barracks,     num:$.R(0,2)},
-      {type:Pillbox,      num:$.R(0,2)},
-      {type:SmallMine,    num:$.R(0,8)}
+      {type:MissileRack,      num:$.R(0,4)},
+      {type:SmallTurret,      num:$.R(0,1)},
+      {type:CommCenter,       num:$.R(0,2)},
+      {type:MissileRack,      num:$.R(0,4)},
+      {type:CommRelay,        num:$.R(0,1)},
+      {type:Barracks,         num:$.R(1,5)},
+      {type:MissileRackSmall, num:$.R(0,4)},
+      {type:SmallTurret,      num:$.R(0,1)},
+      {type:Barracks,         num:$.R(0,2)},
+      {type:Pillbox,          num:$.R(0,2)},
+      {type:MineFieldSmall,   num:$.R(1,2)}
     ]);
 
     var x = t==TEAM.GREEN? _.w - baseDistFromEdge : baseDistFromEdge;
@@ -295,12 +295,8 @@ Flatten terrain.
           })
         );
 
-        if(p.type == MissileRack && p.num>1) {
+        if((p.type == MissileRack || p.type == MissileRackSmall) && p.num>1) {
           x+=TEAM.GOALDIRECTION[t]*3;
-
-        } else if(p.type == SmallMine && p.num>1) {
-          x+=TEAM.GOALDIRECTION[t]*$.R(8,20);
-
         } else {
           x+=TEAM.GOALDIRECTION[t]*$.R(36,50);
         }
