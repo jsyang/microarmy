@@ -272,13 +272,16 @@ Flatten terrain.
           pruned.push(raw[i]);
       return pruned;
     }([
-      {type:MissileRack,      num:$.R(0,4)},
+      {type:AmmoDump,         num:$.R(0,1)},
+      {type:MissileRack,      num:$.R(0,3)},
       {type:SmallTurret,      num:$.R(0,1)},
-      {type:CommCenter,       num:$.R(0,2)},
-      {type:MissileRack,      num:$.R(0,4)},
+      {type:CommCenter,       num:$.R(1,2)},
+      {type:AmmoDump,         num:$.R(0,1)},
+      {type:MissileRack,      num:$.R(0,3)},
       {type:CommRelay,        num:$.R(0,1)},
       {type:Barracks,         num:$.R(1,5)},
-      {type:MissileRackSmall, num:$.R(0,4)},
+      {type:AmmoDumpSmall,    num:$.R(1,4)},
+      {type:MissileRackSmall, num:$.R(0,6)},
       {type:SmallTurret,      num:$.R(0,1)},
       {type:Barracks,         num:$.R(0,2)},
       {type:Pillbox,          num:$.R(0,2)},
@@ -297,6 +300,8 @@ Flatten terrain.
 
         if((p.type == MissileRack || p.type == MissileRackSmall) && p.num>1) {
           x+=TEAM.GOALDIRECTION[t]*3;
+        } else if(p.type == AmmoDumpSmall && p.num>1) {
+          x+=TEAM.GOALDIRECTION[t]*$.R(4,6);
         } else {
           x+=TEAM.GOALDIRECTION[t]*$.R(36,50);
         }

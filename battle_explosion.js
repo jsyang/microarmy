@@ -100,15 +100,16 @@ SmokeCloud = Explosion.extend({
 Flame = Explosion.extend({
   init:function(params){
     this._=$.extend({
-      frame:        { current:0, last:22 },
+      frame:        { current:$.R(0,4), last:4 },
       img:          { w:6, h:4, sheet: preloader.getFile('firesmall'+$.R(0,2)) },
-      cycles:       $.R(4,20)
+      cycles:       $.R(2,20)
     },params);
     this._super(this._);
   },
   alive:function(){ var _=this._;
     if(_.frame.current==_.frame.last) {
       _.frame.current = -1;
+      _.cycles--;
       if(_.cycles==0) return _.corpsetime=0;
     }
     _.frame.current++;

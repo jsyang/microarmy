@@ -66,7 +66,6 @@ SimpleHash = Class.extend({
     if(_.cycles<_.CYCLESBEFOREFLUSH) {
       _.cycles++;
     } else {
-      
       // todo -- remove hardcoded
       
       var blueCommander   = world._.pawns.commander[TEAM.BLUE]._;
@@ -82,8 +81,6 @@ SimpleHash = Class.extend({
       greenCommander.urgency    = greenSituation.severity;
       
       this.flush();
-      
-      console.log('Casualties '+_.totalDeaths);
     }
   }
 });

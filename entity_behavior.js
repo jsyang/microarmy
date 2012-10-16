@@ -144,14 +144,65 @@ Behavior.Custom = {
     return true;
   },
   
+  supply:function(){ var _ = this._; var t=_.target;
+    for(var ammoName in _.supply.types){
+      if(_.supply.types[ammoName].make==t._.projectile){
+        if(_.supply.types[ammoName].qty<t._.ammo.maxsupply) {
+          t._.ammo.supply = _.supply.types[ammoName].qty;
+          _.totalSupply-=_.supply.types[ammoName].qty;
+          _.supply.types[ammoName].qty = 0;
+        } else {
+          t._.ammo.supply = t._.ammo.maxsupply;
+          _.totalSupply-=t._.ammo.maxsupply;
+          _.supply.types[ammoName].qty-=t._.ammo.maxsupply;
+        }
+        soundManager.play('sliderack1');
+        _.reload.ing=_.reload.time;
+        break;
+      }
+    }
+    return false;
+  },
+  
+  isOutOfAmmo:function() { var _ = this._;
+    return !_.ammo.supply;
+  },
+  
+  isOutOfSupplies:function(){ var _ = this._;
+    if(_.totalSupply>0) {
+      return true;
+    } else {
+      Behavior.Custom.remove.call(this);
+       return false;
+    }
+  },
+  
   isReloading:function() { var _ = this._;
     if(_.reload.ing) {
       _.reload.ing--;
-      if(_.reload.ing==0)
-        _.ammo.clip=_.ammo.max;
+      if(_.reload.ing==0) {
+        if(typeof(_.ammo)!='undefined') {
+          if(_.ammo.maxsupply) {
+            if(_.ammo.supply<_.ammo.max) {
+              _.ammo.clip = _.ammo.supply;
+              _.ammo.supply = 0;
+            } else {
+              _.ammo.clip = _.ammo.max;
+              _.ammo.supply -= _.ammo.max;
+            }
+          } else {
+            _.ammo.clip=_.ammo.max;
+          }
+        }
+      }
       return true;
-    } else if(_.ammo.clip==0) {
-      _.reload.ing=_.reload.time;
+    } else if(_.ammo && _.ammo.clip==0) {
+      if(_.ammo.maxsupply) {
+        _.reload.ing=$.R(30,_.reload.time);
+      } else {
+        _.reload.ing=_.reload.time;
+      }
+      
       if(this instanceof Infantry) // todo: get rid of this hack
         _.frame.current=_.frame.first;                
       return true;
@@ -223,7 +274,7 @@ Behavior.Custom = {
   seeEntity:function(t) { var _ = this._;
     return t? (Math.abs(t._.x-_.x)<_.sight*(1<<world._.xHash._.BUCKETWIDTH)) : false;
   },
-
+  
   foundTarget : function() { var t = this._.target;
     // Try to find a valid target!
     if(!t || Behavior.Custom.isDead.call(t) ||
@@ -233,6 +284,12 @@ Behavior.Custom = {
       else
         world._.xHash.getNearestEnemy(this);
     
+    return this._.target? true:false;
+  },
+
+  foundSupplyTarget : function() { var t = this._.target;
+    // Try to find a valid target!
+    world._.xHash.getNearestFriendlyNeedSupply(this);    
     return this._.target? true:false;
   },
 
@@ -308,61 +365,33 @@ Behavior.Custom = {
     
     } else if(_.projectile==HomingMissile) {
       if(_.target) {
-        if(_.ammo.clip>0) {
-          // Missile doesn't need a target: it finds its own!
-          soundManager.play('missile1');
-          world.add(
-            new HomingMissile({
-              x:    _.x,
-              y:    _.y-20,
-              team: _.team,
-              dx:   _.direction*4.6,
-              dy:   -8.36
-            })
-          );
-          if(_)
-          _.ammo.clip--;
-        } else {
-          if(_.ammo.supply>0) {
-            if(_.ammo.max>=_.ammo.supply) {
-              _.ammo.clip = _.ammo.supply;
-              _.ammo.supply = 0;
-            } else {
-              _.ammo.clip = _.ammo.max;
-              _.ammo.supply -= _.ammo.max;
-            }            
-          }
-          _.reload.ing = $.R(30,_.reload.time);
-        }
+        // Missile doesn't need a target: it finds its own!
+        soundManager.play('missile1');
+        world.add(
+          new HomingMissile({
+            x:    _.x,
+            y:    _.y-20,
+            team: _.team,
+            dx:   _.direction*4.6,
+            dy:   -8.36
+          })
+        );
+        _.ammo.clip--;
       }
       return true;
     } else if(_.projectile===HomingMissileSmall) {
       if(_.target) {
-        if(_.ammo.clip>0) {
-          // Missile doesn't need a target: it finds its own!
-          soundManager.play('rocket');
-          world.add(
-            new HomingMissileSmall({
-              x:    _.x,
-              y:    _.y-20,
-              team: _.team,
-              dx:   _.direction*3.6,
-              dy:   -6.16
-            })
-          );
-          _.ammo.clip--;
-        } else {
-          if(_.ammo.supply>0) {
-            if(_.ammo.max>=_.ammo.supply) {
-              _.ammo.clip = _.ammo.supply;
-              _.ammo.supply = 0;
-            } else {
-              _.ammo.clip = _.ammo.max;
-              _.ammo.supply -= _.ammo.max;
-            }            
-          }
-          _.reload.ing = _.reload.time;
-        }
+        soundManager.play('rocket');
+        world.add(
+          new HomingMissileSmall({
+            x:    _.x,
+            y:    _.y-8,
+            team: _.team,
+            dx:   _.direction*7.12,
+            dy:   -11.35
+          })
+        );
+        _.ammo.clip--;
       }
       return true;
     }
@@ -370,11 +399,6 @@ Behavior.Custom = {
     // Projectile origin relative to sprite
     var pDY=_.shootHeight? -_.shootHeight: -_.img.h>>1;
     var pDX=_.direction*(_.img.w>>1);
-    
-    /*if(obj instanceof Structure) {
-      var pDY=-_.shootHeight;
-      var pDX=_.direction>0? (obj.img.w>>1)-2 : -((obj.img.w>>1)-2);
-    } */     
     
     if(this instanceof Infantry)
       var pDY=_.action==INFANTRY.ACTION.ATTACK_PRONE? -2: -4;
@@ -630,7 +654,7 @@ Behavior.Custom = {
           "EngineerInfantry",
           1,
           $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(32,128)),
-          [MissileRackSmall,Pillbox,SmallTurret][$.R(0,2)]
+          [MissileRackSmall,Pillbox,Barracks,SmallTurret][$.R(0,3)]
         );
       }
     } else if(_.urgency>27 && $.R(0,3000)<23) {
@@ -640,7 +664,7 @@ Behavior.Custom = {
           "EngineerInfantry",
           1,
           $.R(_.attention[0],_.attention[1])-(TEAM.GOALDIRECTION[_.team]*$.R(64,256)),
-          [MissileRackSmall,SmallMineField,Barracks][$.R(0,2)]
+          [MissileRackSmall,MineFieldSmall,AmmoDumpSmall][$.R(0,2)]
         );
       }
     }
@@ -709,8 +733,12 @@ Behavior.Library={
   StructureDeadExplode:
     "<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>",
   
+  AmmoDump:
+    "<[!isOutOfSupplies],[!isReloading],<[foundSupplyTarget],[supply]>>",
+  
   MissileRack:
-    "<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",
+    //"<[!isReloading],(<[foundTarget],[seeTarget],[attack]>,[forceReload])>",
+    "<[!isReloading],<[foundTarget],[seeTarget],[attack]>>",
   Pillbox:
     "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>",
   SmallTurret:

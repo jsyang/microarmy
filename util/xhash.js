@@ -93,5 +93,30 @@ XHash = Class.extend({
         }
       }
     }
+  },
+  
+  // Find a friendly which needs resupply
+  getNearestFriendlyNeedSupply:function(pawn){ var _=pawn._;
+    var pawnIndex=_.x>>this._.BUCKETWIDTH;
+    _.target=undefined;
+    // buckets left,right of the starting bucket.
+    for(var left=right=pawnIndex, sight=_.sight; sight; left--,right++, sight--) {
+      var shell=[];
+      if(this._.buckets[left])                  shell=shell.concat(this._.buckets[left]);
+      if(left!=right && this._.buckets[right])  shell=shell.concat(this._.buckets[right]);
+
+      for(var i=0; i<shell.length; i++) {
+        var a=shell[i];
+        if(a._.team!=_.team || !a._.projectile || Behavior.Custom.isDead.call(a) || !Behavior.Custom.isOutOfAmmo.call(a) ) continue;
+        for(var ammoName in _.supply.types){
+          // todo: maybe this isn't the best?
+          if(_.supply.types[ammoName].make==a._.projectile){
+            _.target=a;
+            break;
+          }
+        }
+      }
+      if(_.target) break;
+    }
   }
 });

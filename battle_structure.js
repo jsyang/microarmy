@@ -161,11 +161,10 @@ WatchTower = Structure.extend({
     this._=$.extend({
       img:          { w:13, h:21, hDist2:196, sheet:'watchtower' },
       health:       { current:$.R(300,350), max:$.R(360,400) },
-      behavior:     { alive:Behavior.Library.WatchTower, dead: Behavior.Library.StructureDead },
+      //behavior:     { alive:Behavior.Library.WatchTower, dead: Behavior.Library.StructureDead },
       sight:        13
     },params);
     this._super(this._);
-    soundManager.play('tack');
   }
 });
 
@@ -175,10 +174,20 @@ AmmoDump = Structure.extend({
       img:          { w:18, h:9, hDist2:100, sheet:'ammodump' },
       health:       { current:$.R(80,120), max:$.R(130,150) },
       behavior:     { alive:Behavior.Library.AmmoDump, dead: Behavior.Library.StructureDeadExplode },
-      reload:       { ing: 0, time: 300 },
-      sight:        7
+      reload:       { ing: 0, time: 500 },
+      supply:       { types: {
+                      HomingMissile:      { qty:$.R(10,20), make: HomingMissile },
+                      HomingMissileSmall: { qty:$.R(60,80), make: HomingMissileSmall }
+                    }},
+      totalSupply:  0,
+      sight:        6
     },params);
     this._super(this._);
+    this.calculateSupply();
+  },
+  calculateSupply:function(){ var _=this._;
+    for(var i in _.supply.types)
+      _.totalSupply+=_.supply.types[i].qty;
   }
 });
 
@@ -187,11 +196,20 @@ AmmoDumpSmall = Structure.extend({
     this._=$.extend({
       img:          { w:4, h:6, hDist2:25, sheet:'ammodumpsmall' },
       health:       { current:$.R(80,120), max:$.R(130,150) },
-      behavior:     { alive:Behavior.Library.AmmoDumpSmall, dead: Behavior.Library.StructureDeadExplode },
+      behavior:     { alive:Behavior.Library.AmmoDump, dead: Behavior.Library.StructureDeadExplode },
       reload:       { ing: 0, time: 300 },
-      sight:        7
+      supply:       { types: {
+                      HomingMissileSmall: { qty:$.R(30,40), make: HomingMissileSmall }
+                    }},
+      totalSupply:  0,
+      sight:        5
     },params);
     this._super(this._);
+    this.calculateSupply();
+  },
+  calculateSupply:function(){ var _=this._;
+    for(var i in _.supply.types)
+      _.totalSupply+=_.supply.types[i].qty;
   }
 });
 
@@ -338,13 +356,13 @@ MissileRackSmall = Structure.extend({
   init:function(params){
     this._=$.extend({
       img:          { w:4, h:7, hDist2:18, sheet:'missileracksmall' },
-      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
+      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDead },
       sight:        9,
       health:       { current:$.R(100,180), max:$.R(180,200) },
       corpsetime:   1,
       projectile:   HomingMissileSmall,
-      reload:       { ing:240, time: 200 },
-      ammo:         { clip:2, max: 2, supply: 12, maxsupply: 12 },
+      reload:       { ing:20, time: 90 },
+      ammo:         { clip:1, max: 1, supply: 24, maxsupply: 24 },
       shootHeight:  2
     },params);
     this._super(this._);
