@@ -346,10 +346,12 @@ MissileRack = Structure.extend({
   
     var frame = _.img.h;
     if(_.health.current>0) {
-      if(_.ammo.clip) {
-        frame = 0;
-      } else if(!_.ammo.clip && _.reload.ing<40) {
-        frame = 0;
+      if(_.ammo.supply>0) {
+        if(_.ammo.clip) {
+          frame = 0;
+        } else if(!_.ammo.clip && _.reload.ing<40) {
+          frame = 0;
+        }
       }
     } else {
       frame = _.img.h*2;
