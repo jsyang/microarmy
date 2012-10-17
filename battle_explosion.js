@@ -52,7 +52,7 @@ FragExplosion = Explosion.extend({
 
     // add some fires..
     for(var i=$.R(0,4); i-->0;) {
-      var x=_.x-$.R(48,64)+$.R(48,64);
+      var x=this._.x-$.R(48,64)+$.R(48,64);
       var y=world.height(x);
       world.add(new Flame({ x: x, y: y }));
     }

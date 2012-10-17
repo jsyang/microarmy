@@ -134,6 +134,7 @@ Scaffold = Structure.extend({
     var crewCount=8;
     if(t instanceof Pillbox)              crewCount=4;
     else if(t instanceof MissileRack)     crewCount=8;
+    else if(t instanceof MissileRackSmall)crewCount=1;
     else if(t instanceof SmallTurret)     crewCount=6;
     else if(t instanceof Barracks)        crewCount=16;
     else if(t instanceof CommCenter)      crewCount=60;
@@ -342,10 +343,22 @@ MissileRack = Structure.extend({
     this._super(this._);
   },
   gfx:function(){ var _=this._;
+  
+    var frame = _.img.h;
+    if(_.health.current>0) {
+      if(_.ammo.clip) {
+        frame = 0;
+      } else if(!_.ammo.clip && _.reload.ing<40) {
+        frame = 0;
+      }
+    } else {
+      frame = _.img.h*2;
+    }
+    
     return {
       img:    _.img.sheet,
       imgdx:  _.direction>0? _.img.w:0,
-      imgdy:  (_.health.current>0 && _.ammo.supply) || (!_.ammo.clip && _.reload.ing<50)? 0:_.img.h,
+      imgdy:  frame,
       worldx: _.x-(_.img.w>>1),
       worldy: _.y-_.img.h+1,
       imgw:_.img.w,
@@ -354,7 +367,7 @@ MissileRack = Structure.extend({
   }
 });
 
-MissileRackSmall = Structure.extend({
+MissileRackSmall = MissileRack.extend({
   init:function(params){
     this._=$.extend({
       img:          { w:4, h:7, hDist2:18, sheet:'missileracksmall' },
@@ -368,16 +381,5 @@ MissileRackSmall = Structure.extend({
       shootHeight:  2
     },params);
     this._super(this._);
-  },
-  gfx:function(){ var _=this._;
-    return {
-      img:    _.img.sheet,
-      imgdx:  _.direction>0? _.img.w:0,
-      imgdy:  _.health.current>0? 0:_.img.h,
-      worldx: _.x-(_.img.w>>1),
-      worldy: _.y-_.img.h+1,
-      imgw:_.img.w,
-      imgh:_.img.h
-    };
   }
 });
