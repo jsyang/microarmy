@@ -413,6 +413,7 @@ Flatten terrain.
     var self=this;
     this._.timer=setInterval(function(){self.cycle()},40);
   },
-  pause:function(){ clearInterval(this._.timer); }
+  pause:function(){ clearInterval(this._.timer); setTimeout(this.reloadPage,4000); },
+  reloadPage:function(){ window.location = window.location.href; }
 
 });
