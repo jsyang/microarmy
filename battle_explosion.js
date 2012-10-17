@@ -72,6 +72,19 @@ SmallExplosion = Explosion.extend({
   }
 });
 
+FlakExplosion = Explosion.extend({
+  init:function(params){
+    this._=$.extend({
+      frame:        { current:-1, last:6 },
+      img:          { w:24, h:17, hDist2: 260, sheet: preloader.getFile('exp0') },
+      damage:       $.R(11,47),
+      damageDecay:  3
+    },params);
+    this._super(this._);
+    soundManager.play('expsmall');
+  }
+});
+
 HEAPExplosion = Explosion.extend({
   init:function(params){
     this._=$.extend({
@@ -91,7 +104,7 @@ HEAPExplosion = Explosion.extend({
 SmokeCloud = Explosion.extend({
   init:function(params){
     this._=$.extend({
-      frame:        { current:-1, last:22 },
+      frame:        { current:-1, last:6 },
       img:          { w:19, h:17, sheet: preloader.getFile('smoke') },
       damageDecay:  1
     },params);
@@ -104,6 +117,17 @@ SmokeCloud = Explosion.extend({
   }
 });
 
+SmokeCloudSmall = SmokeCloud.extend({
+  init:function(params){
+    this._=$.extend({
+      frame:        { current:-1, last:3 },
+      img:          { w:8, h:13, sheet: preloader.getFile('smokesmall') },
+      damageDecay:  1
+    },params);
+    this._super(this._);
+  }
+});
+
 Flame = Explosion.extend({
   init:function(params){
     this._=$.extend({
@@ -111,6 +135,21 @@ Flame = Explosion.extend({
       img:          { w:6, h:4, sheet: preloader.getFile('firesmall'+$.R(0,2)) },
       cycles:       $.R(2,20)
     },params);
+
+	if($.R(0,40)<4) {
+        this._=$.extend(this._, {
+		    img: 	{ w:10, h:11, sheet: preloader.getFile('firemedium0') },
+            frame:	{ current:$.R(0,64), last:64 },
+			cycles: $.R(1,4)
+		});
+	} else if($.R(0,40)<7) {
+		this._=$.extend(this._, {
+		    img: 	{ w:23, h:23, sheet: preloader.getFile('firemedium1') },
+            frame:	{ current:$.R(0,14), last:14 },
+			cycles: $.R(2,11)
+		});
+	}
+	
     this._super(this._);
   },
   alive:function(){ var _=this._;

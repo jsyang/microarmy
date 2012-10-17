@@ -3,10 +3,12 @@ preloader=(function() {
   var a=new html5Preloader();  
   var i="";  
   var u=( // team-neutral stuff
-    'shells,exp1,exp2,exp2big,smoke,'+
+    'shells,exp0,exp1,exp2,exp2big,'+
+	'smoke,smokesmall,'+
     'scaffold_,pillbox_,missilerack_,'+
-    'missileorange,missilered,'+
-    'firesmall0,firesmall1,firesmall2'
+    'missilepurple,missilered,'+
+    'firesmall0,firesmall1,firesmall2,'+
+	'firemedium0,firemedium1'
   ).split(',');
   
   for(var j=0; j<u.length; j++)

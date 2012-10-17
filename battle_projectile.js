@@ -132,7 +132,8 @@ HomingMissile = Projectile.extend({
       dspeed:           0.84,
       sight:            8,
       homingDelay:      12,
-      smokeTrailLength: 6,
+	  smokeTrailType:	SmokeCloud,
+      smokeTrailLength: 8,
       target:           undefined
     },params);
     this._super(this._);
@@ -194,7 +195,7 @@ HomingMissile = Projectile.extend({
     
     // Smoke trail
     if(_.rangeTravelled<_.smokeTrailLength)
-      world.add(new SmokeCloud({
+      world.add(new (_.smokeTrailType)({
         x: _.x-_.dx,
         y: _.y-_.dy
       }));
@@ -266,34 +267,38 @@ HomingMissile = Projectile.extend({
 HomingMissileSmall = HomingMissile.extend({
   init:function(params){
     this._=$.extend({
-      img:              { w:10, h:10, frame:0, sheet:preloader.getFile('missileorange') },
+      img:              { w:10, h:10, frame:0, sheet:preloader.getFile('missilepurple') },
       maxSpeed:         110,
       range:            90,
       rangeTravelled:   0,
-      ddy:              0.173,
+      ddy:              0.0173,
       dspeed:           $.R(312,2650)/1000,
-      homingDelay:      $.R(4,14),
+      homingDelay:      $.R(7,14),
       sight:            8,
-      smokeTrailLength: 3,
+	  smokeTrailType:	SmokeCloudSmall,
+      smokeTrailLength: 6,
       target:           undefined
     },params);
     this._super(this._);
   },
   explode:function(){ var _=this._;
-    _.y+=_.dy;
-    _.x+=_.dx; 
-    for(var i=$.R(2,3); i-->0;) {
-      var x = _.x+$.R(0,16)-$.R(0,16);
-      var y = _.y+$.R(0,16)-$.R(0,16);
-      if(y>world.height(x)) y=world.height(x);
+    for(var i=$.R(3,5); i-->0;) {
+      var x = _.x+$.R(0,12)-$.R(0,12);
+      var y = y>world.height(x)? y=world.height(x) : _.y;
       
-      world.add(new SmallExplosion({
+      world.add(new FlakExplosion({
+        x: x,
+        y: y
+      }));
+	  
+	  var x = _.x+$.R(0,18)-$.R(0,18);
+	  var y = _.y+$.R(0,18)-$.R(0,18);
+	  world.add(new SmokeCloudSmall({
         x: x,
         y: y
       }));
     }
     
-    //_.img.w=15;
     _.range=0;
     _.corpsetime=0;
   }
