@@ -180,13 +180,6 @@ HomingMissile = Projectile.extend({
     if(y>world.height(x)) y=world.height(x);
     world.add(new HEAPExplosion({ x: x, y: y }));
     
-    // add some fires..
-    for(var i=$.R(3,12); i-->0;) {
-      var x=_.x-$.R(48,64)+$.R(48,64);
-      var y=world.height(x);
-      world.add(new Flame({ x: x, y: y }));
-    }
-    
     _.img.w=15;
     _.range=0;
     _.corpsetime=0;
@@ -274,12 +267,12 @@ HomingMissileSmall = HomingMissile.extend({
   init:function(params){
     this._=$.extend({
       img:              { w:10, h:10, frame:0, sheet:preloader.getFile('missileorange') },
-      maxSpeed:         140,
+      maxSpeed:         110,
       range:            90,
       rangeTravelled:   0,
       ddy:              0.173,
-      dspeed:           $.R(612,2250)/1000,
-      homingDelay:      6,
+      dspeed:           $.R(312,2650)/1000,
+      homingDelay:      $.R(4,14),
       sight:            8,
       smokeTrailLength: 3,
       target:           undefined
@@ -287,9 +280,11 @@ HomingMissileSmall = HomingMissile.extend({
     this._super(this._);
   },
   explode:function(){ var _=this._;
-    for(var i=$.R(1,2); i-->0;) {
-      var x = _.x+$.R(0,24)-$.R(0,24);
-      var y = _.y+$.R(0,24)-$.R(0,24);
+    _.y+=_.dy;
+    _.x+=_.dx; 
+    for(var i=$.R(2,3); i-->0;) {
+      var x = _.x+$.R(0,16)-$.R(0,16);
+      var y = _.y+$.R(0,16)-$.R(0,16);
       if(y>world.height(x)) y=world.height(x);
       
       world.add(new SmallExplosion({

@@ -387,8 +387,8 @@ Behavior.Custom = {
             x:    _.x,
             y:    _.y-8,
             team: _.team,
-            dx:   _.direction*7.12,
-            dy:   -11.35
+            dx:   _.direction*5.12,
+            dy:   -6.35
           })
         );
         _.ammo.clip--;

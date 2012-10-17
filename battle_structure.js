@@ -138,6 +138,8 @@ Scaffold = Structure.extend({
     else if(t instanceof Barracks)        crewCount=16;
     else if(t instanceof CommCenter)      crewCount=60;
     else if(t instanceof MineFieldSmall)  crewCount=1;
+    else if(t instanceof AmmoDumpSmall)   crewCount=1;
+    else if(t instanceof AmmoDump)        crewCount=2;
     _.crew.current=1;
     _.crew.max=crewCount;
   }
@@ -362,7 +364,7 @@ MissileRackSmall = Structure.extend({
       corpsetime:   1,
       projectile:   HomingMissileSmall,
       reload:       { ing:60, time: 190 },
-      ammo:         { clip:1, max: 1, supply: 24, maxsupply: 24 },
+      ammo:         { clip:1, max: 1, supply: 12, maxsupply: 12 },
       shootHeight:  2
     },params);
     this._super(this._);
