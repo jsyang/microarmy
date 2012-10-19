@@ -241,7 +241,7 @@ MineFieldSmall = Structure.extend({
 Depot = Structure.extend({
   init:function(params){
     this._=$.extend({
-      img:          { w:19, h:8, hDist2:64, sheet:'depot' },
+      img:          { w:39, h:16, hDist2:260, sheet:'depot' },
       target:       undefined
     },params);
     this._super(this._);
@@ -252,7 +252,7 @@ Depot = Structure.extend({
 RepairYard = Structure.extend({
   init:function(params){
     this._=$.extend({
-      img:          { w:19, h:8, hDist2:64, sheet:'repair' },
+      img:          { w:28, h:14, hDist2:196, sheet:'repair' },
       target:       undefined
     },params);
     this._super(this._);
@@ -263,7 +263,7 @@ RepairYard = Structure.extend({
 Helipad = Structure.extend({
   init:function(params){
     this._=$.extend({
-      img:          { w:19, h:8, hDist2:64, sheet:'helipad' },
+      img:          { w:28, h:11, hDist2:130, sheet:'helipad' },
       target:       undefined
     },params);
     this._super(this._);
