@@ -2,13 +2,14 @@
     <style>
         canvas
         {
-            image-rendering: -moz-crisp-edges;
-            image-rendering: -o-crisp-edges;
-            image-rendering: -webkit-optimize-contrast;
+            image-rendering:        -moz-crisp-edges;
+            image-rendering:        -o-crisp-edges;
+            image-rendering:        -webkit-optimize-contrast;
             -ms-interpolation-mode: nearest-neighbor;
-            -webkit-filter: grayscale(100%); /* New WebKit */
-            -moz-filter: grayscale(100%);
-            -ms-filter: grayscale(100%); 
+            -webkit-filter:         grayscale(100%); /* New WebKit */
+            -moz-filter:            grayscale(100%);
+            -ms-filter:             grayscale(100%);
+            display:                inline-block;
         }
         
         td, th
@@ -19,9 +20,10 @@
             text-align:     left;
         }
         
-        span
+        
+        th, div
         {
-            width: 10px;
+            text-align:     center;
         }
         
         hr
@@ -29,13 +31,7 @@
             height:         0px;
             color:          #fff;
             border:         none;
-            border-bottom:  1px solid #000;
-        }
-                
-        div
-        {
-            width:100px;
-            height:20px;
+            border-bottom:  1px dotted #000;
         }
         
         body, table
@@ -84,8 +80,9 @@
                 for(var i = l.length, html='<table>'; i-->0;) {
                     var j = l[i];
                     
-                    html+=  '<tr><th>'+j.name+'</th><td id="'+j.id+'"></td><td><i>'+j.text.split(',').join('<br/>')+'</i></td></tr>'+
-                            '<tr><td colspan="3"><hr/></td></tr>';
+                    html+=
+                        '<tr><td colspan="2"><hr/></td></tr>'+
+                        '<tr><th><div id="'+j.id+'"></div>'+j.name+'</th><td><i>'+j.text.split(',').join('<br/>')+'</i></td></tr>';
                 }
                 
                 document.write(html+'</table>');
@@ -97,7 +94,7 @@
     </head>
     <body>
         <h1>Microarmy game pieces</h1>
-        <hr/>
+        
         
         <h2>Units</h2>
 
