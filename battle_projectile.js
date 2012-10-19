@@ -226,7 +226,14 @@ HomingMissile = Projectile.extend({
     {  // turn on homing function after delay
       if(_.target && !Behavior.Custom.isDead.call(_.target)) {
         _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
-        _.dy+=_.target._.y<_.y? -_.dspeed: _.dspeed;
+        
+        // Avoid hitting the ground prematurely
+        if(Math.abs(_.x-_.target._.x)>128 && _.y>world.height(_.x)-48) {
+          _.dy-=_.dspeed;
+        } else {
+          _.dy+=_.target._.y<_.y? -_.dspeed: _.dspeed;
+        }
+        
         if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed) {
           _.dy*=$.R(30,50)/100; // normalize speed with feedback
           _.dx*=$.R(70,80)/100;
