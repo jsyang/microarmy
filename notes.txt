@@ -7,3 +7,15 @@ http://www.ufopaedia.org/
 - generate background (not just the sky and heightmap)
 - optimize generation of the peaks and terrain colors; we don't have to calculate
   the color gradient every single time...
+  
+------------------------------------------------------------------------------------------------------------------------
+
+Sprites
+  
+http://www.xbattlestation.com/forgottencreations/viper.aspx
+http://walen.se/sprites/?level=collection&id=1
+
+
+http://www.atari.st/view.php?id=1535
+
+http://www.hasegawa-model.co.jp/hp/catalog/x72_series/x72_index.html
