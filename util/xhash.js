@@ -52,15 +52,20 @@ XHash = Class.extend({
     var pawnIndex=_.x>>this._.BUCKETWIDTH;
     var minDist=Infinity;
     _.target=undefined;
+    
     // buckets left,right of the starting bucket.
     for(var left=right=pawnIndex, sight=_.sight; sight; left--,right++, sight--) {
       var shell=[];
       if(this._.buckets[left])                  shell=shell.concat(this._.buckets[left]);
       if(left!=right && this._.buckets[right])  shell=shell.concat(this._.buckets[right]);
-
+      
       for(var i=0; i<shell.length; i++) {
         var a=shell[i];
-        if(a._.team==_.team || Behavior.Custom.isDead.call(a) || Behavior.Custom.isCrewed.call(a) ) continue;
+        
+        if(a._.team==_.team || Behavior.Custom.isDead.call(a) ||
+           Behavior.Custom.isCrewed.call(a) ||
+           !(_.canTargetAircraft && a instanceof Aircraft)) continue;
+        
         var dist=Math.abs(a._.x-_.x);
         if(dist<minDist){
           _.target=a;
@@ -85,7 +90,10 @@ XHash = Class.extend({
           var bucketEnemies=0;
           for(var i=0; i<b.length; i++) {
             var a=b[i];
-            if(a._.team==_.team || Behavior.Custom.isDead.call(a)) continue;
+            
+            if( a._.team==_.team || Behavior.Custom.isDead.call(a) ||
+                !(_.canTargetAircraft && a instanceof Aircraft)) continue;
+            
             bucketEnemies++;
             if(bucketEnemies>maxEnemies) _.target=a;
           }

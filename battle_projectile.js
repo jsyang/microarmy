@@ -149,6 +149,25 @@ HomingMissile = Projectile.extend({
       imgh:_.img.h
     }
   },
+  getAngle : function() { var _=this._;
+    // Projectile angle graphics
+    // Days since last no division by zero: 10
+    if(_.dx==0) _.dx=0.001;
+    if(_.dy==0) _.dy=0.001;
+    var dydx=Math.abs(_.dy/_.dx);
+    var fr; 
+    
+    if(_.dx<0 && _.dy<0)      fr=[4,3,2,1,0];
+    else if(_.dx<0 && _.dy>0) fr=[4,5,6,7,8];
+    else if(_.dx>0 && _.dy>0) fr=[12,11,10,9,8];
+    else                      fr=[12,13,14,15,0];
+    
+    _.img.frame=fr[0];
+    if(dydx>=0.1989 && dydx<0.6681)  _.img.frame=fr[1];
+    if(dydx>=0.6681 && dydx<1.4966)  _.img.frame=fr[2];
+    if(dydx>=1.4966 && dydx<5.0273)  _.img.frame=fr[3];
+    if(dydx>=5.0273)                 _.img.frame=fr[4];
+  },
   explode:function(){ var _=this._;
     world.add(new SmallExplosion({
       x: _.x,
@@ -245,23 +264,7 @@ HomingMissile = Projectile.extend({
       }
     }
     
-    // Projectile angle graphics
-    // Days since last no division by zero: 10
-    if(_.dx==0) _.dx=0.001;
-    if(_.dy==0) _.dy=0.001;
-    var dydx=Math.abs(_.dy/_.dx);
-    var fr; 
-    
-    if(_.dx<0 && _.dy<0)      fr=[4,3,2,1,0];
-    else if(_.dx<0 && _.dy>0) fr=[4,5,6,7,8];
-    else if(_.dx>0 && _.dy>0) fr=[12,11,10,9,8];
-    else                      fr=[12,13,14,15,0];
-    
-    _.img.frame=fr[0];
-    if(dydx>=0.1989 && dydx<0.6681)  _.img.frame=fr[1];
-    if(dydx>=0.6681 && dydx<1.4966)  _.img.frame=fr[2];
-    if(dydx>=1.4966 && dydx<5.0273)  _.img.frame=fr[3];
-    if(dydx>=5.0273)                 _.img.frame=fr[4];
+    this.getAngle();
     
     _.y+=_.dy;
     _.x+=_.dx;    
@@ -274,17 +277,19 @@ HomingMissile = Projectile.extend({
 HomingMissileSmall = HomingMissile.extend({
   init:function(params){
     this._=$.extend({
-      img:              { w:10, h:10, frame:0, sheet:preloader.getFile('missilepurple') },
-      maxSpeed:         110,
-      range:            90,
-      rangeTravelled:   0,
-      ddy:              0.0173,
-      dspeed:           $.R(312,2650)/1000,
-      homingDelay:      $.R(7,14),
-      sight:            8,
-	  smokeTrailType:	SmokeCloudSmall,
-      smokeTrailLength: 6,
-      target:           undefined
+      img:                { w:10, h:10, frame:0, sheet:preloader.getFile('missilepurple') },
+      maxSpeed:           110,
+      range:              90,
+      rangeTravelled:     0,
+      ddy:                0.0173,
+      dspeed:             $.R(312,2650)/1000,
+      homingDelay:        $.R(7,14),
+      sight:              8,
+	  smokeTrailType:	  SmokeCloudSmall,
+      smokeTrailLength:   6,
+      
+      canTargetAircraft:  true,
+      target:             undefined
     },params);
     this._super(this._);
   },
@@ -300,14 +305,84 @@ HomingMissileSmall = HomingMissile.extend({
 	  
 	  var x = _.x+$.R(0,18)-$.R(0,18);
 	  var y = _.y+$.R(0,18)-$.R(0,18);
-	  world.add(new SmokeCloudSmall({
-        x: x,
-        y: y
-      }));
+	  world.add(new SmokeCloudSmall({ x: x, y: y }));
     }
     
     _.range=0;
     _.corpsetime=0;
   }
   
+});
+
+////////////////////////////////////////////////////////////////////////////////
+
+MediumRocketHE = HomingMissile.extend({
+  init:function(params){
+    this._=$.extend({
+      img:                { w:10, h:10, frame:0, sheet:preloader.getFile('missilepurple') },
+      maxSpeed:           65,
+      range:              60,
+      rangeTravelled:     0,
+      ddy:                0.0241,
+      dspeed:             $.R(600,2100)/1000,
+	  smokeTrailType:	  SmokeCloudSmall,
+      smokeTrailLength:   12,
+      
+      target:             undefined,
+      targetX:            undefined,
+      targetY:            undefined
+    },params);
+    this._super(this._);
+  },
+  explode:function(){ var _=this._;
+    var x = _.x+$.R(0,_.img.w)-$.R(0,_.img.w);
+    var y = _.y+$.R(0,_.img.h)-$.R(0,_.img.h);
+    
+    world.add(new HEAPExplosion({ x: x, y: y }));
+    
+    _.range=0;
+    _.corpsetime=0;
+  },
+  alive:function(){ var _=this._;
+    _.rangeTravelled++;
+    if(!_.range) {
+      return _.corpsetime=0;
+    }
+    
+    // Smoke trail
+    if(_.rangeTravelled<_.smokeTrailLength)
+      world.add(new (_.smokeTrailType)({
+        x: _.x-_.dx,
+        y: _.y-_.dy
+      }));
+    
+    // Hit ground
+    if(world.isOutside(this)) {
+      _.x-=_.dx>>1;
+      _.y=world.height(_.x>>0);
+      this.explode();
+      return false;      
+    }      
+        
+    // Homing.
+    if(_.range<15) {
+      _.dx+=_.targetX<_.x? -_.dspeed: _.dspeed;
+    
+      if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed) {
+        _.dy*=$.R(30,50)/100; // normalize speed with feedback
+        _.dx*=$.R(70,80)/100;
+      }
+    } else {      
+      // Gravity
+      _.dy+=_.ddy;
+    }
+    
+    this.getAngle();
+    
+    _.y+=_.dy;
+    _.x+=_.dx;    
+    
+    _.range--;
+    return false;
+  }  
 });

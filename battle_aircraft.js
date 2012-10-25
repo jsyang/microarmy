@@ -1,19 +1,32 @@
 var AIRCRAFT={
   STATE : {
     GOOD          : 0,
-    POOR          : 1,
-    WRECK         : 2,
-    TURNING_YAW   : 3,
-    TURNING_ROLL  : 4
+    WRECK         : 1,
+    TURNING_YAW   : 2,
+    TURNING_ROLL  : 3
+  },
+  MANEUVER : {
+    LANDING : 0,
+    LOADING : 1, // REARMING
+    DODGING : 2,
+    PATROL  : 3
+  },
+  ALTITUDE : {
+    HIGH    : 0,
+    MEDIUM  : 1,
+    LOW     : 2
   }
 };
 
 Aircraft = Pawn.extend({
   init:function(params){
     this._=$.extend({
-      corpsetime: 400,
+      corpsetime: 800,
       state:      AIRCRAFT.STATE.GOOD,
-      behavior:   { alive:Behavior.Library.Aircraft, dead:Behavior.Library.AircraftDead }
+      behavior:   { alive:Behavior.Library.Aircraft, dead:Behavior.Library.AircraftDead },
+      target:     undefined,
+      squad:      undefined,
+      direction:  undefined
     },params);
     this.setDirection();
     this.setSpriteSheet(this._.img.sheet); // sheet is a string before here.
@@ -21,8 +34,8 @@ Aircraft = Pawn.extend({
   gfx:function(){ var _=this._;
     return {
       img:    _.img.sheet,
-      imgdx:  _.direction>0? _.img.w : 0,
-      imgdy:  _.state*_.img.h,
+      imgdx: 0,//imgdx:  _.direction>0? _.img.w : 0,
+      imgdy: 0,//imgdy:  _.state*_.img.h,
       worldx: _.x-(_.img.w>>1),
       worldy: _.y-_.img.h+1,
       imgw:_.img.w,
@@ -41,11 +54,6 @@ Aircraft = Pawn.extend({
       return false;
     } else {
       Behavior.Execute(_.behavior.alive,this);      
-      // shouldn't be able to target an unoccupied building
-      if(_.crew && !_.crew.current) {
-        _.img.sheet=_.crew.empty;
-        return false;
-      }
       return true;
     }
   }
@@ -53,12 +61,33 @@ Aircraft = Pawn.extend({
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TransportHelicopter = Aircraft.extend({
+AttackHelicopter = Aircraft.extend({
   init:function(params){
     this._=$.extend({
       img:          { w:28, h:28, hDist2:196, sheet:'comm' },
-      health:       { current:$.R(2100,2500), max:$.R(2500,2600) }
+      behavior:     { alive: Behavior.Library.AttackHelicopter, dead:Behavior.Library.AircraftDead },
+      
+      maxAltitude:  AIRCRAFT.ALTITUDE.MEDIUM,
+      
+      projectile:   MediumRocketHE,
+      sight:        7,
+      health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
+      reload:       { ing:0, time:$.R(90,120) },
+      ammo:         { clip:3, max:12 },
+      
+      rallyPoint:   undefined
+      
     },params);
     this._super(this._);
+    this.setRallyPoint();
+  },
+  setRallyPoint:function(){ var _=this._;
+  // todo
+    var commander   = world._.pawns.commander[_.team]._;
+    if(commander.attention) {
+      _.rallyPoint = commander.attention;
+    } else {
+      _.rallyPoint = $.R(0,world._.w);
+    }
   }
 });

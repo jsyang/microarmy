@@ -1,13 +1,12 @@
 var MOUSEMODE={
-  EXPLOSION:0,
-  APC:1,
-  PRINTMOUSECOORDS:2,
-  ENGINEERBUILDPILLBOX:3,
-  SMALLMINE:4,
-  MISSILERACK:5,
-  PISTOL:6,
-  
-  NONE:Infinity
+  EXPLOSION:            0,
+  APC:                  1,
+  PRINTMOUSECOORDS:     2,
+  ENGINEERBUILDPILLBOX: 3,
+  SMALLMINE:            4,
+  MISSILERACK:          5,
+  PISTOL:               6,
+  ATTACKHELI:           7
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,10 +71,27 @@ window.onclick=function(e){
   var x=e.pageX, y=e.pageY;
   var a;
   switch(mode) {
-    case MOUSEMODE.APC: a=new APC(x,world.height(x),TEAM.BLUE); break;
-    case MOUSEMODE.EXPLOSION: a=new SmallExplosion({x:x,y:y}); break;
-    case MOUSEMODE.PISTOL: a=new PistolInfantry({x:x,y:world.height(x),team:1}); break;
-    case MOUSEMODE.PRINTMOUSECOORDS: console.log([x,y]); break;
+    
+    case MOUSEMODE.ATTACKHELI:
+      a=new AttackHelicopter({x:x,y:y,team:$.R(0,1)});
+      break;
+    
+    case MOUSEMODE.APC:
+      a=new APC(x,world.height(x),TEAM.BLUE);
+      break;
+    
+    case MOUSEMODE.EXPLOSION:
+      a=new SmallExplosion({x:x,y:y});
+      break;
+    
+    case MOUSEMODE.PISTOL:
+      a=new PistolInfantry({x:x,y:world.height(x),team:1});
+      break;
+    
+    case MOUSEMODE.PRINTMOUSECOORDS:
+      console.log([x,y]);
+      break;
+    
     case MOUSEMODE.ENGINEERBUILDPILLBOX:
       if(clicks.length){
         a=new EngineerInfantry(x,world.height(x),TEAM.BLUE);
@@ -87,6 +103,7 @@ window.onclick=function(e){
         clicks.push([x,y]);
       }
       break;
+    
     case MOUSEMODE.SMALLMINE:
       a=new SmallMine({
         x:    x,
@@ -94,6 +111,7 @@ window.onclick=function(e){
         team: TEAM.BLUE
       });
       break;
+    
     case MOUSEMODE.MISSILERACK:
       a=new MissileRack({
         x:    x,
@@ -101,7 +119,6 @@ window.onclick=function(e){
         team: TEAM.GREEN
       });
       break;
-    case MOUSEMODE.NONE:
   }  
   world.add(a);
 };

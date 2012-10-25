@@ -716,6 +716,9 @@ Behavior.Library={
   APC:
     "([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
 
+  AttackHelicopter:
+    "([isReloading],<[foundTarget],[seeTarget],[attack]>,<[setFacingTarget],[fly]>)",
+
   Infantry:
     "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,[InfantryAttack],<[setFacingTarget],[moveAndBoundsCheck]>)",
   InfantryAttack:
