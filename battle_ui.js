@@ -73,7 +73,7 @@ window.onclick=function(e){
   switch(mode) {
     
     case MOUSEMODE.ATTACKHELI:
-      a=new AttackHelicopter({x:x,y:y,team:$.R(0,1)});
+      a=new AttackHelicopter({x:x, y:y, team:$.R(0,1)});
       break;
     
     case MOUSEMODE.APC:

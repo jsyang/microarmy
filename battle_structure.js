@@ -372,15 +372,16 @@ MissileRack = Structure.extend({
 MissileRackSmall = MissileRack.extend({
   init:function(params){
     this._=$.extend({
-      img:          { w:4, h:7, hDist2:18, sheet:'missileracksmall' },
-      behavior:     { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
-      sight:        9,
-      health:       { current:$.R(100,180), max:$.R(180,200) },
-      corpsetime:   1,
-      projectile:   HomingMissileSmall,
-      reload:       { ing:60, time: 190 },
-      ammo:         { clip:1, max: 1, supply: 12, maxsupply: 12 },
-      shootHeight:  2
+      img:                { w:4, h:7, hDist2:18, sheet:'missileracksmall' },
+      behavior:           { alive:Behavior.Library.MissileRack, dead: Behavior.Library.StructureDeadExplode },
+      sight:              9,
+      health:             { current:$.R(100,180), max:$.R(180,200) },
+      corpsetime:         1,
+      projectile:         HomingMissileSmall,
+      canTargetAircraft:  true,
+      reload:             { ing:60, time: 190 },
+      ammo:               { clip:1, max: 1, supply: 12, maxsupply: 12 },
+      shootHeight:        2
     },params);
     this._super(this._);
   }

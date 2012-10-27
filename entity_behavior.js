@@ -33,7 +33,7 @@ Behavior = {
             !Behavior.Execute(subtree, thisArg)
             :Behavior.Execute(subtree, thisArg);
         
-        return alert("Custom decorator / subtree '"+realId+"'not found!");
+        return console.log("Custom decorator / subtree '"+realId+"'not found!");
     }
     return alert('ERROR: You are not supposed to see this!');
   },
@@ -71,6 +71,7 @@ Behavior.Custom = {
 
   seeTarget:              function(){ return Behavior.Custom.seeEntity.call(this,this._.target); },
 
+  isPatroling:            function(){ return !this._.target; },
   isDead:                 function(){ return this._.health.current<=0; },
   isOutsideWorld:         function(){ return world.isOutside(this); },
   isCrumblingStructure:   function(){ return this._.state==STRUCTURE.STATE.WRECK; },
@@ -433,6 +434,12 @@ Behavior.Custom = {
     return true;
   },
   
+  flyAircraft:function() { var _ = this._;
+    _.y+=_.dy;
+    _.x+=_.dx;
+    return true;
+  },
+  
   hitGroundProjectile:function(){ var _ = this._;
     _.x-=_.dx>>1;
     world.add(
@@ -716,8 +723,9 @@ Behavior.Library={
   APC:
     "([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])",
 
+  // todo
   AttackHelicopter:
-    "([isReloading],<[foundTarget],[seeTarget],[attack]>,<[setFacingTarget],[fly]>)",
+    "([isReloading],<[foundTarget],[seeTarget],[attack]>,[flyAircraft])",
 
   Infantry:
     "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,[InfantryAttack],<[setFacingTarget],[moveAndBoundsCheck]>)",

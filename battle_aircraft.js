@@ -81,6 +81,9 @@ AttackHelicopter = Aircraft.extend({
     this._super(this._);
     this.setRallyPoint();
   },
+  alive:function(){
+    return true;
+  },
   setRallyPoint:function(){ var _=this._;
   // todo
     var commander   = world._.pawns.commander[_.team]._;

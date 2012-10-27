@@ -63,8 +63,9 @@ XHash = Class.extend({
         var a=shell[i];
         
         if(a._.team==_.team || Behavior.Custom.isDead.call(a) ||
-           Behavior.Custom.isCrewed.call(a) ||
-           !(_.canTargetAircraft && a instanceof Aircraft)) continue;
+           Behavior.Custom.isCrewed.call(a) ) continue;
+        if(!_.canTargetAircraft && a instanceof Aircraft)
+          continue;
         
         var dist=Math.abs(a._.x-_.x);
         if(dist<minDist){
@@ -91,8 +92,10 @@ XHash = Class.extend({
           for(var i=0; i<b.length; i++) {
             var a=b[i];
             
-            if( a._.team==_.team || Behavior.Custom.isDead.call(a) ||
-                !(_.canTargetAircraft && a instanceof Aircraft)) continue;
+            if( a._.team==_.team || Behavior.Custom.isDead.call(a) )
+              continue;
+            if(!_.canTargetAircraft && a instanceof Aircraft)
+              continue;
             
             bucketEnemies++;
             if(bucketEnemies>maxEnemies) _.target=a;
@@ -115,7 +118,14 @@ XHash = Class.extend({
 
       for(var i=0; i<shell.length; i++) {
         var a=shell[i];
-        if(a._.team!=_.team || !a._.projectile || Behavior.Custom.isDead.call(a) || !Behavior.Custom.isOutOfAmmo.call(a) ) continue;
+        if(a._.team!=_.team || !a._.projectile ||
+           Behavior.Custom.isDead.call(a) ||
+           !Behavior.Custom.isOutOfAmmo.call(a) )
+          continue;
+        
+        if(!_.canTargetAircraft && a instanceof Aircraft)
+          continue;
+        
         for(var ammoName in _.supply.types){
           // todo: maybe this isn't the best?
           if(_.supply.types[ammoName].make==a._.projectile){
