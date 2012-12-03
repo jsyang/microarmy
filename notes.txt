@@ -19,3 +19,16 @@ http://walen.se/sprites/?level=collection&id=1
 http://www.atari.st/view.php?id=1535
 
 http://www.hasegawa-model.co.jp/hp/catalog/x72_series/x72_index.html
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+Rename to "Proxy War"?
+- more than just the obvious of what's going on,
+  microarmy already restates something that's completely obvious
+
+- new unit for campaign views: spy / infiltrator (enemy spy)
+  can sabotage the ranks of your army
+  out them with a "purge" mini game -- reading their behaviors / interrogation
+  
+
