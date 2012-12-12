@@ -114,16 +114,21 @@ ChemExplosion = Explosion.extend({
   
   dead: function(){ var _=this._;
     for(var i=$.R(1,2); i--;){
-	  world.add(new ChemCloud({ x:_.x, y:_.y }));
-	}
+      world.add(new ChemCloud({ x:_.x, y:_.y }));
+    }
   },
   
   alive:function(){ var _=this._;
     if(_.frame.current==_.frame.last) {
-	  this.dead();
-	  return _.corpsetime=0;
-	}
+      this.dead();
+      return _.corpsetime=0;
+    }
     _.frame.current++;
+    
+    // Explosion forces gas around
+    _.y-=$.R(1,4);	  
+    _.x+=$.r()-$.r();
+    
     var h=world._.xHash.getNBucketsByCoord(_.x,2);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];

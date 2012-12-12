@@ -7,7 +7,8 @@ var MOUSEMODE={
   MISSILERACK:          5,
   PISTOL:               6,
   ATTACKHELI:           7,
-  CHEMEXP:	            8
+  MINEFIELD:	          8
+  //CHEMEXP:	            8
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +92,10 @@ window.onclick=function(e){
     
     case MOUSEMODE.PISTOL:
       a=new PistolInfantry({x:x,y:world.height(x),team:1});
+      break;
+    
+    case MOUSEMODE.MINEFIELD:
+      a=new MineFieldSmall({x:x,y:world.height(x),team:1});
       break;
     
     case MOUSEMODE.PRINTMOUSECOORDS:

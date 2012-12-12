@@ -21,7 +21,7 @@ preloader=(function() {
   var u=( // stuff that has team-unique gfx
     'pistol,rocket,engineer,'+
     'apc,'+
-    'mine,'+
+    'mine,chemmine,'+
     'ammodump,ammodumpsmall,'+
     'watchtower,'+
     'missilerack,missileracksmall,'+

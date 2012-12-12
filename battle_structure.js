@@ -227,7 +227,8 @@ MineFieldSmall = Structure.extend({
     var mineX = _.x + $.R(0,128) - $.R(0,128);
     for(var numMines = $.R(2,4); numMines-->0;) {
       mineX += 7;
-      world.add(new SmallMine({
+      var mineType = [SmallMine,SmallChemMine][$.R(0,1)];
+      world.add(new mineType({
         x:    mineX,
         y:    world.height(mineX),
         team: _.team
