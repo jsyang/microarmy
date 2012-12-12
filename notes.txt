@@ -29,10 +29,12 @@ http://littlebluething.com/games/top50.php?place=1
 
 http://www.mobygames.com/game/dos/sandstorm/screenshots
 
+Star Control
+http://sc2.sourceforge.net/info.php
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Rename to "Proxy War"?
+Rename to "Proxy War"? // bad name. 
 - more than just the obvious of what's going on,
   microarmy already restates something that's completely obvious
 

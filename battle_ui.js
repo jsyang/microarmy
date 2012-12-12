@@ -6,7 +6,8 @@ var MOUSEMODE={
   SMALLMINE:            4,
   MISSILERACK:          5,
   PISTOL:               6,
-  ATTACKHELI:           7
+  ATTACKHELI:           7,
+  CHEMEXP:	            8
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +73,12 @@ window.onclick=function(e){
   var a;
   switch(mode) {
     
+	case MOUSEMODE.CHEMEXP:
+      a=new ChemExplosion({x:x, y:y});
+      break;
+	
     case MOUSEMODE.ATTACKHELI:
-      a=new AttackHelicopter({x:x, y:y, team:$.R(0,1)});
+      a=new BlueHelicopter({x:x, y:y});
       break;
     
     case MOUSEMODE.APC:

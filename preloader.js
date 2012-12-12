@@ -4,6 +4,10 @@ preloader=(function() {
   var i="";  
   var u=( // team-neutral stuff
     'shells,exp0,exp1,exp2,exp2big,'+
+	
+	// Test sprites :
+	'heli0,chemexp,chemcloud,'+
+	
 	'smoke,smokesmall,'+
     'scaffold_,pillbox_,missilerack_,'+
     'missilepurple,missilered,'+
@@ -41,7 +45,7 @@ preloader.onfinish=function() {
     var list=(
       'pistol,mgburst,rocket,die1,die2,die3,die4,'+
       'expsmall,expfrag,accomp,crumble,sliderack1,'+
-      'tack,exp2big,missile1,turretshot,feed'
+      'tack,exp2big,missile1,turretshot,feed,chemspray'
     ).split(',');
     for(var i=list.length; i--;)
       soundManager.createSound(list[i],'./snd/'+list[i]);
