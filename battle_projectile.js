@@ -117,6 +117,22 @@ SmallMine = Projectile.extend({
   }
 });
 
+SmallChemMine = Projectile.extend({
+  init:function(params){
+    this._=$.extend({
+      accuracy: [0.6, 0],
+      behavior: Behavior.Library.SmallMine,
+      // So much for the Geneva Convention!
+      explosion:ChemExplosion,
+      damage:   6,
+      
+      img:      {w:5,h:2,row:0}
+    },params);
+    this._super(this._);
+    this._.img.sheet=preloader.getFile('chemmine'+TEAM.NAMES[this._.team]);
+  }
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 // Specials.
 

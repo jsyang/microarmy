@@ -6,7 +6,9 @@ var MOUSEMODE={
   SMALLMINE:            4,
   MISSILERACK:          5,
   PISTOL:               6,
-  ATTACKHELI:           7
+  ATTACKHELI:           7,
+  MINEFIELD:	          8
+  //CHEMEXP:	            8
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +74,12 @@ window.onclick=function(e){
   var a;
   switch(mode) {
     
+	case MOUSEMODE.CHEMEXP:
+      a=new ChemExplosion({x:x, y:y});
+      break;
+	
     case MOUSEMODE.ATTACKHELI:
-      a=new AttackHelicopter({x:x, y:y, team:$.R(0,1)});
+      a=new BlueHelicopter({x:x, y:y});
       break;
     
     case MOUSEMODE.APC:
@@ -86,6 +92,10 @@ window.onclick=function(e){
     
     case MOUSEMODE.PISTOL:
       a=new PistolInfantry({x:x,y:world.height(x),team:1});
+      break;
+    
+    case MOUSEMODE.MINEFIELD:
+      a=new MineFieldSmall({x:x,y:world.height(x),team:1});
       break;
     
     case MOUSEMODE.PRINTMOUSECOORDS:

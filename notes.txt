@@ -20,10 +20,21 @@ http://www.atari.st/view.php?id=1535
 
 http://www.hasegawa-model.co.jp/hp/catalog/x72_series/x72_index.html
 
+Naval ship superstructures look like good futuristic military installation buildings
+http://www.fas.org/irp/doddir/navy/rfs/part02.htm
+
+top 50 games.
+http://littlebluething.com/games/top50.php?place=1
+
+http://www.mobygames.com/game/dos/sandstorm/screenshots
+
+Star Control
+http://sc2.sourceforge.net/info.php
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Rename to "Proxy War"?
+- renaming to "proxy war" is bad (doesn't actually say anything)
+
 - more than just the obvious of what's going on,
   microarmy already restates something that's completely obvious
 
