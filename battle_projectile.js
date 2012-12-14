@@ -101,7 +101,6 @@ SmallShell = Projectile.extend({
   }
 });
 
-// Is laid / built by Engineer
 SmallMine = Projectile.extend({
   init:function(params){
     this._=$.extend({
@@ -120,16 +119,39 @@ SmallMine = Projectile.extend({
 SmallChemMine = Projectile.extend({
   init:function(params){
     this._=$.extend({
-      accuracy: [0.6, 0],
-      behavior: Behavior.Library.SmallMine,
-      // So much for the Geneva Convention!
-      explosion:ChemExplosion,
-      damage:   6,
+      accuracy:   [0.6, 0],
+      behavior:   Behavior.Library.SmallMine,
+      explosion:  ChemExplosion,
+      damage:     6,
+      blinktime:  { current: 6, max: 6, },
       
-      img:      {w:5,h:2,row:0}
+      img:        {w:5,h:2,row:0}
     },params);
     this._super(this._);
     this._.img.sheet=preloader.getFile('chemmine'+TEAM.NAMES[this._.team]);
+  },
+  gfx:function(){ var _=this._;
+    // Blinky light.
+    if(_.blinktime.current) {
+      _.blinktime.current--;
+    } else {
+      _.img.row++;
+      if(_.img.row==3) {
+        _.img.row=0;
+      } else {
+        _.blinktime.current=_.blinktime.max;
+      }
+    }
+    
+    
+    return {
+      img:    _.img.sheet,
+      imgdx:  (_.dx>0)? _.img.w:0,
+      imgdy:  _.img.row*_.img.h,
+      worldx: _.x-(_.img.w>>1),
+      worldy: _.y-(_.img.h>>1),
+      imgw:_.img.w, imgh:_.img.h
+    }
   }
 });
 
@@ -148,7 +170,7 @@ HomingMissile = Projectile.extend({
       dspeed:           0.84,
       sight:            8,
       homingDelay:      12,
-	  smokeTrailType:	SmokeCloud,
+      smokeTrailType:   SmokeCloud,
       smokeTrailLength: 8,
       target:           undefined
     },params);
@@ -221,6 +243,45 @@ HomingMissile = Projectile.extend({
     _.corpsetime=0;
   },
   
+  hitGround:function(){ var _=this._;
+    if(world.isOutside(this)) {
+      _.x-=_.dx>>1;
+      _.y=world.height(_.x>>0);
+      this.explode();
+      return true;
+      
+    } else {
+      return false;
+    }
+  },
+  
+  hitEnemy:function(){ var _=this._;
+    var h=world._.xHash.getNBucketsByCoord(_.x,0);    
+    for(var i=0; i<h.length; i++) {
+      var unit=h[i];
+      if( (unit._.team==_.team) ||
+          Behavior.Custom.isDead.call(unit) ){
+        continue;
+      }
+      
+      var dx=_.x-(unit._.x-(unit._.img.w>>1));
+      var dy=_.y-(unit._.y-(unit._.img.h>>1));      
+      if(dx*dx+dy*dy>81) continue;   // Not close enough! // todo: replace with hDist2?
+      this.explode();
+      return true;
+    }
+    
+    return false;
+  },
+  
+  laySmokeTrail:function(){ var _=this._;
+    if(_.rangeTravelled<_.smokeTrailLength)
+      world.add(new (_.smokeTrailType)({
+        x: _.x-_.dx,
+        y: _.y-_.dy
+      }));
+  },
+  
   alive:function(){ var _=this._;
     _.rangeTravelled++;
     if(!_.range) {
@@ -228,33 +289,10 @@ HomingMissile = Projectile.extend({
       return _.corpsetime=0;
     }
     
-    // Smoke trail
-    if(_.rangeTravelled<_.smokeTrailLength)
-      world.add(new (_.smokeTrailType)({
-        x: _.x-_.dx,
-        y: _.y-_.dy
-      }));
+    this.laySmokeTrail();
     
-    // Hit enemy.
-    var h=world._.xHash.getNBucketsByCoord(_.x,0);    
-    for(var i=0; i<h.length; i++) {
-      var unit=h[i];
-      if(unit._.team==_.team)  continue;
-      if(Behavior.Custom.isDead.call(unit))         continue;
-      var dx=_.x-(unit._.x-(unit._.img.w>>1));
-      var dy=_.y-(unit._.y-(unit._.img.h>>1));      
-      if(dx*dx+dy*dy>81)       continue;   // Not close enough!
-      this.explode();
-      return false;
-    }
-
-    // Hit ground
-    if(world.isOutside(this)) {
-      _.x-=_.dx>>1;
-      _.y=world.height(_.x>>0);
-      this.explode();
-      return false;      
-    }      
+    if(this.hitEnemy())   return false;
+    if(this.hitGround())  return false;
         
     // Homing.
     if( _.rangeTravelled>_.homingDelay )
@@ -301,7 +339,7 @@ HomingMissileSmall = HomingMissile.extend({
       dspeed:             $.R(312,2650)/1000,
       homingDelay:        $.R(7,14),
       sight:              8,
-	  smokeTrailType:	  SmokeCloudSmall,
+      smokeTrailType:	    SmokeCloudSmall,
       smokeTrailLength:   6,
       
       canTargetAircraft:  true,
