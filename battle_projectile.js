@@ -314,10 +314,7 @@ HomingMissileSmall = HomingMissile.extend({
       var x = _.x+$.R(0,12)-$.R(0,12);
       var y = y>world.height(x)? y=world.height(x) : _.y;
       
-      world.add(new FlakExplosion({
-        x: x,
-        y: y
-      }));
+      world.add(new FlakExplosion({ x: x, y: y }));
 	  
 	  var x = _.x+$.R(0,18)-$.R(0,18);
 	  var y = _.y+$.R(0,18)-$.R(0,18);

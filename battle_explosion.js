@@ -214,27 +214,30 @@ ChemCloud = Explosion.extend({
     this._=$.extend({
       frame:        { current:$.R(0,2) },
       img:          { w:20, h:20, hDist2: 400, sheet: preloader.getFile('chemcloud') },
-      damage:       10,
+      damage:       4,
       damageDecay:  0,
       cycles:       $.R(100,120),
-      driftdx:		$.R(0,1)-$.R(0,1)
+      driftdx:		$.R(0,1)
     },params);
 	
     this._super(this._);
   },
-  alive:function(){ var _=this._;
-
-    _.cycles--;
-    if(_.cycles==0) return _.corpsetime=0;
-    _.frame.current = $.R(0,2);
-    
+  
+  drift:function() { var _=this._;
     // ChemCloud drifts around
-    if(_.y+(_.img.h>>1) < world.height(_.x) ) {
-	  _.y+=$.R(0,1);
-    }
-	  
     _.x+=_.driftdx>0? $.r() : -$.r();
-	
+    
+    var cloudBottom = _.y+(_.img.h>>1);
+    if(cloudBottom < world.height(_.x) ) {
+	  _.y+=$.R(0,1);
+    } else {
+	  _.y = world.height(_.x) - (_.img.h>>1);
+      // Gas drifts downhill mostly.
+      _.driftdx = -_.driftdx;
+    }
+  },
+  
+  poison:function() { var _=this._;
     var h=world._.xHash.getNBucketsByCoord(_.x,2);
     for(var i=0; i<h.length; i++) {
       var unit=h[i];
@@ -247,6 +250,17 @@ ChemCloud = Explosion.extend({
         // todo: Damage production for depots and production centers.        
       }      
     }    
+  },
+  
+  alive:function(){ var _=this._;
+
+    _.cycles--;
+    if(_.cycles==0) return _.corpsetime=0;
+    _.frame.current = $.R(0,2);
+    
+    this.drift();
+    this.poison();
+    
     return false;
   }
 });
