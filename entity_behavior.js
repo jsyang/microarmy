@@ -65,9 +65,7 @@ Behavior.Custom = {
   logMsg:                 function(){ console.log('msg'); return true; },
 
   hasCorpseTime:          function(){ return !this._.corpsetime; },
-  remove:                 function(){
-    this._.health.current = this._.corpsetime = 0; return true;
-  },
+  remove:                 function(){ this._.health.current = this._.corpsetime = 0; return true; },
 
   seeTarget:              function(){ return Behavior.Custom.seeEntity.call(this,this._.target); },
 
@@ -571,11 +569,12 @@ Behavior.Custom = {
           return true;
         }
       }
-      if(!_.crew.current){
+      
+      if(_.crew.current > 0){
+        _.img.sheet=_.crew.occupied(this);
+      } else {
         // Enemies should not attack an empty pillbox
         _.img.sheet=_.crew.empty;
-      } else {
-        _.img.sheet=_.crew.occupied(this);
       }
     }
     return true;
@@ -685,11 +684,6 @@ Behavior.Custom = {
         _.minX=_.members[i]._.x;
       }
     _.members=newMembers;
-    
-    /*/ Scroll to place where squad met its end.
-    if(DEMO_ACTION.CHECKACTION && !_.members.length && isFinite(_.minX))
-      DEMO_ACTION.X=_.minX;
-    */
     
     return !_.members.length;
   }
