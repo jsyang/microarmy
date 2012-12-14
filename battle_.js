@@ -398,7 +398,10 @@ Flatten terrain.
     if(pawn instanceof Infantry)        return _.infantry.push(pawn);
     if(pawn instanceof Projectile)      return _.projectile.push(pawn);
     if(pawn instanceof Explosion)       return _.explosion.push(pawn);
-    if(pawn instanceof Aircraft)        return _.aircraft.push(pawn);
+    if(pawn instanceof Aircraft) {
+      console.log('aircraft!');
+      return _.aircraft.push(pawn);
+    }
     if(pawn instanceof PawnController)  return _.pawncontroller.push(pawn);
     return false;
   },

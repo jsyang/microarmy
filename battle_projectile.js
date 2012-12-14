@@ -143,7 +143,6 @@ SmallChemMine = Projectile.extend({
       }
     }
     
-    
     return {
       img:    _.img.sheet,
       imgdx:  (_.dx>0)? _.img.w:0,

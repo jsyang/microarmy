@@ -68,6 +68,15 @@ window.onkeyup=function(e){
   console.log("Click = "+i);
 };
 
+// Track our mouse for chasing purposes.
+window.lastMouse = {};
+window.onmousemove = function(e){
+  window.lastMouse._ = {
+    x: e.pageX,
+    y: e.pageY
+  };
+};
+
 // BOOM! HEH.
 window.onclick=function(e){
   var x=e.pageX, y=e.pageY;
@@ -79,7 +88,7 @@ window.onclick=function(e){
       break;
 	
     case MOUSEMODE.ATTACKHELI:
-      a=new BlueHelicopter({x:x, y:y});
+      a=new AttackHelicopter({x:x, y:y, team:TEAM.BLUE });
       break;
     
     case MOUSEMODE.APC:

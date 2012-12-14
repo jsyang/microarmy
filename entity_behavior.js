@@ -235,13 +235,26 @@ Behavior.Custom = {
         if(!_.turn.ing) {            
           _.turn.ing=1;
           _.turn.current=0;
-          if(this instanceof Vehicle) _.action = VEHICLE.ACTION.TURNING;
+          
+          if(this instanceof Vehicle) {
+            _.action = VEHICLE.ACTION.TURNING;
+            
+          } else if(this instanceof Aircraft) {
+            _.state = AIRCRAFT.STATE.TURNING;
+          }
+          
         } else {
           _.turn.current++;
           if(_.turn.current>_.turn.last) {
             _.turn.ing=_.turn.current=0;
             _.direction*=-1;
-            if(this instanceof Vehicle) _.action = VEHICLE.ACTION.MOVING;
+            if(this instanceof Vehicle) {
+              _.action = VEHICLE.ACTION.MOVING;
+              
+            } else if(this instanceof Aircraft) {
+              // doesn't matter?
+              //_.state = AIRCRAFT.STATE.PITCHNORMAL;
+            }
           }            
         }
       }
