@@ -31,6 +31,10 @@ http://www.mobygames.com/game/dos/sandstorm/screenshots
 Star Control
 http://sc2.sourceforge.net/info.php
 
+http://opengameart.org
+http://www.freesound.org
+http://game-icons.net/
+
 ------------------------------------------------------------------------------------------------------------------------
 
 - renaming to "proxy war" is bad (doesn't actually say anything)
