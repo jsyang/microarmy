@@ -171,6 +171,8 @@ HomingMissile = Projectile.extend({
       homingDelay:      12,
       smokeTrailType:   SmokeCloud,
       smokeTrailLength: 8,
+      dx:               0.01,
+      dy:               0.01,
       target:           undefined
     },params);
     this._super(this._);
@@ -375,7 +377,7 @@ MediumRocketHE = HomingMissile.extend({
       rangeTravelled:     0,
       ddy:                0.0241,
       dspeed:             $.R(600,2100)/1000,
-	  smokeTrailType:	  SmokeCloudSmall,
+      smokeTrailType:	    SmokeCloudSmall,
       smokeTrailLength:   12,
       
       target:             undefined,

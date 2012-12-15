@@ -69,6 +69,7 @@ window.onkeyup=function(e){
 };
 
 // Track our mouse for chasing purposes.
+window.helicopter = undefined;
 window.lastMouse = {};
 window.onmousemove = function(e){
   window.lastMouse._ = {
@@ -88,7 +89,22 @@ window.onclick=function(e){
       break;
 	
     case MOUSEMODE.ATTACKHELI:
-      a=new AttackHelicopter({x:x, y:y, team:TEAM.BLUE });
+      if(window.helicopter) {
+        // shoot a missile
+        a=new HomingMissileSmall({ 
+          team: TEAM.BLUE, 
+          x:  window.helicopter._.x,
+          y:  window.helicopter._.y,
+          dx: window.helicopter._.dx*2.3,
+          dy: window.helicopter._.dy*2.3,
+          homingDelay: 0
+        });
+        
+      } else {
+        // spawn a test AttackHelicopter
+        a=new AttackHelicopter({x:x, y:y, team:TEAM.BLUE });
+        window.helicopter = a;
+      }
       break;
     
     case MOUSEMODE.APC:

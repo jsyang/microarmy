@@ -79,7 +79,7 @@ AttackHelicopter = Aircraft.extend({
       ammo:         { clip:3, max:12 },
       turn:         { ing: 0, current:0, last:4 },
       frame:        0,
-      maxspeed:     2,
+      maxSpeed:     40,
       dspeed:       0.379,
       
       dx:           0.001,
@@ -116,13 +116,23 @@ AttackHelicopter = Aircraft.extend({
   getAngle:function(){ var _=this._;
     if(_.turn.ing) return;
     
+    if(_.dx == 0) {
+      // ensure no divisions by 0
+      _.dx = 0.01;
+    }
+    
     if(Math.abs(_.dy/_.dx)>3) {
       _.state = AIRCRAFT.STATE.PITCHNORMAL;
     } else {
-      if(_.dx*_.direction>0) {
-        _.state = AIRCRAFT.STATE.PITCHLOW;
+      if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed*0.3) {        
+        if(_.dx*_.direction>0) {
+          _.state = AIRCRAFT.STATE.PITCHLOW;
+        } else {
+          _.state = AIRCRAFT.STATE.PITCHHIGH;
+        }
       } else {
-        _.state = AIRCRAFT.STATE.PITCHHIGH;
+        // Not going fast enough to pitch.
+        _.state = AIRCRAFT.STATE.PITCHNORMAL;
       }
     }
   },
@@ -132,20 +142,35 @@ AttackHelicopter = Aircraft.extend({
     // turn if we have to.
     Behavior.Custom.isFacingTarget.call(this);
     
-    // fly towards it.
-    // todo: this works for missiles but not for aircraft.. too wild!
-    _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
-    _.dy+=_.target._.y<_.y? -_.dspeed: _.dspeed;
+    if(_.y+(_.img.h>>1)-8>=world.height(_.x)){
+      // Landed... (no crash code yet)
+
+      _.dy = 0;
+      _.dx = 0;
+      
+      _.turn.ing = 0;
+      _.state = AIRCRAFT.STATE.PITCHNORMAL;
+      
+      _.dy+=_.target._.y<_.y? -_.dspeed: 0;
+      _.y = world.height(_.x)-(_.img.h>>1)+8+_.dy;
+      
+    } else {
+
+      // fly towards it.
+      _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
+      _.dy+=_.target._.y<_.y? -_.dspeed: _.dspeed;
     
-    if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed) {
-      _.dy/=$.R(100,300); // normalize speed with feedback
-      _.dx/=$.R(100,300);
-    }
+      if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed) {
+        _.dy*=$.R(30,50)/100; // normalize speed with feedback
+        _.dx*=$.R(70,80)/100;
+      }
     
-    _.y+=_.dy;
-    _.x+=_.dx;  
-    
-    this.getAngle();
+      // move around
+      _.y+=_.dy;
+      _.x+=_.dx;
+      
+      this.getAngle();
+    }    
     
     return true;
   },
