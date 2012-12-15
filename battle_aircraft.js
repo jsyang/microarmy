@@ -114,6 +114,7 @@ AttackHelicopter = Aircraft.extend({
   },
   
   getAngle:function(){ var _=this._;
+    // todo: there's a bug here: involves turning at speed.
     if(_.turn.ing) return;
     
     if(_.dx == 0) {
@@ -168,6 +169,11 @@ AttackHelicopter = Aircraft.extend({
       // move around
       _.y+=_.dy;
       _.x+=_.dx;
+      
+      // Don't stutter past the ground.
+      if(_.y+(_.img.h>>1)-8>=world.height(_.x)){
+        _.y = world.height(_.x)-(_.img.h>>1)+8;
+      }
       
       this.getAngle();
     }    

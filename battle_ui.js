@@ -95,8 +95,8 @@ window.onclick=function(e){
           team: TEAM.BLUE, 
           x:  window.helicopter._.x,
           y:  window.helicopter._.y,
-          dx: window.helicopter._.dx*2.3,
-          dy: window.helicopter._.dy*2.3,
+          dx: window.helicopter._.dx*1.6,
+          dy: window.helicopter._.dy*1.6,
           homingDelay: 0
         });
         

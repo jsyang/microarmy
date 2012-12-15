@@ -101,8 +101,8 @@ Battle = Class.extend({
       pawns: {
         pawncontroller: [],  // Commanders / Squads -- higher level AI
         commander     : [],
-        aircraft      : [],
         structure     : [],
+        aircraft      : [],
         vehicle       : [],
         infantry      : [],
         projectile    : [],
