@@ -6,10 +6,12 @@ var AIRCRAFT={
     TURNING:      3
   },
   MANEUVER : {
-    LANDING : 0,
-    LOADING : 1, // REARMING
-    DODGING : 2,
-    PATROL  : 3
+    LANDING:    0,
+    LOADING:    1, // REARMING
+    DODGING:    2,
+    PATROL:     3,
+    STRAFE:     4,
+    UNLOADING:  5
   },
   ALTITUDE : {
     HIGH    : 0,
@@ -72,11 +74,14 @@ AttackHelicopter = Aircraft.extend({
       maxAltitude:  AIRCRAFT.ALTITUDE.MEDIUM,
       
       state:        AIRCRAFT.STATE.PITCHNORMAL,
-      projectile:   MediumRocketHE,
+      projectile:   MGBullet,
+      reload:       { ing:0, time: 70 },
+      ammo:         { clip:12, max: 12 },
+      shootHeight:  13,
+      
       sight:        7,
       health:       { current:$.R(2100,2500), max:$.R(2500,2600) },
-      reload:       { ing:0, time:$.R(90,120) },
-      ammo:         { clip:3, max:12 },
+      
       turn:         { ing: 0, current:0, last:4 },
       frame:        0,
       maxSpeed:     40,
@@ -86,8 +91,8 @@ AttackHelicopter = Aircraft.extend({
       dy:           0.001,
       
       // todo: remove this
-      target:       window.lastMouse,
-      rallyPoint:   undefined
+      //target:     undefined,
+      rally:        window.lastMouse
       
     },params);
     this._super(this._);
@@ -138,10 +143,21 @@ AttackHelicopter = Aircraft.extend({
     }
   },
   
+  attack:function() {
+    if(Behavior.Custom.foundTarget.call(this)){
+      Behavior.Custom.attack.call(this);
+    }
+  },
+  
   alive:function(){ var _=this._;
     // chase the mouse.
     // turn if we have to.
-    Behavior.Custom.isFacingTarget.call(this);
+    var distToRallyPoint = Math.abs(_.rally._.x-_.x);
+    
+    if(distToRallyPoint > 48) {
+      // Don't turn to face things if they're close enough already
+      Behavior.Custom.isFacingRally.call(this);      
+    }
     
     if(_.y+(_.img.h>>1)-8>=world.height(_.x)){
       // Landed... (no crash code yet)
@@ -152,14 +168,15 @@ AttackHelicopter = Aircraft.extend({
       _.turn.ing = 0;
       _.state = AIRCRAFT.STATE.PITCHNORMAL;
       
-      _.dy+=_.target._.y<_.y? -_.dspeed: 0;
+      _.dy+=_.rally._.y<_.y? -_.dspeed: 0;
       _.y = world.height(_.x)-(_.img.h>>1)+8+_.dy;
+      _.x = Math.round(_.x);
       
     } else {
 
       // fly towards it.
-      _.dx+=_.target._.x<_.x? -_.dspeed: _.dspeed;
-      _.dy+=_.target._.y<_.y? -_.dspeed: _.dspeed;
+      _.dx+=_.rally._.x<_.x? -_.dspeed: _.dspeed;
+      _.dy+=_.rally._.y<_.y? -_.dspeed: _.dspeed;
     
       if(_.dx*_.dx+_.dy*_.dy>_.maxSpeed) {
         _.dy*=$.R(30,50)/100; // normalize speed with feedback

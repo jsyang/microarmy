@@ -228,6 +228,41 @@ Behavior.Custom = {
     return false;
   },
   
+  // Face the rally point
+  isFacingRally:function() { var _ = this._;
+    if(_.rally && (_.rally._.x-_.x)*_.direction<0) {
+      if(_.turn) {
+        if(!_.turn.ing) {            
+          _.turn.ing=1;
+          _.turn.current=0;
+          
+          if(this instanceof Vehicle) {
+            _.action = VEHICLE.ACTION.TURNING;
+            
+          } else if(this instanceof Aircraft) {
+            _.state = AIRCRAFT.STATE.TURNING;
+          }
+          
+        } else {
+          _.turn.current++;
+          if(_.turn.current>_.turn.last) {
+            _.turn.ing=_.turn.current=0;
+            _.direction*=-1;
+            if(this instanceof Vehicle) {
+              _.action = VEHICLE.ACTION.MOVING;
+              
+            } else if(this instanceof Aircraft) {
+              // doesn't matter?
+              //_.state = AIRCRAFT.STATE.PITCHNORMAL;
+            }
+          }            
+        }
+      }
+      return false;
+    }
+    return true;
+  },
+
   // Handle rotation to face target -- Vehicles
   isFacingTarget:function() { var _ = this._;
     if(_.target && (_.target._.x-_.x)*_.direction<0) {
@@ -304,7 +339,7 @@ Behavior.Custom = {
     world._.xHash.getNearestFriendlyNeedSupply(this);    
     return this._.target? true:false;
   },
-
+  
   // Face the target -- Infantry
   setFacingTarget : function() { var _ = this._;
     if(_.target) {

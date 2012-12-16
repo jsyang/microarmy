@@ -90,15 +90,8 @@ window.onclick=function(e){
 	
     case MOUSEMODE.ATTACKHELI:
       if(window.helicopter) {
-        // shoot a missile
-        a=new HomingMissileSmall({ 
-          team: TEAM.BLUE, 
-          x:  window.helicopter._.x,
-          y:  window.helicopter._.y,
-          dx: window.helicopter._.dx*1.6,
-          dy: window.helicopter._.dy*1.6,
-          homingDelay: 0
-        });
+        // attack with the given helicopter.
+        window.helicopter.attack();
         
       } else {
         // spawn a test AttackHelicopter
