@@ -52,8 +52,6 @@ Behavior = {
   
 };
 
-
-
 Behavior.Custom = {
   
   TRUE:   true,
@@ -472,20 +470,17 @@ Behavior.Custom = {
     return true;
   },
   
-  fly : function(){ var _ = this._;
-    _.y+=_.dy;
-    _.x+=_.dx;
-    // Simulate gravity, add a speed limiter here later, for terminal velo.
-    if(this instanceof MortarShell) _.dy += _.ddy;
-    return true;
-  },
-  
-  flyAircraft:function() { var _ = this._;
+  fly : function() { var _ = this._;
     _.y+=_.dy;
     _.x+=_.dx;
     return true;
   },
   
+  fallGravity : function() { var _ = this._;
+    _.dy+=_.ddy;
+    return true;
+  },
+    
   hitGroundProjectile:function(){ var _ = this._;
     _.x-=_.dx>>1;
     world.add(
@@ -755,7 +750,7 @@ Behavior.Library={
   Projectile:
     "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)",
   MortarShell:
-    "(<[isOutsideWorld],[hitGroundProjectile]>,[fly])",
+    "(<[isOutsideWorld],[hitGroundProjectile]>,<[fly],[fallGravity]>)",
   SmallMine:
     "<[tryHitProjectile],[stopProjectile]>",
 
@@ -767,7 +762,7 @@ Behavior.Library={
 
   // todo
   AttackHelicopter:
-    "([isReloading],<[foundTarget],[seeTarget],[attack]>,[flyAircraft])",
+    "([isReloading],<[foundTarget],[seeTarget],[attack]>,[fly])",
 
   Infantry:
     "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,[InfantryAttack],<[setFacingTarget],[moveAndBoundsCheck]>)",
