@@ -1,7 +1,9 @@
 // Generate starting bases /////////////////////////////////////////////////////////////////////////////////////////////
 // Either randomly by default or via tile information
 
-Battle.generateBase = function(params) { var _ = params;
+Battle.Generate = {};
+
+Battle.Generate.Base = function(params) { var _ = params;
   var baseDistFromEdge = 200; // margin for each
   
   var base = function(raw){
@@ -48,4 +50,47 @@ Battle.generateBase = function(params) { var _ = params;
     }
 
   return newBase;
+};
+
+
+Battle.Generate.Terrain.SECTORS = {
+  FOREST     : 0,
+  DEEPFOREST : 1,
+  PLAINS     : 2,
+  SWAMP      : 3,
+  JUNGLE     : 4,
+  DEEPJUNGLE : 5,
+  HILL       : 6,
+  MOUNTAIN   : 7,
+  SANDDUNES  : 8,
+  SANDFLATS  : 9,
+  BEACH      : 10,
+  BRIDGE     : 11
+};
+
+Battle.Generate.Terrain = function(params) {
+  var _ = $.extend({
+    sectors : []
+    
+  }, params);
+};
+
+
+Battle.Generate.Sky.TIMEOFDAY = {
+  DAWN       : 0,
+  MIDDAY     : 1,
+  DUSK       : 2,
+  NIGHT      : 3
+};
+
+Battle.Generate.Sky.WEATHER = {
+  BRIGHT     : 0,
+  GLOOM      : 1,
+  RAIN       : 2,
+  SNOW       : 3,
+  STORM      : 4
+};
+
+Battle.Generate.Sky = function(params) {
+  
 };

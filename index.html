@@ -1,49 +1,13 @@
 <html>
-  <style>
-    canvas  {position:absolute;left:0;top:0; }
-    body    {background: #222; font: 30px sans-serif; color: #fff}
-  </style>
-  <title>microarmy v0.4</title>
+  <link rel="stylesheet" type="text/css" href="microarmy.css">
+  <title>microarmy</title>
   <link rel="SHORTCUT ICON" href="microarmy.ico"/>
-  <script>
-    var preloader;
-  </script>
-
-  <!-- UTILITY -->
-  <script src="util/$.js"></script>
-  <script src="util/class.js"></script>
-  <script src="util/canvas.js"></script>
-  <script src="util/xhash.js"></script>
-  <script src="util/simplehash.js"></script>
   
-  <!-- PRELOADERS -->
-  <script src="html5preloader/html5Preloader.js"></script>
+  <!-- todo: can't seem to modularize SM2 -->
   <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
   <script> soundManager.url='./soundmanager2/'; </script>
-
-  <!-- PAWN BASE / BEHAVIOR TREE INTERPRETER -->
-  <script src='entity_.js'></script>
-  <script src='entity_behavior.js'></script>
-
-  <!-- BATTLE SPECIFICS -->
-  <script src='battle_.js'></script>
-  <script src='battle_projectile.js'></script>
-  <script src='battle_infantry.js'></script>
-  <script src='battle_vehicle.js'></script>
-  <script src='battle_aircraft.js'></script>
-  <script src='battle_explosion.js'></script>
-  <script src='battle_structure.js'></script>
-  <script src='battle_commander.js'></script>
-
-  <!-- CAMPAIGN SPECIFICS -->
-  <script src='campaign_.js'></script>
   
-  <!-- EXEC PRELOADER -->
-  <script src='preloader.js'></script>
-  
-  <!-- UI -->
-  <script src='battle_ui.js'></script>
-
+  <script data-main="preloader" src="require.js"></script>
   <body>
     <b>Loading...</b>
   </body>

@@ -1,60 +1,46 @@
-preloader=(function() {    
-  // 1. Preload gfx
-  var a=new html5Preloader();  
-  var i="";  
-  var u=( // team-neutral stuff
-    'shells,exp0,exp1,exp2,exp2big,'+
-	
-	// Test sprites :
-	'heli0,chemexp,chemcloud,'+
-	
-	'smoke,smokesmall,'+
-    'scaffold_,pillbox_,missilerack_,'+
-    'missilepurple,missilered,'+
-    'firesmall0,firesmall1,firesmall2,'+
-	'firemedium0,firemedium1'
-  ).split(',');
+define(
+  [
+    'html5preloader/html5Preloader',
+    'text!RESOURCES_GFX.txt',
+    'text!RESOURCES_SND.txt'
+  ],
   
-  for(var j=0; j<u.length; j++)
-    i+=';'+u[j]+'*:gfx/'+u[j]+'.png';
-  
-  var u=( // stuff that has team-unique gfx
-    'pistol,rocket,engineer,'+
-    'apc,'+
-    'mine,chemmine,'+
-    'ammodump,ammodumpsmall,'+
-    'watchtower,'+
-    'missilerack,missileracksmall,'+
-    'comm,pillbox,barracks,turret,depot,repair,helipad,'+
-    'scaffold,relay'
-  ).split(',');
-  
-  for(var j=0; j<u.length; j++)
-    for(var k=0; k<TEAM.MAX; k++)
-      i+=';'+u[j]+TEAM.NAMES[k]+'*:gfx/'+u[j]+k+'.png';
+  function(html5Preloader, RESOURCES_GFX, RESOURCES_SND) {
+    var loader  = new html5Preloader();
     
-  a.addFiles.apply(a,i.split(';'));  
-  return a;
-
-})();
-
-preloader.onfinish=function() {  
-  // 2. Preload sfx/music
-  soundManager.onready(function() {
-    soundManager.defaultOptions.volume = 15;
-    var list=(
-      'pistol,mgburst,rocket,die1,die2,die3,die4,'+
-      'expsmall,expfrag,accomp,crumble,sliderack1,'+
-      'tack,exp2big,missile1,turretshot,feed,chemspray'
-    ).split(',');
-    for(var i=list.length; i--;)
-      soundManager.createSound(list[i],'./snd/'+list[i]);
-  });
+    RESOURCES_GFX = RESOURCES_GFX.split('\n');
+    RESOURCES_GFX.forEach(
+      function(v,i,a) {
+        if(v.length) {
+          a[i] = v+'*:gfx/'+v+'.png';
+        }
+      }
+    );
     
-  // 3. Create the gameworld with map entities and run it!
-  
-  world=new Battle();
-  world.initWorld();
-  world.go();
-};
+    loader.addFiles.apply(loader, RESOURCES_GFX);
 
+    window.soundManager.onready(function() {
+      window.soundManager.defaultOptions.volume = 15;
+      RESOURCES_SND = RESOURCES_SND.split('\n');
+      RESOURCES_SND.forEach(function(v) {
+        if(v.length) {
+          window.soundManager.createSound(v,'./snd/'+v);
+        }
+      });
+    });
+
+    /* done loading everything! wait a sec.
+      this is a module, don't do anything yet
+      with the loaded stuff
+      
+    loader.onfinish=function() {        
+      world=new Battle();
+      world.initWorld();
+      world.go();
+    };
+    
+    */
+    window.loader = loader;
+    return loader;
+  }
+);
