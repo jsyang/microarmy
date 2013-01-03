@@ -51,8 +51,8 @@ http://game-icons.net/
 
 Generate the resources list for the preloader
 
-ls -1 gfx | sed -e 's/\.[a-zA-Z]*$//' > RESOURCES_GFX.txt
-ls -1 snd | sed -e 's/\.[a-zA-Z]*$//' > RESOURCES_SND.txt
+ls -1 gfx | sed -e 's/\.[a-zA-Z]*$//' > preloader/RESOURCES_GFX.txt
+ls -1 snd | sed -e 's/\.[a-zA-Z]*$//' > preloader/RESOURCES_SND.txt
 
 
 
