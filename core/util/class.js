@@ -1,6 +1,10 @@
-(function(){
+// Class object
+define(function(){
+	
     var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
-    this.Class = function(){};
+    
+	var Class = function(){};
+	
     Class.extend = function(prop) {
       var _super = this.prototype;
 
@@ -33,4 +37,6 @@
 		Class.extend = arguments.callee;
 		return Class;
 	};
-})();
+	
+	return Class;
+});

@@ -1,5 +1,11 @@
 // Run the game.
-define(['preloader/preloader'], function(preloader){
+define([
+  
+  'preloader/preloader',
+  'core/util/XHash'
+  
+], function(preloader, XHash){
+  
   window.preloader = preloader;
   
   /* done loading everything! wait a sec.
