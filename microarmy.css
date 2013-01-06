@@ -11,3 +11,10 @@ body
     font        : 30px sans-serif;
     color       : #fff;
 }
+
+td
+{
+  width   : 8px;
+  height  : 8px;
+  display : block;
+}

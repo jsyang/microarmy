@@ -1,6 +1,17 @@
 // $ -- misc util functions
 define({
   
+  // Checks if any arguments are undefined
+  isUndefined : function() {
+    for(var i=0; i<arguments.length; i++) {
+      if(typeof arguments[i] !== 'undefined') {
+        return false;
+      }
+    }
+    
+    return true;
+  },
+  
   // Random float / with coefficient
   r : function(n) { return n?n*Math.random():Math.random(); },
 
@@ -19,6 +30,6 @@ define({
       target[prop] = extender[prop];
     }
     return target;
-  }
+  }  
   
 });

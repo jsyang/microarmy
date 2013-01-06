@@ -1,76 +1,42 @@
-/*
- It's been decided that the campaign map world will be square tiles.
- Each tile will have its own attributes for how players can interact
- with it.
- See notepad for more.
- 
-*/
-
-var dsdfsddfCampaign=new function () {
-/* campaign map has elements:
-  cities - civilian centers, funding, research
-  factories -  heavy / special weapon production site
-  bases - contain supplies for your operations, adjacent bases to mission will
-          determine what you can use in the mission, all cities and factories
-          are bases by default.
-
-
-
-
-*/
-  this.map;
-
-  this.research
-
-  this.City=function(x,y,team){
-    this.x=x;
-    this.y=y;
-    this.team=team;
-    this.funding=10;
-    this.research=10;
-  };
-
-  this.makeMap=function(){
-    //gffdggdd
-  };
-
-};
-
-var MapTile={
-  Heights:{
-    Mountain:4,
-    Hill:2,
-    Plain:0,
-    Valley:-2
-  },
-  Locations:{
-
-    CityBlock:{},   // can be turned into any team location except missile pad
-    Village:{},     // can only be turned into a forward base
-
-    // Team specific locations
-
-    Supply:{},      // mass-storage of resources, personnel
-    Forward:{},     // small-storage of units, light artillery
-    Production:{},  // vehicle creation and repair
-    AirPort:{},     // aircraft and suborbital craft production / maintenance
-
-    MissilePad:{},  // long range superweapon
-    Fortress:{}     // leadership stronghold
-  },
-};
-
-var Resources={
-  // your supply of usable troops is limited by your supply of small arms
-  SmallArms:{},
-
-  Fabricon:{},    // materials to create / repair new structures,
-                  // 1 x Fabricon = 20 x Producium
-  Producium:{},   // materials to create new vehicles and non-structures
-
-  Combatant:{},   //
-  Fanatics:{},    //
-  Engineer:{},    // retool factories, install upgrades, used to construct
-  FieldAgent:{}   // report on enemy positions / productions / attack plans
-};
-
+// Campaign map view ///////////////////////////////////////////////////////////////////////////////////////////////////
+define([
+  'core/util/Class',
+  'core/util/$'
+],function(Class, $){
+  // todo: draw the map onto the canvas and return the map gui object
+  var Map = Class.extend({
+    init : function(params) {
+      this._ = $.extend({
+        id : 'map'+$.r(),
+        el : document.createElement('div')
+      },params);
+    },
+    render : function() { var _ = this._;
+      _.el.id = _.id;
+      var innerHTML = '<table cellpadding=0 cellspacing=0>';
+      for(var y=0; y<_.terrain.length; y++) {
+        innerHTML += '<tr>';
+        for(var x=0; x<_.terrain[y].length; x++) {
+          var shade       = _.terrain[y][x]>15? 15 : _.terrain[y][x];
+          var waterShade  = 5-shade;
+          var isWater     = shade < 4;
+          var color;
+          
+          if(isWater){
+            color = waterShade.toString(16)+''+waterShade.toString(16)+'f';
+          } else {
+            color = shade.toString(16)+'f'+shade.toString(16);
+          }
+          
+          innerHTML += '<td style="background:#'+color+'"></td>';
+        }
+        innerHTML += '</tr>';
+      }
+      innerHTML += '</table>';
+      
+      _.el.innerHTML = innerHTML;
+    }
+  });
+  
+  return Map;
+});
