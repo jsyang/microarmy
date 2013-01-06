@@ -5,7 +5,7 @@ define([
   var TerrainGenerator = function(params) {
     var _ = $.extend({
       numPeaks      : $.R(12,20),     // peaks = seeds for terrain generation
-      maxPeakHeight : 15,
+      maxPeakHeight : 12,             // 15
       
       seaLevel      : 5               // 0 = deepest sea level, 5 = beach
     }, params);
@@ -38,7 +38,9 @@ define([
             ){
               // box lines.
               if(!$.isUndefined(map[dy]) && !$.isUndefined(map[dy][dx])) {
-                map[dy][dx] += $.R(height-1, height+1);
+                var minHeight = height<7? height : height-1;
+                var maxHeight = height<7? height+1 : height+5;
+                map[dy][dx] += $.R(minHeight, maxHeight);
               }
             }
           }
