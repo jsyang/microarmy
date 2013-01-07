@@ -7,7 +7,7 @@ define([
       numPeaks      : $.R(12,20),     // peaks = seeds for terrain generation
       maxPeakHeight : 12,             // 15
       
-      seaLevel      : 5               // 0 = deepest sea level, 5 = beach
+      seaLevel      : 5               // 0 = deepest sea level, 4 = beach
     }, params);
     
     if($.isUndefined(_.w, _.h)) {
@@ -49,15 +49,19 @@ define([
       
       // Use the peaks as seeds to generate mounds in the terrain
       peaks.forEach(function(peak){
-        var dist = 0;
-        while(peak.height>0) {
-          chanceFill(peak.x, peak.y, peak.height, dist);
-          peak.height--;
+        var dist    = 0;
+        var height  = peak.height;
+        while(height>0) {
+          chanceFill(peak.x, peak.y, height, dist);
+          height--;
           dist++;
         }
       });
       
-      return map;
+      return $.extend(_, {
+        'map'   : map,
+        'peaks' : peaks
+      });
     }
   };
   

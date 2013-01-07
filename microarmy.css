@@ -14,7 +14,21 @@ body
 
 td
 {
-  width   : 8px;
-  height  : 8px;
-  display : block;
+  width     : 16px;
+  height    : 16px;
+  display   : block;
+  font-size : 0.2em;
+  text-align: center;
+  color     : #888;
+}
+
+.city
+{
+  background: url('gfx/civiliancenter.png') no-repeat center center fixed !important;
+  -webkit-background-size : cover;
+  -moz-background-size    : cover;
+  -o-background-size      : cover;
+  background-size         : cover;
+  width                   : 16px;
+  height                  : 16px;
 }

@@ -11,7 +11,7 @@ define([
   window.preloader = preloader;
   
   var c = new Campaign;
-  var m = new CampaignMap(c._);
+  var m = new CampaignMap(c._.world);
   
   document.body.appendChild(m._.el);
   m.render();
