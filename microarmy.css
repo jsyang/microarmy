@@ -22,13 +22,18 @@ td
   color     : #888;
 }
 
-.city
+.map_city
 {
-  background: url('gfx/civiliancenter.png') no-repeat center center fixed !important;
-  -webkit-background-size : cover;
-  -moz-background-size    : cover;
-  -o-background-size      : cover;
-  background-size         : cover;
-  width                   : 16px;
-  height                  : 16px;
+  width     : 16px;
+  height    : 16px;
+  display   : block;
+  background: #ff0;
+}
+
+.map_base
+{
+  width     : 16px;
+  height    : 16px;
+  display   : block;
+  background: #f00;
 }

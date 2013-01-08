@@ -17,13 +17,13 @@ define([
       
       // Layer upon layer.
       var world = _;
-      /*
-      [CampaignTerrain, CampaignLocations, ...].forEach(
+
+      [
+        CampaignTerrain,
+        CampaignLocations
+      ].forEach(
         function(v){ world = v(world); }
       );
-      */
-      world = CampaignTerrain(world);
-      world = CampaignLocations(world);
       
       _.world = world;
       

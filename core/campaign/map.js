@@ -5,16 +5,20 @@ define([
 ],function(Class, $){
   // todo: draw the map onto the canvas and return the map gui object
   var Map = Class.extend({
+    
     init : function(params) {
       this._ = $.extend({
         id : 'map',
         el : document.createElement('div')
       },params);
+      
+      this._.el.id = this._.id;
     },
+        
     render : function() { var _ = this._;
       // Renders terrain ONLY
+      var locations = _.locations.slice();
       
-      _.el.id = _.id;
       var innerHTML = '<table cellpadding=0 cellspacing=0>';
       for(var y=0; y<_.map.length; y++) {
         innerHTML += '<tr>';
@@ -23,6 +27,7 @@ define([
           // Inverting the shade value actually makes the landforms stand out more!
           var waterShade  = shade+2//5-shade; 
           var isWater     = shade < _.seaLevel;
+          var isLocation  = undefined;
           var color;
           
           if(isWater){
@@ -31,10 +36,21 @@ define([
             color = shade.toString(16)+'f'+shade.toString(16);
           }
           
-          var city = false;
-          if($.r()<0.002) { city = '<img src="gfx/civiliancenter.png" width=16 height=16></div>'; }
+          locations.forEach(function(v){
+            if(v.x==x && v.y==y) {
+              isLocation = v;
+            }
+          });
+          innerHTML += '<td id="mapx'+x+'y'+y+'" style="background:#'+color+'">';
           
-          innerHTML += '<td style="background:#'+color+'">'+(city? city: shade)+'</td>';
+          // Display locations
+          if(isLocation) {
+            innerHTML += '<span class="map_'+isLocation.type+'">'+isLocation.type[0]+'</span>';
+          } else {
+            innerHTML += shade;
+          }
+          
+          innerHTML += '</td>';
         }
         innerHTML += '</tr>';
       }

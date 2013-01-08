@@ -4,12 +4,12 @@ define({
   // Checks if any arguments are undefined
   isUndefined : function() {
     for(var i=0; i<arguments.length; i++) {
-      if(typeof arguments[i] !== 'undefined') {
-        return false;
+      if(typeof arguments[i] === 'undefined') {
+        return true;
       }
     }
     
-    return true;
+    return false;
   },
   
   // Random float / with coefficient
