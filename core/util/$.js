@@ -30,6 +30,6 @@ define({
       target[prop] = extender[prop];
     }
     return target;
-  }  
+  }
   
 });

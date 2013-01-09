@@ -1,13 +1,13 @@
-// Generate Terrain for the Campaign ///////////////////////////////////////////////////////////////////////////////////
+// Generate Terrain for the Campaign
 define([
   'core/util/$'
 ], function($, Class){
   var TerrainGenerator = function(params) {
     var _ = $.extend({
-      numPeaks      : $.R(12,20),     // peaks = seeds for terrain generation
-      maxPeakHeight : 12,             // 15
+      numPeaks      : $.R(24,30),     // peaks = seeds for terrain generation
+      maxPeakHeight : 8,             // 15
       
-      seaLevel      : 5               // 0 = deepest sea level, 4 = beach
+      seaLevel      : 4               // 0 = deepest sea level, 4 = beach
     }, params);
     
     if($.isUndefined(_.w, _.h)) {
@@ -38,8 +38,8 @@ define([
             ){
               // box lines.
               if(!$.isUndefined(map[dy]) && !$.isUndefined(map[dy][dx])) {
-                var minHeight = height<7? height : height-1;
-                var maxHeight = height<7? height+1 : height+5;
+                var minHeight = height<(_.maxPeakHeight>>1)? height : height-1;
+                var maxHeight = height<(_.maxPeakHeight>>1)? height+1 : height+3;
                 map[dy][dx] += $.R(minHeight, maxHeight);
               }
             }

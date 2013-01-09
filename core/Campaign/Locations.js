@@ -37,9 +37,7 @@ define([
         return dx*dx + dy*dy;
       }
       
-      // todo: use peaks as starting points for cities, then add bases near cities.
-      // unless it's a firebase or a citadel.
-      var distThreshold = _.w * _.h * 0.3;
+      var distThreshold = _.w * _.h * 0.6;
       var lastPeak;
       while(locations.length < _.numLocations) {
         var origin = _.peaks[$.R(0,_.peaks.length-1)];
