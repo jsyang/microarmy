@@ -112,6 +112,16 @@ define([
   determine the atomic value of each non-elementary resource by
   recursing through the needs tree until you get to an elementary resource
   
+  mining a piece of terrain (harvesting using a harvester entity) will yield resources
+  farming (harvesting)
+  
+  harvesting is basically a high level synthesis, so in actuality you're doing the same thing
+  
+  if a high level synthesis fails the synthesis chance roll, there is a chance the ingredients
+  will either be lost or turned into rubble
+  
+  rubble fills up resource stores eventually and must be cleared (maybe automatically)
+  
   */
   var Resource = Class.extend({
     
