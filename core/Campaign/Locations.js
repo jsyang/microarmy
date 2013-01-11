@@ -79,6 +79,7 @@ define([
                   
                   suitableLocation.x = x;
                   suitableLocation.y = y;
+                  suitableLocation.peak = origin;
                   locations.push(suitableLocation);
                   break;
                 }

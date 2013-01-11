@@ -3,10 +3,11 @@ define([
   'preloader/preloader',
   'core/Campaign',
   'core/Campaign/Map',
+  'core/Campaign/Storage',
   //'core/util/XHash',
   //'core/Behavior/Battle/Trees'
   
-], function(preloader, Campaign, CampaignMap){
+], function(preloader, Campaign, CampaignMap, Storage){
   
   window.preloader = preloader;
   
@@ -15,8 +16,6 @@ define([
   
   document.body.appendChild(m._.el);
   m.render();
-  
-  console.log(c._.world);
   
   /* done loading everything! wait a sec.
       this is a module, don't do anything yet

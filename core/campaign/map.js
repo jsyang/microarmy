@@ -47,7 +47,7 @@ define([
           if(isLocation) {
             innerHTML += '<span class="map_'+isLocation.type+'">'+isLocation.type[0]+'</span>';
           } else {
-            //innerHTML += shade;
+            innerHTML += shade;
           }
           
           innerHTML += '</td>';

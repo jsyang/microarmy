@@ -65,5 +65,7 @@ define([
     }
   };
   
+  // todo: alter the terrain somehow, bulldoze, bombs, build up
+  
   return TerrainGenerator;
 });
