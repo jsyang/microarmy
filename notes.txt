@@ -35,6 +35,24 @@ http://opengameart.org
 http://www.freesound.org
 http://game-icons.net/
 
+
+------------------------------------------------------------------------------------------------------------------------
+Roguelike characteristics references
+
+http://brogue.createforumhosting.com/brogue-tile-version-t579.html
+http://www.redblobgames.com/articles/visibility/
+http://www.reddit.com/r/roguelikes/comments/16kq4a/new_to_pixel_art_looking_for_suggestions/
+http://doom.chaosforge.org/screenshots
+http://www.reddit.com/r/gamedev/comments/ya1zm/asciito3d_building_generator_i_detail_a_code/
+http://www.reddit.com/r/roguelikedev
+http://www.bay12forums.com/smf/index.php?topic=28410.0
+http://crawl.develz.org/wordpress/
+http://www.rockpapershotgun.com/2013/01/07/tome-is-where-the-heart-is-happy-new-roguelike/
+http://www.roguebase.net/
+http://roguebasin.roguelikedevelopment.org/index.php?title=Main_Page
+http://stuart-morgan.blogspot.co.uk/
+http://prospector.freeforums.org/similar-genre-games-t66.html
+
 ------------------------------------------------------------------------------------------------------------------------
 
 - renaming to "proxy war" is bad (doesn't actually say anything)
