@@ -23,14 +23,20 @@ define([
       for(var y=0; y<_.map.length; y++) {
         innerHTML += '<tr>';
         for(var x=0; x<_.map[y].length; x++) {
+        
           var shade       = _.map[y][x]>15? 15 : _.map[y][x];
-          // Inverting the shade value actually makes the landforms stand out more!
-          var waterShade  = shade+2//5-shade; 
+          var isRoad      = false;
+          if(_.map[y][x]==255) {
+            isRoad = true;
+          }
+          
+          var waterShade  = shade+2;
           var isWater     = shade < _.seaLevel;
           var isLocation  = undefined;
           var color;
-          
-          if(isWater){
+          if(isRoad){
+            color = '333';
+          } else if(isWater){
             color = waterShade.toString(16)+waterShade.toString(16)+'f';
           } else {
             color = shade.toString(16)+'f'+shade.toString(16);

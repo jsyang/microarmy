@@ -40,7 +40,7 @@ define([
       var distThreshold = _.w * _.h * 0.6;
       var lastPeak;
       while(locations.length < _.numLocations) {
-        var origin = _.peaks[$.R(0,_.peaks.length-1)];
+        var origin = $.pickRandom(_.peaks);
         var foundOrigin = false;
         for(var trying=3; trying--;) {
           if(dist2(lastPeak, origin)<distThreshold) {

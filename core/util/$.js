@@ -1,5 +1,8 @@
 // $ -- misc util functions
 define({
+
+  // Pick a random element from an array
+  pickRandom : function(a) { return a[(Math.random()*a.length)>>0]; },
   
   // Checks if any arguments are undefined
   isUndefined : function() {

@@ -3,8 +3,9 @@ define([
   'core/util/$',
   'core/util/Class',
   'core/Campaign/Terrain',
-  'core/Campaign/Locations'
-],function($, Class, CampaignTerrain, CampaignLocations){
+  'core/Campaign/Locations',
+  'core/Campaign/Transport'
+],function($, Class, CampaignTerrain, CampaignLocations, CampaignTransport){
   
   var Campaign = Class.extend({
     init : function(params) {
@@ -20,7 +21,8 @@ define([
 
       [
         CampaignTerrain,
-        CampaignLocations
+        CampaignLocations,
+        CampaignTransport
       ].forEach(
         function(v){ world = v(world); }
       );
