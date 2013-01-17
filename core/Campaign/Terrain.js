@@ -30,7 +30,7 @@ define([
       }
       
       // Draw a lossy box around the peak
-      function chanceFill(x, y, height, distFromCenter) {
+      var chanceFill = function(x, y, height, distFromCenter) {s
         for(var dy=y-distFromCenter; dy<=y+distFromCenter; dy++) {
           for(var dx=x-distFromCenter; dx<=x+distFromCenter; dx++) {
             if(Math.abs(dy-y) == distFromCenter ||
