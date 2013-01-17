@@ -1,17 +1,21 @@
 // Generate Terrain for the Campaign
 define([
+
   'core/util/$'
+
 ], function($, Class){
+
   var TerrainGenerator = function(params) {
     var _ = $.extend({
-      numPeaks      : $.R(24,30),     // peaks = seeds for terrain generation
-      maxPeakHeight : 8,             // 15
+      numPeaks      : $.R(24,30),   // peaks = seeds for terrain generation
+      maxPeakHeight : 8,            // 15
       
-      seaLevel      : 4               // 0 = deepest sea level, 4 = beach
+      seaLevel      : 4             // 0 = deepest sea level, 4 = beach
     }, params);
     
     if($.isUndefined(_.w, _.h)) {
       throw new Error('width or height not given to TerrainGenerator');
+
     } else {
       // 2d --> w * h
       for(var map=[], i=0; i<_.h; i++) {
