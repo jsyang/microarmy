@@ -32,8 +32,12 @@ define([
       
       // todo: convert tiles into objects rather than ints
       var setTileRoad = function(tile) {
-        if(tile.height>=_.seaLevel)
-          tile.isRoad = true;
+        if(tile.height>=_.seaLevel) {
+          tile.road = true;
+          return true;
+        } else {
+          return false;
+        }
       };
       
       var makeRoute = function(c,d) {
@@ -45,15 +49,11 @@ define([
         var dy = a.y<b.y? 1 : -1;
         
         if(a.x == b.x) {
-          for(var y=a.y+dy; y!=b.y; y+=dy) {
-            if(_.map[y][a.x]>=_.seaLevel)
-              _.map[y][a.x] = 255;
-          }
+          for(var y=a.y; y!=b.y; y+=dy) { if(!setTileRoad(_.map[y][a.x])) break; }
+          
         } else if(a.y == b.y) {
-          for(var x=a.x+dx; x!=b.x; x+=dx) {
-            if(_.map[a.y][x]>=_.seaLevel)
-              _.map[a.y][x] = 255;
-          }
+          for(var x=a.x; x!=b.x; x+=dx) { if(!setTileRoad(_.map[a.y][x])) break; }
+          
         } else {
           var ySplit = dy>0? $.R(a.y,b.y) : $.R(b.y,a.y);
           /*
@@ -67,23 +67,12 @@ define([
           
           */
           if(dy>0) {            
-            for(var y=a.y+dy; y<ySplit; y+=dy) { 
-              if(_.map[y][a.x]>=_.seaLevel)
-                _.map[y][a.x] = 255; 
-            }
-            for(var y=b.y-dy; y>=ySplit; y-=dy) { 
-              if(_.map[y][b.x]>=_.seaLevel)
-                _.map[y][b.x] = 255; 
-            }
+            for(var y=a.y+dy; y<ySplit; y+=dy)  { if(!setTileRoad(_.map[y][a.x])) break; }
+            for(var y=b.y-dy; y>=ySplit; y-=dy) { if(!setTileRoad(_.map[y][b.x])) break; }
+          
           } else {
-            for(var y=a.y+dy; y>ySplit; y+=dy) { 
-              if(_.map[y][a.x]>=_.seaLevel)
-                _.map[y][a.x] = 255; 
-            }
-            for(var y=b.y-dy; y<=ySplit; y-=dy) { 
-              if(_.map[y][b.x]>=_.seaLevel)
-                _.map[y][b.x] = 255; 
-            }
+            for(var y=a.y+dy; y>ySplit; y+=dy)  { if(!setTileRoad(_.map[y][a.x])) break; }
+            for(var y=b.y-dy; y<=ySplit; y-=dy) { if(!setTileRoad(_.map[y][b.x])) break; }
           }
           
           /*
@@ -96,10 +85,7 @@ define([
                           B
           
           */
-          for(var x=a.x; x<b.x; x+=dx) { 
-            if(_.map[ySplit][x]>=_.seaLevel)
-              _.map[ySplit][x] = 255; 
-          }
+          for(var x=a.x; x<b.x; x+=dx) { if(!setTileRoad(_.map[ySplit][x])) break; }
         }
       };
       

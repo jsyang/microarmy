@@ -3,6 +3,7 @@ define([
   'core/util/Class',
   'core/util/$'
 ],function(Class, $){
+  
   // todo: draw the map onto the canvas and return the map gui object
   var Map = Class.extend({
     
@@ -16,51 +17,67 @@ define([
     },
         
     render : function() { var _ = this._;
-      // Renders terrain ONLY
-      var locations = _.locations.slice();
       
-      var innerHTML = '<table cellpadding=0 cellspacing=0>';
-      for(var y=0; y<_.map.length; y++) {
-        innerHTML += '<tr>';
-        for(var x=0; x<_.map[y].length; x++) {
+      var mapTile = function(x,y) {
+        return (_.map[y] && _.map[y][x])? _.map[y][x] : {};
+      };
+      
+      var roadType = function(x,y) {
+        var N = mapTile(x,y-1).road;
+        var S = mapTile(x,y+1).road;
+        var E = mapTile(x+1,y).road;
+        var W = mapTile(x-1,y).road;
         
-          var shade       = _.map[y][x]>15? 15 : _.map[y][x];
-          var isRoad      = false;
-          if(_.map[y][x]==255) {
-            isRoad = true;
-          }
+        if(N && S && E && W)  { return 'r2'; }
+        if(N && S && E &&!W)  { return 'r8'; }
+        if(N && S &&!E && W)  { return 'r7'; }
+        if(N &&!S && E && W)  { return 'r10'; }
+        if(!N &&S && E && W)  { return 'r9'; }
+        if(N &&!S && E &&!W)  { return 'r6'; }
+        if(!N &&S && E &&!W)  { return 'r5'; }
+        if(N &&!S &&!E && W)  { return 'r4'; }
+        if(!N&& S &&!E && W)  { return 'r3'; }
+        if(!E && !W)          { return 'r0'; }
+        if(!N && !S)          { return 'r1'; }
+        
+        return 'r'+$.R(0,10);
+      };
+        
+      var innerHTML = '<div class="map">';
+      
+      for(var y=0; y<_.map.length; y++) {
+        for(var x=0; x<_.map[y].length; x++) {
+          innerHTML    += '<span id="mapx'+x+'y'+y+'" ';
+          var tile      = _.map[y][x];
+          var tileStyle = '';
+          var tileClass = [];
           
-          var waterShade  = shade+2;
-          var isWater     = shade < _.seaLevel;
-          var isLocation  = undefined;
-          var color;
-          if(isRoad){
-            color = '333';
-          } else if(isWater){
-            color = waterShade.toString(16)+waterShade.toString(16)+'f';
+          if(tile.location) {
+            tileClass.push(tile.location.type);
+            
+          } else if(tile.road) {
+            tileClass.push(roadType(tile.x, tile.y));
+            
           } else {
-            color = shade.toString(16)+'f'+shade.toString(16);
-          }
-          
-          locations.forEach(function(v){
-            if(v.x==x && v.y==y) {
-              isLocation = v;
+            
+            var shade       = tile.height>15? 15 : tile.height;
+            var waterShade  = shade+2;
+            var color;
+            if(tile.height<_.seaLevel){
+              color = waterShade.toString(16)+waterShade.toString(16)+'f';
+            } else {
+              color = shade.toString(16)+'f'+shade.toString(16);
             }
-          });
-          innerHTML += '<td id="mapx'+x+'y'+y+'" style="background:#'+color+'">';
-          
-          // Display locations
-          if(isLocation) {
-            innerHTML += '<span class="map_'+isLocation.type+'">'+isLocation.type[0]+'</span>';
-          } else {
-            innerHTML += shade;
+            
+            tileStyle = 'style="background:#'+color+'"';
           }
           
-          innerHTML += '</td>';
+          innerHTML += 'class="'+tileClass.join(' ')+'" '+tileStyle+'></span>';
         }
-        innerHTML += '</tr>';
+        innerHTML += '<br>';
       }
-      innerHTML += '</table>';
+      
+      innerHTML += '</div>';
       
       _.el.innerHTML = innerHTML;
     }

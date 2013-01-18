@@ -19,7 +19,14 @@ define([
     } else {
       // 2d --> w * h
       for(var map=[], i=0; i<_.h; i++) {
-        for(var row=[], j=0; j<_.w; j++) { row.push(0); }
+        for(var row=[], j=0; j<_.w; j++) {
+          row.push({
+            x       : j,
+            y       : i,
+            height  : 0,
+            road    : false
+          });
+        }
         map.push(row);
       }
       
@@ -34,7 +41,7 @@ define([
       }
       
       // Draw a lossy box around the peak
-      var chanceFill = function(x, y, height, distFromCenter) {s
+      var chanceFill = function(x, y, height, distFromCenter) {
         for(var dy=y-distFromCenter; dy<=y+distFromCenter; dy++) {
           for(var dx=x-distFromCenter; dx<=x+distFromCenter; dx++) {
             if(Math.abs(dy-y) == distFromCenter ||
@@ -44,7 +51,7 @@ define([
               if(!$.isUndefined(map[dy]) && !$.isUndefined(map[dy][dx])) {
                 var minHeight = height<(_.maxPeakHeight>>1)? height : height-1;
                 var maxHeight = height<(_.maxPeakHeight>>1)? height+1 : height+3;
-                map[dy][dx] += $.R(minHeight, maxHeight);
+                map[dy][dx].height += $.R(minHeight, maxHeight);
               }
             }
           }

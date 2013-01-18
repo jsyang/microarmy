@@ -73,13 +73,16 @@ define([
             if(suitableLocation) {
               if($.isUndefined(_.map[y]) || $.isUndefined(_.map[y][x])) {
               } else {
-                if(_.map[y][x] >= _.seaLevel) {
+                if(_.map[y][x].height >= _.seaLevel) {
                   // Only build stuff that's on land...
                   // todo: offshore rigs?
-                  
+                                   
                   suitableLocation.x = x;
                   suitableLocation.y = y;
                   suitableLocation.peak = origin;
+                  
+                  _.map[y][x].location = suitableLocation;
+                  
                   locations.push(suitableLocation);
                   break;
                 }

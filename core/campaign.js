@@ -10,8 +10,8 @@ define([
   var Campaign = Class.extend({
     init : function(params) {
       this._ = $.extend({
-        w : 56,
-        h : 32
+        w : 48,
+        h : 24
       }, params);
       
       var _ = this._;

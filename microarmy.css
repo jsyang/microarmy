@@ -12,28 +12,36 @@ body
     color       : #fff;
 }
 
-td
+.city
 {
-  width     : 16px;
-  height    : 16px;
-  display   : block;
-  font-size : 0.2em;
-  text-align: center;
-  color     : #888;
+  background: url('scraps/portals.bmp') -120px 0px;
 }
 
-.map_city
+.base
 {
-  width     : 16px;
-  height    : 16px;
-  display   : block;
-  background: #ff0;
+  background: url('scraps/land.bmp') -360px 0px;
 }
 
-.map_base
+div.map span
 {
-  width     : 16px;
-  height    : 16px;
-  display   : block;
-  background: #f00;
+  width       : 24px;
+  height      : 24px;
+  display     : inline-block;
+  font-size   : 12px;
+  line-height : 2em; 
+  text-align  : center;
+  color       : #421;
 }
+
+
+.r0   { background: url('gfx/road.png') -0px; }
+.r1   { background: url('gfx/road.png') -24px; }
+.r2   { background: url('gfx/road.png') -48px; }
+.r3   { background: url('gfx/road.png') -72px; }
+.r4   { background: url('gfx/road.png') -96px; }
+.r5   { background: url('gfx/road.png') -120px; }
+.r6   { background: url('gfx/road.png') -144px; }
+.r7   { background: url('gfx/road.png') -168px; }
+.r8   { background: url('gfx/road.png') -192px; }
+.r9   { background: url('gfx/road.png') -216px; }
+.r10  { background: url('gfx/road.png') -240px; }
