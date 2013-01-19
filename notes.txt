@@ -7,11 +7,11 @@ http://www.ufopaedia.org/
 - generate background (not just the sky and heightmap)
 - optimize generation of the peaks and terrain colors; we don't have to calculate
   the color gradient every single time...
-  
+
 ------------------------------------------------------------------------------------------------------------------------
 
 Sprites
-  
+
 http://www.xbattlestation.com/forgottencreations/viper.aspx
 http://walen.se/sprites/?level=collection&id=1
 
@@ -53,6 +53,13 @@ http://roguebasin.roguelikedevelopment.org/index.php?title=Main_Page
 http://stuart-morgan.blogspot.co.uk/
 http://prospector.freeforums.org/similar-genre-games-t66.html
 
+discussion on roguelike mechanics -- learning and "annihilation fields"
+https://groups.google.com/forum/?fromgroups=#!topic/rec.games.roguelike.development/adQnhMX9yUM
+
+
+articles on dev up to and include project mgmt
+http://roguebasin.roguelikedevelopment.org/index.php?title=Articles#Fundamentals
+
 ------------------------------------------------------------------------------------------------------------------------
 
 - renaming to "proxy war" is bad (doesn't actually say anything)
@@ -63,9 +70,15 @@ http://prospector.freeforums.org/similar-genre-games-t66.html
 - new unit for campaign views: spy / infiltrator (enemy spy)
   can sabotage the ranks of your army
   out them with a "purge" mini game -- reading their behaviors / interrogation
-  
 
----------------------------
+-- is a contextual action the same as a contextual menu? hell no
+    - menu --> multiple options, delayed response
+    - action --> 1 action, immediate response
+    - contextual action must be very VERY well designed
+    - who says you can't have both?
+        - contextual actions for some, menus for others
+
+------------------------------------------------------------------------------------------------------------------------
 
 Generate the resources list for the preloader
 
@@ -75,13 +88,13 @@ ls -1 snd | sed -e 's/\.[a-zA-Z]*$//' > preloader/RESOURCES_SND.txt
 
 
   <!-- UTILITY -->
-  
+
   <script src="util/$.js"></script>
   <script src="util/class.js"></script>
   <script src="util/canvas.js"></script>
   <script src="util/xhash.js"></script>
   <script src="util/simplehash.js"></script>
-  
+
   <!-- PRELOADERS -->
   <script src="html5preloader/html5Preloader.js"></script>
   <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
@@ -103,10 +116,10 @@ ls -1 snd | sed -e 's/\.[a-zA-Z]*$//' > preloader/RESOURCES_SND.txt
 
   <!-- CAMPAIGN SPECIFICS -->
   <script src='campaign.js'></script>
-  
+
   <!-- EXEC PRELOADER -->
   <script src='preloader.js'></script>
-  
+
   <!-- UI -->
   <script src='battle/ui.js'></script>
 
