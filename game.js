@@ -1,19 +1,16 @@
 define([
 
   'preloader/preloader',
-  'core/Campaign',
-  'core/Campaign/Map',
-  'core/Campaign/Storage'
-  
-], function(preloader, Campaign, CampaignMap, Storage){
+  'core/campaign',
+  'core/campaign/storage'
+
+], function(preloader, Campaign, Storage){
 
   window.preloader = preloader;
 
   var c = new Campaign;
-  var m = new CampaignMap(c._.world);
-
-  document.body.appendChild(m._.el);
-  m.render();
+  var m = c.render();
+  document.body.appendChild(m);
 
   /* done loading everything! wait a sec.
       this is a module, don't do anything yet

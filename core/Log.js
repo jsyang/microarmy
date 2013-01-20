@@ -1,7 +1,6 @@
 define([
   'core/util/$'
-], function($) {
-  var Log = Class.extend({
+], function($) { return Class.extend({
     init : function(params){
       this._=$.extend({
         maxMessages : 1<<10,        // todo: save to localStorage if it goes over!
@@ -36,6 +35,4 @@ define([
       _.el = el;
     }
   });
-
-  return Log;
 });

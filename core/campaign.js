@@ -1,12 +1,12 @@
 // Campaign -- strategy side ///////////////////////////////////////////////////////////////////////////////////////////
 define([
   'core/util/$',
-  'core/util/Class',
-  'core/Campaign/Terrain',
-  'core/Campaign/Locations',
-  'core/Campaign/Transport'
-],function($, Class, CampaignTerrain, CampaignLocations, CampaignTransport){
-
+  'core/util/class',
+  'core/campaign/terrain',
+  'core/campaign/locations',
+  'core/campaign/transport',
+  'core/campaign/mapview'
+],function($, Class, Terrain, Locations, Transport, MapView){
   return Class.extend({
     init : function(params) {
       this._ = $.extend({
@@ -18,11 +18,12 @@ define([
 
       // Layer upon layer.
       var world = _;
-
       [
-        CampaignTerrain,
-        CampaignLocations,
-        CampaignTransport
+
+        Terrain,
+        Locations,
+        Transport
+
       ].forEach(
         function(additiveGenerator){ world = additiveGenerator(world); }
       );
@@ -35,7 +36,9 @@ define([
       // this._.bases = ...
       // this._.roads = ...
       // this._. = ...
-    }
+    },
+
+    render : MapView
   });
 
 });
