@@ -77,6 +77,26 @@ http://roguebasin.roguelikedevelopment.org/index.php?title=Articles#Fundamentals
     - contextual action must be very VERY well designed
     - who says you can't have both?
         - contextual actions for some, menus for others
+    - can bind specific actions to a context action (e.g. zelda: A = sword, B = hook)
+
+-- content game...
+    - made as a vehicle (really) for content that's produced from a direction
+    - a story is a content
+    - content is critical, but look at how you are pacing and using it
+
+-- on PERMADEATH: https://groups.google.com/forum/?fromgroups=#!topic/rec.games.roguelike.development/9leesIK3ijg
+Permadeath: Whether it's good for your game or not depends on how
+quickly it happens, how long the game is, how quickly you can restart
+(do you have to pick a new race, class, name, weapon) and especially
+how varied a start can you give the player? Many games fail at this.
+Is the first level lava caves? Dwarven gold caves? Limestone caverns
+eroded? The kings dungeon? The Goblin King's Dungeon? If each game is
+short and starts out interesting it's okay to fail over and over
+because each game is so very different and fun. Modern games don't do
+this though. They want their characters to live and they want hard
+work to be done easily. They create many hours of content meant to
+just be 'gotten through.' Everyone can get through, it's prospering
+that is hard.
 
 ------------------------------------------------------------------------------------------------------------------------
 
