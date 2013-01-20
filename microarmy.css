@@ -7,6 +7,8 @@ canvas
 
 body
 {
+    padding     : 0px;
+    margin      : 0px;
     background  : #222;
     font        : 30px sans-serif;
     color       : #fff;
@@ -28,11 +30,15 @@ div.map span
   height      : 24px;
   display     : inline-block;
   font-size   : 12px;
-  line-height : 2em; 
+  line-height : 2em;
   text-align  : center;
   color       : #421;
 }
 
+div.map span:hover
+{
+  opacity: 0.2;
+}
 
 .r0   { background: url('gfx/road.png') -0px; }
 .r1   { background: url('gfx/road.png') -24px; }

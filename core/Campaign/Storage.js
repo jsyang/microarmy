@@ -1,23 +1,22 @@
-// Storage "trait" for facilities / massive units
+// Storage "trait" for locations
 define([
   'core/util/Class',
   'core/util/$'
 ],function(Class, $){
-  
-  var Storage = Class.extend({
-    
+  return Class.extend({
+
     init : function(params) {
       this._ = $.extend({
         spaceRemaining  : 10,
         contents        : []
       }, params);
     },
-    
+
     // todo: sort these based on class type..
-    
+
     add : function(stuff) { var _ = this._;
       if(!(stuff instanceof Array)) { stuff = [ stuff ]; }
-      
+
       var totalSize = 0;
       stuff.forEach(function(v){
         var size = 1;
@@ -25,10 +24,10 @@ define([
         if(v instanceof Class && v._.durable) {
           size = v._.durable.size;
         }
-        
+
         totalSize += size;
       });
-      
+
       if(totalSize>_.spaceRemaining) {
         return false;
       } else {
@@ -37,7 +36,7 @@ define([
         return true;
       }
     },
-    
+
     remove : function() { var _ = this._;
       $$.toArray(arguments).forEach(function(v){
         var size = 1;
@@ -45,16 +44,14 @@ define([
         if(v instanceof Class && v._.durable) {
           size = v._.durable.size;
         }
-        
+
         _.spaceRemaining += size;
         _.contents[ _.contents.indexOf(v) ] = undefined;
       });
-      
+
       // Remove the undefined values!
       _.contents = $$.compact(_.contents);
     }
-    
+
   });
-  
-  return Storage;
 });

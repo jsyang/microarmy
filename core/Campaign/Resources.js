@@ -11,8 +11,14 @@ define([
 
   // todo: load this externally to define what our resources are.
 
+  // non-physical resources have an atom count of <0
 
   var ResourcesTree = {
+
+    'research progress' : {
+      atoms : -1,
+      synth : 0.01
+    },
 
     'nutrients' : {
       atoms : 18,
@@ -81,7 +87,7 @@ define([
     },
 
     'citizen' : {
-    
+
     }
 
   };
@@ -131,15 +137,17 @@ define([
   rubble fills up resource stores eventually and must be cleared (maybe automatically)
 
   */
-  var Resource = Class.extend({
 
-    init : function(params) {
-      this._ = $.extend({
-        atoms : 0,
-        requires : undefined
-      }, params);
-    }
-  });
+  // uni
+
+  var Resource = function(params) {
+    var _ = $.extend({
+
+    }, params);
+
+    
+
+  };
 
   return Resource;
 });

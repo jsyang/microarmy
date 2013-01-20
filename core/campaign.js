@@ -5,8 +5,9 @@ define([
   'core/campaign/terrain',
   'core/campaign/locations',
   'core/campaign/transport',
+  'core/campaign/resources',
   'core/campaign/mapview'
-],function($, Class, Terrain, Locations, Transport, MapView){
+],function($, Class, Terrain, Locations, Transport, Resources, MapView){
   return Class.extend({
     init : function(params) {
       this._ = $.extend({
@@ -38,7 +39,8 @@ define([
       // this._. = ...
     },
 
-    render : MapView
-  });
+    render : MapView,
 
+    ui : undefined  // user interaction controller here.
+  });
 });
