@@ -97,6 +97,7 @@ this though. They want their characters to live and they want hard
 work to be done easily. They create many hours of content meant to
 just be 'gotten through.' Everyone can get through, it's prospering
 that is hard.
+    - alternatives http://roguebasin.roguelikedevelopment.org/index.php?title=Alternatives_to_Permadeath
 
 ------------------------------------------------------------------------------------------------------------------------
 

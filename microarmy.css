@@ -24,6 +24,15 @@ body
   background: url('scraps/land.bmp') -360px 0px;
 }
 
+div.map
+{
+  width       : 768 px;
+  height      : 720 px;
+  overflow-x  : scroll;
+  overflow-y  : scroll;
+  white-space : nowrap;
+}
+
 div.map span
 {
   width       : 24px;
