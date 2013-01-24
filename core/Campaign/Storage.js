@@ -14,6 +14,11 @@ define([
 
     // todo: sort these based on class type..
 
+    getByType : function(typeName) {
+      // todo.
+      return $$.pluck(this.contents, typeName);
+    },
+
     add : function(stuff) { var _ = this._;
       if(!(stuff instanceof Array)) { stuff = [ stuff ]; }
 

@@ -2,27 +2,7 @@
 // "virtual" and physical; the smallest unit of resource is an atom (only counted, does not itself exist as distinct resource)
 define([
   'core/util/$',
-  'core/util/Class',
-  'core/campaign/resourceslist'
-],function(Class, $, ResourceList){
-
-
-  // uni
-
-  // Resource synthesizer class
-  return Class.extend({
-    init : function(params) {
-      this._ = $.extend({
-        name  : '____ synthesizer',
-        tech  : undefined,
-        // auto synthesizes based on what's available (not in resource reserves)
-        
-      }, params);
-    }
-
-
-
-  });
-
-  return Resource;
+  'core/util/Class'
+],function($, Class){
+  // todo: additive resources and resource manipulators on the map
 });

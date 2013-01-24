@@ -98,7 +98,17 @@ define({
     }
   },
 
-  
+  'small arms manufacturer' : {
+    isTechnology  : true,
+    isImmobile    : true,
+    needs : {
+      'small arms'    : 5,
+      'machine shop'  : 3,
+      'metal'         : 12,
+      'explosives'    : 4,
+      'fuel'          : 8
+    }
+  }
 
 });
 

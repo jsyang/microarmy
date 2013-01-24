@@ -1,0 +1,77 @@
+- define core gameplay
+- create randomized battles in battle view
+    -- parametrized battles, not random
+- smooth out terrain generation
+    -- assign parameters for coarseness of terrain (should be able to restrict to regions of the map)
+- create game music
+    -- different tracks for different events and states of progress
+    -- music reactive to game events
+- enforce rule: all Behavior.Custom decorators need to check for the ability to perform the action before attempting
+- create bomber aircraft units
+- create foliage and special structures
+- battle/peakGenerator generates cliffs
+    -- handle cliffs properly or smooth out battle terrain
+- create squad level behaviors
+    -- morale, if too low, squad members disband and their individual AI takes over
+    -- while in squad, squad members use squad member AI
+    -- if outside of squad, ex-members use own AI; panicked AI or normal AI
+
+-----------------------------------------------------------------------------------------------------------------------
+
+stuff from the notepad:
+
+- new units / game pieces
+    -- vehicles
+        --- threshold levels for raising and lowering track pieces for tanks and such
+        --- max slope the vehicle is able to handle
+            ---- behavior to see what to do if vehicle cannot advance
+                ----- stop and hold
+                ----- reverse
+                ----- radio commander for transport heli
+                ----- radio commander to level terrain
+                ----- crew debarks
+    -- encampments
+        --- mg nest instead of pillbox  (2 x crew)
+        --- mortar nest                 (2 x crew, functions immediately)
+        --- one way barrier             (friendlies move unrestricted, enemies running into it must destroy it first)
+        --- logistics tent              (makes reloading of missiles / encampments faster, heals infantry)
+        --- observation post            (enlarges range of commander attention in immediate area; sets rally points for squads, picks better targets for missile launchers)
+        --- jamming station             ()
+    -- new aircraft
+        --- transport heli              (3 x medium storage)
+        --- light attack heli           (4 x smallrocket)
+        --- heavy bomber                (6 x fuel air bomb / 1 x tactical nuke)
+        --- intercepter                 (4 x AA missile)
+        --- spaceplane                  (2 x large storage / 2 x bunker buster)
+        --- small ufo craft             (1 x medium storage, long range, high speed, low fuel capacity)
+    -- booby trapped buildings          (if occupied by enemy forces, it has a special effect? blows up, reveals some intel to the rigger?)
+    -- hideout structures
+        - bunker
+        - cave
+        - urban bunker -- fortified high rise
+            -- level 1, 2, 3 functions as separate mini-battles, only infantry can participate
+            -- OR level the whole thing
+                --- morale effects
+                --- loss of loot, intel, etc
+        - jungle woods, tall grass, swamp
+        - temperate woods
+        - underground bunker (cave entrance)
+        - desert oasis
+
+- interface notes (todo)
+- huge tank plot line?
+    -- breaks into pieces that must be destroyed individually
+    -- pieces individually attack separate bases
+    -- basically a mobile base (mother craft)
+
+- story options
+    -- STARTING GOOD: defeat the evil empire (like jagged alliance)
+        --- ENDING EVIL: story twist : you are the bad guy
+    -- STARTING EVIL: conquer the native lands
+        --- ENDING GOOD: improve the conquered land
+    -- MIDGAME TWIST: alien invasion
+        --- must team up with former enemy to defeat the invader
+
+- status report on production, morale
+    -- occupied territories
+    -- enemy territories (via intel)
