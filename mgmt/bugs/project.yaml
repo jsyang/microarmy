@@ -1,0 +1,34 @@
+--- !ditz.rubyforge.org,2008-03-06/project 
+name: ma
+version: "0.5"
+components: 
+- !ditz.rubyforge.org,2008-03-06/component 
+  name: ma
+releases: 
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: moving issues
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-04 09:05:01.979946 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - moving issues into ditz from all sources.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: prealpha
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-04 09:09:45.107090 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - pre-alpha version for self-testing mostly. may show some elements to friends.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: alpha
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-04 09:37:38.425761 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - For general testing, enlarge pool of potential testers to more than friends, maybe gamedev meetups.
