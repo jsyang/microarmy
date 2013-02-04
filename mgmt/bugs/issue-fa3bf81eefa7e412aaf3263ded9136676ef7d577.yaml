@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: move wiki from github to a locally hosted / bundled file
+desc: needed to show outsiders what's going on with the project. spark enough interest by showing them some of the internals. may be used later as a high level set of docs or base from which we write tutorials
+type: :task
+component: ma
+release: unify docs
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-04 10:03:14.212641 Z
+references: []
+
+id: fa3bf81eefa7e412aaf3263ded9136676ef7d577
+log_events: 
+- - 2013-02-04 10:03:15.316853 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
