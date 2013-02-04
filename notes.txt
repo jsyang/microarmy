@@ -144,4 +144,6 @@ ls -1 snd | sed -e 's/\.[a-zA-Z]*$//' > preloader/RESOURCES_SND.txt
   <!-- UI -->
   <script src='battle/ui.js'></script>
 
--->
+
+
+FOSSIL

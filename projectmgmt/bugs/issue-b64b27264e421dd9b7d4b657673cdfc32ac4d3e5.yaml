@@ -1,0 +1,30 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: stuff is borked!
+desc: what the hell is going on!
+type: :task
+component: microarmy
+release: 
+reporter: j <j>
+status: :in_progress
+disposition: 
+creation_time: 2013-02-04 07:57:27.859125 Z
+references: 
+- hello world
+id: b64b27264e421dd9b7d4b657673cdfc32ac4d3e5
+log_events: 
+- - 2013-02-04 07:57:37.866509 Z
+  - j <j>
+  - created
+  - ""
+- - 2013-02-04 08:03:43.893306 Z
+  - j <j>
+  - added reference 1
+  - yeah
+- - 2013-02-04 08:04:33.995757 Z
+  - j <j>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2013-02-04 08:05:59.364979 Z
+  - j <j>
+  - commented
+  - hit a brick wall today, blah blah excuses
