@@ -269,3 +269,8 @@ stuff from the notepad:
     -- you can use the technology when not researched if you have a copy, but it is tied to location (1 to 1 with the thing that uses it)
     -- tech is virtual but manifests itself in physical objects (blueprints/documents)
     -- once you have a critical mass of tech docs, that becomes a base tech (no tech docs needed to use the tech)
+    -- captured tech can be transported to another location just like any other resource
+
+- tutorial for new players
+  -- day 1 - 5 (campaign turns 1 to 5)
+    --- a legit campaign can be based off the player's state at the end of a tutorial period (1-5)

@@ -5,4 +5,5 @@ define([
   'core/util/Class'
 ],function($, Class){
   // todo: additive resources and resource manipulators on the map
+  
 });

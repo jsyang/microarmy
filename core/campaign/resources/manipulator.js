@@ -64,7 +64,8 @@ define([
 
   return {
     Disassembler  : Disassembler,
-    Synthesizer   : Synthesizer
+    Synthesizer   : Synthesizer,
+    Maintainer    : Maintainer
   };
 
 });
