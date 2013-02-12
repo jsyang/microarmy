@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: sign up for AWS free tier and begin writing API for online game saves and P vs P
+desc: ""
+type: :task
+component: ma
+release: alpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-12 00:11:58.794297 Z
+references: []
+
+id: 011a3a46340456e27870beeaf2cf93feb47a89e6
+log_events: 
+- - 2013-02-12 00:12:00.322812 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
