@@ -16,3 +16,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-02-13 09:08:08.518065 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - use markdown parser along with requireJS to load wiki pages through a single file.
