@@ -2,12 +2,13 @@
 define([
   'core/util/$',
   'core/util/class',
-  'core/campaign/terrain',
-  'core/campaign/locations',
-  'core/campaign/transport',
-  'core/campaign/resources',
-  'core/campaign/mapview'
-],function($, Class, Terrain, Locations, Transport, Resources, MapView){
+  'core/Campaign/addTerrain',
+  'core/Campaign/addLocations',
+  'core/Campaign/addTransport',
+  'core/Campaign/addStorage',
+  
+  'core/Campaign/MapView'
+],function($, Class, Terrain, Locations, Transport, Storage, MapView){
   return Class.extend({
     init : function(params) {
       this._ = $.extend({
@@ -23,7 +24,8 @@ define([
 
         Terrain,
         Locations,
-        Transport
+        Transport,
+        Storage
 
       ].forEach(
         function(additiveGenerator){ world = additiveGenerator(world); }
@@ -34,8 +36,6 @@ define([
       // this._.foliage = ...
       // this._.cities = ...
       // this._.mines = ...
-      // this._.bases = ...
-      // this._.roads = ...
       // this._. = ...
     },
 

@@ -1,5 +1,5 @@
 // View -- render the campaign map
-define([],function(){ return function(){ var _ = this._;
+define(function(){ return function(){ var _ = this._;
     var world = _.world;
     var map = world.map;
     var mapTile = function(x,y) {
