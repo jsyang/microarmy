@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: add way to show world tile's storage contents
+desc: |-
+  view to select a tile
+  view to show tile contents information
+type: :feature
+component: ma
+release: prealpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-13 06:40:16.396608 Z
+references: []
+
+id: 811c0f9c095fd523b6e5064d5bbd66d156aadd6e
+log_events: 
+- - 2013-02-13 06:40:18.556910 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
