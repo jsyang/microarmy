@@ -16,7 +16,7 @@ define([
         turnsSinceLastPoll      : 0,      // How many campaign turns has it been since we last tried to decay contents?
         decayRate               : 10,     // How fast do random things to discard per turn? (for non-storage locations)
         size                    : 1000,   // how much space do we have left?
-        contents                : []
+        contents                : {}
       }, params);
       
       this._.spaceRemaining = this._.size;
@@ -24,48 +24,65 @@ define([
 
     // todo: sort these based on class type..
 
-    getByType : function(typeName) {
-      // todo.
-      return $$.pluck(this.contents, typeName);
-    },
-
-    add : function(stuff) { var _ = this._;
-      if(!(stuff instanceof Array)) { stuff = [ stuff ]; }
-
+    add : function(stuffObj) { var _ = this._;
+      // can only add resources in here.
       var totalSize = 0;
-      stuff.forEach(function(v){
-        var size = 1;
-        // Not perishable; AKA we can store this outside of battles.
-        if(v instanceof Class && v._.durable) {
-          size = v._.durable.size;
-        }
-
+      for(var name in stuffObj) {
+        var resource = stuffObj[name];
+        var size = resource.size || 1;
         totalSize += size;
-      });
+      }
 
       if(totalSize>_.spaceRemaining) {
         return false;
       } else {
         _.spaceRemaining -= totalSize;
-        _.contents = _.contents.concat(stuff);
+        
+        for(var name in stuffObj) {
+          var resource = stuffObj[name];
+          if(name in _.contents) {
+            _.contents[name] += resource;
+          } else {
+            _.contents[name] = resource;
+          }
+        }
+        
         return true;
       }
     },
 
-    remove : function() { var _ = this._;
-      $$.toArray(arguments).forEach(function(v){
-        var size = 1;
-        // Not perishable; AKA we can store this outside of battles.
-        if(v instanceof Class && v._.durable) {
-          size = v._.durable.size;
+    remove : function(stuffObj) { var _ = this._;
+      for(var name in stuffObj) {
+        var resource = stuffObj[name];
+        var size = resource.size || 1;
+        
+        if(name in _.contents) {
+          if(_.contents[name] - resource>=0) {
+            _.contents[name] -= resource;
+            
+          } else {
+            resource = _.contents[name];
+            delete _.contents[name];
+          }
+          
+          _.spaceRemaining += size * resource;
         }
-
-        _.spaceRemaining += size;
-        _.contents[ _.contents.indexOf(v) ] = undefined;
-      });
-
-      // Remove the undefined values!
-      _.contents = $$.compact(_.contents);
+      }
+    },
+    
+    has : function(name) {
+      return name in this._.contents;
+    },
+    
+    printContents : function() { var _ = this._;
+      var text  = '';
+      var qty   = 0;
+      for(var name in _.contents) {
+        qty++;
+        text += _.contents[name] + ' x ' + name + '\n';
+      }
+      
+      return qty? text : 'nothing';
     }
 
   });

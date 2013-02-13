@@ -6,9 +6,10 @@ define([
   'core/Campaign/addLocations',
   'core/Campaign/addTransport',
   'core/Campaign/addStorage',
+  'core/Campaign/addResources',
   
   'core/Campaign/MapView'
-],function($, Class, Terrain, Locations, Transport, Storage, MapView){
+],function($, Class, Terrain, Locations, Transport, Storage, Resources, MapView){
   return Class.extend({
     init : function(params) {
       this._ = $.extend({
@@ -25,7 +26,8 @@ define([
         Terrain,
         Locations,
         Transport,
-        Storage
+        Storage,
+        Resources
 
       ].forEach(
         function(additiveGenerator){ world = additiveGenerator(world); }
@@ -41,6 +43,17 @@ define([
 
     render : MapView,
 
-    ui : undefined  // user interaction controller here.
+    ui : function(el) { var _ = this._;
+      el.onclick = function(e){
+        var x = (e.pageX * 0.041666667)>>0;
+        var y = (e.pageY * 0.041666667)>>0;
+        var tile = _.world.map[y][x]
+        
+        var tileDescription = tile.height < _.world.seaLevel? 'water' : 'land';
+        var tileLocation = tile.location? 'has a ' + tile.location.type + ' and' : '';
+        
+        console.log(tileDescription, 'at', [x, y], tileLocation, 'contains:\n', tile.store.printContents());
+      }
+    }
   });
 });

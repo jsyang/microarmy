@@ -26,11 +26,12 @@ body
 
 div.map
 {
-  width       : 768 px;
-  height      : 720 px;
-  overflow-x  : scroll;
-  overflow-y  : scroll;
+  display     : block;
+  max-width   : 400 px !important;
+  max-height  : 720 px !important;
+  overflow    : scroll;
   white-space : nowrap;
+  background  : #f20;
 }
 
 div.map span
@@ -46,7 +47,7 @@ div.map span
 
 div.map span:hover
 {
-  opacity: 0.2;
+  opacity: 0.4;
 }
 
 .r0   { background: url('gfx/road.png') -0px; }

@@ -6,8 +6,10 @@ define([
 
   window.preloader = preloader;
 
-  var c = new Campaign;
-  document.body.appendChild(c.render());
+  var c   = new Campaign;
+  var el  = c.render();
+  var ui  = c.ui(el);
+  document.body.appendChild(el);
 
   /* done loading everything! wait a sec.
       this is a module, don't do anything yet
