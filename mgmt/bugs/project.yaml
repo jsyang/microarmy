@@ -34,8 +34,8 @@ releases:
     - For general testing, enlarge pool of potential testers to more than friends, maybe gamedev meetups.
 - !ditz.rubyforge.org,2008-03-06/release 
   name: unify docs
-  status: :unreleased
-  release_time: 
+  status: :released
+  release_time: 2013-02-14 09:55:52.539398 Z
   log_events: 
   - - 2013-02-04 10:01:16.345287 Z
     - JSYang <jsyang.ca@gmail.com>
@@ -44,3 +44,7 @@ releases:
       includes both the wiki and things like unit descriptions and ad-blurbs perhaps
       need to consolidate this into this single git repo
       makes everything much more convenient
+  - - 2013-02-14 09:55:52.539421 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - released
+    - done!
