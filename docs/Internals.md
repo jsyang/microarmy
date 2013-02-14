@@ -1,7 +1,7 @@
 # Internals
 
 ## Hierarchy of Battleview Entities
-![topdown](hierarchy.png)
+![topdown](i/hierarchy.png)
 
 ## PawnControllers
 

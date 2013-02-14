@@ -2,10 +2,10 @@ define([
   'text!Behavior-Trees.md',
   'text!Design-Notes.md',
   'text!Devlog.md',
-  'text!Gamepieces-(Battle-view).md',
+  'text!Pieces.md',
   'text!Gameplay.md',
   'text!Internals.md',
-  'text!Promo-stuff.md',
+  'text!Misc.md',
   'text!Tools.md'
 ], function(){
   var $ol = $('<ol/>');
