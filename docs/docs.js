@@ -12,7 +12,7 @@ define([
   var pages = [];
   
   for(var i=0; i<arguments.length; i++) {
-    var title = arguments[i].substr(0, 16) + '...';
+    var title = arguments[i].substr(0, arguments[i].indexOf('\n')).replace(/#/g,'');
     
     $ol.append(
       $('<li/>')
@@ -21,8 +21,13 @@ define([
         })
         .text(title)
         .click(function(e){
+          $('li').removeClass('selected');
+          $(e.target).addClass('selected');
           $('div').hide();
-          $('#'+$(e.target).attr('data-id')).show();
+          var newPage = '#'+$(e.target).attr('data-id');
+          $(newPage).show();
+          //$(window).scrollTop(0);
+          window.location.href = window.location.href.split('#')[0] + newPage;
         })
     );
     
@@ -35,5 +40,6 @@ define([
   }
 
   $('body').append($ol, pages);
-  $('#0').show();
+  var previousPage = window.location.href.split('#')[1];
+  setTimeout(function(){ $('[data-id="'+( previousPage || '0' )+'"]').click(); });
 });

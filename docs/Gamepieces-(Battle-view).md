@@ -1,3 +1,96 @@
+# Pieces (Battle)
+
+### Infantry
+* **Pistol Infantry**  
+pistol  
+weak bodyarmor  
+short range  
+aggressive  
+joe everyman. he is the foundation of armies
+
+* **Rocket Infantry**  
+RPG  
+medium bodyarmor  
+medium range  
+cautious  
+
+* **Engineer Infantry**  
+small scaffold  
+medium bodyarmor  
+ambitious  
+lays down groundwork for new structures
+
+### Structures
+* **Small Scaffold**  
+framework for constructing fortifications, capturable
+
+* **Small Land Mine**  
+pressure sensitive anti-personnel mine  
+moderate damage  
+excels at maiming in all occasions
+
+* **Pillbox**  
+light machine gun  
+capturable strong point  
+crew of 4  
+made in china
+
+* **Small Turret**  
+30mm HE auto-loading cannon  
+medium range, medium armor  
+"Reach out and touch someone."
+
+* **Small Missile Launcher**  
+rapid-fire heat seeking missile  
+long range
+
+* **Small Ammo Dump**  
+small missile supplies  
+highly explosive  
+dislikes smokers
+
+* **Surface-to-Surface Missile Launcher**  
+autonomous cruise missile  
+severe damage  
+extreme range  
+do not point at face
+
+* **Ammo Dump**  
+various missile supplies  
+popular at birthday parties and corporate events
+
+* **Guard Tower**  
+long range IR / laser scope  
+sights targets for support weapons  
+a valuable tool for any commander
+
+* **Communications Relay**  
+shortwave radio / satellite communication relay  
+transmits encrypted strategic orders  
+field commander's connection to HQ
+
+* **Communications Bunker**  
+strategic planning / pistol - rocket - engineer infantry  
+heavy armor  
+kinda looks like a turtle
+
+* **Barracks**  
+pistol - engineer infantry  
+housing for army groups large and small
+
+* **Vehicle Depot**  
+TBD
+
+* **Helicopter Pad**  
+TBD
+
+* **Repair Yard**  
+TBD
+
+---
+
+## Old stuff -- rewrite stuff in this section
+
 ## Structures
 
 ### CommCenter

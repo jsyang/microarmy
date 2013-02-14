@@ -7,8 +7,8 @@ type: :task
 component: ma
 release: unify docs
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-02-04 10:05:15.016725 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-02-14 09:35:36.921864 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - |-
+    document hub is now localhost:8000/docs
+    markdown entries into the wiki

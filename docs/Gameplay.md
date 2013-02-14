@@ -1,3 +1,5 @@
+# Gameplay
+
 How do we want to introduce gameplay elements to the player in a way that avoids a "tutorial" level or written instructions that they are forced to read? See some examples: Megaman X, conveyance of player actions and dynamics with the environment. Put the player in a situation that gradually introduces and forces them to use certain elements to progress through the intro.  
 - shadow player (stronger than the player, but parallel so player can see his near-future trajectory)
 - can't give everything away, save some key elements to be discovered independently  

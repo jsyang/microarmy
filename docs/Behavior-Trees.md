@@ -1,3 +1,5 @@
+# Behavior Trees
+
 Behavior Trees implement the entity-component system of the game, where a "component" is a behavior. Behavior tree is halfway between scripting and plug and play behavior.
 
 `Behavior.Custom` -- for low-level unit behaviors (decorators with side effects)  
@@ -8,7 +10,7 @@ Behavior Trees implement the entity-component system of the game, where a "compo
 **Decorator**: process itself and return a bool, possibly with side effects.  
 
 syntax diagram for the shorthand:  
-![btreediagram](http://github.com/jsyang/microarmy/wiki/btreediagram.png)
+![btreediagram](btreediagram.png)
 
 * Decorator prefix naming standard:  
 is___  = condition check  

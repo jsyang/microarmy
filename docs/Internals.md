@@ -1,5 +1,7 @@
+# Internals
+
 ## Hierarchy of Battleview Entities
-![topdown](http://github.com/jsyang/microarmy/wiki/hierarchy.png)
+![topdown](hierarchy.png)
 
 ## PawnControllers
 

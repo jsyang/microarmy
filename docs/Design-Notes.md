@@ -1,3 +1,5 @@
+# Design Notes
+
 ### Commander-Mgmt interface
 * access commander's profile? (does the player really care where they come from?)
   * mug-shots
