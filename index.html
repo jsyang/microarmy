@@ -8,6 +8,13 @@
   <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
   <script> soundManager.url='./soundmanager2/'; </script>
   
-  <script data-main="game" src="require.js"></script>
+  <script data-main="game" src="lib/require.js"></script>
+  <script>
+    require.config({
+      paths : {
+        'text' : 'lib/text'
+      }
+    });
+  </script>
   <body></body>
 </html>

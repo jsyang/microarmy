@@ -1,0 +1,16 @@
+div
+{
+  float : left;
+  width   : 80%;
+}
+
+ol
+{
+  float: left;
+  width: 13%;
+}
+
+.hide
+{
+  display : none;
+}

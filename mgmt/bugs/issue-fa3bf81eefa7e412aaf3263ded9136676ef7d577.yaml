@@ -5,8 +5,8 @@ type: :task
 component: ma
 release: unify docs
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-02-04 10:03:14.212641 Z
 references: []
 
@@ -20,3 +20,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - commented
   - use markdown parser along with requireJS to load wiki pages through a single file.
+- - 2013-02-14 03:46:32.862241 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - done. localhost:8000/docs
