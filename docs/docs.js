@@ -11,6 +11,10 @@ define([
   var $ol = $('<ol/>');
   var pages = [];
   
+  $ol
+    .attr('start', 0)
+    .append($('<lh/>').html('<h3>Microarmy Docs</h3>'));
+
   for(var i=0; i<arguments.length; i++) {
     var title = arguments[i].substr(0, arguments[i].indexOf('\n')).replace(/#/g,'');
     
@@ -26,7 +30,6 @@ define([
           $('div').hide();
           var newPage = '#'+$(e.target).attr('data-id');
           $(newPage).show();
-          //$(window).scrollTop(0);
           window.location.href = window.location.href.split('#')[0] + newPage;
         })
     );
