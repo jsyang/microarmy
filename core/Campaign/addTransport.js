@@ -1,105 +1,102 @@
-// Generate roads and other methods of transport between locations
-define([
-  'core/util/$'
-], function($){ return function(params) {
-  var _ = $.extend({
-    numLocations  : 10,
-    percentCity   : 0.6,
-    percentBase   : 0.4,
 
-    /* todo: generate different transport types, not just roads
-      gravel / dirt road,
-      rail,
-      high speed rail,
-      monorail (fastest?),
-
-    */
-  }, params);
-
-  if($.isUndefined(_.map, _.locations)) {
-    throw new Error('no terrain / locations given!');
-
-  } else {
-     var setTileRoad = function(tile) {
-      if(tile.height>=_.seaLevel) {
-        tile.road = true;
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    var makeRoute = function(c,d) {
-      // Set a as left-most point
-      var a = d.x<c.x? d : c;
-      var b = d.x<c.x? c : d;
-
-      var dx = a.x<b.x? 1 : -1;
-      var dy = a.y<b.y? 1 : -1;
-
-      if(a.x == b.x) {
-        for(var y=a.y; y!=b.y; y+=dy) { if(!setTileRoad(_.map[y][a.x])) break; }
-
-      } else if(a.y == b.y) {
-        for(var x=a.x; x!=b.x; x+=dx) { if(!setTileRoad(_.map[a.y][x])) break; }
-
-      } else {
-        /*
-          Xsplit            A----|
-                                 | <--------- split on x
-                                 |
-                                 |----B
-
-          Ysplit            A
-                            |__________ <---- split on y
-                                      |
-                                      B
-        */
-        if($.R(0,1)) {
-          var xSplit = dx>0? $.R(a.x,b.x) : $.R(b.x,a.x);
-
-          if(dx>0) {
-            for(var x=a.x+dx; x <xSplit; x+=dx) { if(!setTileRoad(_.map[a.y][x])) break; }
-            for(var x=b.x-dx; x>=xSplit; x-=dx) { if(!setTileRoad(_.map[b.y][x])) break; }
-          } else {
-            for(var x=a.x+dx; x >xSplit; x+=dx) { if(!setTileRoad(_.map[a.y][x])) break; }
-            for(var x=b.x-dx; x<=xSplit; x-=dx) { if(!setTileRoad(_.map[b.y][x])) break; }
-          }
-            for(var y=a.y; y<b.y; y+=dy)        { if(!setTileRoad(_.map[y][xSplit])) break; }
-
+define(['core/util/$'], function($) {
+  return function(_) {
+    var loc, locs, pave, route, _i, _len;
+    if ((_.map == null) || (_.locations == null)) {
+      throw new Error('map or location not set!');
+    } else {
+      pave = function(tile) {
+        if (tile.height >= _.seaLevel) {
+          return tile.road = true;
         } else {
-          var ySplit = dy>0? $.R(a.y,b.y) : $.R(b.y,a.y);
-
-          if(dy>0) {
-            for(var y=a.y+dy; y <ySplit; y+=dy) { if(!setTileRoad(_.map[y][a.x])) break; }
-            for(var y=b.y-dy; y>=ySplit; y-=dy) { if(!setTileRoad(_.map[y][b.x])) break; }
-          } else {
-            for(var y=a.y+dy; y >ySplit; y+=dy) { if(!setTileRoad(_.map[y][a.x])) break; }
-            for(var y=b.y-dy; y<=ySplit; y-=dy) { if(!setTileRoad(_.map[y][b.x])) break; }
+          return false;
+        }
+      };
+      route = function(c, d) {
+        var a, b, dx, dxGZ, dy, dyGZ, x, xSplit, y, ySplit, _ref;
+        _ref = d.x < c.x ? [c, d] : [d, c], a = _ref[0], b = _ref[1];
+        dx = a.x < b.x ? 1 : -1;
+        dy = a.y < b.y ? 1 : -1;
+        if (a.x === b.x) {
+          y = a.y;
+          while (y !== b.y) {
+            if (!pave(_.map[y][a.x])) {
+              break;
+            }
+            y += dy;
           }
-            for(var x=a.x; x<b.x; x+=dx) { if(!setTileRoad(_.map[ySplit][x])) break; }
+        } else if (a.y === b.y) {
+          x = a.x;
+          while (x !== b.x) {
+            if (!pave(_.map[a.y][x])) {
+              break;
+            }
+            x += dx;
+          }
+        } else {
+          if ($.R(0, 1)) {
+            dxGZ = dx > 0;
+            xSplit = dxGZ ? $.R(a.x, b.x) : $.R(b.x, a.x);
+            x = a.x + dx;
+            while ((dxGZ && x < xSplit) || (!dxGZ && x > xSplit)) {
+              if (!pave(_.map[a.y][x])) {
+                break;
+              }
+              x += dx;
+            }
+            x = b.x - dx;
+            while ((dxGZ && x >= xSplit) || (!dxGZ && x <= xSplit)) {
+              if (!pave(_.map[b.y][x])) {
+                break;
+              }
+              x -= dx;
+            }
+            y = a.y;
+            while (y !== b.y) {
+              if (!pave(_.map[y][xSplit])) {
+                break;
+              }
+              y += dy;
+            }
+          } else {
+            dyGZ = dy > 0;
+            ySplit = dyGZ ? $.R(a.y, b.y) : $.R(b.y, a.y);
+            y = a.y + dy;
+            while ((dyGZ && y < ySplit) || (!dyGZ && y > ySplit)) {
+              if (!pave(_.map[y][a.x])) {
+                break;
+              }
+              y += dy;
+            }
+            y = b.y - dy;
+            while ((dyGZ && y >= ySplit) || (!dyGZ && y <= ySplit)) {
+              if (!pave(_.map[y][b.x])) {
+                break;
+              }
+              y -= dy;
+            }
+            x = a.x;
+            while (x !== b.x) {
+              if (!pave(_.map[ySplit][x])) {
+                break;
+              }
+              x += dx;
+            }
+          }
         }
-
+      };
+      locs = _.locations;
+      if (locs.length > 1) {
+        for (_i = 0, _len = locs.length; _i < _len; _i++) {
+          loc = locs[_i];
+          if ($.R(0, 2)) {
+            route(loc, $.pickRandom($$.without(locs, loc)));
+          }
+        }
       }
-    };
-
-    var allLocs = _.locations;
-
-    if(allLocs.length>1) {
-      // Connect all the locations hap-hazardly
-      allLocs.forEach(function(loc) {
-        // 66% chance of road generation.
-        if($.R(0,2)) {
-          var nextLoc = $.pickRandom(
-            $$.without(allLocs, loc)
-          );
-
-          makeRoute(loc, nextLoc);
-        }
-      });
+      return _;
     }
+  };
+});
 
-    return _;
-  }
-
-}; });
+// Generated by CoffeeScript 1.5.0-pre
