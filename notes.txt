@@ -13,7 +13,7 @@ http://www.ufopaedia.org/
 Sprites
 
 AIRCRAFT -- ESP. BOMBER AIRCRAFT
-http://th09.deviantart.net/fs71/PRE/f/2011/137/a/3/aircraft_sprites_sideways_by_triplepogi2009-d39ytae.png 
+http://th09.deviantart.net/fs71/PRE/f/2011/137/a/3/aircraft_sprites_sideways_by_triplepogi2009-d39ytae.png
 
 http://www.xbattlestation.com/forgottencreations/viper.aspx
 http://walen.se/sprites/?level=collection&id=1
@@ -103,6 +103,14 @@ that is hard.
     - alternatives http://roguebasin.roguelikedevelopment.org/index.php?title=Alternatives_to_Permadeath
 
 ------------------------------------------------------------------------------------------------------------------------
+Coffeescript aliases for
+.bash_profile
+
+alias coffee='/usr/local/share/npm/bin/coffee'
+alias cwc='coffee -b -w -c'
+alias cwp='coffee -b -w -p'
+
+------------------------------------------------------------------------------------------------------------------------
 
 Generate the resources list for the preloader
 
@@ -146,7 +154,3 @@ ls -1 snd | sed -e 's/\.[a-zA-Z]*$//' > preloader/RESOURCES_SND.txt
 
   <!-- UI -->
   <script src='battle/ui.js'></script>
-
-
-
-FOSSIL

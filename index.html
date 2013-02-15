@@ -1,13 +1,18 @@
 <html>
   <title>microarmy</title>
-    
+  <script>
+    if(window.location.origin.indexOf('file://')!=-1) {
+        // Loaded this file from Finder / shell script. Reload from local webserver.
+        window.location.href = 'http://localhost:8000';
+    }
+  </script>
   <link rel="stylesheet" type="text/css" href="microarmy.css">
   <link rel="SHORTCUT ICON" href="microarmy.ico"/>
-  
+
   <script src="lib/underscore.js"></script>
   <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
   <script> soundManager.url='./soundmanager2/'; </script>
-  
+
   <script data-main="game" src="lib/require.js"></script>
   <script>
     require.config({

@@ -1,4 +1,5 @@
 define([
+  'text!Resources.md',
   'text!Behavior-Trees.md',
   'text!Design-Notes.md',
   'text!Devlog.md',
@@ -10,14 +11,14 @@ define([
 ], function(){
   var $ol = $('<ol/>');
   var pages = [];
-  
+
   $ol
     .attr('start', 0)
     .append($('<lh/>').html('<h3>Microarmy Docs</h3>'));
 
   for(var i=0; i<arguments.length; i++) {
     var title = arguments[i].substr(0, arguments[i].indexOf('\n')).replace(/#/g,'');
-    
+
     $ol.append(
       $('<li/>')
         .attr({
@@ -33,7 +34,7 @@ define([
           window.location.href = window.location.href.split('#')[0] + newPage;
         })
     );
-    
+
     pages.push(
       $('<div/>')
         .attr('id', i)

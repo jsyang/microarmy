@@ -1,8 +1,7 @@
 define([
   'preloader/preloader',
-  'core/campaign',
-  'core/campaign/storage'
-], function(preloader, Campaign, Storage){
+  'core/campaign'
+], function(preloader, Campaign){
 
   window.preloader = preloader;
 
