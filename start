@@ -1,0 +1,3 @@
+#!/bin/bash
+clear
+open index.html ; python -m SimpleHTTPServer
