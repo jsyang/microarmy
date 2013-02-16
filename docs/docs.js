@@ -40,6 +40,7 @@ define([
         .addClass('hide')
         .html(markdown.toHTML(arguments[i]));
     
+    // Turn zoom links into actual content.
     $content.find('a[href^="zoom"]').each(function(i,v){
         var $this = $(v);
         $('<iframe/>')
@@ -53,15 +54,6 @@ define([
   
   $('body').append($ol, pages);
   
-  /*
-  // Show the zoomed sprite if we have a zoom.
-  $('a[href^="zoom"]').each(function(v){
-    var $this = $(v);
-    $this.replaceWith(
-        $('<iframe/>').attr({ src : $this.attr('href') })
-    );
-  });
-  */
   var previousPage = window.location.href.split('#')[1];
   setTimeout(function(){ $('[data-id="'+( previousPage || '0' )+'"]').click(); });
 });

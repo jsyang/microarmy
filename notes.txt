@@ -4,10 +4,6 @@ http://androidarts.com/xcom/rebelsquad.htm
 Various damage tables and other inspiration for game structure
 http://www.ufopaedia.org/
 
-- generate background (not just the sky and heightmap)
-- optimize generation of the peaks and terrain colors; we don't have to calculate
-  the color gradient every single time...
-
 ------------------------------------------------------------------------------------------------------------------------
 
 Sprites
@@ -64,11 +60,6 @@ articles on dev up to and include project mgmt
 http://roguebasin.roguelikedevelopment.org/index.php?title=Articles#Fundamentals
 
 ------------------------------------------------------------------------------------------------------------------------
-
-- renaming to "proxy war" is bad (doesn't actually say anything)
-
-- more than just the obvious of what's going on,
-  microarmy already restates something that's completely obvious
 
 - new unit for campaign views: spy / infiltrator (enemy spy)
   can sabotage the ranks of your army
