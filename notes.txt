@@ -94,9 +94,9 @@ that is hard.
     - alternatives http://roguebasin.roguelikedevelopment.org/index.php?title=Alternatives_to_Permadeath
 
 ------------------------------------------------------------------------------------------------------------------------
-Coffeescript aliases for
-.bash_profile
+.bash_profile additions
 
+alias d='/usr/bin/ditz'
 alias coffee='/usr/local/share/npm/bin/coffee'
 alias cwc='coffee -b -w -c'
 alias cwp='coffee -b -w -p'
