@@ -10,6 +10,7 @@ define([
   
   'core/Campaign/MapView'
 ],function($, Class, Terrain, Locations, Transport, Storage, Resources, MapView){
+
   return Class.extend({
     init : function(params) {
       this._ = $.extend({

@@ -32,9 +32,7 @@ firemedium1
 firesmall0
 firesmall1
 firesmall2
-heli0 - Copy
 heli0
-helibody
 helipad0
 helipad1
 kitten0
