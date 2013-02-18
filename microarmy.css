@@ -31,7 +31,6 @@ div.map
   max-height  : 720 px !important;
   overflow    : scroll;
   white-space : nowrap;
-  background  : #f20;
 }
 
 div.map span
@@ -47,7 +46,9 @@ div.map span
 
 div.map span:hover
 {
-  opacity: 0.4;
+  -webkit-box-shadow: inset 0 0 8px #f62;
+  -moz-box-shadow: inset 0 0 8px #f62;
+  box-shadow: inset 0 0 8px #f62;
 }
 
 .r0   { background: url('gfx/road.png') -0px; }

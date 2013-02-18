@@ -1,3 +1,4 @@
+# add locations.
 define [
   'core/util/$'
   'core/util/weightedRandom'

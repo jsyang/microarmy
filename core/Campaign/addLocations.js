@@ -47,7 +47,7 @@ define(['core/util/$', 'core/util/weightedRandom'], function($, $WR) {
               'base': 1
             })
           };
-          if ((tile != null) && (loc != null) && tile.height >= _.seaLevel) {
+          if ((tile != null) && tile.height >= _.seaLevel) {
             loc = $.extend({
               x: x,
               y: y,
