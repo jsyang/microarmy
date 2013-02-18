@@ -100,3 +100,6 @@ alias d='/usr/bin/ditz'
 alias coffee='/usr/local/share/npm/bin/coffee'
 alias cwc='coffee -b -w -c'
 alias cwp='coffee -b -w -p'
+
+this one parallel compiles into core/ from coffeecore/
+alias cw='cwc --output core/ coffeecore/'
