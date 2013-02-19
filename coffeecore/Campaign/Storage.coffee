@@ -46,6 +46,9 @@ define [
             return false
         ) for k,v of stuff
         true
+        
+    getContents : ->
+      $.extend {}, @_.contents
       
     printContents : ->
       stuff = @_.contents

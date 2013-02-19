@@ -26,11 +26,11 @@ body
 
 div.map
 {
-  display     : block;
-  max-width   : 400 px !important;
-  max-height  : 720 px !important;
+  display     : inline-block;
   overflow    : scroll;
   white-space : nowrap;
+  width       : 600px;
+  height      : 400px;
 }
 
 div.map span
@@ -47,9 +47,11 @@ div.map span
 div.map span:hover
 {
   -webkit-box-shadow: inset 0 0 8px #f62;
-  -moz-box-shadow: inset 0 0 8px #f62;
-  box-shadow: inset 0 0 8px #f62;
+  -moz-box-shadow   : inset 0 0 8px #f62;
+  box-shadow        : inset 0 0 8px #f62;
 }
+
+/* Road tiles. */
 
 .r0   { background: url('gfx/road.png') -0px; }
 .r1   { background: url('gfx/road.png') -24px; }
@@ -62,3 +64,31 @@ div.map span:hover
 .r8   { background: url('gfx/road.png') -192px; }
 .r9   { background: url('gfx/road.png') -216px; }
 .r10  { background: url('gfx/road.png') -240px; }
+
+.map_inventory
+{
+  position  : absolute;
+  font-size : 12px;
+  right     : 0px;
+  top       : 0px;
+  width     : 280px;
+}
+
+.map_inventory .tile
+{
+  width       : 24px;
+  height      : 24px;
+  display     : inline-block;
+}
+
+.map_inventory table
+{
+  font-size : 12px;
+  position  : absolute;
+  left      : 16px;
+}
+
+.map_inventory table tbody tr td:nth-child(1)
+{
+  text-align: right;
+}
