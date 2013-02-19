@@ -26,11 +26,12 @@ body
 
 div.map
 {
-  display     : inline-block;
-  overflow    : scroll;
-  white-space : nowrap;
-  width       : 600px;
-  height      : 400px;
+  display               : inline-block;
+  overflow              : scroll;
+  white-space           : nowrap;
+  width                 : 600px;
+  height                : 400px;
+  float                 : left;
 }
 
 div.map span
@@ -42,6 +43,12 @@ div.map span
   line-height : 2em;
   text-align  : center;
   color       : #421;
+  -webkit-touch-callout : none;
+  -webkit-user-select   : none;
+  -khtml-user-select    : none;
+  -moz-user-select      : none;
+  -ms-user-select       : none;
+  user-select           : none;
 }
 
 div.map span:hover
@@ -67,11 +74,11 @@ div.map span:hover
 
 .map_inventory
 {
-  position  : absolute;
-  font-size : 12px;
-  right     : 0px;
-  top       : 0px;
-  width     : 280px;
+  display     : inline-block;
+  font-size   : 12px;
+  margin-left : 16px;
+  width       : 200px;
+  float       : left;
 }
 
 .map_inventory .tile
@@ -83,9 +90,8 @@ div.map span:hover
 
 .map_inventory table
 {
-  font-size : 12px;
-  position  : absolute;
-  left      : 16px;
+  font-size   : 12px;
+  margin-left : 16px;
 }
 
 .map_inventory table tbody tr td:nth-child(1)

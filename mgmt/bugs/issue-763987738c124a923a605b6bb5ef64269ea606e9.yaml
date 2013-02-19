@@ -5,8 +5,8 @@ type: :task
 component: ma
 release: moving issues
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :reorg
 creation_time: 2013-02-04 09:26:17.736141 Z
 references: []
 
@@ -16,3 +16,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-02-19 08:44:35.392446 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition reorg
+  - moved them into the docs instead for now. will look at them again to reprioritize things

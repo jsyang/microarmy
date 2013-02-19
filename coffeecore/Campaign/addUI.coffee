@@ -16,6 +16,7 @@ define ->
         views.Inventory?.show _.world.map[y][x]
         return
       
+      # todo: scrolling based on mouse location or mini-map
       # views.Map?.onmousemove = (e) ->
       #  [sx, sy] = [views.Map.scrollLeft, views.Map.scrollTop]
       #  
