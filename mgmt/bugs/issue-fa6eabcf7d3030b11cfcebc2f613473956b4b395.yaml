@@ -20,3 +20,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-02-21 09:19:49.255526 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - rewrote Behavior (old) into Behaviors class, modularized the shit out of it
