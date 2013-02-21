@@ -17,7 +17,10 @@ define [
         decayRate   : 10    # Max things to throw away (decay) per turn
         contents    : {}
       }, _
-      
+    
+    isEmpty : ->
+      ( k for k,v of @_.contents ).length == 0
+    
     add : (stuff) ->
       (
         if @_.contents[k]? and v>0

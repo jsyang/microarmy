@@ -1,5 +1,9 @@
 define [
   'core/util/$'
+
+  'core/Behaviors'
+  'core/Behaviors/campaign'
+
   'core/campaign/addTerrain'
   'core/campaign/addLocations'
   'core/campaign/addTransport'
@@ -10,7 +14,8 @@ define [
   'core/campaign/view/inventory'
   
   'core/campaign/addUI'
-], ($, Terrain, Locations, Transport, Storage, Resources, Map, Inventory, addUI) ->
+  
+], ($, Behaviors, CampaignBehaviors, Terrain, Locations, Transport, Storage, Resources, Map, Inventory, addUI) ->
   
   worldBuilders = [
     Terrain
@@ -26,6 +31,7 @@ define [
   }
     
   class Campaign
+
     constructor : (_) ->
       @_ = $.extend {
         w : 36
@@ -34,13 +40,27 @@ define [
       
       world = @_
       (world = addTo(world)) for addTo in worldBuilders
-      
       @_.world = world
+      
+      @Behaviors = new Behaviors CampaignBehaviors
     
+    # GENERATE THE DOM ELEMENTS
     render : ->
       @views = {}
       (( @views[k] = v(@_.world) ) for k,v of views)
       @
+    
+    # UPDATE THE GAMEWORLD FOR 1 CAMPAIGN CYCLE (TURN)
+    cycle : ->
+      # Process the Behaviors for all the tiles
+      # todo: clean up.
+      (
+        (
+          @Behaviors.Execute @Behaviors.Trees.Tile, @_.world.map[y][x]
+        ) for x in [0..@_.w-1]
+      ) for y in [0..@_.h-1]
+      @
       
+    # ATTACH USER INTERACTIONS TO THE VIEWS
     addUI : addUI
     

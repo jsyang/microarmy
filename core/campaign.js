@@ -1,5 +1,5 @@
 
-define(['core/util/$', 'core/campaign/addTerrain', 'core/campaign/addLocations', 'core/campaign/addTransport', 'core/campaign/addStorage', 'core/campaign/addResources', 'core/campaign/view/map', 'core/campaign/view/inventory', 'core/campaign/addUI'], function($, Terrain, Locations, Transport, Storage, Resources, Map, Inventory, addUI) {
+define(['core/util/$', 'core/Behaviors', 'core/Behaviors/campaign', 'core/campaign/addTerrain', 'core/campaign/addLocations', 'core/campaign/addTransport', 'core/campaign/addStorage', 'core/campaign/addResources', 'core/campaign/view/map', 'core/campaign/view/inventory', 'core/campaign/addUI'], function($, Behaviors, CampaignBehaviors, Terrain, Locations, Transport, Storage, Resources, Map, Inventory, addUI) {
   var Campaign, views, worldBuilders;
   worldBuilders = [Terrain, Locations, Transport, Storage, Resources];
   views = {
@@ -20,6 +20,7 @@ define(['core/util/$', 'core/campaign/addTerrain', 'core/campaign/addLocations',
         world = addTo(world);
       }
       this._.world = world;
+      this.Behaviors = new Behaviors(CampaignBehaviors);
     }
 
     Campaign.prototype.render = function() {
@@ -28,6 +29,16 @@ define(['core/util/$', 'core/campaign/addTerrain', 'core/campaign/addLocations',
       for (k in views) {
         v = views[k];
         this.views[k] = v(this._.world);
+      }
+      return this;
+    };
+
+    Campaign.prototype.cycle = function() {
+      var x, y, _i, _j, _ref, _ref1;
+      for (y = _i = 0, _ref = this._.h - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; y = 0 <= _ref ? ++_i : --_i) {
+        for (x = _j = 0, _ref1 = this._.w - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; x = 0 <= _ref1 ? ++_j : --_j) {
+          this.Behaviors.Execute(this.Behaviors.Trees.Tile, this._.world.map[y][x]);
+        }
       }
       return this;
     };

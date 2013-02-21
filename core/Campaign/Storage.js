@@ -11,6 +11,20 @@ define(['core/util/$'], function($) {
       }, _);
     }
 
+    CampaignStorage.prototype.isEmpty = function() {
+      var k, v;
+      return ((function() {
+        var _ref, _results;
+        _ref = this._.contents;
+        _results = [];
+        for (k in _ref) {
+          v = _ref[k];
+          _results.push(k);
+        }
+        return _results;
+      }).call(this)).length === 0;
+    };
+
     CampaignStorage.prototype.add = function(stuff) {
       var k, v;
       for (k in stuff) {

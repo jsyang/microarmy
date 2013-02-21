@@ -11,4 +11,7 @@ define [
   
   document.body.appendChild v for k,v of c.views
   
+  # todo: remove testing code.
+  window.foo = c;
+  
   return
