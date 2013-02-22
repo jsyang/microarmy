@@ -3,16 +3,20 @@ define({
   Decorators: {
     TRUE: true,
     FALSE: false,
-    storeEmpty: function() {
+    isStoreEmpty: function() {
       return this.store.isEmpty();
     },
     printXY: function() {
       console.log(this.x, this.y);
       return true;
+    },
+    tryDecayResources: function() {
+      this.store.tryDecay();
+      return true;
     }
   },
   Trees: {
-    Tile: '<[!storeEmpty], [printXY]>'
+    Tile: '<[!isStoreEmpty], [printXY], [tryDecayResources]>'
   }
 });
 

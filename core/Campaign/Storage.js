@@ -1,5 +1,5 @@
 
-define(['core/util/$'], function($) {
+define(['core/util/$', 'core/Resources/campaign'], function($, Res) {
   var CampaignStorage;
   return CampaignStorage = (function() {
 
@@ -10,20 +10,6 @@ define(['core/util/$'], function($) {
         contents: {}
       }, _);
     }
-
-    CampaignStorage.prototype.isEmpty = function() {
-      var k, v;
-      return ((function() {
-        var _ref, _results;
-        _ref = this._.contents;
-        _results = [];
-        for (k in _ref) {
-          v = _ref[k];
-          _results.push(k);
-        }
-        return _results;
-      }).call(this)).length === 0;
-    };
 
     CampaignStorage.prototype.add = function(stuff) {
       var k, v;
@@ -66,12 +52,21 @@ define(['core/util/$'], function($) {
     };
 
     CampaignStorage.prototype.getContents = function() {
-      return $.extend({}, this._.contents);
+      var contents, k, v, _ref;
+      contents = {};
+      _ref = this._.contents;
+      for (k in _ref) {
+        v = _ref[k];
+        contents[k] = Math.floor(v);
+      }
+      return contents;
     };
 
-    CampaignStorage.prototype.printContents = function() {
-      var k, stuff, text, v;
-      stuff = this._.contents;
+    CampaignStorage.prototype.printContents = function(stuff) {
+      var k, text, v;
+      if (stuff == null) {
+        stuff = this._.contents;
+      }
       text = (function() {
         var _results;
         _results = [];
@@ -85,6 +80,49 @@ define(['core/util/$'], function($) {
         return text.join('\n');
       } else {
         return 'nothing';
+      }
+    };
+
+    CampaignStorage.prototype.isEmpty = function() {
+      var k, v;
+      return ((function() {
+        var _ref, _results;
+        _ref = this._.contents;
+        _results = [];
+        for (k in _ref) {
+          v = _ref[k];
+          _results.push(k);
+        }
+        return _results;
+      }).call(this)).length === 0;
+    };
+
+    CampaignStorage.prototype.tryDecay = function() {
+      var k, kn, needs, qtyContents, qtyNeeds, qtyToTrash, trash, v, vn, _ref, _ref1;
+      trash = {};
+      _ref = this._.contents;
+      for (k in _ref) {
+        v = _ref[k];
+        needs = (_ref1 = Res[k].keep) != null ? _ref1.needs : void 0;
+        if (needs != null) {
+          for (kn in needs) {
+            vn = needs[kn];
+            qtyContents = this._.contents[kn] != null ? this._.contents[kn] : 0;
+            qtyNeeds = v * vn;
+            if (qtyContents < qtyNeeds) {
+              qtyToTrash = Math.ceil(1 - qtyContents / qtyNeeds) * v;
+              qtyToTrash = Math.round($.r() * qtyToTrash);
+              trash[k] = qtyToTrash;
+              console.log("lost " + trash[k] + " x " + k + " -- not enough " + kn);
+              trash[kn] = trash[kn] != null ? trash[kn] + vn * (v - qtyToTrash) : vn * (v - qtyToTrash);
+              console.log("" + (v - qtyToTrash) + " x " + k + " used " + (vn * (v - qtyToTrash)) + " x " + kn + " for maintenance");
+              break;
+            } else {
+              trash[kn] = trash[kn] != null ? trash[kn] + qtyNeeds : qtyNeeds;
+              console.log("" + v + " x " + k + " used " + qtyNeeds + " x " + kn + " for maintenance");
+            }
+          }
+        }
       }
     };
 

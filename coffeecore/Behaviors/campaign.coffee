@@ -1,3 +1,4 @@
+# Behaviors for a Campaign
 define {
   
   Decorators :
@@ -5,16 +6,19 @@ define {
     TRUE  : true
     FALSE : false
     
-    storeEmpty : ->
+    isStoreEmpty : ->
       @store.isEmpty()
       
     printXY : ->
       console.log(@x, @y)
       true
   
+    tryDecayResources : ->
+      @.store.tryDecay()
+      true
   
   Trees :
     
-    Tile : '<[!storeEmpty], [printXY]>'
+    Tile : '<[!isStoreEmpty], [printXY], [tryDecayResources]>'
   
 }
