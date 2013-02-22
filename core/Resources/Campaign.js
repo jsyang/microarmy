@@ -35,7 +35,7 @@ define({
         nutrient: 2
       },
       bonus: {
-        farmer: 2
+        fuel: 0.7
       }
     }
   },
@@ -125,6 +125,10 @@ define({
       needs: {
         food: 1
       }
+    },
+    make: {
+      food: true,
+      citizen: true
     }
   },
   "advanced alloy": {

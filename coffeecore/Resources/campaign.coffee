@@ -22,7 +22,7 @@ define
       needs:
         nutrient: 2
       bonus:
-        farmer: 2
+        fuel: 0.7
 
   explosive:
     tech: 1
@@ -93,6 +93,9 @@ define
     keep:
       needs:
         food: 1
+    make:
+      food: true
+      citizen: true
 
   "advanced alloy":
     tech: 7

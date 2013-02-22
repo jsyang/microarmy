@@ -7,7 +7,8 @@ define(['core/util/$', 'core/Resources/campaign'], function($, Res) {
       this._ = $.extend({
         lastPoll: 0,
         decayRate: 10,
-        contents: {}
+        contents: {},
+        production: {}
       }, _);
     }
 
@@ -17,6 +18,9 @@ define(['core/util/$', 'core/Resources/campaign'], function($, Res) {
         v = stuff[k];
         if ((this._.contents[k] != null) && v > 0) {
           this._.contents[k] += v;
+          if (Res[k].make != null) {
+            $.extend(this._.production, Res[k].make);
+          }
         } else {
           this._.contents[k] = v;
         }
@@ -97,30 +101,61 @@ define(['core/util/$', 'core/Resources/campaign'], function($, Res) {
       }).call(this)).length === 0;
     };
 
-    CampaignStorage.prototype.tryDecay = function() {
-      var k, kn, needs, qtyContents, qtyNeeds, qtyToTrash, trash, v, vn, _ref, _ref1;
-      trash = {};
+    CampaignStorage.prototype.trySynthesizing = function() {
+      var k, kn, needs, products, qtyContents, qtyNeeds, qtyProducers, trash, v, vn, _ref;
+      products = {};
       _ref = this._.contents;
       for (k in _ref) {
         v = _ref[k];
-        needs = (_ref1 = Res[k].keep) != null ? _ref1.needs : void 0;
-        if (needs != null) {
-          for (kn in needs) {
-            vn = needs[kn];
-            qtyContents = this._.contents[kn] != null ? this._.contents[kn] : 0;
-            qtyNeeds = v * vn;
-            if (qtyContents < qtyNeeds) {
-              qtyToTrash = Math.ceil(1 - qtyContents / qtyNeeds) * v;
-              qtyToTrash = Math.round($.r() * qtyToTrash);
-              trash[k] = qtyToTrash;
-              console.log("lost " + trash[k] + " x " + k + " -- not enough " + kn);
-              trash[kn] = trash[kn] != null ? trash[kn] + vn * (v - qtyToTrash) : vn * (v - qtyToTrash);
-              console.log("" + (v - qtyToTrash) + " x " + k + " used " + (vn * (v - qtyToTrash)) + " x " + kn + " for maintenance");
-              break;
-            } else {
-              trash[kn] = trash[kn] != null ? trash[kn] + qtyNeeds : qtyNeeds;
-              console.log("" + v + " x " + k + " used " + qtyNeeds + " x " + kn + " for maintenance");
+        if ((Res[k].make != null) && this._.production[k] === true) {
+          trash = {};
+          needs = Res[k].make.needs;
+          if (needs != null) {
+            qtyProducers = 0;
+            for (kn in needs) {
+              vn = needs[kn];
+              qtyContents = this._.contents[kn] != null ? this._.contents[kn] : 0;
+              qtyNeeds = v * vn;
+              if (qtyContents < qtyNeeds) {
+                console.log("not enough " + kn + " for " + k + " to fully produce " + k);
+                break;
+              } else {
+                qtyProducers++;
+              }
             }
+          }
+        }
+      }
+    };
+
+    CampaignStorage.prototype.tryDecay = function() {
+      var k, kn, needs, qtyContents, qtyMaintenance, qtyNeeds, qtyToTrashChance, qtyToTrashTotal, trash, v, vn, _ref;
+      _ref = this._.contents;
+      for (k in _ref) {
+        v = _ref[k];
+        if ((Res[k].keep != null)) {
+          trash = {};
+          needs = Res[k].keep.needs;
+          if (needs != null) {
+            for (kn in needs) {
+              vn = needs[kn];
+              qtyContents = this._.contents[kn] != null ? this._.contents[kn] : 0;
+              qtyNeeds = v * vn;
+              if (qtyContents < qtyNeeds) {
+                qtyToTrashTotal = Math.floor(v * (1 - qtyContents / qtyNeeds));
+                qtyToTrashChance = Math.round($.r() * qtyToTrashTotal);
+                trash[k] = qtyToTrashChance;
+                console.log("lost " + qtyToTrashChance + " x " + k + " -- not enough " + kn);
+                break;
+              } else {
+                qtyMaintenance = qtyNeeds;
+              }
+              trash[kn] = trash[kn] != null ? trash[kn] + qtyMaintenance : qtyMaintenance;
+              if (qtyContents >= qtyMaintenance) {
+                console.log("" + qtyToTrashChance + " x " + k + " used " + qtyMaintenance + " x " + kn + " for maintenance");
+              }
+            }
+            this.remove(trash);
           }
         }
       }

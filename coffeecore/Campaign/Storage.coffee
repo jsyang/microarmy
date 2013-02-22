@@ -17,12 +17,18 @@ define [
         lastPoll    : 0     # Turns since we last calculated what's decayed
         decayRate   : 10    # Max things to throw away (decay) per turn
         contents    : {}
+        production  : {}    # ON/OFF for producing various things. should list out the requirements per turn
       }, _
     
     add : (stuff) ->
       (
         if @_.contents[k]? and v>0
           @_.contents[k] += v
+          
+          # Adding a resource that can synthesize others?
+          if Res[k].make?
+            $.extend @_.production, Res[k].make
+            
         else
           @_.contents[k] = v
       ) for k,v of stuff
@@ -64,32 +70,60 @@ define [
     isEmpty : ->
       ( k for k,v of @_.contents ).length == 0
     
-    tryDecay : ->
-      trash = {}
+    trySynthesizing : ->
+      products = {}
       (
-        needs = Res[k].keep?.needs
+        trash = {}
+        needs = Res[k].make.needs
+        if needs?
+          qtyProducers = 0  # qty able to produce the product.
+          
+          # 1. Find out our production limit
+          (
+            qtyContents = if @_.contents[kn]? then @_.contents[kn] else 0
+            qtyNeeds    = v * vn
+            
+            if qtyContents < qtyNeeds
+              console.log("not enough #{kn} for #{k} to fully produce #{k}")
+              break
+            else
+              qtyProducers++
+            
+          ) for kn,vn of needs
+          
+      ) for k,v of @_.contents when (Res[k].make? and @_.production[k] is true)
+      return
+    
+    # needs some rework
+    tryDecay : ->
+      (
+        trash = {}
+        needs = Res[k].keep.needs
         if needs?
           (
             qtyContents = if @_.contents[kn]? then @_.contents[kn] else 0
             qtyNeeds    = v * vn
             
             if qtyContents < qtyNeeds
-              qtyToTrash = Math.ceil(1 - qtyContents/qtyNeeds) * v
-              qtyToTrash = Math.round($.r() * qtyToTrash)
-              trash[k] = qtyToTrash
-              console.log("lost #{trash[k]} x #{k} -- not enough #{kn}")
+              qtyToTrashTotal   = Math.floor(v*(1 - qtyContents/qtyNeeds))
+              qtyToTrashChance  = Math.round($.r() * qtyToTrashTotal)
+              trash[k] = qtyToTrashChance
+              console.log("lost #{qtyToTrashChance} x #{k} -- not enough #{kn}")
               
-              # todo: fix this.
-              trash[kn] = if trash[kn]? then trash[kn] + vn*(v-qtyToTrash) else vn*(v-qtyToTrash)
-              console.log("#{v-qtyToTrash} x #{k} used #{vn*(v-qtyToTrash)} x #{kn} for maintenance")
               break
             
             else
-              trash[kn] = if trash[kn]? then trash[kn] + qtyNeeds else qtyNeeds
-              console.log("#{v} x #{k} used #{qtyNeeds} x #{kn} for maintenance")
+              qtyMaintenance = qtyNeeds
+            
+            trash[kn] = if trash[kn]? then trash[kn] + qtyMaintenance else qtyMaintenance
+            if qtyContents >= qtyMaintenance
+              console.log("#{qtyToTrashChance} x #{k} used #{qtyMaintenance} x #{kn} for maintenance")
             
           ) for kn,vn of needs
           
-      ) for k,v of @_.contents
+          # Resources can't be used twice
+          @remove trash
+          
+      ) for k,v of @_.contents when (Res[k].keep?)
       
       return
