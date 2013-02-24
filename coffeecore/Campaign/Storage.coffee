@@ -2,21 +2,13 @@
 define [
   'core/util/$'
   'core/Resources/campaign'
-], ($, Res) ->
-  # todo: decay items in tiles.
-  # this is for skipping the decay check for all tiles in a turn
-  # just count up the turns since last check
-  # check only if there are things to decay + things that are alive or if
-  # the user tried to poll the storage's contents
-  
-  # Location storage should not have limits?
-  
+], ($, Res) ->  
   class CampaignStorage
     constructor : (_) ->
       @_ = $.extend {
-        lastPoll    : 0     # Turns since we last calculated what's decayed
-        decayRate   : 10    # Max things to throw away (decay) per turn
-        contents    : {}
+        contents    : {}    # Inventory that we can see
+        buried      : {}    # Hidden cache that we can harvest from to add to our inventory
+        owner       : {}    # TRUE/FALSE for who can manipulate
         production  : {}    # ON/OFF for producing various things. should list out the requirements per turn
       }, _
     
@@ -95,7 +87,7 @@ define [
       return
     
     # needs some rework
-    tryDecay : ->
+    tryMaintain : ->
       (
         trash = {}
         needs = Res[k].keep.needs

@@ -1,39 +1,75 @@
 # Resources only for Campaign
 define
   
-  'nutrient'    : tech : 0
-  'metal'       : tech : 0
-  'combustible' : tech : 0
-  'concrete'    : tech : 0
-  'rubble'      : tech : 0
-  'fuel'        : tech : 0
+  # Food related # # # # # # # #   
+  'food':
+    techLevel: 0
+    synth:
+      rate: 10
+  
+  agriculture: # "farmer"
+    techLevel: 0
+    make:
+      food: 1   # production rate bonus. 2 x production rate with same requirements
     
-  alloy:
-    tech: 1
+  'advanced agriculture':
+    techLevel: 1
+    make:
+      food: 4
+  
+  # Metal related # # # # # # # #
+  'metal':
+    techLevel: 0
+  
+  'alloy':
+    techLevel: 1
     synth:
-      rate: 0.8
+      rate: 1
       needs:
-        metal: 2
+        metal: 1
 
-  food:
-    tech: 0
+  'advanced alloy':
+    techLevel: 5
     synth:
-      rate: 1.3
+      rate: 2
       needs:
-        nutrient: 2
-      bonus:
-        fuel: 0.7
+        alloy: 3
+        nutrient: 1
+        fuel: 1
+        
+  "space alloy":
+    techLevel: 9
+    synth:
+      rate: 1
+      needs:
+        'advanced alloy': 4
+        nutrient: 4
+        fuel: 4
+
+  # Combustible related # # # # # # # #
+  'combustible':
+    techLevel : 0
+    
+    
+  'concrete'    : techLevel : 0
+  'rubble'      : techLevel : 0
+  'fuel'        : techLevel : 0
+    
+  
+  
 
   explosive:
-    tech: 1
+    techLevel: 1
     synth:
       rate: 0.09
       needs:
         nutrient: 3
         combustible: 2
 
+  
+        
   "town square":
-    tech: 1
+    techLevel: 1
     synth:
       rate: 0.003
       needs:
@@ -45,7 +81,7 @@ define
         fuel: 10
 
   "high explosive":
-    tech: 3
+    techLevel: 3
     synth:
       rate: 0.04
       needs:
@@ -54,7 +90,7 @@ define
         explosive: 3
 
   "small arm":
-    tech: 2
+    techLevel: 2
     synth:
       rate: 1
       needs:
@@ -63,7 +99,7 @@ define
         explosive: 1
 
   "small rocket launcher":
-    tech: 5
+    techLevel: 5
     synth:
       rate: 1
       needs:
@@ -74,7 +110,7 @@ define
         combustible: 1
 
   "engineering kit":
-    tech: 3
+    techLevel: 3
     synth:
       rate: 1
       needs:
@@ -84,7 +120,7 @@ define
         metal: 3
 
   citizen:
-    tech: 2
+    techLevel: 2
     synth:
       rate: 2
       needs:
@@ -97,18 +133,3 @@ define
       food: true
       citizen: true
 
-  "advanced alloy":
-    tech: 7
-    synth:
-      rate: 0.4
-      needs:
-        alloy: 10
-        nutrient: 2
-
-  "reactive vehicle armor":
-    tech: 9
-    synth:
-      rate: 1
-      needs:
-        "advanced alloy": 2
-        explosives: 1

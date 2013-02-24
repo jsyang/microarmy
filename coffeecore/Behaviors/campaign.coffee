@@ -13,12 +13,12 @@ define {
       console.log(@x, @y)
       true
   
-    tryDecayResources : ->
-      @.store.tryDecay()
+    tryMaintainResources : ->
+      @.store.tryMaintain()
       true
   
   Trees :
     
-    Tile : '<[!isStoreEmpty], [printXY], [tryDecayResources]>'
+    Tile : '<[!isStoreEmpty], [printXY], [tryMaintainResources]>'
   
 }
