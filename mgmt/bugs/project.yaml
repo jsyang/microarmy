@@ -7,13 +7,17 @@ components:
 releases: 
 - !ditz.rubyforge.org,2008-03-06/release 
   name: moving issues
-  status: :unreleased
-  release_time: 
+  status: :released
+  release_time: 2013-02-26 10:16:05.812059 Z
   log_events: 
   - - 2013-02-04 09:05:01.979946 Z
     - JSYang <jsyang.ca@gmail.com>
     - created
     - moving issues into ditz from all sources.
+  - - 2013-02-26 10:16:05.812071 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - released
+    - done a few commits ago.
 - !ditz.rubyforge.org,2008-03-06/release 
   name: prealpha
   status: :unreleased
@@ -48,3 +52,12 @@ releases:
     - JSYang <jsyang.ca@gmail.com>
     - released
     - done!
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: campaign view UI 1
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-26 10:18:25.951369 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - create the basic interactions for the campaign view so user has something to look at and interact with while in campaign view

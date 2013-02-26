@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: add storage moving UI for connected locations that you control
+desc: |-
+  self explanatory - moving items within friendly cities is free up to a max of 4 tiles
+  normal movement penalty after that
+type: :feature
+component: ma
+release: campaign view UI 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-26 10:21:21.019778 Z
+references: []
+
+id: 8af15be02b5d157584b912fe7981c429b8a7e375
+log_events: 
+- - 2013-02-26 10:21:22.163655 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
