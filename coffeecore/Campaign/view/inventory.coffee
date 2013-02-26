@@ -4,7 +4,7 @@ define ->
     
     el           = document.createElement 'div'
     el.innerHTML = 'Select a tile to show its contents'
-    el.className = 'map_inventory'
+    el.className = 'map_inventory noselect'
     
     el.show = (tile) ->
       desc = if tile.height < world.seaLevel then 'Water' else 'Land'

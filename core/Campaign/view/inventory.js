@@ -4,7 +4,7 @@ define(function() {
     var el;
     el = document.createElement('div');
     el.innerHTML = 'Select a tile to show its contents';
-    el.className = 'map_inventory';
+    el.className = 'map_inventory noselect';
     el.show = function(tile) {
       var contentsTable, desc, loc, loc_, qty, resource, road;
       desc = tile.height < world.seaLevel ? 'Water' : 'Land';
