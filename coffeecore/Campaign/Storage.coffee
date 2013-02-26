@@ -18,8 +18,8 @@ define [
           @_.contents[k] += v
           
           # Adding a resource that can synthesize others?
-          if Res[k].make?
-            $.extend @_.production, Res[k].make
+          #if Res[k].make?
+          #  $.extend @_.production, Res[k].make
             
         else
           @_.contents[k] = v
@@ -62,6 +62,7 @@ define [
     isEmpty : ->
       ( k for k,v of @_.contents ).length == 0
     
+    # todo: fix this, for better resource property names
     trySynthesizing : ->
       products = {}
       (

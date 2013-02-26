@@ -9,6 +9,7 @@ define ->
     el.show = (tile) ->
       desc = if tile.height < world.seaLevel then 'Water' else 'Land'
       loc  = if tile.location? then "<div class='tile #{tile.location.type}'></div>" else ''
+      loc_ = if tile.location? then "&mdash; #{tile.location.type}" else ''
       road = if tile.road then "<div class='tile r2'></div>" else ''
       
       contentsTable = ((
@@ -18,7 +19,7 @@ define ->
       contentsTable = contentsTable.join('')
       
       el.innerHTML = [
-        "<h4>#{desc} at (#{ [tile.x, tile.y] })</h4>" 
+        "<h4>#{desc} at (#{ [tile.x, tile.y] }) #{loc_}</h4>" 
         "<div>#{road}#{loc}</div><br/>" 
         "<div><table>#{contentsTable}</table></div>"
       ].join('')

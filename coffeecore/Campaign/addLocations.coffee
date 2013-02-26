@@ -39,6 +39,7 @@ define [
         (
           [x,y] = [(x+tx)>>0, (y+ty)>>0]
           tile = getTile x, y
+          # todo: add distinctions in terms of contained resources for cities / farms / mines / oil wells
           loc =
             type : $WR {
                 'city'  : 4

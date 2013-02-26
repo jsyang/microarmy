@@ -69,5 +69,7 @@ define ->
     el.innerHTML = html
     el.className = 'map'
     
+    el.style.width = document.width - 180;
+    
     el
     

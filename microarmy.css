@@ -14,6 +14,27 @@ body
     color       : #fff;
 }
 
+
+.farm
+{
+  background: url('scraps/land.bmp') -216px 0px;
+}
+
+.mine
+{
+  background: url('scraps/land.bmp') -144px 264px;
+}
+
+.factory
+{
+  background: url('scraps/land.bmp') 0px 264px;
+}
+
+.oilwell
+{
+  background: url('scraps/land.bmp') -72px 192px;
+}
+
 .city
 {
   background: url('scraps/portals.bmp') -120px 0px;
@@ -26,12 +47,14 @@ body
 
 div.map
 {
-  display               : inline-block;
   overflow              : scroll;
   white-space           : nowrap;
-  width                 : 600px;
-  height                : 400px;
-  float                 : left;
+  /* width                 : 100%; */
+  height                : 100%;
+  margin-right          : 240px;
+  position              : absolute;
+  left                  : 0px;
+  top                   : 0px;
 }
 
 div.map span
@@ -74,11 +97,15 @@ div.map span:hover
 
 .map_inventory
 {
-  display     : inline-block;
-  font-size   : 12px;
-  margin-left : 16px;
-  width       : 200px;
-  float       : left;
+  display       : inline-block;
+  font-size     : 12px;
+  padding-left  : 16px;
+  width         : 164px;
+  height        : 100%; 
+  position      : fixed;
+  right         : 0px;
+  top           : 0px;
+  background    : #1a2121;
 }
 
 .map_inventory .tile

@@ -7,6 +7,7 @@ define [
   'core/campaign/addTerrain'
   'core/campaign/addLocations'
   'core/campaign/addTransport'
+  'core/campaign/addExpansionLocations'
   'core/campaign/addStorage'
   'core/campaign/addResources'
   
@@ -15,12 +16,13 @@ define [
   
   'core/campaign/addUI'
   
-], ($, Behaviors, CampaignBehaviors, Terrain, Locations, Transport, Storage, Resources, Map, Inventory, addUI) ->
+], ($, Behaviors, CampaignBehaviors, Terrain, Locations, Transport, ExpandLocations, Storage, Resources, Map, Inventory, addUI) ->
   
   worldBuilders = [
     Terrain
     Locations
     Transport
+    ExpandLocations
     Storage
     Resources
   ]
