@@ -49,7 +49,10 @@ define [
     # GENERATE THE DOM ELEMENTS
     render : ->
       @views = {}
-      (( @views[k] = v(@_.world) ) for k,v of views)
+      (
+        @views[k] = v(@_.world)
+        document.body.appendChild @views[k]
+      ) for k,v of views
       @
     
     # UPDATE THE GAMEWORLD FOR 1 CAMPAIGN CYCLE (TURN)

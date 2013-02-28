@@ -30,9 +30,7 @@ define ->
     
     html = ''
     
-    (
-      html += '<div>'
-      
+    ( 
       (
         html += '<span id="mapx' + x + 'y' + y + '" '
         
@@ -61,15 +59,16 @@ define ->
         
       ) for x in [0..world.w-1]
       
-      html += '</div>'
+      html += '<br/>'
       
     ) for y in [0..world.h-1]
     
     el           = document.createElement 'div'
-    el.innerHTML = html
+    el.innerHTML = '<div class="mapTiles">'+html+'</div>'
     el.className = 'map'
     
-    el.style.width = document.width - 180;
+    el.style.maxWidth  = window.innerWidth - 180; # side bar size.
+    el.style.maxHeight = window.innerHeight;
     
     el
     

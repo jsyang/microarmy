@@ -1,4 +1,6 @@
-define ->
+define [
+  'core/util/autoscroll'
+], (Autoscroll) ->
   ->
     views   = @views
     _       = @_
@@ -16,12 +18,8 @@ define ->
         views.Inventory?.show _.world.map[y][x]
         return
       
-      # todo: scrolling based on mouse location or mini-map
-      # views.Map?.onmousemove = (e) ->
-      #  [sx, sy] = [views.Map.scrollLeft, views.Map.scrollTop]
-      #  
-      #  return
-      
+      Autoscroll views.Map
+
     else
       throw new Error 'views must be set up prior to adding UI'
     

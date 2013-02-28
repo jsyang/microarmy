@@ -7,8 +7,8 @@ type: :feature
 component: ma
 release: campaign view UI 1
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-02-26 10:27:33.653444 Z
 references: []
 
@@ -17,4 +17,8 @@ log_events:
 - - 2013-02-26 10:27:34.933539 Z
   - JSYang <jsyang.ca@gmail.com>
   - created
+  - ""
+- - 2013-02-28 07:50:09.003317 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
   - ""
