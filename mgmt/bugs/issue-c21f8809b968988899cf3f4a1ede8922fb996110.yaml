@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make new map tiles for terrain
+desc: an example for this is in scraps/maptiles_terrain.jpg
+type: :task
+component: ma
+release: campaign view UI 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-03-01 01:09:18.698845 Z
+references: []
+
+id: c21f8809b968988899cf3f4a1ede8922fb996110
+log_events: 
+- - 2013-03-01 01:09:22.578881 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

@@ -61,3 +61,14 @@ releases:
     - JSYang <jsyang.ca@gmail.com>
     - created
     - create the basic interactions for the campaign view so user has something to look at and interact with while in campaign view
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: battle view 1
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-03-01 02:08:07.397190 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - |-
+      make things work like they did before the switch to coffee and requireJS
+      use parameters from campaign view to generate the new maps

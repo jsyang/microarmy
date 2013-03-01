@@ -1,17 +1,15 @@
 define [
   'preloader/preloader'
   'core/campaign'
-], (preloader, Campaign) ->
+  'core/battlec'
+], (preloader, Campaign, Battle) ->
   
   window.preloader = preloader
   
-  c = new Campaign()
-    .render()
-    .addUI()
+  #c = new Campaign()
+  #  .render()
+  #  .addUI()
   
-  
-  
-  # todo: remove testing code.
-  # window.foo = c;
+  b = new Battle()
   
   return
