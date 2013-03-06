@@ -107,3 +107,5 @@ alias cw='cwc --output core/ coffeecore/'
 ------------------------------------------------------------------------------------------------------------------------
 
 http://www.nma-fallout.com/forum/viewtopic.php?t=25942&sid=80b0a6b8c10b52bd16c3bc22a4e4d610
+http://gamedev.stackexchange.com/questions/26111/how-to-discourage-micromanagement-in-strategy-games
+http://fallout.wikia.com/wiki/Fallout_combat

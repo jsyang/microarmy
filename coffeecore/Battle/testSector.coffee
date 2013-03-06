@@ -9,10 +9,12 @@ define [
   
   # a sequence of sectors composes the battle terrain
   
-  makeSector = ->
+  makeSector = (i) ->
     sector =
+      x         : i
+      y         : 5
       height    : $.R(1,15)
       locations : {}
       road      : $.R(0,1) == 1
       
-  sectors = (makeSector for i in [0..4])
+  sectors = (makeSector(i) for i in [0..4])

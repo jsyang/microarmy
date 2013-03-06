@@ -1,4 +1,6 @@
-define ->
+define [
+  'core/Battle/view/background'
+], (addBackground) ->
   clear = ->
     @clearRect(0, 0, @width, @height)
   
@@ -23,13 +25,17 @@ define ->
   
     el                      = document.createElement 'div'
     canvas                  = document.createElement 'canvas'
+    backgroundCanvas        = addBackground(world)
     
+    el.appendChild backgroundCanvas
     el.appendChild canvas
+    
     
     canvas.className        = 'noselect'
     canvas.width            = world.w
     canvas.height           = world.h
     
+    el.className            = 'battlemap'
     el.style.maxWidth       = window.innerWidth
     el.style.maxHeight      = window.innerHeight
     

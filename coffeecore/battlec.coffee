@@ -5,7 +5,9 @@ define [
   'core/Battle/addTerrain'
   
   'core/Battle/view/map'
-], ($, Behaviors, Terrain, Map) ->
+  
+  'core/Battle/addUI'
+], ($, Behaviors, Terrain, Map, addUI) ->
 
   worldBuilders = [
     Terrain
@@ -35,11 +37,10 @@ define [
         document.body.appendChild @views[k]
       ) for k,v of views
       @
-
+      
     cycle : ->
       # clear / setInterval here.
       return
     
-    addUI : ->
-      @
+    addUI : addUI
     
