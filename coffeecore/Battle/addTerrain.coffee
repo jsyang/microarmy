@@ -3,6 +3,9 @@ define [
   'core/battle/testSector'
 ], ($, testSector) ->
   
+  makePeaksForSector = (sector) ->
+    
+  
   # add terrain heightmap to battle world
   (_) ->
     _ = $.extend {
@@ -17,6 +20,7 @@ define [
     else
       peaks = []    
       (
+        
         # add sector's peaks to peaks
       ) for sector in _.sectors
     
