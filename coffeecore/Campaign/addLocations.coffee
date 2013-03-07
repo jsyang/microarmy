@@ -1,8 +1,5 @@
 # add locations.
-define [
-  'core/util/$'
-  'core/util/weightedRandom'
-], ($, $WR) ->
+define ->
   (_) ->
     _ = $.extend {
       numLocations : 10
@@ -26,7 +23,7 @@ define [
       # try to find a good origin
       findOrigin = (origin0) ->
         (
-          origin1 = $.pickRandom _.peaks
+          origin1 = $.AR(_.peaks)
           if dist2(origin0,origin1) < distThreshold
             return origin1
         ) for i in [0..3]
@@ -41,7 +38,7 @@ define [
           tile = getTile x, y
           # todo: add distinctions in terms of contained resources for cities / farms / mines / oil wells
           loc =
-            type : $WR {
+            type : $.WR {
                 'city'  : 4
                 'base'  : 1
               }

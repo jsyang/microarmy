@@ -1,7 +1,6 @@
 define [
-  'core/util/$'
   'core/battle/testSector'
-], ($, testSectors) ->
+], (testSectors) ->
   
   params =
     sectorW           : 1024

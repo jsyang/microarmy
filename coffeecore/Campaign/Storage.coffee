@@ -1,8 +1,7 @@
 # Storage 'trait' class
 define [
-  'core/util/$'
   'core/Resources/campaign'
-], ($, Res) ->  
+], (Res) ->  
   class CampaignStorage
     constructor : (_) ->
       @_ = $.extend {

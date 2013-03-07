@@ -1,26 +1,18 @@
 define [
-  'preloader/preloader'
+  
+  'core/util/$'             # Consumed globally.
+  'preloader/preloader'     # Consumed globally.
+  
   'core/campaign'
   'core/battlec'
-], (preloader, Campaign, Battle) ->
   
-  
-  
-  #c = new Campaign()
-  #  .render()
-  #  .addUI()
-  
+], ($, HTML5Preloader, Campaign, Battle) ->
+
   startGame = ->
-    b = new Battle()
+    b = new Battle() #Campaign()
       .render()
       .addUI()
-    
-    # Testing stuff
-    #b.views.Map.ctx.draw gfxObj
-    #b.views.Map.ctx.clear()
-    
-    return
   
-  window.preloader1 = preloader(startGame)
+  window.preloader = HTML5Preloader(startGame)
   
   return

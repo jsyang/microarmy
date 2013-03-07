@@ -1,8 +1,5 @@
 # add locations.
-define [
-  'core/util/$'
-  'core/util/weightedRandom'
-], ($, $WR) ->
+define ->
   (_) ->
     expandedLocs = [];
     
@@ -28,14 +25,14 @@ define [
             # Weighted random assign expansion purposes
             switch origin.type
               when 'city'
-                expansionType = $WR {
+                expansionType = $.WR {
                   'oilwell' : 1
                   'farm'    : 4
                   'factory' : 1
                   'mine'    : 2
                 }
               when 'base'
-                expansionType = $WR {
+                expansionType = $.WR {
                   'oilwell' : 2
                   'farm'    : 1
                   'factory' : 3

@@ -1,9 +1,8 @@
 # Add Resources to the locations in our world
 
 define [
-  'core/util/$'
   'core/Resources/Campaign'
-], ($, Resources) ->
+], (Resources) ->
   (_) ->
     Resources_ = Resources
     

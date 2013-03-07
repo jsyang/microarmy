@@ -1,5 +1,4 @@
-define ['core/util/$'], ($) ->
-  
+define ->
   # add terrain to the world.
   (_) ->
     _ = $.extend {
@@ -31,11 +30,12 @@ define ['core/util/$'], ($) ->
       chanceFill = (x, y, height, distFromCenter) ->
         (
           (
-            (
+          
+            if (Math.abs(dy-y) == distFromCenter or Math.abs(dx-x) == distFromCenter) and (map[dy]? and map[dy][dx]?)  
               minHeight = if height < (_.maxPeakHeight>>1) then height    else height-1
               maxHeight = if height < (_.maxPeakHeight>>1) then height+1  else height+3
               map[dy][dx].height += $.R(minHeight, maxHeight)
-            ) if (Math.abs(dy-y) == distFromCenter or Math.abs(dx-x) == distFromCenter) and (map[dy]? and map[dy][dx]?)  
+
           ) for dx in [x-distFromCenter..x+distFromCenter]
         ) for dy in [y-distFromCenter..y+distFromCenter]
         return

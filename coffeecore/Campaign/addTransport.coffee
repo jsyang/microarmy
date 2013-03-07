@@ -1,9 +1,6 @@
-define ['core/util/$'], ($) ->
-  
+define ->
   # add terrain to the world.
   (_) ->
-    # _ = $.extend {}, _
-    
     # todo: generate different transport types, not just roads
     # gravel / dirt road,
     # rail,
@@ -112,7 +109,7 @@ define ['core/util/$'], ($) ->
         (
           # 66% chance of routing any location to any other
           if $.R(0,2)
-            route loc, $.pickRandom($$.without(locs, loc))
+            route loc, $.AR($$.without(locs, loc))
         ) for loc in locs
       
       _

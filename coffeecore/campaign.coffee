@@ -1,6 +1,4 @@
 define [
-  'core/util/$'
-
   'core/Behaviors'
   'core/Behaviors/campaign'
 
@@ -16,7 +14,7 @@ define [
   
   'core/campaign/addUI'
   
-], ($, Behaviors, CampaignBehaviors, Terrain, Locations, Transport, ExpandLocations, Storage, Resources, Map, Inventory, addUI) ->
+], (Behaviors, CampaignBehaviors, Terrain, Locations, Transport, ExpandLocations, Storage, Resources, Map, Inventory, addUI) ->
   
   worldBuilders = [
     Terrain

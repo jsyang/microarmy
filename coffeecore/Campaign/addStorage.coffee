@@ -1,7 +1,6 @@
 define [
-  'core/util/$'
   'core/Campaign/Storage'
-], ($, Storage) ->
+], (Storage) ->
   (_) ->
     tileParams =
       water :

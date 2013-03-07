@@ -1,5 +1,4 @@
 define [
-  'core/util/$'
   'core/Behaviors'
   
   'core/Battle/addTerrain'
@@ -7,7 +6,7 @@ define [
   'core/Battle/view/map'
   
   'core/Battle/addUI'
-], ($, Behaviors, Terrain, Map, addUI) ->
+], (Behaviors, Terrain, Map, addUI) ->
 
   worldBuilders = [
     Terrain

@@ -1,6 +1,4 @@
-define [
-  'core/util/$'
-], ($) ->
+define ->
 
   # Hex color string to dec value by color.
   hs2d = (hs, color) ->
