@@ -17,9 +17,13 @@ define ->
           alive : null
           dead  : null
       }, _
+
+    # Set sprite sheet based on team
+    setSpriteSheet : (type, team=@_.team) ->
+      @_.img.sheet = preloader.getFile(type+team)
       
-    gfx : ->
     # Interface for rendering pawns.
+    gfx : ->
       {
         img     : @_.img.sheet                # Sprite sheet
         imgdx   : @_.frame.current*@_.img.w   # X-frames denote action frames

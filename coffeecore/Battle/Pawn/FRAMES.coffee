@@ -14,4 +14,6 @@ define {
       PistolInfantry  : [0,1,0,1,0,0,  0,1,0,1,0,0]
       RocketInfantry  : [0,0,0,1,0,0,  0,0,0,1,0,0]
 
+      
+  
 }
