@@ -5,7 +5,6 @@ define [
     views = @views
     
     if views?
-      console.log 'autoscroll'
       Autoscroll views.Map
 
     else

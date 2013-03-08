@@ -13,8 +13,6 @@ define ['core/util/animation'], (Animation) ->
         w   : el.children[0].scrollWidth #.offsetWidth    
         h   : el.children[0].scrollHeight #.offsetHeight
     
-    window.foo = origin.content
-    
     bShift = 3
     margin = 40
     

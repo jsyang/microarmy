@@ -33,3 +33,23 @@ define ->
         imgw    : @_.img.w
         imgh    : @_.img.h
       }
+    
+    
+    # is___ funcs
+    
+    isAlly      : (pawn) -> @_.team == pawn._.team
+    
+    isDead      : -> !(@_.health?.current > 0)
+    
+    isCrewed    : -> @_.crew?.current > 0
+    
+    isAntiAir   : -> @_.canTargetAircraft is true
+    
+    isAircraft  : -> @_.fly?
+    
+    
+    # # # # # # # #
+    
+    setTarget   : (t) -> if t? then @_.target = t else delete @_.target
+      
+    distX       : (pawn) -> Math.abs(@_.x - pawn._.x)
