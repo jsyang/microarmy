@@ -49,18 +49,41 @@ define ->
       (
         dist = t.distX(pawn)
         if dist < minDist
-          if not ( t.isAlly(pawn) or t.isDead() or t.isCrewed() or (t.isAircraft() and !pawn.isAntiAir()) )
+          if not ( t.isAlly(pawn) or t.isDead() or !t.isCrewed() or (t.isAircraft() and !pawn.isAntiAir()) )
             pawn.setTarget(t)
             minDist = dist
       ) for t in potentialTargets
     
     getCrowdedEnemy : (pawn) ->
-      i               = pawn._.x>>@_.BUCKETWIDTH
-      bucketEnemies   = 0
+      i           = pawn._.x>>@_.BUCKETWIDTH
+      maxEnemies  = 0
       pawn.setTarget()
       (
-        # TODO.
-        do stuff
+        bucketEnemies   = 0
+        (
+          if not ( t.isAlly(pawn) or t.isDead() or (t.isAircraft() and !pawn.isAntiAir()) )
+            bucketEnemies++
+            if bucketEnemies>maxEnemies then pawn.setTarget(t)            
+        ) for t in bucket
+        
+        if bucketEnemies > maxEnemies
+          maxEnemies = bucketEnemies
       ) for bucket in @_.buckets[i-pawn._.sight...i+pawn._.sight+1]
       potentialTargets = @getNBucketsByCoord(pawn, pawn._.sight)
     
+    
+    # todo: Get target
+    getNearestFriendlyNeedSupply : (pawn) ->
+      index   = pawn._.x>>@_.BUCKETWIDTH
+      minDist = Infinity
+      
+      pawn.setTarget()
+      potentialTargets = @getNBucketsByCoord(pawn, pawn._.sight)
+      (
+        dist = t.distX(pawn)
+        if dist < minDist
+          if !t.isAlly(pawn) or t.isDead() or !t.isOutOfAmmo() or t.isAircraft()
+          else
+            pawn.setTarget(t)
+            minDist = dist
+      ) for t in potentialTargets
