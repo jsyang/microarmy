@@ -5,8 +5,8 @@ type: :task
 component: ma
 release: battle view 1
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-03-01 02:08:59.123987 Z
 references: []
 
@@ -20,3 +20,11 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - commented
   - ported addTerrain and BG today
+- - 2013-03-10 03:37:05.544112 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - |-
+    battle is now handled much like campaign is
+    with additive generators for the models within a battle
+    views are also additive and same with UI
+    needs unit tests and documentation...

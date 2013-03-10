@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: add battle units into coffeecore
+desc: convert the old code from JS to coffee for these units
+type: :task
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-03-10 03:38:14.408816 Z
+references: []
+
+id: ef8614c22a8bd5e104e7a9dcf5feb34f9e08379e
+log_events: 
+- - 2013-03-10 03:38:15.586058 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

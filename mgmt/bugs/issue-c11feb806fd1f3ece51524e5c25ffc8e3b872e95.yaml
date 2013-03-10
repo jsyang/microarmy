@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: fix behaviors for pawns
+desc: |-
+  find a good way to add behaviors so they can work with the units which depend on them
+  maybe use the constructor names / inheritance tree to do this
+type: :task
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-03-10 03:52:17.017357 Z
+references: []
+
+id: c11feb806fd1f3ece51524e5c25ffc8e3b872e95
+log_events: 
+- - 2013-03-10 03:52:17.921412 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: dragging viewport around
+desc: |-
+  could be useful for mobile devices, there may be an option to use that instead of 
+  autoscrolling (since there is no mouse on mobile)
+type: :feature
+component: ma
+release: alpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-03-10 03:35:24.076203 Z
+references: []
+
+id: 49892c10984e800d1f4d4719adafbcb186c96777
+log_events: 
+- - 2013-03-10 03:35:25.469179 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
