@@ -30,7 +30,6 @@ define ->
         throw new Error 'no width specified!'
     
     flush : ->
-      # Empties current buckets and resets cycles
       @_.cycles   = 0
       @_.buckets  = ( {} for i in [0..(@_.w>>@_.BUCKETWIDTH)] )
       @

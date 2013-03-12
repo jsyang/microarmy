@@ -94,17 +94,6 @@ that is hard.
     - alternatives http://roguebasin.roguelikedevelopment.org/index.php?title=Alternatives_to_Permadeath
 
 ------------------------------------------------------------------------------------------------------------------------
-.bash_profile additions
-
-alias d='/usr/bin/ditz'
-alias coffee='/usr/local/share/npm/bin/coffee'
-alias cwc='coffee -b -w -c'
-alias cwp='coffee -b -w -p'
-
-this one parallel compiles into core/ from coffeecore/
-alias cw='cwc --output core/ coffeecore/'
-
-------------------------------------------------------------------------------------------------------------------------
 
 http://www.nma-fallout.com/forum/viewtopic.php?t=25942&sid=80b0a6b8c10b52bd16c3bc22a4e4d610
 http://gamedev.stackexchange.com/questions/26111/how-to-discourage-micromanagement-in-strategy-games
