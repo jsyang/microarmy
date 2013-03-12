@@ -1,7 +1,7 @@
-# Simple Hash
-# Tallies events which happen within a period
-# ex: Bucket 4 has 45 deaths within last 30 game cycles.
-
+###
+  SimpleHash tallies events which happen within a period for various Battle Pawns.
+  ex: Bucket 4 has 45 deaths for team 0 within last 30 game cycles.
+###
 define ->
   class SimpleHash
     constructor : (_) ->
@@ -32,6 +32,7 @@ define ->
         throw new Error 'no width specified!'
     
     flush : ->
+      ### Replaces buckets with empty objects ###
       @_.cycles   = 0
       @_.buckets  = ( {} for i in [0..(@_.w>>@_.BUCKETWIDTH)] )
       @
@@ -51,7 +52,6 @@ define ->
           bucket[team] = weight
       
       return
-        
     
     getModeBucket : (team) ->
       maxEvent     = 0

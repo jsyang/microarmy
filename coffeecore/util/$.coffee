@@ -1,8 +1,8 @@
 define ->
   # See if we're running tests or the game
-  if GLOBAL
+  if GLOBAL?
     globalscope = GLOBAL
-  else if window
+  else if window?
     globalscope = window
   else
     throw new Error 'could not find a global scope to attach $'

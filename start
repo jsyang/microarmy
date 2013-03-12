@@ -1,3 +1,13 @@
 #!/bin/bash
 clear
-python -m SimpleHTTPServer | open index.html
+
+./build-preloader-file-list
+coffee -b -o core/ coffeecore/
+
+echo ----------------------------------------------------------------
+cat README.md
+echo ----------------------------------------------------------------
+
+# python -m SimpleHTTPServer
+# Using node's http-server instead. Much faster.
+http-server ./ -p 8000

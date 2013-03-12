@@ -21,14 +21,12 @@ Run "ditz html" to build a web snapshot of the issues.
 5. [Take a peek at the microarmy issues](/mgmt/html/)
     http://localhost:8000/mgmt/html/
     
-## Documentation
-TODO: autodoc all the code
-coffeedoc 
+## Generate documentation
+    coffeedoc --parser requirejs coffeecore/
 
 ## Tests
 Run the jasmine-node unit tests with
     ./test
-
 
 ## Useful .bash_profile additions
 Single letter ditz
@@ -45,4 +43,16 @@ Coffee Watch Print (preview compiled JS code from CS source)
 
 Coffee Watch Compile entire CS source into JS
     alias cw='cwc --output core/ coffeecore/'
-    
+
+Autodoc with coffeedoc
+    alias ad='coffeedoc --parser requirejs coffeecore/'
+
+## Tools used
+- jasmine-node
+- http-server
+- coffeedoc
+  Need to edit the template as to include the base.css otherwise anything within docs/ is overwriten!
+  See lib/index.eco for the docs main template.
+  
+- ditz
+- coffee
