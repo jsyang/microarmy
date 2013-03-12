@@ -1,9 +1,17 @@
 define ->
+  # See if we're running tests or the game
+  if GLOBAL
+    globalscope = GLOBAL
+  else if window
+    globalscope = window
+  else
+    throw new Error 'could not find a global scope to attach $'
+  
   # Don't redef $ if something's there already.
-  if window['$']? then return new Error 'window.$ already exists!'
+  if globalscope['$']? then return new Error '$ already exists globally!'
 
   # Globally defined $ utility namespace.
-  window['$'] =
+  globalscope['$'] =
     
     r : (n=1) -> n*Math.random()
     

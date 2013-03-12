@@ -9,7 +9,7 @@ define ->
         @_ = $.extend {
           BUCKETWIDTH   : 6   # depending on the use of the SimpleHash, this value should coincide with XHash
           PERIOD        : 100
-          cycle         : 0
+          cycles        : 0
           
           
           weights :
@@ -27,7 +27,9 @@ define ->
           #   }
           # }
           
-        }
+        }, _
+      else
+        throw new Error 'no width specified!'
     
     flush : ->
       @_.cycles   = 0
@@ -36,21 +38,31 @@ define ->
       
     add : (pawn) ->
       bucket = @_.buckets[pawn._.x>>@_.BUCKETWIDTH]
-      team   = pawn._.team
-      type   = pawn.constructor.name
       
-      if bucket[team]?
-        bucket[team] += @_.weights[type]
-      else
-        bucket[team] = @_.weights[type]
-      @
+      if bucket?
+        team   = pawn._.team
+        type   = pawn.constructor.name
+        weight = @_.weights[type]
+        weight = if weight? then weight else 1
+          
+        if bucket[team]?
+          bucket[team] += weight
+        else
+          bucket[team] = weight
+      
+      return
+        
     
     getModeBucket : (team) ->
       maxEvent     = 0
       maxEventIndex = -1
       (
-        b = @_.buc
-        
-        if b[team]? and b[team] > maxEvent
-          maxEventIndex =
-      ) for i in @_.buckets
+        teamCount = @_.buckets[i][''+team]
+
+        if teamCount > maxEvent
+          maxEventIndex = i
+          maxEvent      = teamCount
+      ) for i in [0...@_.buckets.length]
+    
+      maxEventIndex
+    

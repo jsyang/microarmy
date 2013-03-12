@@ -23,14 +23,14 @@ Run "ditz html" to build a web snapshot of the issues.
     
 ## Documentation
 TODO: autodoc all the code
-coffeedoc
+coffeedoc 
 
 ## Tests
-TODO: unit test all the code
+Run the jasmine-node unit tests with
+    ./test
 
 
 ## Useful .bash_profile additions
-
 Single letter ditz
     alias d='/usr/bin/ditz'
     
@@ -45,3 +45,4 @@ Coffee Watch Print (preview compiled JS code from CS source)
 
 Coffee Watch Compile entire CS source into JS
     alias cw='cwc --output core/ coffeecore/'
+    
