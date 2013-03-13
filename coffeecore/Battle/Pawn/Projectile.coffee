@@ -162,11 +162,11 @@ define [
     
     gfx : ->
       # Set the correct angle automatically per frame.
-      @getAngle()
+      frame = @getAngle()
       
       {
         img     : @_.img.sheet
-        imgdx   : @_.img.w*@_.img.frame
+        imgdx   : @_.img.w*frame
         imgdy   : 0
         worldx  : @_.x-(@_.img.w>>1)
         worldy  : @_.y-(@_.img.h>>1)
@@ -185,12 +185,13 @@ define [
       else if @_.dx>0 and @_.dy>0    then  f = [12, 11, 10, 9,  8]
       else                                 f = [12, 13, 14, 15, 0]
       
-      @_.img.frame = f[0]
-      if      0.1989 <= dydx < 0.6681 then @_.img.frame = f[1]
-      if      0.6681 <= dydx < 1.4966 then @_.img.frame = f[2]
-      if      1.4966 <= dydx < 5.0273 then @_.img.frame = f[3]
-      if      5.0273 <= dydx          then @_.img.frame = f[4]
-      return
+      frame = f[0]
+      if  0.1989 <= dydx < 0.6681 then  frame = f[1]
+      if  0.6681 <= dydx < 1.4966 then  frame = f[2]
+      if  1.4966 <= dydx < 5.0273 then  frame = f[3]
+      if  5.0273 <= dydx          then  frame = f[4]
+      
+      frame
     
     
   # TODO: move the rest of the stuff over from projectile.js

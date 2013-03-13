@@ -57,3 +57,8 @@ define ->
     setTarget   : (t) -> if t? then @_.target = t else delete @_.target
       
     distX       : (pawn) -> Math.abs(@_.x - pawn._.x)
+    distHit     : (pawn) ->
+      [dx, dy] = [pawn._.x-(pawn._.img.w>>1), pawn._.y-(pawn._.img.h>>1)]
+      [dx, dy] = [Math.abs(@_.x - dx), Math.abs(@_.y - dy)]
+      
+      dx*dx + dy*dy

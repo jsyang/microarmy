@@ -1,4 +1,5 @@
-# Behaviors for a Battle
+# todo: load in these tree strings from a text file so they're more easily editable?
+# todo: figure out how to handle battle world stuff
 define {
   
   Decorators :
@@ -6,10 +7,32 @@ define {
     TRUE  : true
     FALSE : false
     
-    setAboveGround : ->
+    
+    
+    hasHitGround : ->
       if world.isOutside @
         @_.x -= @_.dx>>1 if @_.dx?
         @_.y = world.getHeight @_.x
+        true
+      else
+        false
+    
+    hasHitEnemy : ->
+      potentialHits = world.fetchEveryTarget(@, 0)
+      (
+        if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 # 81
+          return true
+      ) for t in potentialHits
+      false
+    
+    hasSmokeTrail : ->
+      @_.rangeTravelled < @_.smokeTrailLength
+    
+    spawnSmokeTrail : ->
+      world.add(new (@_.smokeTrailType)({
+        x: @_.x-@_.dx
+        y: @_.y-@_.dy
+      }))
       true
     
     spawnLargeDetonation : (battle) ->
