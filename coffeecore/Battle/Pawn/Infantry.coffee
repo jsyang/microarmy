@@ -1,7 +1,6 @@
 define [
   'core/Battle/Pawn'
-  'core/Battle/Pawn/FRAMES'
-], (Pawn, FRAMES) ->
+], (Pawn) ->
 
   class Infantry extends Pawn
     constructor : (_) ->
@@ -9,12 +8,14 @@ define [
         target      : null
         squad       : null
         direction   : null                              # don't set the direction here
-        action      : FRAMES.Infantry.ACTION.MOVEMENT
+        action      : 'moving'
         corpsetime  : 180
         frame :
           current : 0
           first   : 0
           last    : 5
+        
+        # todo: set the behavior according to constructor name by default
         behavior    : 'behavior tree name here'
       }, _
       

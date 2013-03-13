@@ -1,7 +1,6 @@
 define [
   'core/Battle/Pawn'
-  'core/Battle/Pawn/FRAMES'
-], (Pawn, FRAMES) ->
+], (Pawn) ->
 
   class Projectile extends Pawn
     constructor : (_) ->
@@ -15,7 +14,7 @@ define [
         explosion   : null
         behavior    : 'behavior tree here!'
         img :
-          sheet : null
+          sheet : preloader.getFile('shells')
           w     : 3
           h     : 3
           row   : 0
@@ -34,7 +33,7 @@ define [
       }
 
       
-# # # # Bullets # # # #
+# # # # Dumb projectiles # # # #
       
   class Bullet extends Projectile
     constructor : (_) ->
@@ -57,7 +56,7 @@ define [
   class SmallRocket extends Projectile
     constructor : (_) ->
       @_ = $.extend {
-        explosion : 'SmallExplosion'
+        explosion : 'SmallExplosion'  # todo: add this as a behavior decorator
         range     : 90
         damage    : 24
       }, _
@@ -67,7 +66,6 @@ define [
   class MortarShell extends Projectile
     constructor : (_) ->
       @_ = $.extend {
-        behavior  : 'MortarShell' # todo: take the constructor.name to use as the behavior.
         range     : 1
         ddy       : 0.41
       }, _
@@ -77,7 +75,7 @@ define [
   class SmallShell extends Projectile
     constructor : (_) ->
       @_ = $.extend {
-        explosion : 'SmallExplosion'
+        explosion : 'SmallExplosion'  # todo: add this as a behavior decorator
         range     : 70
         damage    : 90
       }, _
@@ -162,15 +160,37 @@ define [
       }, _
       super @_
     
-  gfx : ->
-    {
-      img     : @_.img.sheet
-      imgdx   : @_.img.w*@_.img.frame
-      imgdy   : 0
-      worldx  : @_.x-(@_.img.w>>1)
-      worldy  : @_.y-(@_.img.h>>1)
-      imgw    : @_.img.w
-      imgh    : @_.img.h
-    }
+    gfx : ->
+      # Set the correct angle automatically per frame.
+      @getAngle()
+      
+      {
+        img     : @_.img.sheet
+        imgdx   : @_.img.w*@_.img.frame
+        imgdy   : 0
+        worldx  : @_.x-(@_.img.w>>1)
+        worldy  : @_.y-(@_.img.h>>1)
+        imgw    : @_.img.w
+        imgh    : @_.img.h
+      }
   
+    getAngle : ->
+      if @_.dx == 0 then @_.dx = 0.001
+      if @_.dy == 0 then @_.dy = 0.001      
+      dydx = Math.abs(@_.dy/@_.dx)
+      
+      # Set which frames we're going to be using depending on vector's quadrant
+      if      @_.dx<0 and @_.dy<0    then  f = [4,  3,  2,  1,  0]
+      else if @_.dx<0 and @_.dy>0    then  f = [4,  5,  6,  7,  8]
+      else if @_.dx>0 and @_.dy>0    then  f = [12, 11, 10, 9,  8]
+      else                                 f = [12, 13, 14, 15, 0]
+      
+      @_.img.frame = f[0]
+      if      0.1989 <= dydx < 0.6681 then @_.img.frame = f[1]
+      if      0.6681 <= dydx < 1.4966 then @_.img.frame = f[2]
+      if      1.4966 <= dydx < 5.0273 then @_.img.frame = f[3]
+      if      5.0273 <= dydx          then @_.img.frame = f[4]
+      return
+    
+    
   # TODO: move the rest of the stuff over from projectile.js

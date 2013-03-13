@@ -6,6 +6,19 @@ define {
     TRUE  : true
     FALSE : false
     
+    setAboveGround : ->
+      if world.isOutside @
+        @_.x -= @_.dx>>1 if @_.dx?
+        @_.y = world.getHeight @_.x
+      true
+    
+    spawnLargeDetonation : (battle) ->
+      world.add( new SmallExplosion({ x : @_.x, y : @_.y }) )
+      [x, y] = [@_.x+$.R(12,20), @_.y+$.R(-20,20)]
+      
+      # todo: finish this.
+      # todo: autoset the y when world.add is called.
+      # if y>world.height(x) then y=world.
   
   Trees :
   

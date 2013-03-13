@@ -1,18 +1,18 @@
 define {
  
   Infantry :
-    ACTION :
-      MOVEMENT          : 0
-      ATTACK_STANDING   : 1
-      ATTACK_CROUCHING  : 2
-      ATTACK_PRONE      : 3
-      DEATH1            : 4
-      DEATH2            : 5
+    action :
+      'moving'          : 0
+      'attack_standing' : 1
+      'attack_crouching': 2
+      'attack_prone'    : 3
+      'death1'          : 4
+      'death2'          : 5
 
-    SHOTFRAME :
+    shotframes :
     # in which frames do we want to spawn projectiles?
-      PistolInfantry  : [0,1,0,1,0,0,  0,1,0,1,0,0]
-      RocketInfantry  : [0,0,0,1,0,0,  0,0,0,1,0,0]
+      PistolInfantry  : '010100010100'
+      RocketInfantry  : '000100000100'
 
       
   

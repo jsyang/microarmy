@@ -2,11 +2,11 @@
 Build your pixelized military, fight decisive battles, conquer the world
 
 ## Issue tracking
-Can be found by running ditz in the mgmt directory.
+Can be found by running ditz in the mgmt directory.  
 Run "ditz html" to build a web snapshot of the issues.
 
 ## Release build commands
-1. Gather gfx and sfx resources for the HTML5Preloader    
+1. Gather gfx and sfx resources for the HTML5Preloader  
     ./build-preloader-file-list
     
 2. Compile core game sources into JS from CS

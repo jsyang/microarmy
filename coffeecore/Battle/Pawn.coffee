@@ -20,6 +20,7 @@ define ->
 
     # Set sprite sheet based on team
     setSpriteSheet : (type, team=@_.team) ->
+      if !(team?) then team = ''
       @_.img.sheet = preloader.getFile(type+team)
       
     # Interface for rendering pawns.
