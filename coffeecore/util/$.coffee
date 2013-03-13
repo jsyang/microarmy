@@ -1,12 +1,12 @@
 define ->
   # See if we're running tests or the game
-  if GLOBAL?
-    globalscope = GLOBAL
+  if global?
+    globalscope = global
   else if window?
     globalscope = window
   else
     throw new Error 'could not find a global scope to attach $'
-  
+
   # Don't redef $ if something's there already.
   if globalscope['$']? then return new Error '$ already exists globally!'
 
@@ -39,12 +39,11 @@ define ->
     
     sum : (o, sum=0) ->
       if o instanceof Array
-        sum += v for v in a
+        sum += v for v in o
       else
-        sum += v for k,v of a
+        sum += v for k,v of o
       sum
     
     extend : (target, extender) ->
       target[k] = v for k,v of extender
       target
-    

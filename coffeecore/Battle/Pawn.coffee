@@ -1,6 +1,6 @@
 define ->
   class Pawn
-    constuctor : (_) ->
+    constructor : (_) ->
       @_ = $.extend {
         x           : 0
         y           : 0
@@ -37,16 +37,19 @@ define ->
     
     # is___ funcs
     
-    isAlly      : (pawn) -> @_.team == pawn._.team
+    isAlly          : (pawn) -> @_.team == pawn._.team
     
-    isDead      : -> !(@_.health?.current > 0)
+    isDead          : -> !(@_.health?.current > 0)
     
-    isCrewed    : -> @_.crew?.current > 0
+    isCrewDead      : -> if @_.crew? then @_.crew.current < 0 else false
     
-    isAntiAir   : -> @_.canTargetAircraft is true
+    isOutOfAmmo     : -> if @_.ammo? then @_.ammo.supply <=0 else false
     
-    isAircraft  : -> @_.fly?
-    
+    isAbleToTarget  : (pawn) ->
+      if pawn._.fly? and !@_.canTargetAircraft
+        false
+      else
+        true
     
     # # # # # # # #
     
