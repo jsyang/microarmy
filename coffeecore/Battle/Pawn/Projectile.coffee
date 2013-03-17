@@ -193,5 +193,49 @@ define [
       
       frame
     
+  class HomingMissileSmall extends HomingMissile
+    constructor : (_) ->
+      @_ = $.extend {
+        maxSpeed          : 110
+        range             : 90
+        rangeTravelled    : 0
+        ddy               : 0.0173
+        dspeed            : 0.84
+        sight             : 8
+        homingDelay       : 12
+        smokeTrailType    : 'SmokeCloudSmall'
+        smokeTrailLength  : 6
+        img :
+          w     : 10
+          h     : 10
+          frame : 0
+          sheet : preloader.getFile('missilepurple')
+      }, _
+      super @_
+  
+  class MediumRocketHE extends HomingMissile
+    constructor : (_) ->
+      @_ = $.extend {
+        maxSpeed          : 65
+        range             : 60
+        rangeTravelled    : 0
+        ddy               : 0.0241
+        dspeed            : 0.001*$.R(600,2100)
+        smokeTrailType    : 'SmokeCloudSmall'
+        smokeTrailLength  : 12
+        
+        # Dumb missile.
+        target            : { _ : { x:_.targetX, y:_.targetY} }
+        # Set the target X, Y here and the target should be defined automatically
+        targetX           : undefined
+        targetY           : undefined
+        
+        img :
+          w     : 10
+          h     : 10
+          frame : 0
+          sheet : preloader.getFile('missilepurple')
+      }, _
+      super @_
     
-  # TODO: move the rest of the stuff over from projectile.js
+    

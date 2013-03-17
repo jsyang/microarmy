@@ -4,7 +4,7 @@ define [
   'preloader/preloader'     # Consumed globally.
   
   'core/campaign'
-  'core/battlec'
+  'core/battle'
   
 ], ($, HTML5Preloader, Campaign, Battle) ->
 

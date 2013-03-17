@@ -1,12 +1,13 @@
 define [
   'core/Behaviors'
+  'core/Behaviors/battle'
   
   'core/Battle/addTerrain'
   
   'core/Battle/view/map'
   
   'core/Battle/addUI'
-], (Behaviors, Terrain, Map, addUI) ->
+], (Behaviors, BattleBehaviors, Terrain, Map, addUI) ->
 
   worldBuilders = [
     Terrain
