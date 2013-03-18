@@ -16,3 +16,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-03-18 07:48:52.116976 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - added projectiles, begun conversion for explosions
