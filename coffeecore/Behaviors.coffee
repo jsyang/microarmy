@@ -1,15 +1,11 @@
 define ->
   class Behaviors
-  
     constructor : (_) ->
-      @[k]=v for k,v of _
-      
-      if 'Trees' of _      then (@['Trees'][k]       = @ConvertShortHand @['Trees'][k])       for k,v of @['Trees']
-      if 'Decorators' of _ then (@['Decorators'][k]  = @ConvertShortHand @['Decorators'][k])  for k,v of @['Decorators']
+      if 'Trees' of _      then (@['Trees'][k]  = @ConvertShortHand @['Trees'][k]) for k,v of @['Trees']
+      if 'Decorators' of _ then @['Decorators'] = _['Decorators']
     
-    Decorators : {}       # old Behavior.Custom
-    
-    Trees : {}            # old Behavior.Library
+    Decorators : {}
+    Trees      : {}
     
     Execute : (btree, thisArg) ->
       if btree? and btree.id?
