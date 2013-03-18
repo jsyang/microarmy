@@ -43,7 +43,16 @@ define ->
       else
         sum += v for k,v of o
       sum
+      
+    # todo: test this
+    globSet : (dict) ->
+      globalscope[v] = v for k,v of dict
+    
+    # todo: test this
+    globDelete : (arr) ->
+      (delete globalscope[k]) for k in arr
     
     extend : (target, extender) ->
+      target = {} unless target?
       target[k] = v for k,v of extender
       target

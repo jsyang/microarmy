@@ -32,6 +32,11 @@ require [
         expect($.sum(arr)).toEqual(10)
     
     describe 'extend', ->
+      it 'returns an empty obj {} if target is undefined', ->
+        target = undefined
+        r = $.extend(target, {})
+        expect(r).toEqual({})
+    
       it 'returns the target obj', ->
         target =
           b : 4
