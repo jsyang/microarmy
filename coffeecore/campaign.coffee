@@ -9,7 +9,8 @@ define [
   'core/campaign/addStorage'
   'core/campaign/addResources'
   
-  'core/campaign/view/map'
+  'core/campaign/view/canvasmap'
+  #'core/campaign/view/map'
   'core/campaign/view/inventory'
   
   'core/campaign/addUI'

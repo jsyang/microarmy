@@ -21,7 +21,6 @@ define [
 
   worldBuilders = [
     Terrain
-    Hashes
   ]
   
   views = {
@@ -44,10 +43,16 @@ define [
       
       world = @_
       (world = addTo(world)) for addTo in worldBuilders
+      
+      # Add Hashes here for now...
+      @world._.XHash     = new XHash      ({ w:@_.w })
+      @world._.DeathHash = new SimpleHash ({ w:@_.w })
+      
       @_.world = world
       
+      
       # Assign World, Classes for 
-      @Behaviors = new Behaviors(BattleBehaviors(world, childClasses)) 
+      @Behaviors = new Behaviors(BattleBehaviors(world, childClasses))
     
     render : ->
       @views = {}

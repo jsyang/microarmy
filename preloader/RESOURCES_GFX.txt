@@ -11,11 +11,8 @@ chemcloud
 chemexp
 chemmine0
 chemmine1
-citadel
-civiliancenter
 comm0
 comm1
-commbase
 cursors
 depot0
 depot1
@@ -26,7 +23,6 @@ exp1
 exp2
 exp2big
 fieldcommcenter0
-firebase
 firemedium0
 firemedium1
 firesmall0
@@ -37,6 +33,7 @@ helipad0
 helipad1
 kitten0
 kitten1
+micropolis
 mine0
 mine1
 missile
@@ -52,7 +49,6 @@ pillbox1
 pillbox_
 pistol0
 pistol1
-productionbase
 relay0
 relay1
 repair0
@@ -67,7 +63,6 @@ shells
 smallturret1
 smoke
 smokesmall
-supplybase
 tank_test
 turret0
 turret1
