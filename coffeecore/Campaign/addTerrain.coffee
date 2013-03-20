@@ -2,9 +2,9 @@ define ->
   # add terrain to the world.
   (_) ->
     _ = $.extend {
-      numPeaks      : $.R(24,30)
-      maxPeakHeight : 8
-      seaLevel      : 4
+      numPeaks      : $.R(10,30)
+      maxPeakHeight : 10
+      seaLevel      : 2
     }, _
 
     if !_.w? or !_.h?
@@ -17,7 +17,7 @@ define ->
         y       : y
         height  : 0
         road    : false
-      } for x in [0.._.w-1]) for y in [0.._.h-1])
+      } for x in [0..._.w]) for y in [0..._.h])
       
       # peaks = seeds
       peaks = ({
