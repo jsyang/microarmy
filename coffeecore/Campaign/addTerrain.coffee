@@ -2,9 +2,10 @@ define ->
   # add terrain to the world.
   (_) ->
     _ = $.extend {
-      numPeaks      : $.R(2,3)
-      maxPeakHeight : 8
-      seaLevel      : 2
+      maxHeight     : 4
+      numPeaks      : $.R(_.w>>1,_.w<<1)
+      maxPeakHeight : 4
+      seaLevel      : 1
     }, _
 
     if !_.w? or !_.h?
@@ -21,34 +22,31 @@ define ->
       
       # peaks = seeds
       peaks = ({
-        x       : $.R(0, _.w-1)
-        y       : $.R(0, _.h-1)
+        x       : $.r(_.w) >> 0
+        y       : $.r(_.h) >> 0
         height  : $.R(_.seaLevel, _.maxPeakHeight)
       } for i in [1.._.numPeaks])
       
       # func to draw a "lossy" box around a point
-      chanceFill = (x, y, height, distFromCenter) ->
+      chanceFill = (peak, distFromCenter) ->
+        [x, y]  = [peak.x, peak.y]
+        dheight = peak.height - distFromCenter
+        if dheight < 2
+          dheight = 1
         (
           (
-          
             if (Math.abs(dy-y) == distFromCenter or Math.abs(dx-x) == distFromCenter) and (map[dy]? and map[dy][dx]?)  
-              minHeight = if height < (_.maxPeakHeight>>1) then height    else height-1
-              maxHeight = if height < (_.maxPeakHeight>>1) then height+1  else height+3
-              map[dy][dx].height += 1 #minHeight #$.R(minHeight, maxHeight)
-
+              map[dy][dx].height += dheight
+              if map[dy][dx].height>_.maxHeight then map[dy][dx].height = _.maxHeight
           ) for dx in [x-distFromCenter..x+distFromCenter]
         ) for dy in [y-distFromCenter..y+distFromCenter]
         return
       
       # draw lossy boxes successively around peaks to terraform
       (
-        dist   = 0
-        height = peak.height
         (
-          chanceFill peak.x, peak.y, height, dist
-          height--
-          dist++
-        ) while height>0
+          chanceFill peak, dist
+        ) for dist in [0...peak.height]
       ) for peak in peaks
       
       # return the world with terrain bolted on
