@@ -19,16 +19,16 @@ define [
   
   worldBuilders = [
     Terrain
-    Locations
-    Transport
-    ExpandLocations
-    Storage
-    Resources
+    #Locations
+    #Transport
+    #ExpandLocations
+    #Storage
+    #Resources
   ]
   
   views = {
     Map
-    Inventory
+    #Inventory
   }
     
   class Campaign

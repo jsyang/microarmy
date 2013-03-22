@@ -11,7 +11,7 @@ define [
 ], ($, HTML5Preloader, Campaign, drawCampaignMap, Battle) ->
 
   startGameCampaign = ->
-    b = new Campaign({ w: 40, h: 40 })
+    b = new Campaign({ w: 20, h: 20 })
       .render()
       .addUI()
     drawCampaignMap.apply(b)

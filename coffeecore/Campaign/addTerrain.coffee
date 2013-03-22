@@ -2,8 +2,8 @@ define ->
   # add terrain to the world.
   (_) ->
     _ = $.extend {
-      numPeaks      : $.R(10,30)
-      maxPeakHeight : 10
+      numPeaks      : $.R(2,3)
+      maxPeakHeight : 8
       seaLevel      : 2
     }, _
 
@@ -34,7 +34,7 @@ define ->
             if (Math.abs(dy-y) == distFromCenter or Math.abs(dx-x) == distFromCenter) and (map[dy]? and map[dy][dx]?)  
               minHeight = if height < (_.maxPeakHeight>>1) then height    else height-1
               maxHeight = if height < (_.maxPeakHeight>>1) then height+1  else height+3
-              map[dy][dx].height += $.R(minHeight, maxHeight)
+              map[dy][dx].height += 1 #minHeight #$.R(minHeight, maxHeight)
 
           ) for dx in [x-distFromCenter..x+distFromCenter]
         ) for dy in [y-distFromCenter..y+distFromCenter]

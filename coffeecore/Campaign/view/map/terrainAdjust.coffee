@@ -76,11 +76,11 @@ define ->
         tile = getTile(x,y)
         if tile.height < world.seaLevel
           tileType = 'water'
-        else if tile.height < 8
-          tileType = 'sand'
         else if tile.height < 10
-          tileType = 'plain'
+          tileType = 'sand'
         else if tile.height < 12
+          tileType = 'plain'
+        else if tile.height < 14
           tileType = 'hill'
         else
           tileType = 'butte'
