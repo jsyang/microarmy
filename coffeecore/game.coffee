@@ -4,18 +4,18 @@ define [
   'preloader/preloader'     # Consumed globally.
   
   'core/campaign'
-  'core/campaign/view/map/terrainAdjust'
-  
   'core/battle'
   
-], ($, HTML5Preloader, Campaign, drawCampaignMap, Battle) ->
+], ($, HTML5Preloader, Campaign, Battle) ->
 
   startGameCampaign = ->
-    b = new Campaign({ w: 10, h: 10 })
+    b = new Campaign({ w: 30, h: 14 })
       .render()
       .addUI()
-    drawCampaignMap.apply(b)
-      
+    
+    window.b = b
+    
+    
   window.preloader = HTML5Preloader(startGameCampaign)
   
   #startGameBattle = ->

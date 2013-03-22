@@ -1,5 +1,7 @@
 # stolen from Battle/view/map
-define ->
+define [
+  'core/campaign/view/map/drawTerrain'
+], (drawTerrain) ->
   clear = ->
     @clearRect(0, 0, @width, @height)
   
@@ -30,6 +32,20 @@ define ->
         @draw(whatToDraw)
       ) for i in [x...x+w]
     ) for j in [y...y+h]
+    
+  tileDraw = (x,y,gfx,size='8x8') ->
+    whatToDraw = $.extend {
+      img     : preloader.getFile('micropolis')
+    }, gfx
+    
+    whatToDraw.worldx = 8*x
+    whatToDraw.worldy = 8*y
+    
+    if size=='24x24'
+      whatToDraw.worldx -= 8
+      whatToDraw.worldy -= 8
+    
+    @draw(whatToDraw)
   
   (world) ->
     if !(world?) then throw new Error 'no world given'
@@ -41,8 +57,8 @@ define ->
     
     
     canvas.className        = 'noselect'
-    canvas.width            = world.w*8*5
-    canvas.height           = world.h*8*5
+    canvas.width            = world.w*8
+    canvas.height           = world.h*8
     
     el.className            = 'map'
     el.style.maxWidth       = window.innerWidth - 180;
@@ -57,5 +73,8 @@ define ->
     el.ctx.clear            = clear
     el.ctx.draw             = draw
     el.ctx.tileFill         = tileFill
+    el.ctx.tileDraw         = tileDraw
+    
+    drawTerrain.call(el.ctx, world)
     
     el

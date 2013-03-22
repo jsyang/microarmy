@@ -2,7 +2,8 @@ define [
   'core/Behaviors'
   'core/Behaviors/campaign'
 
-  'core/campaign/addTerrain'
+  'core/campaign/addCoarseTerrain'
+  'core/campaign/addFineTerrain'
   'core/campaign/addLocations'
   'core/campaign/addTransport'
   'core/campaign/addExpansionLocations'
@@ -15,12 +16,13 @@ define [
   
   'core/campaign/addUI'
   
-], (Behaviors, CampaignBehaviors, Terrain, Locations, Transport, ExpandLocations, Storage, Resources, Map, Inventory, addUI) ->
+], (Behaviors, CampaignBehaviors, CoarseTerrain, FineTerrain, Locations, Transport, ExpandLocations, Storage, Resources, Map, Inventory, addUI) ->
   
   worldBuilders = [
-    Terrain
-    #Locations
-    #Transport
+    CoarseTerrain
+    FineTerrain
+    Locations
+    Transport
     #ExpandLocations
     #Storage
     #Resources

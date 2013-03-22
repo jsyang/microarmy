@@ -2,7 +2,7 @@
 define ->
   (_) ->
     _ = $.extend {
-      numLocations : 10
+      numLocations : 16
     }, _
     
     if !_.map? or !_.peaks?
@@ -44,6 +44,28 @@ define ->
               }
           
           if tile? and tile.height>=_.seaLevel
+            
+            enoughSpace = (cell) ->
+              if cell?
+                tile.height == cell.height and !tile.location
+
+            N   = getTile(x  ,y-1)
+            NW  = getTile(x-1,y-1)
+            NE  = getTile(x+1,y-1)
+            E   = getTile(x+1,y  )
+            SE  = getTile(x+1,y+1)
+            S   = getTile(x  ,y+1)
+            SW  = getTile(x-1,y+1)
+            W   = getTile(x-1,y  )
+            
+            largeLoc = 1
+            (largeLoc &= enoughSpace(cell)) for cell in [N,NW,NE,E,SE,SW,S,E,W]
+            
+            if largeLoc
+              loc = $.extend { size : '24x24' }, loc
+            else
+              loc = $.extend { size : '8x8' }, loc
+              
             loc = $.extend {
               x
               y
@@ -51,6 +73,8 @@ define ->
             }, loc
             
             tile.location = loc
+            if largeLoc
+              (cell.location = loc) for cell in [N,NW,NE,E,SE,SW,S,E,W] unless !cell
             tile.road     = true
             
             return loc
