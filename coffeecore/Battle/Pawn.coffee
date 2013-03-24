@@ -7,15 +7,11 @@ define ->
         team        : 0
         corpsetime  : 0
         
-        img :             # TODO: move these somewhere else, possible into part of map view?
+        img :
           w     : 0
           h     : 0
           hDist : 0
           sheet : 0
-          
-        behavior :        # TODO: move this into behavior separate from model?
-          alive : null
-          dead  : null
       }, _
 
     # Set sprite sheet based on team
@@ -54,9 +50,16 @@ define ->
     
     # # # # # # # #
     
+    takeDamage  : (damageValue) ->
+      if damageValue > 0
+        @_.health.current -= damageValue
+        @_.health.current = 0 if @_.health.current < 0
+    
     setTarget   : (t) -> if t? then @_.target = t else delete @_.target
       
     distX       : (pawn) -> Math.abs(@_.x - pawn._.x)
+    
+    # todo: Might need to overwrite this func for certain classes
     distHit     : (pawn) ->
       [dx, dy] = [pawn._.x-(pawn._.img.w>>1), pawn._.y-(pawn._.img.h>>1)]
       [dx, dy] = [Math.abs(@_.x - dx), Math.abs(@_.y - dy)]

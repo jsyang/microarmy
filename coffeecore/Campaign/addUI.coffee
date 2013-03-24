@@ -4,7 +4,7 @@ define [
   ->
     views   = @views
     _       = @_
-    factor  = 1 / 24  # dimension of tiles (~ microarmy.css)
+    factor  = 1/8  # dimension of tiles (~ microarmy.css)
     
     if views?
       

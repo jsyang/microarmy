@@ -7,8 +7,8 @@ type: :task
 component: ma
 release: battle view 1
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-03-10 03:52:17.017357 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-03-24 10:43:56.636576 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - |-
+    made it so behaviors generator (ref'd as BattleBehaviors()) is passed the world and its classes attr
+    this makes it so that there's a common reference between both behaviors and things like the Xhash

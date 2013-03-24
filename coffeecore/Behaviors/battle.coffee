@@ -12,18 +12,31 @@ define ->
         hasHitGround : ->
           if World.isOutside @
             @_.x -= @_.dx>>1 if @_.dx?
-            @_.y = World.getHeight @_.x
+            @_.y = World.height(@)
             true
           else
             false
         
         hasHitEnemy : ->
-          potentialHits = World.fetchEveryTarget(@, 0)
+          potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
             if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 # 81
               return true
           ) for t in potentialHits
           false
+        
+        # Special version of hasHitEnemy for explosions
+        # 
+        explode : ->
+          potentialHits = World.XHash.getNBucketsByCoord(@, 1)
+          (
+            # todo: might want to check if this is being triggered on the correct dist
+            if t.distHit(@) <= @_.img.hDist2
+              t.takeDamage(@_.damage)
+              @_.damage -= @_.damageDecay
+              @_.damage = 0 if @_.damage<0
+          ) for t in potentialHits
+          true
         
         hasSmokeTrail : ->
           @_.rangeTravelled < @_.smokeTrailLength
@@ -42,7 +55,7 @@ define ->
           # Call this with .apply(thisArg, args)
           [x, y] = [@_.x+$.R.apply(xrange), @_.y+$.R.apply(yrange)]
           if y>World.height(x) then y = World.height(x)
-          World.add(new Classes[type] { x:x, y:y })
+          World.add(new Classes[type]({x,y}))
         
         spawnSmallFlakExplosion : ->
           (
@@ -92,9 +105,22 @@ define ->
           if @_.range? then @_.range = 0
           @_.corpsetime = 0
       
+        nextFrame : ->
+          @_.frame.current++
+          true
+          
+        isLastFrame : ->
+          @_.frame.current is @_.frame.last
+        
+        
+        
+        
         
         
       Trees :
+      
+        Explosion      : '(<[isLastFrame],[remove]>,[!nextFrame],<[explode],[FALSE]>)'
+        SmallExplosion : '<[Explosion]>'
       
         CommanderIdle : "<[idleCommander]>"
           
@@ -125,7 +151,5 @@ define ->
         Pillbox     : "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>"
         SmallTurret : "<[checkStructureState],[!isReloading],<[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>"
         Scaffold    : "<[checkStructureState],[tryCrewing]>"
-          
-        #Tile : '<[!isStoreEmpty], [printXY], [tryMaintainResources]>'
       
     }

@@ -2,26 +2,27 @@ define ->
 
   # Hex color string to dec value by color.
   hs2d = (hs, color) ->
-    index =
+    index = {
       'r' : 0
       'g' : 2
       'b' : 4
-    index = index[color]
+    }[color]
     parseInt(hs[index...index+2], 16)
 
   # Spit out a background layer DOM element to be consumed by the Battle/view/map
   (world) ->
     if !(world?) then throw new Error 'no world given'
-
+    
+    [w,h]             = [world._.w, world._.h]
     canvas            = document.createElement 'canvas'
   
     canvas.className  = 'noselect'
-    canvas.width      = world.w
-    canvas.height     = world.h
+    canvas.width      = w
+    canvas.height     = h
     
-    ctx               = canvas.getContext '2d'
+    ctx               = canvas.getContext('2d')
     
-    imgdata = ctx.createImageData(world.w, world.h)
+    imgdata = ctx.createImageData(w, h)
     d = imgdata.data
 
     # todo: make more than 2 color sky gradients?
@@ -43,16 +44,17 @@ define ->
       r : hs2d(terrainColor,'r')
       g : hs2d(terrainColor,'g')
       b : hs2d(terrainColor,'b')
-
+    
     # Make a gradient from terrain color to black
-    terrainGradient = []
-    (
-      terrainGradient.push {
-        r : rgbT.r - y
-        g : rgbT.g - y
-        b : rgbT.b - y
-      }
-    ) for y in [0...world.h]
+    terrainGradient = (
+      (
+        {
+          r : rgbT.r - y
+          g : rgbT.g - y
+          b : rgbT.b - y
+        }
+      ) for y in [0...h]
+    )
     
     rgb1 = 
       r : hs2d(color[0],'r')
@@ -64,7 +66,7 @@ define ->
       g : hs2d(color[1],'g')
       b : hs2d(color[1],'b')
 
-    h_ = 1/world.h;
+    h_ = 1/h;
     
     [cR, cG, cB] = [rgb1.r, rgb1.g, rgb1.b]
     
@@ -79,8 +81,8 @@ define ->
     # Color the background and terrain
     (
       (
-        c = 4*(y*world.w + x)
-        dSurface = world.heightmap[x]
+        c = (y*w + x)<<2
+        dSurface = world._.heightmap[x]
         
         if dSurface > 0
           # Sky
@@ -98,9 +100,9 @@ define ->
           
         d[c+3] = 0xFF
         
-      ) for x in [0...world.w]
+      ) for x in [0...w]
       [cR, cG, cB] = [cR+dR, cG+dG, cB+dB]
-    ) for y in [0...world.h]
+    ) for y in [0...h]
     
     ctx.putImageData imgdata, 0, 0
     

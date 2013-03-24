@@ -20,3 +20,10 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - commented
   - added projectiles, begun conversion for explosions
+- - 2013-03-24 10:42:20.338585 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - |-
+    added projectiles, explosions, infantry
+    still need to test them to see if they work
+    behaviors will need to be tested thoroughly

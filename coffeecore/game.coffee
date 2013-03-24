@@ -8,21 +8,18 @@ define [
   
 ], ($, HTML5Preloader, Campaign, Battle) ->
 
-  startGameCampaign = ->
-    b = new Campaign({ w: 30, h: 14 })
-      .render()
-      .addUI()
-    
-    window.b = b
-    
-    
-  window.preloader = HTML5Preloader(startGameCampaign)
-  
-  #startGameBattle = ->
-  #  b = new Battle()
+  #startGame = ->
+  #  b = new Campaign({ w: 30, h: 14 })
   #    .render()
   #    .addUI()
   
-  # window.preloader = HTML5Preloader(startGameBattle)
+  startGame = ->
+    b = new Battle()
+      .render()
+      .addUI()
+      .play()
+  
+    window.game = b
+  window.preloader = HTML5Preloader(startGame)
   
   return

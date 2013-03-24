@@ -2,58 +2,34 @@ define [
   'core/Behaviors'
   'core/Behaviors/battle'
   
-  # Classes
-  'core/Battle/Pawn/Explosion'
+  # Model
+  'core/Battle/World'
   
-  # World builders
-  'core/Battle/addTerrain'
-  
-  # Utils
-  'core/Battle/XHash'
-  'core/Battle/SimpleHash'
-  
-  # UI
+  # Views
   'core/Battle/view/map'
   
-  # Controller
+  # Controllers
   'core/Battle/addUI'
-], (Behaviors, BattleBehaviors, Explosion, Terrain, XHash, SimpleHash, Map, addUI) ->
-
-  worldBuilders = [
-    Terrain
-  ]
+], (Behaviors, BattleBehaviors, World, Map, addUI) ->
   
   views = {
     Map
   }
   
-  childClasses = {
-    Explosion
-  }
-  
   class Battle
+  
     constructor : (_) ->
       @_ = $.extend {
         w : 3200
-        h : 480 
-        pawns : {
-          Explosion : []
-        }
+        h : 480
       }, _
       
-      world = @_
-      (world = addTo(world)) for addTo in worldBuilders
+      @_.world   = new World(@_)
+      @Behaviors = new Behaviors(BattleBehaviors(@_.world, @_.world.Classes))
       
-      # Add Hashes here for now...
-      @world._.XHash     = new XHash      ({ w:@_.w })
-      @world._.DeathHash = new SimpleHash ({ w:@_.w })
-      
-      @_.world = world
-      
-      
-      # Assign World, Classes for 
-      @Behaviors = new Behaviors(BattleBehaviors(world, childClasses))
+      window.aa = @
     
+    # Create the DOM elements
     render : ->
       @views = {}
       (
@@ -61,41 +37,66 @@ define [
         document.body.appendChild @views[k]
       ) for k,v of views
       @
-    
-    cycle : ->
-      newXHash = new XHash({ w:@_.w })
-      newPawns = {}
+      
+    # Apply behaviors to the models held in the world.
+    tick : ->
+      world = @_.world
+      newXHash = world.createNewXHash()
+      newInstances = {}
       (
-        newPawnsCollection = []
+        newInstancesCollection = []
         (
           btree = if p._.behavior? then p._.behavior else p.constructor.name
           btree = @Behaviors.Trees[btree]
           
           if btree?
-            @Behaviors.Execute(p, btree)
+            if @Behaviors.Execute(p, btree)
+              newXHash.add(p)
           else
             throw new Error 'no behaviors found for instance of '+p.constructor.name
           
-          @views.Map.draw(p.gfx())
-          
           if p._.corpsetime>0
-            newPawnsCollection.push(p)
-            if !p.isDead()
-              newXHash.add(p)
+            newInstancesCollection.push(p)
+            
         ) for p in v
         
-        newPawns[k] = newPawnsCollection
-      ) for k,v of @_.pawns
+        newInstances[k] = newInstancesCollection
+      ) for k,v of world.Instances
       
-      @_.pawns = newPawns
-      return
+      world.Instances = newInstances
+      @
+  
+    # Visualize the current state of the world.
+    redraw : ->
+      mapctx  = @views?.Map?.ctx
+      world   = @_.world
+      if mapctx? and world?
+        mapctx.clear()
+        
+        # Drawing order is important here.
+        # todo: skip drawing things that we can't see
+        if world.Instances['Explosion']?
+          (
+            mapctx.draw(p.gfx())
+            #console.log(p.gfx())
+          ) for p in world.Instances['Explosion']
+        
+      else
+        throw new Error 'no map view to redraw!'
+      @
     
-    play : ->
-      self = @
-      @_.timer = setInterval((-> self.cycle()), 60)
+    
+    cycle : ->
+      @tick()
+      @redraw()
+      @
+    
+    play : (self=@) ->
+      @_.timer = setInterval((-> self.cycle()), 40)
+      @
     
     pause : ->
       clearInterval(@_.timer)
+      @
     
     addUI : addUI
-    

@@ -1,21 +1,23 @@
 define ->
   class Behaviors
     constructor : (_) ->
-      if 'Trees' of _      then (@['Trees'][k]  = @ConvertShortHand @['Trees'][k]) for k,v of @['Trees']
-      if 'Decorators' of _ then @['Decorators'] = _['Decorators']
+      if _.Trees?
+        @Trees = _.Trees
+        @Trees[k] = @ConvertShortHand(@Trees[k]) for k,v of @Trees
+      if _.Decorators? then @['Decorators'] = _.Decorators
     
     Decorators : {}
     Trees      : {}
     
-    Execute : (btree, thisArg) ->
+    Execute : (thisArg, btree) ->
       if btree? and btree.id?
         switch btree.id
           
           when 'sequence' # Quit on first false
-            return false for subtree in btree.children when @Execute(subtree, thisArg) is false
+            return false for subtree in btree.children when @Execute(thisArg, subtree) is false
           
           when 'selector' # Quit on first true
-            return true for subtree in btree.children when @Execute(subtree, thisArg) is true
+            return true for subtree in btree.children when @Execute(thisArg, subtree) is true
         
           else            # Custom behaviors and decorators
             negate  = btree.id[0] is '!'
@@ -34,7 +36,7 @@ define ->
             # Look in Trees
             subtree = @Trees[id_]
             if subtree?
-              result = @Execute(subtree, thisArg)
+              result = @Execute(thisArg, subtree)
               if negate then result = !result
               return result
             
