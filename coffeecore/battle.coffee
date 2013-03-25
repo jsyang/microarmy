@@ -79,7 +79,7 @@ define [
           (
             mapctx.draw(p.gfx())
             #console.log(p.gfx())
-          ) for p in world.Instances[types]
+          ) for p in world.Instances[type]
         ) for type in ['Explosion']
         
       else
