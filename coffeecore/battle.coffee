@@ -1,6 +1,7 @@
 define [
+  # Model sub
   'core/Behaviors'
-  'core/Behaviors/battle'
+  'core/Battle/behaviors'
   
   # Model
   'core/Battle/World'
@@ -26,8 +27,6 @@ define [
       
       @_.world   = new World(@_)
       @Behaviors = new Behaviors(BattleBehaviors(@_.world, @_.world.Classes))
-      
-      window.aa = @
     
     # Create the DOM elements
     render : ->
@@ -50,6 +49,7 @@ define [
           btree = @Behaviors.Trees[btree]
           
           if btree?
+            # Pawn can be targeted if the btree exits with the status true
             if @Behaviors.Execute(p, btree)
               newXHash.add(p)
           else
@@ -75,11 +75,12 @@ define [
         
         # Drawing order is important here.
         # todo: skip drawing things that we can't see
-        if world.Instances['Explosion']?
+        (
           (
             mapctx.draw(p.gfx())
             #console.log(p.gfx())
-          ) for p in world.Instances['Explosion']
+          ) for p in world.Instances[types]
+        ) for type in ['Explosion']
         
       else
         throw new Error 'no map view to redraw!'

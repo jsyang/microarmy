@@ -5,25 +5,24 @@ define [
   class Infantry extends Pawn
     constructor : (_) ->
       @_ = $.extend {
+        imgsheet    : null
         target      : null
         squad       : null
-        direction   : null                              # don't set the direction here
+        direction   : null           # don't set the direction here
         action      : 'moving'
         corpsetime  : 180
         frame :
           current : 0
           first   : 0
           last    : 5
-        
-        # todo: set the behavior according to constructor name by default
-        behavior    : 'behavior tree name here'
       }, _
-      
+      @setSpriteSheet(@_.imgsheet)
       super @_
 
   class PistolInfantry extends Infantry
     constructor : (_) ->
       @_ = $.extend {
+        imgsheet    : 'pistol'
         projectile  : 'Bullet'
         sight       : 3
         meleeDmg    : 8
@@ -42,11 +41,12 @@ define [
       }, _
       
       super @_
-      @setSpriteSheet('pistol')
+
   
   class RocketInfantry extends Infantry
     constructor : (_) ->
       @_ = $.extend {
+        imgsheet    : 'rocket'
         projectile  : 'SmallRocket'
         sight       : 6
         meleeDmg    : 23
@@ -70,6 +70,7 @@ define [
   class EngineerInfantry extends Infantry
     constructor : (_) ->
       @_ = $.extend {
+        imgsheet    : 'engineer'
         sight       : 4
         meleeDmg    : 5
         build :
@@ -81,9 +82,9 @@ define [
       
       @_.target = @_.build
       super @_
-      @setSpriteSheet('engineer')
       
   {
+    Infantry
     PistolInfantry
     RocketInfantry
     EngineerInfantry

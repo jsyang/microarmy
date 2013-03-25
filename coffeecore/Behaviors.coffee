@@ -1,25 +1,30 @@
 define ->
+
   class Behaviors
     constructor : (_) ->
       if _.Trees?
         @Trees = _.Trees
         @Trees[k] = @ConvertShortHand(@Trees[k]) for k,v of @Trees
       if _.Decorators? then @['Decorators'] = _.Decorators
-    
+
     Decorators : {}
     Trees      : {}
     
+    # Behavior Tree Parser
     Execute : (thisArg, btree) ->
       if btree? and btree.id?
         switch btree.id
           
-          when 'sequence' # Quit on first false
+          # Quit on first false
+          when 'sequence'
             return false for subtree in btree.children when @Execute(thisArg, subtree) is false
           
-          when 'selector' # Quit on first true
+          # Quit on first true
+          when 'selector' 
             return true for subtree in btree.children when @Execute(thisArg, subtree) is true
         
-          else            # Custom behaviors and decorators
+          # Custom behaviors and decorators
+          else
             negate  = btree.id[0] is '!'
             id_     = if negate then btree.id[1..] else btree.id
             
@@ -46,10 +51,11 @@ define ->
         throw new Error 'No behavior tree specified!'
       
       return
-        
+    
+    # String to BTree
     ConvertShortHand : (code) ->
       if typeof code == 'string'
-        btree = code
+        btreeJSON = code
           .replace(/\[/g, '{id:"')
           .replace(/\]/g, '"}')
           .replace(/\(/g, '{id:"selector",children:[')
@@ -57,7 +63,7 @@ define ->
           .replace(/>/g,  ']}')
           .replace(/\)/g, ']}')
         
-        btree = eval("(#{btree})")
+        btree = eval("(#{btreeJSON})")
       
       else
         code
