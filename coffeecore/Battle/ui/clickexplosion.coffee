@@ -7,7 +7,7 @@ define ->
         [sx, sy] = [map.scrollLeft, map.scrollTop]
         [x,y] = [e.pageX+sx, e.pageY+sy]
         
-        world.add(new world.Classes['SmallExplosion']({
+        world.add(new world.Classes['ChemCloud']({
           x
           y
         }))

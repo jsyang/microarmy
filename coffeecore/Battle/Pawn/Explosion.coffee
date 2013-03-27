@@ -2,21 +2,16 @@ define [
   'core/Battle/Pawn'
 ], (Pawn) ->
 
-  # todo: Maybe not have the _ variable?
-  # Keep all things as bare attributes?
-
   class Explosion extends Pawn
     constructor : (_) ->
       @_ = $.extend {
+        targetable  : false # Don't want to be able to target explosions
         damage      : 0
-        damageDecay : 2 # How much will damage decay if we've splash-damaged a bunch of stuff
+        damageDecay : 2     # How much will damage decay if we've splash-damaged a bunch of stuff
         corpsetime  : 1
       }, _
       soundManager.play(@_.sound) if @_.sound?
       super @_
-    
-    # Don't want to be able to target explosions
-    isDead : -> true
     
     gfx : ->
       {
@@ -38,8 +33,6 @@ define [
         img     : { w : 41, h : 35, hDist2 : 400, sheet : preloader.getFile('exp1') }
       }, _
       super @_
-      # todo: sounds are played through an sfxmanager (through behaviors)
-      # todo: spawning fires also through behavior
       
   class SmallExplosion extends Explosion
     constructor : (_) ->
@@ -56,14 +49,14 @@ define [
     constructor : (_) ->
       @_ = $.extend {
         sound       : 'expsmall'
-        damage      : $.R(65,95)
-        damageDecay : 3
+        damage      : $.R(11,47)
+        damageDecay : 4
         frame       : { current : -1, last : 6 }
         img         : { w : 24, h : 17, hDist2 : 260, sheet : preloader.getFile('exp0') }
       }, _
       super @_
   
-  class FlakExplosion extends Explosion
+  class HEAPExplosion extends Explosion
     constructor : (_) ->
       @_ = $.extend {
         sound       : 'exp2big'
@@ -92,7 +85,7 @@ define [
         damageDecay : 0
         cycles      : $.R(100,200)
         driftdx     : $.R(0,1)
-        frame       : { current : $.R(0,2) }
+        frame       : { current : $.R(0,2), last : 2 }
         img         : { w : 20, h : 20, hDist2 : 400, sheet : preloader.getFile('chemcloud') }
       }, _
       super @_
@@ -147,6 +140,7 @@ define [
       FragExplosion
       SmallExplosion
       FlakExplosion
+      HEAPExplosion
       ChemExplosion
       
       SmokeCloud

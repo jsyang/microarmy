@@ -104,6 +104,7 @@ define ->
         remove : ->
           if @_.range? then @_.range = 0
           @_.corpsetime = 0
+          false
       
         nextFrame : ->
           @_.frame.current++
@@ -112,15 +113,40 @@ define ->
         isLastFrame : ->
           @_.frame.current is @_.frame.last
         
+        gotoFirstFrame : ->
+          @_.frame.current = 0
+          true
         
+        hasCyclesRemaining : ->
+          @_.cycles > 0
         
+        decrementCycles : ->
+          @_.cycles--
+          true
         
-        
+        consoleLog : ->
+          console.log(1111)
+          true
         
       Trees :
       
-        Explosion      : '(<[isLastFrame],[remove]>,[!nextFrame],<[explode],[FALSE]>)'
-        SmallExplosion : '<[Explosion]>'
+        Explosion       : '(<[isLastFrame],[remove]>,[!nextFrame],[explode])'
+        SmallExplosion  : '[Explosion]'
+        FragExplosion   : '[Explosion]'
+        FlakExplosion   : '[Explosion]'
+        HEAPExplosion   : '[Explosion]'
+        ChemExplosion   : '[Explosion]'
+        
+        SmokeCloud      : '(<[isLastFrame],[!remove]>,[!nextFrame])'
+        SmokeCloudSmall : '[SmokeCloud]'
+        
+        FlameAnimate    : '(<[isLastFrame],[decrementCycles],[gotoFirstFrame]>,[nextFrame])'
+        Flame           : '(<[!hasCyclesRemaining],[remove]>,[FlameAnimate])'
+        ChemCloud       : '[Flame]'
+        
+        
+        
+      
       
         CommanderIdle : "<[idleCommander]>"
           

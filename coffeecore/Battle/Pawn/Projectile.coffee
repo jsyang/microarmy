@@ -12,7 +12,6 @@ define [
         corpsetime  : 1
         target      : null
         explosion   : null
-        behavior    : 'behavior tree here!'
         img :
           sheet : preloader.getFile('shells')
           w     : 3
@@ -56,7 +55,7 @@ define [
   class SmallRocket extends Projectile
     constructor : (_) ->
       @_ = $.extend {
-        explosion : 'SmallExplosion'  # todo: add this as a behavior decorator
+        explosion : 'SmallExplosion'
         range     : 90
         damage    : 24
       }, _
@@ -75,7 +74,7 @@ define [
   class SmallShell extends Projectile
     constructor : (_) ->
       @_ = $.extend {
-        explosion : 'SmallExplosion'  # todo: add this as a behavior decorator
+        explosion : 'SmallExplosion'
         range     : 70
         damage    : 90
       }, _
@@ -88,7 +87,6 @@ define [
     constructor : (_) ->
       @_ = $.extend {
         accuracy  : [0.6, 0]
-        # todo: take the constructor.name to use as the behavior.
         explosion : 'FragExplosion'
         damage    : 20
         img :
@@ -103,7 +101,6 @@ define [
     constructor : (_) ->
       @_ = $.extend {
         accuracy  : [0.6, 0]
-        # todo: take the constructor.name to use as the behavior.
         explosion : 'ChemExplosion'
         damage    : 6
         blinktime :
@@ -237,5 +234,22 @@ define [
           sheet : preloader.getFile('missilepurple')
       }, _
       super @_
-    
+  
+  # export
+  (Classes) ->
+    $.extend(Classes, {
+      Projectile
+      Bullet
+      MGBullet
+      SmallRocket
+      MortarShell
+      SmallShell
+      
+      SmallMine
+      SmallChemMine
+      
+      HomingMissile
+      HomingMissileSmall
+      MediumRocketHE
+    })
     

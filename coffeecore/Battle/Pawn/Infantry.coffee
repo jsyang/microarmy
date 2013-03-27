@@ -83,9 +83,11 @@ define [
       @_.target = @_.build
       super @_
       
-  {
-    Infantry
-    PistolInfantry
-    RocketInfantry
-    EngineerInfantry
-  }
+  # export
+  (Classes) ->
+    $.extend(Classes, {
+      Infantry
+      PistolInfantry
+      RocketInfantry
+      EngineerInfantry
+    })

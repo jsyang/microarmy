@@ -15,7 +15,7 @@ define ->
       }, _
 
     # Set sprite sheet based on team
-    setSpriteSheet : (type, team=@_.team) ->
+    setSpriteSheet : (type=@_.img.sheet, team=@_.team) ->
       if !(team?) then team = ''
       @_.img.sheet = preloader.getFile(type+team)
       
@@ -57,6 +57,14 @@ define ->
     
     setTarget   : (t) -> if t? then @_.target = t else delete @_.target
       
+    setDirection : ->
+      switch @_.team
+        when 0
+          d = 1
+        when 1
+          d = -1
+      @_.direction = d
+    
     distX       : (pawn) -> Math.abs(@_.x - pawn._.x)
     
     # todo: Might need to overwrite this func for certain classes

@@ -1,6 +1,6 @@
 define [
   'core/Behaviors'
-  'core/Behaviors/campaign'
+  'core/campaign/behaviors'
 
   'core/campaign/addCoarseTerrain'
   'core/campaign/addFineTerrain'
