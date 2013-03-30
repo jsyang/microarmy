@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make infantry behaviors work
+desc: |-
+  attack, move, rally -- offensive
+  lay scaffold -- engineer
+  
+  child issue is making projectiles work
+type: :feature
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-03-30 00:39:37.406855 Z
+references: []
+
+id: eb67f329bf86a9d34525f5091abb6adf13a2d3da
+log_events: 
+- - 2013-03-30 00:39:39.223793 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
