@@ -56,7 +56,9 @@ define ->
         @_.health.current = 0 if @_.health.current < 0
     
     setTarget   : (t) -> if t? then @_.target = t else delete @_.target
-      
+    
+    setRallyPoint : (x, y) -> @_.rally = [x, y]
+    
     setDirection : ->
       switch @_.team
         when 0
