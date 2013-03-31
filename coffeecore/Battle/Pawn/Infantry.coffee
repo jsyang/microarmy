@@ -2,27 +2,31 @@ define [
   'core/Battle/Pawn'
 ], (Pawn) ->
 
-  class Infantry extends Pawn
+  CONST =
     ACTION :
-      'moving'          : 0
-      'attack_standing' : 1
-      'attack_crouching': 2
-      'attack_prone'    : 3
-      'death1'          : 4
-      'death2'          : 5
+      MOVING            : 0
+      ATTACK_STANDING   : 1
+      ATTACK_CROUCHING  : 2
+      ATTACK_PRONE      : 3
+      DEATH1            : 4
+      DEATH2            : 5
 
     SHOOTFRAMES :
     # in which frames do we want to spawn projectiles?
       PistolInfantry  : '010100010100'
       RocketInfantry  : '000100000100'
   
+  class Infantry extends Pawn
+    CONST : CONST
+    
     constructor : (_) ->
       @_ = $.extend {
+        img         : { w:8, h:8, hDist2:20 }
         imgsheet    : null
         target      : null
         squad       : null
         direction   : null           # don't set the direction here
-        action      : 'moving'
+        action      : @CONST.ACTION.MOVING
         corpsetime  : 180
         frame :
           current : 0

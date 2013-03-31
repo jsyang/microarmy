@@ -1,13 +1,16 @@
 #!/bin/bash
 clear
 
+echo Updating game resources...
 ./build-preloader-file-list
-coffee -b -o core/ coffeecore/
+echo Done.
 
-echo ----------------------------------------------------------------
-cat README.md
+echo Compiling CS game logic...
+coffee -b -o core/ coffeecore/
+echo Done.
+
 echo ----------------------------------------------------------------
 
 # python -m SimpleHTTPServer
 # Using node's http-server instead. Much faster.
-http-server ./ -p 8000
+open index.html ; http-server ./ -p 8000

@@ -5,17 +5,51 @@ define ->
   (World, Classes) ->
     {      
       Decorators :
+        # todo: Each of these decorators is a unit... easily unit tested
         
         TRUE  : true
         FALSE : false
         
         hasHitGround : ->
-          if World.isOutside @
+          if !World.contains(@)
             @_.x -= @_.dx>>1 if @_.dx?
             @_.y = World.height(@)
             true
           else
             false
+        
+        findTarget : -> World.XHash.getNearestEnemy(@)?
+        
+        faceTarget : ->
+          @_.direction = if @_.target._.x > @_.x then  1 else -1
+          true
+
+        faceGoalDirection : ->
+          # todo: remove this once testing is done
+          @_.direction = {
+            '0' : -1
+            '1' : 1
+          }[@_.team]
+          true
+          
+        gameOver : -> 
+          # todo: this is not the only "game over"
+          # todo: remove this and use mission handlers instead
+          soundManager.play('accomp')
+          true
+        
+        setFacingFrames : ->
+          @_.frame.first = if @_.direction>0 then  6   else 0
+          @_.frame.last  = if @_.direction>0 then  11  else 5
+          
+          # Make sure we're facing the correct direction immediately.
+          if not( @_.frame.first <= @_.frame.current <= @_.frame.last )
+            @_.frame.current = @_.frame.first
+          true
+          
+        setAttackingStance : ->
+          @_.action = $.R(@CONST.ACTION.ATTACK_STANDING,@CONST.ACTION.ATTACK_PRONE)
+          true
         
         hasHitEnemy : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
@@ -26,7 +60,6 @@ define ->
           false
         
         # Special version of hasHitEnemy for explosions
-        # 
         explode : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
@@ -93,6 +126,11 @@ define ->
             true
           else
             false
+            
+        move : ->
+          @_.x += @_.direction
+          @_.y = World.height(@)
+          true
         
         fly : ->
           # Keep this simple.
@@ -110,72 +148,97 @@ define ->
           @_.frame.current++
           true
           
-        isLastFrame : ->
-          @_.frame.current is @_.frame.last
+        isPastLastFrame : ->
+          @_.frame.current >= @_.frame.last
         
         gotoFirstFrame : ->
-          @_.frame.current = 0
+          @_.frame.current = @_.frame.first
           true
         
         hasCyclesRemaining : ->
           @_.cycles > 0
         
         decrementCycles : ->
-          @_.cycles--
+          if @_.cycles? then @_.cycles--
           true
         
-        consoleLog : ->
-          console.log(1111)
+        isReloading : -> @_.reload.ing
+        
+        tryReloading : ->
+          @_.reload.ing--
+          if !@_.reload.ing
+          
+            if @_.ammo?
+              # Use ammo from our ammo supply if we're a unit limited by ammo supply
+              if @_.ammo.maxsupply
+                if @_.ammo.supply<@_.ammo.max
+                  @_.ammo.clip    = @_.ammo.supply
+                  @_.ammo.supply  = 0
+                else
+                  @_.ammo.clip    = @_.ammo.max
+                  @_.ammo.supply  -= @_.ammo.max
+              else
+                @_.ammo.clip = @_.ammo.max
+          true
+          
+        isOutOfAmmo : -> @_.ammo.clip is 0
+        
+        beginReloading : ->
+          @_.reload.ing = if @_.ammo.maxsupply then $.R(30, @_.reload.time) else @_.reload.time
+          true
+            
+        isBerserking : ->
+          @_.berserk.ing
+          
+        tryBerserking : ->
+          @_.action = @CONST.ACTION.MOVING
+          @_.berserk.ing--
+          true
+        
+        beginBerserking : ->
+          if $.R() < @_.berserk.chance
+            @_.berserk.ing = @_.berserk.time
+            true
+          else
+            false
+        
+        hasTarget : ->
+          @_.target? and @_.target.isDead() and @seeTarget()
+        
+        isOutsideWorld : ->
+          !World.contains(@)
+        
+        log : ->
+          console.log(111)
           true
         
       Trees :
       
-        Explosion       : '(<[isLastFrame],[remove]>,[!nextFrame],[explode])'
+        animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
+      
+        Explosion       : '(<[isPastLastFrame],[remove]>,[!nextFrame],[explode])'
         SmallExplosion  : '[Explosion]'
         FragExplosion   : '[Explosion]'
         FlakExplosion   : '[Explosion]'
         HEAPExplosion   : '[Explosion]'
         ChemExplosion   : '[Explosion]'
         
-        SmokeCloud      : '(<[isLastFrame],[!remove]>,[!nextFrame])'
+        SmokeCloud      : '(<[isPastLastFrame],[!remove]>,[!nextFrame])'
         SmokeCloudSmall : '[SmokeCloud]'
-        
-        FlameAnimate    : '(<[isLastFrame],[decrementCycles],[gotoFirstFrame]>,[nextFrame])'
-        Flame           : '(<[!hasCyclesRemaining],[remove]>,[FlameAnimate])'
+
+        Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'
         ChemCloud       : '[Flame]'
         
+        #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
+        InfantryDead            : '<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>'
+        InfantryReloading       : '(<[isOutOfAmmo],[beginReloading],[setAttackingStance]>,<[isReloading],[tryReloading]>)'
+        InfantryBerserking      : '<[isBerserking],[tryBerserking],[InfantryMove]>'
+        InfantryAttack          : '(<[hasTarget],[faceTarget],[setFacingFrames],[attack],[!beginBerserking],[animate]>,[findTarget])'
+        InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,<[faceGoalDirection],[setFacingFrames],[move],[animate]>)'
         
+        Infantry                : '([InfantryMove])' #'([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMove])'
         
-      
-      
-        CommanderIdle : "<[idleCommander]>"
-          
-        SquadAttack : "<[!isSquadDead]>"
-      
-        Projectile  : "(<[isOutsideWorld],[stopProjectile]>,<[isProjectileOutOfRange],[stopProjectile]>,[!fly],<[tryHitProjectile],[stopProjectile]>)"
-        MortarShell : "(<[isOutsideWorld],[hitGroundProjectile]>,<[fly],[fallGravity]>)"
-        SmallMine   : "<[tryHitProjectile],[stopProjectile]>"
-      
-        moveAndBoundsCheck : "<[move],[loopAnimation],(<[isOutsideWorld],[walkingOffMapCheck]>,[TRUE])>"
-        
-        APC : "([isReloading],<[foundTarget],(<[!isFacingTarget],[loopAnimation]>,<[seeTarget],[attack]>)>,[moveAndBoundsCheck])"
-      
-        AttackHelicopter : "([isReloading],<[foundTarget],[seeTarget],[attack]>,[fly])"
-      
-        Infantry        : "([isReloading],<[isBerserking],[moveAndBoundsCheck]>,[InfantryAttack],<[setFacingTarget],[moveAndBoundsCheck]>)"
-        InfantryAttack  : "<[foundTarget],[seeTarget],[setFacingTarget],[attack],[!tryBerserking],[loopAnimation]>"
-        InfantryDead    : "<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>"
-        EngineerInfantry: "<[!tryBuilding],[setFacingTarget],[moveAndBoundsCheck]>"
-      
-        Structure           : "<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>"
-        StructureDead       : "<[!isCrumblingStructure],[crumbleStructure]>"
-        StructureDeadExplode: "<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>"
-        
-        AmmoDump : "<[!isOutOfSupplies],[!isReloading],<[foundSupplyTarget],[supply]>>"
-        
-        MissileRack : "<[!isReloading],<[foundTarget],[seeTarget],[attack]>>"
-        Pillbox     : "<[checkStructureState],[tryCrewing],[!isReloading],<[isCrewed],[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>"
-        SmallTurret : "<[checkStructureState],[!isReloading],<[foundTarget],<[isFacingTarget],<[seeTarget],[attack]>>>>"
-        Scaffold    : "<[checkStructureState],[tryCrewing]>"
+        PistolInfantry          : '[Infantry]'
+        EngineerInfantry        : '[Infantry]'
       
     }

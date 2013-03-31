@@ -5,14 +5,19 @@ define [
   
   # Classes
   'core/Battle/Pawn/Explosion'
+  'core/Battle/Pawn/Infantry'
+  'core/Battle/Pawn/Projectile'
   
   # Utils
   'core/Battle/XHash'
   'core/Battle/SimpleHash'
-], (Terrain, Explosion, XHash, SimpleHash) ->
+  
+], (Terrain, Explosion, Infantry, Projectile, XHash, SimpleHash) ->
 
   classFactories = [
     Explosion
+    Infantry
+    Projectile
   ]
   
   worldBuilders = [
@@ -24,8 +29,8 @@ define [
     primitiveClasses : [
       #'Vehicle'
       #'Structure'
-      #'Infantry'
-      #'Projectile'
+      'Infantry'
+      'Projectile'
       'Explosion'
       #'Aircraft'
       #'PawnController'
@@ -53,12 +58,13 @@ define [
     createNewXHash : -> new XHash(@_)
   
     height : (p) ->
-      if isNaN(p)
-        # Pawn used as the query
-        @_.heightmap[p._.x>>0]
-      else
-        # X used as the query
-        @_.heightmap[p>>0]
+      # Can use either a Pawn or an X value as the query
+      x = if isNaN(p) then p._.x>>0 else p>>0
+      @_.heightmap[x]
+  
+    contains : (p) ->
+      [x,y] = [p._.x>>0, p._.y>>0]
+      !(x<0 || x>=@_.w || y>@_.heightmap[x])
   
     add : (p) ->
       for type in @primitiveClasses

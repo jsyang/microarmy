@@ -78,9 +78,8 @@ define [
         (
           (
             mapctx.draw(p.gfx())
-            #console.log(p.gfx())
           ) for p in world.Instances[type]
-        ) for type in ['Explosion']
+        ) for type in world.primitiveClasses
         
       else
         throw new Error 'no map view to redraw!'

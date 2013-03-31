@@ -26,7 +26,7 @@ define ->
         imgdx   : @_.frame.current*@_.img.w   # X-frames denote action frames
         imgdy   : @_.action*@_.img.h          # Y-frames denote actions
         worldx  : @_.x-(@_.img.w>>1)          # Center sprite horizontally
-        worldy  : @_.y-(@_.img.h+1)           # Bottom align
+        worldy  : @_.y-@_.img.h               # Bottom align
         imgw    : @_.img.w
         imgh    : @_.img.h
       }
