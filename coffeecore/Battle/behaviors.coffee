@@ -236,7 +236,7 @@ define ->
         InfantryAttack          : '(<[hasTarget],[faceTarget],[setFacingFrames],[attack],[!beginBerserking],[animate]>,[findTarget])'
         InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,<[faceGoalDirection],[setFacingFrames],[move],[animate]>)'
         
-        Infantry                : '([InfantryMove])' #'([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMove])'
+        Infantry                : '([InfantryReloading],[InfantryMove])' #'([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMove])'
         
         PistolInfantry          : '[Infantry]'
         EngineerInfantry        : '[Infantry]'

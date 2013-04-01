@@ -5,8 +5,8 @@ type: :task
 component: ma
 release: battle view 1
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-03-10 03:38:14.408816 Z
 references: []
 
@@ -27,3 +27,7 @@ log_events:
     added projectiles, explosions, infantry
     still need to test them to see if they work
     behaviors will need to be tested thoroughly
+- - 2013-04-01 00:07:00.843496 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - added remaining battle models into new stuff
