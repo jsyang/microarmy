@@ -69,4 +69,5 @@ define [
     add : (p) ->
       for type in @primitiveClasses
         if p instanceof @Classes[type]
+          @XHash.add(p) # addFilterDead
           return @Instances[type].push(p)

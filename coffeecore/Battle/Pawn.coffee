@@ -43,7 +43,7 @@ define ->
     isOutOfAmmo     : -> if @_.ammo? then @_.ammo.supply <=0 else false
     
     isAbleToTarget  : (pawn) ->
-      if pawn._.fly? and !@_.canTargetAircraft
+      if (pawn._.fly? and !@_.canTargetAircraft)
         false
       else
         true

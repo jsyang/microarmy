@@ -18,7 +18,8 @@ define ->
           else
             false
         
-        findTarget : -> World.XHash.getNearestEnemy(@)?
+        findTarget : ->
+          World.XHash.getNearestEnemy(@)?
         
         faceTarget : ->
           @_.direction = if @_.target._.x > @_.x then  1 else -1
@@ -188,7 +189,7 @@ define ->
           true
             
         isBerserking : ->
-          @_.berserk.ing
+          @_.berserk.ing > 0
           
         tryBerserking : ->
           @_.action = @CONST.ACTION.MOVING
@@ -210,6 +211,10 @@ define ->
         
         log : ->
           console.log(111)
+          true
+          
+        log1 : ->
+          console.log(222)
           true
         
       Trees :
@@ -236,7 +241,7 @@ define ->
         InfantryAttack          : '(<[hasTarget],[faceTarget],[setFacingFrames],[attack],[!beginBerserking],[animate]>,[findTarget])'
         InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,<[faceGoalDirection],[setFacingFrames],[move],[animate]>)'
         
-        Infantry                : '([InfantryReloading],[InfantryMove])' #'([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMove])'
+        Infantry                : '([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMove])'
         
         PistolInfantry          : '[Infantry]'
         EngineerInfantry        : '[Infantry]'

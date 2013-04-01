@@ -66,7 +66,6 @@ define ->
             pawn.setTarget(t)
             minDist = dist
       ) for t in potentialTargets
-      
       pawn._.target
     
     getCrowdedEnemy : (pawn) ->
