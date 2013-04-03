@@ -25,6 +25,10 @@ define ->
           @_.direction = if @_.target._.x > @_.x then  1 else -1
           true
 
+        setInfantryMoving : ->
+          @_.action = @CONST.ACTION.MOVING
+          true
+          
         faceGoalDirection : ->
           # todo: remove this once testing is done
           @_.direction = {
@@ -48,9 +52,27 @@ define ->
             @_.frame.current = @_.frame.first
           true
           
-        setAttackingStance : ->
+        setInfantryAttackStance : ->
           @_.action = $.R(@CONST.ACTION.ATTACK_STANDING,@CONST.ACTION.ATTACK_PRONE)
           true
+        
+        tryProjectileHit : ->
+          potentialHits = World.XHash.getNBucketsByCoord(@, 0)
+          InfantryClass = World.Classes['Infantry']
+          (
+            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 # 81
+              chanceToHit = @_.accuracy[0]
+              if t is @_.target then chanceToHit += @_.accuracy[1]
+              if t instanceof InfantryClass
+                # stance affects chance to be hit.
+                if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
+                if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
+              
+              if $.r() < chanceToHit
+                t.takeDamage(@_.damage)
+                return true
+          ) for t in potentialHits
+          false
         
         hasHitEnemy : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
@@ -139,6 +161,7 @@ define ->
           @_.y += @_.dy
           if @_.range? then @_.range--
           if @_.rangeTravelled? then @_.rangeTravelled++
+          true
       
         remove : ->
           if @_.range? then @_.range = 0
@@ -163,26 +186,24 @@ define ->
           if @_.cycles? then @_.cycles--
           true
         
-        isReloading : -> @_.reload.ing
+        isReloading : -> @_.reload.ing > 0
         
         tryReloading : ->
           @_.reload.ing--
-          if !@_.reload.ing
-          
-            if @_.ammo?
-              # Use ammo from our ammo supply if we're a unit limited by ammo supply
-              if @_.ammo.maxsupply
-                if @_.ammo.supply<@_.ammo.max
-                  @_.ammo.clip    = @_.ammo.supply
-                  @_.ammo.supply  = 0
-                else
-                  @_.ammo.clip    = @_.ammo.max
-                  @_.ammo.supply  -= @_.ammo.max
+          if @_.reload.ing is 0
+            # Use ammo from our ammo supply if we're a unit limited by ammo supply
+            if @_.ammo.maxsupply
+              if @_.ammo.supply<@_.ammo.max
+                @_.ammo.clip    = @_.ammo.supply
+                @_.ammo.supply  = 0
               else
-                @_.ammo.clip = @_.ammo.max
+                @_.ammo.clip    = @_.ammo.max
+                @_.ammo.supply  -= @_.ammo.max
+            else
+              @_.ammo.clip = @_.ammo.max
           true
           
-        isOutOfAmmo : -> @_.ammo.clip is 0
+        isOutOfAmmo : -> @_.ammo.clip <= 0
         
         beginReloading : ->
           @_.reload.ing = if @_.ammo.maxsupply then $.R(30, @_.reload.time) else @_.reload.time
@@ -197,20 +218,91 @@ define ->
           true
         
         beginBerserking : ->
-          if $.R() < @_.berserk.chance
+          if $.r() < @_.berserk.chance
             @_.berserk.ing = @_.berserk.time
-            true
-          else
-            false
+          true
         
         hasTarget : ->
-          @_.target? and @_.target.isDead() and @seeTarget()
+          @_.target? and !@_.target?.isDead()
         
         isOutsideWorld : ->
           !World.contains(@)
+          
+        seeTarget : ->
+          @distX(@_.target) <= @_.sight*(1<<World.XHash._.BUCKETWIDTH)
+        
+        tryInfantryAttack : ->
+          dist = @distX(@_.target)
+          if dist < @_.img.w
+            # melee range
+            if $.r() < @_.berserk.chance
+                @_.target.takeDamage(@_.meleeDmg)
+                # Pretty hard to ignore someone punching your face
+                @_.target._?.target = @
+          else
+          
+            switch @_.projectile
+              when 'MGBullet'
+                accuracy  = [0.65, 0.35]  # more spread
+                strayDy   = $.R(-15,15)*0.01
+                sound     = 'mgburst'
+              when 'Bullet'
+                accuracy  = [0.15, 0.85]
+                strayDy   = $.R(-15,15)*0.01
+                sound     = 'pistol'
+              when 'SmallRocket'
+                if dist < 48 then return true
+                accuracy  = [0.28, 0.68]
+                strayDy   = $.R(-19,19)*0.01
+                sound     = 'rocket'
+              else
+                accuracy  = [0.2, 0.5]
+                strayDy   = $.R(-30,30)*0.01
+            
+            if @_.ammo.clip == @_.ammo.max and sound? then soundManager.play(sound)
+            @_.ammo.clip--
+            
+            pSpeed = 4
+            pDx    = @_.direction*(@_.img.w>>1)
+            pDy    = if @_.action is @CONST.ACTION.ATTACK_PRONE then -2 else -4
+            
+            if dist > 50
+              accuracy[0]-=0.02
+              accuracy[1]-=0.15
+            if dist > 120
+              accuracy[0]-=0.01
+              accuracy[1]-=0.18
+            if dist > 180
+              accuracy[0]-=0.01
+              accuracy[1]-=0.08
+            if dist > 200
+              accuracy[0]-=0.01
+              accuracy[1]-=0.08
+              
+            World.add(
+              new World.Classes[@_.projectile](
+                {
+                  accuracy
+                  x       : @_.x + pDx
+                  y       : @_.y + pDy
+                  team    : @_.team
+                  target  : @_.target
+                  dx      : @_.direction*pSpeed
+                  dy      : ((@_.target._.y-(@_.target._.img.h>>1)-(@_.y+pDy))*pSpeed)/dist + strayDy
+                }
+              )
+            )
+            
+          true
+          
+        isInfantryAttacking : ->
+          @CONST.ACTION.ATTACK_STANDING <= @_.action <= @CONST.ACTION.ATTACK_PRONE
+        
+        isProjectileActive : ->
+          @_.range > 0
         
         log : ->
-          console.log(111)
+          console.log('hit!')
           true
           
         log1 : ->
@@ -218,6 +310,9 @@ define ->
           true
         
       Trees :
+      
+        Projectile      : '(<[isOutsideWorld],[remove]>,<[!isProjectileActive],[remove]>,[!fly],<[tryProjectileHit],[log],[remove]>)'
+        Bullet          : '[Projectile]'
       
         animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
       
@@ -236,14 +331,16 @@ define ->
         
         #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
         InfantryDead            : '<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>'
-        InfantryReloading       : '(<[isOutOfAmmo],[beginReloading],[setAttackingStance]>,<[isReloading],[tryReloading]>)'
-        InfantryBerserking      : '<[isBerserking],[tryBerserking],[InfantryMove]>'
-        InfantryAttack          : '(<[hasTarget],[faceTarget],[setFacingFrames],[attack],[!beginBerserking],[animate]>,[findTarget])'
-        InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,<[faceGoalDirection],[setFacingFrames],[move],[animate]>)'
+        InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance]>)'
+        InfantryBerserking      : '<[isBerserking],[hasTarget],[tryBerserking],[InfantryMove]>'
+        InfantryAttack          : '(<[hasTarget],[seeTarget],[faceTarget],[setFacingFrames],([isInfantryAttacking],[setInfantryAttackStance]),[tryInfantryAttack],([beginBerserking],[TRUE]),[animate]>,<[findTarget],[seeTarget]>)'
+        InfantryMoveToGoal      : '([!faceGoalDirection],[!setFacingFrames])'
+        InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,[!setInfantryMoving],[!move])'
         
-        Infantry                : '([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMove])'
+        Infantry                : '([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMoveToGoal],[InfantryMove],[animate])'
         
         PistolInfantry          : '[Infantry]'
+        RocketInfantry          : '[Infantry]'
         EngineerInfantry        : '[Infantry]'
       
     }

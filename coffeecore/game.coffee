@@ -18,8 +18,9 @@ define [
       .render()
       .addUI()
       .play()
-  
+      
     window.game = b
+    
   window.preloader = HTML5Preloader(startGame)
   
   return

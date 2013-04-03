@@ -63,6 +63,7 @@ define [
         newInstances[k] = newInstancesCollection
       ) for k,v of world.Instances
       
+      world.XHash     = newXHash
       world.Instances = newInstances
       @
   

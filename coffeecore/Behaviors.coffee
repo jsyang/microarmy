@@ -15,13 +15,21 @@ define ->
       if btree? and btree.id?
         switch btree.id
           
-          # Quit on first false
+          # Quit on first false, otherwise true
           when 'sequence'
-            return false for subtree in btree.children when @Execute(thisArg, subtree) is false
+            (
+              result = @Execute(thisArg, subtree)
+              return result unless result is true
+            ) for subtree in btree.children
+            return result
           
-          # Quit on first true
+          # Quit on first true, otherwise false
           when 'selector' 
-            return true for subtree in btree.children when @Execute(thisArg, subtree) is true
+            (
+              result = @Execute(thisArg, subtree)
+              return result unless result is false
+            ) for subtree in btree.children
+            return result
         
           # Custom behaviors and decorators
           else
@@ -54,7 +62,7 @@ define ->
     
     # String to BTree
     ConvertShortHand : (code) ->
-      if typeof code == 'string'
+      if typeof code is 'string'
         btreeJSON = code
           .replace(/\[/g, '{id:"')
           .replace(/\]/g, '"}')

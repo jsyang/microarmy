@@ -13,10 +13,11 @@ define [
         target      : null
         explosion   : null
         img :
-          sheet : preloader.getFile('shells')
-          w     : 3
-          h     : 3
-          row   : 0
+          sheet   : preloader.getFile('shells')
+          hDist2  : 9
+          w       : 3
+          h       : 3
+          row     : 0
       }, _
       super @_
     
