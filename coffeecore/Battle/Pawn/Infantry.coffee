@@ -36,6 +36,23 @@ define [
       @setSpriteSheet(@_.imgsheet)
       super @_
 
+    distHit : (pawn) ->
+      [dx, dy] = [pawn._.x, pawn._.y]
+      [dx, dy] = [Math.abs(@_.x - dx), Math.abs((@_.y-(@_.img.h>>1)) - dy)]
+      
+      dx*dx + dy*dy
+      
+    gfx : ->
+      {
+        img     : @_.img.sheet                # Sprite sheet
+        imgdx   : @_.frame.current*@_.img.w   # X-frames denote action frames
+        imgdy   : @_.action*@_.img.h          # Y-frames denote actions
+        worldx  : @_.x-(@_.img.w>>1)          # Center sprite horizontally
+        worldy  : @_.y-@_.img.h               # Bottom align
+        imgw    : @_.img.w
+        imgh    : @_.img.h
+      }
+      
   class PistolInfantry extends Infantry
     constructor : (_) ->
       @_ = $.extend {

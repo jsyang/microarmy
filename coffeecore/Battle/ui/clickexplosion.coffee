@@ -21,6 +21,23 @@ define ->
           'Flame'
           'ChemCloud'
         ]
+        Structure : [
+          'CommCenter'
+          'Barracks'
+          'Scaffold'
+          'CommRelay'
+          'WatchTower'
+          'AmmoDump'
+          'AmmoDumpSmall'
+          'MineFieldSmall'
+          'Depot'
+          'RepairYard'
+          'Helipad'
+          'Pillbox'
+          'SmallTurret'
+          'MissileRack'
+          'MissileRackSmall'
+        ]
           
     
       availableClasses = classCategories.Infantry

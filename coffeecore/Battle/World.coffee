@@ -26,9 +26,10 @@ define [
 
   class BattleWorld
   
+    # Also used for drawing order
     primitiveClasses : [
       #'Vehicle'
-      #'Structure'
+      'Structure'
       'Infantry'
       'Projectile'
       'Explosion'

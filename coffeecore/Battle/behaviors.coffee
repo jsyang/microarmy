@@ -49,7 +49,7 @@ define ->
           
           # Make sure we're facing the correct direction immediately.
           if not( @_.frame.first <= @_.frame.current <= @_.frame.last )
-            @_.frame.current = @_.frame.first
+            @_.frame.current = @_.frame.first + (@_.frame.current % 6)
           true
           
         setInfantryAttackStance : ->
@@ -58,15 +58,17 @@ define ->
         
         tryProjectileHit : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 0)
-          InfantryClass = World.Classes['Infantry']
+          InfantryClass = Classes['Infantry']
           (
-            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= t._.img.hDist2
+            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= t._.img.hDist2 + @_.img.hDist2
               chanceToHit = @_.accuracy[0]
               if t is @_.target then chanceToHit += @_.accuracy[1]
               if t instanceof InfantryClass
                 # stance affects chance to be hit.
                 if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
                 if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
+              
+              # console.log("#{@constructor.name} hit : CTH = #{chanceToHit}")
               
               if $.r() < chanceToHit
                 t.takeDamage(@_.damage)
@@ -164,7 +166,6 @@ define ->
           true
         
         fly : ->
-          # Keep this simple.
           @_.x += @_.dx
           @_.y += @_.dy
           if @_.range? then @_.range--
@@ -259,9 +260,11 @@ define ->
           
             if @CONST.SHOTFRAME[@constructor.name][@_.frame.current % 6] is '0' then return true
             
+            accuracy = [0, 0]
+            
             switch @_.projectile
               when 'MGBullet'
-                accuracy  = [0.65, 0.35]  # more spread
+                accuracy  = [0.65, 0.35]  # chanceToHit [periphery, target bonus]
                 strayDy   = $.R(-15,15)*0.01
                 sound     = 'mgburst'
               when 'Bullet'
@@ -295,9 +298,9 @@ define ->
             if dist > 200
               accuracy[0]-=0.01
               accuracy[1]-=0.08
-              
+            
             World.add(
-              new World.Classes[@_.projectile](
+              new Classes[@_.projectile](
                 {
                   accuracy
                   x       : @_.x + pDx
@@ -335,12 +338,12 @@ define ->
           if @_.corpsetime > 0 then @_.corpsetime--
           true
         
-        log : ->
-          console.log('berserking!', @_.team)
+        log1 : ->
+          console.log(111)
           true
           
-        log1 : ->
-          console.log('hit!')
+        log2 : ->
+          console.log(222)
           true
         
       Trees :
@@ -366,6 +369,8 @@ define ->
         Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'
         ChemCloud       : '[Flame]'
         
+        # Berserk means Infantry charges towards target
+        
         #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
         InfantryDead            : '<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>'
         InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance],[clearTarget],[gotoFirstFrame]>)'
@@ -375,6 +380,7 @@ define ->
         InfantryDoAttack        : '<[tryInfantryAttack],[animate],([tryBerserking],[TRUE])>'
         InfantryTryAttack       : '(<[hasTarget],[seeTarget],[faceTarget],[setFacingFrames],[InfantryDoAttack]>,[InfantryFindTarget])'
         InfantryMoveToGoal      : '([!faceGoalDirection],[!setFacingFrames])'
+        # todo
         InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,[!setInfantryMoving],[!move],[animate])'
         
         InfantryAlive           : '([InfantryReloading],[InfantryBerserking],[InfantryTryAttack],[InfantryMoveToGoal],[InfantryMove])'
@@ -386,4 +392,6 @@ define ->
         RocketInfantry          : '[Infantry]'
         EngineerInfantry        : '[Infantry]'
       
+        
+        Structure : '<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>'
     }

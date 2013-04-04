@@ -26,7 +26,7 @@ define ->
         imgdx   : @_.frame.current*@_.img.w   # X-frames denote action frames
         imgdy   : @_.action*@_.img.h          # Y-frames denote actions
         worldx  : @_.x-(@_.img.w>>1)          # Center sprite horizontally
-        worldy  : @_.y-@_.img.h               # Bottom align
+        worldy  : @_.y-(@_.img.h>>1)          # Center sprite vertically
         imgw    : @_.img.w
         imgh    : @_.img.h
       }
@@ -71,9 +71,10 @@ define ->
     
     distX       : (pawn) -> Math.abs(@_.x - pawn._.x)
     
-    # todo: Might need to overwrite this func for certain classes
+    # Centers. Point to point.
+    # Overwrite this func for certain classes when their sprites show that they should be 
     distHit     : (pawn) ->
-      [dx, dy] = [pawn._.x, pawn._.y-(pawn._.img.h>>1)]
+      [dx, dy] = [pawn._.x, pawn._.y]
       [dx, dy] = [Math.abs(@_.x - dx), Math.abs(@_.y - dy)]
       
       dx*dx + dy*dy

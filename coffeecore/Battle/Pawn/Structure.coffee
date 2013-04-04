@@ -23,7 +23,6 @@ define [
       }, _
       super @_
       @setSpriteSheet()
-      
     
     gfx : ->
       {
