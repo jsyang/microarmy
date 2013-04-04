@@ -49,9 +49,9 @@ define [
           btree = @Behaviors.Trees[btree]
           
           if btree?
-            # Pawn can be targeted if the btree exits with the status true
-            if @Behaviors.Execute(p, btree)
-              newXHash.add(p)
+            @Behaviors.Execute(p, btree)
+            newXHash.add(p) unless !p.isTargetable()
+              
           else
             throw new Error 'no behaviors found for instance of '+p.constructor.name
           

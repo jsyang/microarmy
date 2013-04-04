@@ -2,7 +2,14 @@ define [
   'core/Battle/view/background'
 ], (addBackground) ->
 
-  clear = -> @clearRect(0, 0, @width, @height)
+  #clear = -> @clearRect(0, 0, @width, @height)
+  clear = ->
+    @clearRect(0, 0, @width, @height)
+    if @Message?.time>0
+      @text(10 + @el.scrollLeft, 10, @Message.text)
+      @Message.time--
+  
+  text = (x,y,t)-> @fillText(t,x,y)
   
   draw = (gfx) ->
     if gfx?.img?
@@ -42,11 +49,23 @@ define [
     
     el.ctx                  = canvas.getContext '2d'
     
+    # for text.
+    el.ctx.fillStyle        = '#ff0000'
+    el.ctx.textBaseline     = 'top'
+    el.ctx.font             = '10px verdana'
+    
     el.ctx.width            = w
     el.ctx.height           = h
     
     # Map view API
     el.ctx.clear            = clear
     el.ctx.draw             = draw
+    el.ctx.text             = text
+    
+    # context2d's parent el
+    el.ctx.el               = el
+    
+    # Map debug text API
+    el.ctx.Message          = { text : '', time : 0 }
     
     el

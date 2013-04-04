@@ -47,6 +47,8 @@ define ->
         false
       else
         true
+        
+    isTargetable    : -> !(@_.targetable is false)
     
     # # # # # # # #
     

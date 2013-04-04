@@ -12,6 +12,7 @@ define [
         corpsetime  : 1
         target      : null
         explosion   : null
+        targetable  : false
         img :
           sheet   : preloader.getFile('shells')
           hDist2  : 9

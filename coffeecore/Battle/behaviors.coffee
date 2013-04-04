@@ -74,6 +74,14 @@ define ->
           ) for t in potentialHits
           false
         
+        tryProjectileExplode : ->
+          if @_.explosion? and Classes[@_.explosion]?
+            World.add(new Classes[@_.explosion]({
+              x: @_.x
+              y: @_.y
+            }))
+          true
+        
         hasHitEnemy : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
@@ -87,7 +95,7 @@ define ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
             # todo: might want to check if this is being triggered on the correct dist
-            if t.distHit(@) <= @_.img.hDist2
+            if t? and t.distHit(@) <= @_.img.hDist2
               t.takeDamage(@_.damage)
               @_.damage -= @_.damageDecay
               @_.damage = 0 if @_.damage<0
@@ -101,7 +109,7 @@ define ->
           @_.homing
         
         spawnSmokeTrail : ->
-          World.add(new (@_.smokeTrailType)({
+          World.add(new Classes[@_.smokeTrailType]({
             x: @_.x-@_.dx
             y: @_.y-@_.dy
           }))
@@ -336,9 +344,11 @@ define ->
           true
         
       Trees :
-      
-        Projectile      : '(<[isOutsideWorld],[remove]>,<[!isProjectileActive],[remove]>,[!fly],<[tryProjectileHit],[log1],[remove]>)'
-        Bullet          : '[Projectile]'
+
+        Projectile          : '(<[isOutsideWorld],[remove]>,<[!isProjectileActive],[remove]>,[!fly],<[tryProjectileHit],[tryProjectileExplode],[remove]>)'
+        Bullet              : '[Projectile]'
+        MGBullet            : '[Projectile]'
+        SmallRocket         : '[Projectile]'
       
         corpseDecay     : '(<[!isPastLastFrame],[nextFrame]>,[rot])'
         animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
@@ -358,7 +368,7 @@ define ->
         
         #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
         InfantryDead            : '<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>'
-        InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance],[clearTarget]>)'
+        InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance],[clearTarget],[gotoFirstFrame]>)'
         InfantryBerserking      : '<[isBerserking],[move],[animate]>'
         InfantryFindTarget      : '<[findTarget],[seeTarget]>'
         InfantrySetStance       : '([isInfantryAttacking],[setInfantryAttackStance])'

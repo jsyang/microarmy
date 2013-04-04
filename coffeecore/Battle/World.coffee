@@ -69,5 +69,5 @@ define [
     add : (p) ->
       for type in @primitiveClasses
         if p instanceof @Classes[type]
-          @XHash.add(p) # addFilterDead
+          @XHash.add(p) unless !p.isTargetable()
           return @Instances[type].push(p)
