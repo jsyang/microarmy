@@ -71,7 +71,7 @@ define ->
     
     # todo: Might need to overwrite this func for certain classes
     distHit     : (pawn) ->
-      [dx, dy] = [pawn._.x-(pawn._.img.w>>1), pawn._.y-(pawn._.img.h>>1)]
+      [dx, dy] = [pawn._.x, pawn._.y-(pawn._.img.h>>1)]
       [dx, dy] = [Math.abs(@_.x - dx), Math.abs(@_.y - dy)]
       
       dx*dx + dy*dy

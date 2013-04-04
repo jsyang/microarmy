@@ -2,10 +2,10 @@ define ->
 
   class Behaviors
     constructor : (_) ->
-      if _.Trees?
+      if _?.Trees?
         @Trees = _.Trees
-        @Trees[k] = @ConvertShortHand(@Trees[k]) for k,v of @Trees
-      if _.Decorators? then @['Decorators'] = _.Decorators
+        @Trees[k] = @ConvertShortHand(v) for k,v of @Trees
+      if _?.Decorators? then @Decorators = _.Decorators
 
     Decorators : {}
     Trees      : {}
@@ -64,14 +64,13 @@ define ->
     ConvertShortHand : (code) ->
       if typeof code is 'string'
         btreeJSON = code
-          .replace(/\[/g, '{id:"')
-          .replace(/\]/g, '"}')
-          .replace(/\(/g, '{id:"selector",children:[')
-          .replace(/</g,  '{id:"sequence",children:[')
-          .replace(/>/g,  ']}')
-          .replace(/\)/g, ']}')
+          .replace(/\[/g,     '{id:"')
+          .replace(/\]/g,     '"}')
+          .replace(/\(/g,     '{id:"selector",children:[')
+          .replace(/</g,      '{id:"sequence",children:[')
+          .replace(/(>|\))/g, ']}')
         
         btree = eval("(#{btreeJSON})")
       
       else
-        code
+        throw new Error 'btree shorthand must be given as a string!'

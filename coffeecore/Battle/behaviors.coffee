@@ -60,7 +60,7 @@ define ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 0)
           InfantryClass = World.Classes['Infantry']
           (
-            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 # 81
+            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= t._.img.hDist2
               chanceToHit = @_.accuracy[0]
               if t is @_.target then chanceToHit += @_.accuracy[1]
               if t instanceof InfantryClass
@@ -179,6 +179,9 @@ define ->
           @_.frame.current = @_.frame.first
           true
         
+        isFirstFrame : ->
+          @_.frame.current is @_.frame.first
+        
         hasCyclesRemaining : ->
           @_.cycles > 0
         
@@ -210,16 +213,21 @@ define ->
           true
             
         isBerserking : ->
-          @_.berserk.ing > 0
+          if @_.berserk.ing > 0
+            @_.action = @CONST.ACTION.MOVING
+            @_.berserk.ing--
+            true
+          else
+            false
+            
           
         tryBerserking : ->
-          @_.action = @CONST.ACTION.MOVING
-          @_.berserk.ing--
-          true
-        
-        beginBerserking : ->
           if $.r() < @_.berserk.chance
             @_.berserk.ing = @_.berserk.time
+          @_.berserk.ing > 0
+          
+        clearTarget : ->
+          @setTarget()
           true
         
         hasTarget : ->
@@ -294,26 +302,42 @@ define ->
             )
             
           true
-          
+        
+        setInfantryDying : ->
+          @_.action = $.R(@CONST.ACTION.DEATH1,@CONST.ACTION.DEATH2)
+          soundManager.play('die'+$.R(1,4))
+          true
+        
+        isInfantryDying : ->
+          @CONST.ACTION.DEATH1 <= @_.action <= @CONST.ACTION.DEATH2
+        
         isInfantryAttacking : ->
           @CONST.ACTION.ATTACK_STANDING <= @_.action <= @CONST.ACTION.ATTACK_PRONE
         
         isProjectileActive : ->
           @_.range > 0
         
+        isDead : ->
+          @isDead()
+          
+        rot : ->
+          if @_.corpsetime > 0 then @_.corpsetime--
+          true
+        
         log : ->
-          console.log('hit!')
+          console.log('berserking!', @_.team)
           true
           
         log1 : ->
-          console.log(222)
+          console.log('hit!')
           true
         
       Trees :
       
-        Projectile      : '(<[isOutsideWorld],[remove]>,<[!isProjectileActive],[remove]>,[!fly],<[tryProjectileHit],[log],[remove]>)'
+        Projectile      : '(<[isOutsideWorld],[remove]>,<[!isProjectileActive],[remove]>,[!fly],<[tryProjectileHit],[log1],[remove]>)'
         Bullet          : '[Projectile]'
       
+        corpseDecay     : '(<[!isPastLastFrame],[nextFrame]>,[rot])'
         animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
       
         Explosion       : '(<[isPastLastFrame],[remove]>,[!nextFrame],[explode])'
@@ -331,13 +355,19 @@ define ->
         
         #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
         InfantryDead            : '<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>'
-        InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance]>)'
-        InfantryBerserking      : '<[isBerserking],[hasTarget],[tryBerserking],[InfantryMove]>'
-        InfantryAttack          : '(<[hasTarget],[seeTarget],[faceTarget],[setFacingFrames],([isInfantryAttacking],[setInfantryAttackStance]),[tryInfantryAttack],([beginBerserking],[TRUE]),[animate]>,<[findTarget],[seeTarget]>)'
+        InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance],[clearTarget]>)'
+        InfantryBerserking      : '<[isBerserking],[move],[animate]>'
+        InfantryFindTarget      : '<[findTarget],[seeTarget]>'
+        InfantrySetStance       : '([isInfantryAttacking],[setInfantryAttackStance])'
+        InfantryDoAttack        : '<[tryInfantryAttack],[animate],([tryBerserking],[TRUE])>'
+        InfantryTryAttack       : '(<[hasTarget],[seeTarget],[faceTarget],[setFacingFrames],[InfantryDoAttack]>,[InfantryFindTarget])'
         InfantryMoveToGoal      : '([!faceGoalDirection],[!setFacingFrames])'
-        InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,[!setInfantryMoving],[!move])'
+        InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,[!setInfantryMoving],[!move],[animate])'
         
-        Infantry                : '([InfantryReloading],[InfantryBerserking],[InfantryAttack],[InfantryMoveToGoal],[InfantryMove],[animate])'
+        InfantryAlive           : '([InfantryReloading],[InfantryBerserking],[InfantryTryAttack],[InfantryMoveToGoal],[InfantryMove])'
+        InfantryDead            : '(<[!isInfantryDying],[setInfantryDying],[gotoFirstFrame]>,[corpseDecay])'
+        
+        Infantry                : '(<[isDead],[InfantryDead]>,[InfantryAlive])'
         
         PistolInfantry          : '[Infantry]'
         RocketInfantry          : '[Infantry]'
