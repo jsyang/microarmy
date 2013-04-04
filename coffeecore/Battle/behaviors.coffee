@@ -249,6 +249,8 @@ define ->
                 @_.target._?.target = @
           else
           
+            if @CONST.SHOTFRAME[@constructor.name][@_.frame.current % 6] is '0' then return true
+            
             switch @_.projectile
               when 'MGBullet'
                 accuracy  = [0.65, 0.35]  # more spread
@@ -268,7 +270,6 @@ define ->
                 strayDy   = $.R(-30,30)*0.01
             
             if @_.ammo.clip == @_.ammo.max and sound? then soundManager.play(sound)
-            @_.ammo.clip--
             
             pSpeed = 4
             pDx    = @_.direction*(@_.img.w>>1)
@@ -300,6 +301,8 @@ define ->
                 }
               )
             )
+            
+            @_.ammo.clip--
             
           true
         

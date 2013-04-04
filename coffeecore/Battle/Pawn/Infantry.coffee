@@ -11,7 +11,7 @@ define [
       DEATH1            : 4
       DEATH2            : 5
 
-    SHOOTFRAMES :
+    SHOTFRAME :
     # in which frames do we want to spawn projectiles?
       PistolInfantry  : '010100010100'
       RocketInfantry  : '000100000100'
