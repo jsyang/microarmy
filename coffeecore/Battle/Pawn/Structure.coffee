@@ -14,6 +14,7 @@ define [
     constructor : (_) ->
       @_ = $.extend {
         targetable  : true
+        crumbled    : false # already destroyed?
         corpsetime  : 1
         target      : null
         state       : STATE.GOOD
@@ -34,6 +35,24 @@ define [
         imgw    : @_.img.w
         imgh    : @_.img.h
       }
+    
+    distHit : (pawn) ->
+      [dx, dy] = [pawn._.x, pawn._.y]
+      # Above ground.
+      [dx, dy] = [Math.abs(@_.x - dx), Math.abs((@_.y-(@_.img.h>>1)) - dy)]
+      
+      dx*dx + dy*dy
+    
+    takeDamage : (damageValue) ->
+      if damageValue > 0
+        @_.health.current -= damageValue
+        
+        if @_.health.current <= 0
+          @_.health.current = 0
+          @_.state = @CONST.STATE.WRECK
+          
+        else if @_.health.current < 0.6*@_.health.max
+          @_.state = @CONST.STATE.BAD
 
   
   class CommCenter extends Structure

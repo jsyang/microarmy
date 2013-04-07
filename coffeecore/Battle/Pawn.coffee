@@ -34,7 +34,11 @@ define ->
     
     # is___ funcs
     
-    isAlly          : (pawn) -> @_.team == pawn._.team
+    isAlly          : (pawn) ->
+      if @_.team is -1
+        true
+      else
+        @_.team == pawn._.team
     
     isDead          : -> !(@_.health?.current > 0)
     

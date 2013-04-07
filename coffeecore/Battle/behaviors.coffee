@@ -248,6 +248,71 @@ define ->
         seeTarget : ->
           @distX(@_.target) <= @_.sight*(1<<World.XHash._.BUCKETWIDTH)
         
+        # use weapons for this instead of a specific attack func?
+        # attack -> attackWith[class.weapon]
+        
+        tryStructureAttack : ->
+          accuracy = [0, 0]
+          
+          bulletWeapon = false
+          switch @_.projectile
+            when 'MGBullet'
+              accuracy      = [0.65, 0.35]  # chanceToHit [periphery, target bonus]
+              strayDy       = $.R(-15,15)*0.01
+              sound         = 'mgburst'
+              bulletWeapon  = true
+            when 'Bullet'
+              accuracy      = [0.15, 0.85]
+              strayDy       = $.R(-15,15)*0.01
+              sound         = 'pistol'
+              bulletWeapon  = true
+            when 'SmallRocket'
+              if dist < 48 then return true
+              accuracy      = [0.28, 0.68]
+              strayDy       = $.R(-19,19)*0.01
+              sound         = 'rocket'
+              bulletWeapon  = true
+            else
+              accuracy  = [0.2, 0.5]
+              strayDy   = $.R(-30,30)*0.01
+          
+          if @_.ammo.clip == @_.ammo.max and sound? then soundManager.play(sound)
+          
+          pSpeed = 4
+          pDx    = @_.direction*(@_.img.w>>1)
+          pDy    = @_.shootDy
+          
+          if bulletWeapon
+            if dist > 50
+              accuracy[0]-=0.02
+              accuracy[1]-=0.15
+            if dist > 120
+              accuracy[0]-=0.01
+              accuracy[1]-=0.18
+            if dist > 180
+              accuracy[0]-=0.01
+              accuracy[1]-=0.08
+            if dist > 200
+              accuracy[0]-=0.01
+              accuracy[1]-=0.08
+          
+          World.add(
+            new Classes[@_.projectile](
+              {
+                accuracy
+                x       : @_.x + pDx
+                y       : @_.y + pDy
+                team    : @_.team
+                target  : @_.target
+                dx      : @_.direction*pSpeed
+                dy      : ((@_.target._.y-(@_.target._.img.h>>1)-(@_.y+pDy))*pSpeed)/dist + strayDy
+              }
+            )
+          )
+          
+          @_.ammo.clip--
+          true
+        
         tryInfantryAttack : ->
           dist = @distX(@_.target)
           if dist < @_.img.w
@@ -258,6 +323,7 @@ define ->
                 @_.target._?.target = @
           else
           
+            # todo: move this into its own decorator
             if @CONST.SHOTFRAME[@constructor.name][@_.frame.current % 6] is '0' then return true
             
             accuracy = [0, 0]
@@ -338,6 +404,53 @@ define ->
           if @_.corpsetime > 0 then @_.corpsetime--
           true
         
+        isCrewed : -> @_.crew? and @_.crew?.current? > 0
+        
+        tryCrewing : ->
+          if @_.crew.current < @_.crew.max
+            potentialCrew = World.XHash.getNBucketsByCoord(@,1)
+            (
+              if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@_.img.w>>1) and t.isAlly()
+                @_.crew.current++
+                return true
+            ) for t in potentialCrew
+          false
+        
+        hasReinforcements : ->
+          @_.reinforce?
+        
+        tryReinforcing : ->
+          if @_.reinforce.ing
+            if  @_.reinforce.supplyNumber > 0 and
+                @_.reinforce.parentSquad?     and
+                @_.reinforce.supplyType?      and
+                @_.reinforce.types[@_.reinforce.supplyType] > 0
+              # release a unit from the supply
+              @_.reinforce.ing = @_.reinforce.time
+              @_.reinforce.types[@_.reinforce.supplyType]--
+              @_.reinforce.supplyNumber--
+              
+              # todo: spawned unit inherits parameters from the structure's reinforce obj
+              instance = new Classes[@_.reinforce.supplyType]({
+                x     : @_.x
+                y     : World.height(@)
+                team  : @_.team
+                squad : @_.reinforce.parentSquad
+              })
+              
+              World.add(instance)
+              # todo: parentSquad should check if all its members have joined rather than the supplier
+              @_.reinforce.parentSquad.add(instance)
+              return true
+            
+          false
+        
+        isStructureCrumbling : -> @_.state is @CONST.STATE.WRECK
+        
+        isCrumbled : -> @_.crumbled is true
+        
+        setUntargetable : -> @_.targetable = false
+        
         log1 : ->
           console.log(111)
           true
@@ -393,5 +506,14 @@ define ->
         EngineerInfantry        : '[Infantry]'
       
         
-        Structure : '<[checkStructureState],[tryCrewing],[tryReinforcing],<[isArmed],([isReloading],<[foundTarget],[seeTarget],[attack]>)>>'
+        StructureCrewing      : '<[isCrewed],[tryCrewing]>'
+        StructureReinforcing  : '<[isReinforcing],[tryReinforcing]>'
+        StructureAttack       : '<[isArmed],([isReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
+        
+        # todo
+        StructureDead         : '<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>'
+        #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
+        
+        StructureAlive        : '<[StructureCrewing],[StructureReinforcing],[StructureAttack]>'
+        StructureDead         : ''
     }

@@ -1,3 +1,6 @@
 #!/bin/bash
-clear
-jasmine-node --verbose --runWithRequireJs --coffee tests/
+if [ $# -eq 0 ] ; then
+    jasmine-node --verbose --runWithRequireJs --coffee tests/
+else
+    jasmine-node --verbose --runWithRequireJs --coffee $1
+fi

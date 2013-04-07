@@ -59,11 +59,11 @@ define ->
         switch e.which
           # Choosing a category of classes
           when 49
-            availableClasses = classCategories.Infantry
             categoryChoose = 'Infantry'
           when 50
-            availableClasses = classCategories.Explosion
             categoryChoose = 'Explosion'
+          when 51
+            categoryChoose = 'Structure'
             
           # Navigate within current category
           when 87, 119 # W
@@ -89,6 +89,7 @@ define ->
             text : "MouseClick = [#{currentClick._class}, TEAM = #{currentClick._team}]"
             time : 40
         else if categoryChoose?
+          availableClasses = classCategories[categoryChoose]
           map.ctx.Message =
             text : "#{categoryChoose} classes."
             time : 40
@@ -97,10 +98,13 @@ define ->
         [sx, sy] = [map.scrollLeft, map.scrollTop]
         [x,y] = [e.pageX+sx, e.pageY+sy]
         
-        if world.Classes[currentClick._class] instanceof world.Classes.Infantry
+        currentClass = world.Classes[currentClick._class]
+        
+        if (currentClass instanceof world.Classes.Infantry) or
+           (currentClass instanceof world.Classes.Structure)
           y = world.height(x)
           
-        instance = new world.Classes[currentClick._class]({
+        instance = new currentClass({
           x
           y
           team  : currentClick._team

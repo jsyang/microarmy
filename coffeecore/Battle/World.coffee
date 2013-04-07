@@ -4,6 +4,7 @@ define [
   'core/Battle/addTerrain'
   
   # Classes
+  'core/Battle/Pawn/Structure'
   'core/Battle/Pawn/Explosion'
   'core/Battle/Pawn/Infantry'
   'core/Battle/Pawn/Projectile'
@@ -12,9 +13,10 @@ define [
   'core/Battle/XHash'
   'core/Battle/SimpleHash'
   
-], (Terrain, Explosion, Infantry, Projectile, XHash, SimpleHash) ->
+], (Terrain, Structure, Explosion, Infantry, Projectile, XHash, SimpleHash) ->
 
   classFactories = [
+    Structure
     Explosion
     Infantry
     Projectile
