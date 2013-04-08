@@ -20,3 +20,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-04-08 06:02:51.997448 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - all other infantry behaviors work except for EngineerInfantry. need to figure out why the scaffolds they lay down don't stay in the world.

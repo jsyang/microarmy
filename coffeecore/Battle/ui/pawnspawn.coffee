@@ -48,15 +48,24 @@ define ->
       ]
     
       currentClick =
-        _class  : availableClasses[0]
-        _classi : 0
-        _team   : availableTeams[0]
-        _teami  : 0
+        _special  : null
+        _class    : availableClasses[0]
+        _classi   : 0
+        _team     : availableTeams[0]
+        _teami    : 0
     
       window.onkeypress = (e) ->
         #console.log(e.which)
         
         switch e.which
+          # Special options
+          when 122, 90
+            switch currentClick._class
+              when 'EngineerInfantry'
+                message = 'Click to set scaffold location.'
+                currentClick._special = { build : { type : 'Pillbox', x : null } }
+            specialOption = true
+        
           # Choosing a category of classes
           when 49
             categoryChoose = 'Infantry'
@@ -93,25 +102,41 @@ define ->
           map.ctx.Message =
             text : "#{categoryChoose} classes."
             time : 40
+        else if specialOption? and message?
+          map.ctx.Message =
+            text : message
+            time : 40
     
       map.onclick = (e) ->
-        [sx, sy] = [map.scrollLeft, map.scrollTop]
-        [x,y] = [e.pageX+sx, e.pageY+sy]
+        [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
+        [x,   y]      = [e.pageX+sx,      e.pageY+sy]
+        currentClass  = world.Classes[currentClick._class]
         
-        currentClass = world.Classes[currentClick._class]
-        
-        if (currentClass instanceof world.Classes.Infantry) or
-           (currentClass instanceof world.Classes.Structure)
-          y = world.height(x)
+        if currentClick._special? and currentClick._special.build? and !(currentClick._special.build.x?)
+            currentClick._special.build.x = x
+            map.ctx.Message =
+              text : 'Scaffold location set.'
+              time : 20
+        else
           
-        instance = new currentClass({
-          x
-          y
-          team  : currentClick._team
-        })
-        
-        world.add(instance)
-      
+          switch currentClass.__super__.constructor.name
+            when 'Infantry', 'Structure'
+              y = world.height(x)
+            
+          options = $.extend {
+            x
+            y
+            team  : currentClick._team
+          }, currentClick._special
+          
+          # console.log(options)
+          
+          instance = new currentClass(options)
+          world.add(instance)
+          
+          # Delete previous special options
+          delete currentClick._special
+          
     else
       throw new Error 'no battle map view / battle world assigned to this ui behavior!'
     

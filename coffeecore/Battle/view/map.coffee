@@ -6,7 +6,7 @@ define [
   clear = ->
     @clearRect(0, 0, @width, @height)
     if @Message?.time>0
-      @text(10 + @el.scrollLeft, 10, @Message.text)
+      @text(10 + @el.scrollLeft, 10 + @el.scrollTop, @Message.text)
       @Message.time--
   
   text = (x,y,t)-> @fillText(t,x,y)

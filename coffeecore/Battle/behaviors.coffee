@@ -10,6 +10,8 @@ define ->
         TRUE  : true
         FALSE : false
         
+        isArmed : -> @_.projectile?
+        
         hasHitGround : ->
           if !World.contains(@)
             @_.x -= @_.dx>>1 if @_.dx?
@@ -313,6 +315,17 @@ define ->
           @_.ammo.clip--
           true
         
+        tryInfantryBuild : ->
+          if @_.build.x is @_.x
+            World.add(new Classes['Scaffold']({
+              x     : @_.x
+              y     : World.height(@)
+              team  : @_.team
+              build : @_.build
+            }))
+            return true
+          false
+        
         tryInfantryAttack : ->
           dist = @distX(@_.target)
           if dist < @_.img.w
@@ -493,7 +506,6 @@ define ->
         InfantryDoAttack        : '<[tryInfantryAttack],[animate],([tryBerserking],[TRUE])>'
         InfantryTryAttack       : '(<[hasTarget],[seeTarget],[faceTarget],[setFacingFrames],[InfantryDoAttack]>,[InfantryFindTarget])'
         InfantryMoveToGoal      : '([!faceGoalDirection],[!setFacingFrames])'
-        # todo
         InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,[!setInfantryMoving],[!move],[animate])'
         
         InfantryAlive           : '([InfantryReloading],[InfantryBerserking],[InfantryTryAttack],[InfantryMoveToGoal],[InfantryMove])'
@@ -503,17 +515,24 @@ define ->
         
         PistolInfantry          : '[Infantry]'
         RocketInfantry          : '[Infantry]'
-        EngineerInfantry        : '[Infantry]'
+        
+        InfantryMoveToBuild     : '([!faceTarget],[!setFacingFrames],<[tryInfantryBuild],[remove]>)'
+        EngineerInfantryAlive   : '([InfantryMoveToBuild],[InfantryMove])'
+        EngineerInfantry        : '(<[isDead],[InfantryDead]>,[EngineerInfantryAlive])'
       
         
         StructureCrewing      : '<[isCrewed],[tryCrewing]>'
-        StructureReinforcing  : '<[isReinforcing],[tryReinforcing]>'
+        StructureReinforcing  : '<[hasReinforcements],[tryReinforcing]>'
         StructureAttack       : '<[isArmed],([isReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
         
         # todo
         StructureDead         : '<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>'
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
-        StructureAlive        : '<[StructureCrewing],[StructureReinforcing],[StructureAttack]>'
-        StructureDead         : ''
+        StructureAlive        : '([log1],[StructureCrewing],[StructureReinforcing],[StructureAttack])'
+
+        Structure             : '(<[isDead],[StructureDead]>,[StructureAlive])'
+        
+        Scaffold              : '[Structure]'
+        CommRelay             : '[Structure]'
     }

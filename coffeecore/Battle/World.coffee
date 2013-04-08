@@ -30,12 +30,12 @@ define [
   
     # Also used for drawing order
     primitiveClasses : [
-      #'Vehicle'
       'Structure'
+      #'Vehicle'
+      #'Aircraft'
       'Infantry'
       'Projectile'
       'Explosion'
-      #'Aircraft'
       #'PawnController'
     ]
   
@@ -55,8 +55,6 @@ define [
       @initInstances()
       @initClasses()
       @initWorld()
-      
-      window.battleworld = @
   
     createNewXHash : -> new XHash(@_)
   

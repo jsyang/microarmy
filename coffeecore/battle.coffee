@@ -78,6 +78,7 @@ define [
         # todo: skip drawing things that we can't see
         (
           (
+            if p instanceof world.Classes['Scaffold'] then console.log('aaaaaaaa!')
             mapctx.draw(p.gfx())
           ) for p in world.Instances[type]
         ) for type in world.primitiveClasses

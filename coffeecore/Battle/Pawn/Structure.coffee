@@ -111,10 +111,9 @@ define [
       super @_
   
   class Scaffold extends Structure
-    # todo: assign a build cost for each structure for the scaffold.
     constructor : (_) ->
       @_ = $.extend {
-        img : { w:16, h:8, hDist2:64, sheet:'scaffold_' }
+        img : { w:16, h:8, hDist2:64, sheet:'scaffold' }
         health :
           current : $.R(360,400)
           max     : $.R(400,450)
@@ -130,7 +129,21 @@ define [
           damageChance    : 1
       }, _
       super @_
+      @setCrewCount()
       soundManager.play('tack')
+    
+    setCrewCount : ->
+      @_.crew.max = {
+        'Pillbox'           : 4
+        'MissileRack'       : 8
+        'MissileRackSmall'  : 1
+        'SmallTurret'       : 6
+        'Barracks'          : 16
+        'CommCenter'        : 60
+        'MineFieldSmall'    : 1
+        'AmmoDumpSmall'     : 1
+        'AmmoDump'          : 2
+      }[@_.build.type]
   
   class CommRelay extends Structure
     # todo: this structure needs a purpose!

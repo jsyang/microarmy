@@ -114,7 +114,7 @@ define [
           current : $.R(20,50)
       }, _
       
-      @_.target = @_.build
+      @_.target = { _ : @_.build }
       super @_
       
   # export
