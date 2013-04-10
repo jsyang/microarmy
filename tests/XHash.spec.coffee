@@ -29,6 +29,7 @@ require [
     ) for p in v
   ) for k, v of teams
   
+  pendingRemovalPawn = new Pawn({ x : 256, team : 3, corpsetime : 0 })
   outOfBoundsPawn = new Pawn({ x : 256, team : 2 })
   nBucketsPawn = new Pawn({ x : 130,    team : 1 })
   
@@ -95,6 +96,11 @@ require [
         xh = new XHash({ w : 250 })
         ( xh.add(p) ) for p in mockPawns
         expect(xh.getNearestEnemy(queryPawn1)).toEqual(mockPawns[0])
+        
+      it 'doesnt get enemies that are pending removal', ->
+        xh = new XHash({ w : 250 })
+        xh.add(pendingRemovalPawn)
+        expect(xh.getNearestEnemy(queryPawn1)).toBeUndefined()
     
     describe 'getCrowdedEnemy', ->
       it 'gets the last enemy of the bucket which contains the most enemies', ->

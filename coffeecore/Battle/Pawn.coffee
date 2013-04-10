@@ -5,7 +5,7 @@ define ->
         x           : 0
         y           : 0
         team        : 0
-        corpsetime  : 0
+        corpsetime  : 1
         
         img :
           w     : 0
