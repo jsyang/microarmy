@@ -317,12 +317,13 @@ define ->
         
         tryInfantryBuild : ->
           if @_.build.x is @_.x
-            World.add(new Classes['Scaffold']({
+            scaffold = new Classes['Scaffold']({
               x     : @_.x
               y     : World.height(@)
               team  : @_.team
               build : @_.build
-            }))
+            })
+            World.add(scaffold)
             return true
           false
         
@@ -419,15 +420,21 @@ define ->
         
         isCrewed : -> @_.crew? and @_.crew?.current? > 0
         
+        isFullyCrewed : -> @_.crew? and @_.crew?.current? is @_.crew?.max?
+        
         tryCrewing : ->
           if @_.crew.current < @_.crew.max
             potentialCrew = World.XHash.getNBucketsByCoord(@,1)
             (
-              if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@_.img.w>>1) and t.isAlly()
+              if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@_.img.w>>1) and t.isAlly(@)
                 @_.crew.current++
+                t.remove()
                 return true
             ) for t in potentialCrew
           false
+        
+        tryScaffoldSpawnChild : ->
+          
         
         hasReinforcements : ->
           @_.reinforce?
@@ -529,7 +536,7 @@ define ->
         StructureDead         : '<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>'
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
-        StructureAlive        : '([log1],[StructureCrewing],[StructureReinforcing],[StructureAttack])'
+        StructureAlive        : '([StructureCrewing],[StructureReinforcing],[StructureAttack])'
 
         Structure             : '(<[isDead],[StructureDead]>,[StructureAlive])'
         

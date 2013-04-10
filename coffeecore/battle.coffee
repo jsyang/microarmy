@@ -40,31 +40,28 @@ define [
     # Apply behaviors to the models held in the world.
     tick : ->
       world = @_.world
-      newXHash = world.createNewXHash()
-      newInstances = {}
+      world.createNewXHash()
+      world.createNewInstances()
       (
-        newInstancesCollection = []
         (
-          btree = if p._.behavior? then p._.behavior else p.constructor.name
-          btree = @Behaviors.Trees[btree]
-          
-          if btree?
-            @Behaviors.Execute(p, btree)
-            newXHash.add(p) unless !p.isTargetable()
-              
-          else
-            throw new Error 'no behaviors found for instance of '+p.constructor.name
-          
-          if p._.corpsetime>0
-            newInstancesCollection.push(p)
+          if !p.isPendingRemoval()
+            btree = if p._.behavior? then p._.behavior else p.constructor.name
+            btree = @Behaviors.Trees[btree]
             
+            if btree?
+              @Behaviors.Execute(p, btree)
+              world.add(p)
+                
+            else
+              throw new Error 'no behaviors found for instance of '+p.constructor.name
         ) for p in v
-        
-        newInstances[k] = newInstancesCollection
       ) for k,v of world.Instances
       
-      world.XHash     = newXHash
-      world.Instances = newInstances
+      world.XHash     = world.XHash_
+      world.Instances = world.Instances_
+      
+      delete world.XHash_
+      delete world.Instances_
       @
   
     # Visualize the current state of the world.
@@ -78,7 +75,6 @@ define [
         # todo: skip drawing things that we can't see
         (
           (
-            if p instanceof world.Classes['Scaffold'] then console.log('aaaaaaaa!')
             mapctx.draw(p.gfx())
           ) for p in world.Instances[type]
         ) for type in world.primitiveClasses

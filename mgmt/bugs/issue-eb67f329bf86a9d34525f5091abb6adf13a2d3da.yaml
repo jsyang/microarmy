@@ -9,8 +9,8 @@ type: :feature
 component: ma
 release: battle view 1
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-03-30 00:39:37.406855 Z
 references: []
 
@@ -24,3 +24,7 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - commented
   - all other infantry behaviors work except for EngineerInfantry. need to figure out why the scaffolds they lay down don't stay in the world.
+- - 2013-04-10 05:17:55.253258 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - engineer infantry now adds scaffolds properly! world.add acts depending on when it's called.

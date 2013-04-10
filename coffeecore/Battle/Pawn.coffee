@@ -52,10 +52,14 @@ define ->
       else
         true
         
-    isTargetable    : -> !(@_.targetable is false)
+    isTargetable      : -> !(@_.targetable is false)
+    
+    isPendingRemoval  : -> @_.corpsetime <= 0 
     
     # # # # # # # #
-    
+
+    remove : -> @_.corpsetime = 0
+        
     takeDamage  : (damageValue) ->
       if damageValue > 0
         @_.health.current -= damageValue

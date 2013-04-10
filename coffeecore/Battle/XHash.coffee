@@ -58,10 +58,11 @@ define ->
       (
         dist = pawn.distX(t)
         if dist < minDist
-          if  !(t is pawn)    and
-              !t.isAlly(pawn) and
-              !t.isDead()     and
-              !t.isCrewDead() and
+          if  !(t is pawn)          and
+              !t.isAlly(pawn)       and
+              !t.isDead()           and
+              !t.isPendingRemoval() and
+              !t.isCrewDead()       and
               pawn.isAbleToTarget(t)
             pawn.setTarget(t)
             minDist = dist
@@ -75,10 +76,11 @@ define ->
       (
         bucketEnemies   = 0
         (
-          if  !(t is pawn)    and
-              !t.isAlly(pawn) and
-              !t.isDead()     and
-              !t.isCrewDead() and
+          if  !(t is pawn)          and
+              !t.isAlly(pawn)       and
+              !t.isDead()           and
+              !t.isPendingRemoval() and
+              !t.isCrewDead()       and
               pawn.isAbleToTarget(t)
             bucketEnemies++
             if bucketEnemies > maxEnemies
@@ -98,10 +100,11 @@ define ->
       (
         dist = t.distX(pawn)
         if dist < minDist
-          if  t.isAlly(pawn)  and
-              !t.isDead()     and
-              !t.isCrewDead() and
-              t.isOutOfAmmo() and
+          if  t.isAlly(pawn)        and
+              !t.isDead()           and
+              !t.isCrewDead()       and
+              !t.isPendingRemoval() and
+              t.isOutOfAmmo()       and
               pawn.isAbleToTarget(t)
             pawn.setTarget(t)
             minDist = dist
