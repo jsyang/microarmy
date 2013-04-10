@@ -317,13 +317,12 @@ define ->
         
         tryInfantryBuild : ->
           if @_.build.x is @_.x
-            scaffold = new Classes['Scaffold']({
+            World.add(new Classes['Scaffold']({
               x     : @_.x
               y     : World.height(@)
               team  : @_.team
               build : @_.build
-            })
-            World.add(scaffold)
+            }))
             return true
           false
         
@@ -420,7 +419,7 @@ define ->
         
         isCrewed : -> @_.crew? and @_.crew?.current? > 0
         
-        isFullyCrewed : -> @_.crew? and @_.crew?.current? is @_.crew?.max?
+        isFullyCrewed : -> @_.crew? and @_.crew.current is @_.crew.max
         
         tryCrewing : ->
           if @_.crew.current < @_.crew.max
@@ -429,11 +428,23 @@ define ->
               if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@_.img.w>>1) and t.isAlly(@)
                 @_.crew.current++
                 t.remove()
+                soundManager.play('sliderack1')
                 return true
             ) for t in potentialCrew
           false
         
         tryScaffoldSpawnChild : ->
+          child = Classes[@_.build.type]
+          if child?
+            World.add(new child({
+              x     : @_.x
+              y     : World.height(@)
+              team  : @_.team
+            })) 
+            true
+            
+          else
+            false
           
         
         hasReinforcements : ->
@@ -533,13 +544,15 @@ define ->
         StructureAttack       : '<[isArmed],([isReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
         
         # todo
-        StructureDead         : '<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>'
+        StructureDead         : '<[isDead],<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>>'
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
         StructureAlive        : '([StructureCrewing],[StructureReinforcing],[StructureAttack])'
 
-        Structure             : '(<[isDead],[StructureDead]>,[StructureAlive])'
+        Structure             : '([StructureDead],[StructureAlive])'
         
-        Scaffold              : '[Structure]'
+        ScaffoldAlive         : '(<[isFullyCrewed],[log1],[tryScaffoldSpawnChild],[remove]>,<[isCrewed],[tryCrewing]>)'
+        Scaffold              : '([StructureDead],[ScaffoldAlive])'
         CommRelay             : '[Structure]'
+        Pillbox               : '[Structure]'
     }

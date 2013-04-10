@@ -2,14 +2,16 @@ define [
   'core/Battle/Pawn'
 ], (Pawn) ->
 
-  STATE =
-    GOOD  : 0
-    BAD   : 1
-    WRECK : 2
+  CONST = 
+    STATE :
+      GOOD  : 0
+      BAD   : 1
+      WRECK : 2
 
   class Structure extends Pawn
     # todo: might have to modify these so the prototype can be mutated by a
     #       team upon research bonus / experience bonus
+    CONST : CONST
     
     constructor : (_) ->
       @_ = $.extend {
@@ -17,7 +19,7 @@ define [
         crumbled    : false # already destroyed?
         corpsetime  : 1
         target      : null
-        state       : STATE.GOOD
+        state       : @CONST.STATE.GOOD
         # adjustments to the projectile origin
         shootDy     : 0
         shootDx     : 0
@@ -31,7 +33,7 @@ define [
         imgdx   : if @_.direction>0 then @_.img.w else 0
         imgdy   : @_.state*@_.img.h
         worldx  : @_.x-(@_.img.w>>1)
-        worldy  : @_.y-@_.img.h+1
+        worldy  : @_.y-@_.img.h
         imgw    : @_.img.w
         imgh    : @_.img.h
       }
@@ -118,7 +120,7 @@ define [
           current : $.R(360,400)
           max     : $.R(400,450)
         build :
-          type : null
+          type : 'Pillbox'
         crew :
           current   : 1
           max       : 2
@@ -244,7 +246,7 @@ define [
   class Pillbox extends Structure
     constructor : (_) ->
       @_ = $.extend {
-        img : { w:19, h:8, hDist2:64, sheet:'pillbox_' }
+        img : { w:19, h:8, hDist2:64, sheet:'pillbox' }
         health :
           current : $.R(800,900)
           max     : $.R(800,1100)
@@ -260,8 +262,8 @@ define [
         crew :
           current   : 0
           max       : 4
-          occupied  : 'scaffold'
-          empty     : 'scaffold_'
+          occupied  : 'pillbox'
+          empty     : 'pillbox_'
           
           damageThreshold : 23
           damageChance    : 0.2
