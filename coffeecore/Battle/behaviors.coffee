@@ -513,6 +513,7 @@ define ->
         Bullet              : '[Projectile]'
         MGBullet            : '[Projectile]'
         SmallRocket         : '[Projectile]'
+        SmallShell          : '[Projectile]'
       
         SmokeTrail          : '(<[hasSmokeTrail],[spawnSmokeTrail]>,[TRUE])'
         HomingAbility       : '(<[hasHomingAbility],[steerToEnemy],[!fly]>,[!fly])'
@@ -585,4 +586,5 @@ define ->
         MissileRackSmall      : '[Structure]'
         CommRelay             : '[Structure]'
         Pillbox               : '[Structure]'
+        SmallTurret           : '[Structure]'
     }

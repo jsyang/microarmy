@@ -316,7 +316,7 @@ define [
     
     gfx : ->
       # turning graphics
-      imgdy = if @_.state!=STATE.WRECK then @_.state*45+@_.img.h*@_.turn.current else 90
+      imgdy = if @_.state!=@CONST.STATE.WRECK then @_.state*45+@_.img.h*@_.turn.current else 90
       imgdx = if @_.direction>0 then @_.img.w else 0
       {
         img     : @_.img.sheet
