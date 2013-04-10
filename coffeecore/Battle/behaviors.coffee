@@ -1,6 +1,4 @@
 # todo: load in these tree strings from a text file so they're more easily editable?
-# todo: resolve how to spawn an instance of an arbitrary class (given the class name)
-# todo: find out how to reference stuff that's going on in the world and use battle world methods
 define ->
   (World, Classes) ->
     {      
@@ -258,22 +256,34 @@ define ->
           
           bulletWeapon = false
           switch @_.projectile
+            
             when 'MGBullet'
               accuracy      = [0.65, 0.35]  # chanceToHit [periphery, target bonus]
               strayDy       = $.R(-15,15)*0.01
               sound         = 'mgburst'
               bulletWeapon  = true
+              
             when 'Bullet'
               accuracy      = [0.15, 0.85]
               strayDy       = $.R(-15,15)*0.01
               sound         = 'pistol'
               bulletWeapon  = true
+              
             when 'SmallRocket'
               if dist < 48 then return true
               accuracy      = [0.28, 0.68]
               strayDy       = $.R(-19,19)*0.01
               sound         = 'rocket'
               bulletWeapon  = true
+              
+            when 'HomingMissileSmall'
+              dx            = @_.direction*5.12
+              dy            = -6.35
+              
+            when 'HomingMissile'
+              dx            = @_.direction*4.6
+              dy            = -8.36
+              
             else
               accuracy  = [0.2, 0.5]
               strayDy   = $.R(-30,30)*0.01
@@ -298,20 +308,24 @@ define ->
               accuracy[0]-=0.01
               accuracy[1]-=0.08
           
-          World.add(
-            new Classes[@_.projectile](
-              {
-                accuracy
+            projectile = new Classes[@_.projectile]({
+              accuracy
+              x       : @_.x + pDx
+              y       : @_.y + pDy
+              team    : @_.team
+              target  : @_.target
+              dx      : @_.direction*pSpeed
+              dy      : ((@_.target._.y-(@_.target._.img.h>>1)-(@_.y+pDy))*pSpeed)/dist + strayDy
+            })
+          else
+            projectile = new Classes[@_.projectile]({
                 x       : @_.x + pDx
                 y       : @_.y + pDy
                 team    : @_.team
                 target  : @_.target
-                dx      : @_.direction*pSpeed
-                dy      : ((@_.target._.y-(@_.target._.img.h>>1)-(@_.y+pDy))*pSpeed)/dist + strayDy
-              }
-            )
-          )
+            })
           
+          World.add(projectile)
           @_.ammo.clip--
           true
         
@@ -492,10 +506,20 @@ define ->
         
       Trees :
 
-        Projectile          : '(<[isOutsideWorld],[remove]>,<[!isProjectileActive],[remove]>,[!fly],<[tryProjectileHit],[tryProjectileExplode],[remove]>)'
+        removeIfOutsideWorld        : '<[isOutsideWorld],[remove]>'
+        removeIfProjectileNotActive : '<[!isProjectileActive],[remove]>'
+
+        Projectile          : '([removeIfOutsideWorld],[removeIfProjectileNotActive],[!fly],<[tryProjectileHit],[tryProjectileExplode],[remove]>)'
         Bullet              : '[Projectile]'
         MGBullet            : '[Projectile]'
         SmallRocket         : '[Projectile]'
+      
+        SmokeTrail          : '(<[hasSmokeTrail],[spawnSmokeTrail]>,[TRUE])'
+        HomingAbility       : '(<[hasHomingAbility],[steerToEnemy],[!fly]>,[!fly])'
+        HomingMissile       : '([removeIfOutsideWorld],[removeIfProjectileNotActive],<[SmokeTrail],[HomingAbility],[log2]>,<[tryProjectileHit],[tryProjectileExplode],[remove]>)'
+        HomingMissileSmall  : '[HomingMissile]'
+      
+        ################################################################################################################################################################
       
         corpseDecay     : '(<[!isPastLastFrame],[nextFrame]>,[rot])'
         animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
@@ -512,6 +536,8 @@ define ->
 
         Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'
         ChemCloud       : '[Flame]'
+        
+        ################################################################################################################################################################
         
         # Berserk means Infantry charges towards target
         
@@ -538,12 +564,13 @@ define ->
         EngineerInfantryAlive   : '([InfantryMoveToBuild],[InfantryMove])'
         EngineerInfantry        : '(<[isDead],[InfantryDead]>,[EngineerInfantryAlive])'
       
+        ################################################################################################################################################################
         
+        StructureReloading    : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[clearTarget]>)'
         StructureCrewing      : '<[isCrewed],[tryCrewing]>'
         StructureReinforcing  : '<[hasReinforcements],[tryReinforcing]>'
-        StructureAttack       : '<[isArmed],([isReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
+        StructureAttack       : '<[isArmed],([StructureReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
         
-        # todo
         StructureDead         : '<[isDead],<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>>'
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
@@ -551,8 +578,11 @@ define ->
 
         Structure             : '([StructureDead],[StructureAlive])'
         
-        ScaffoldAlive         : '(<[isFullyCrewed],[log1],[tryScaffoldSpawnChild],[remove]>,<[isCrewed],[tryCrewing]>)'
+        ScaffoldAlive         : '(<[isFullyCrewed],[tryScaffoldSpawnChild],[remove]>,<[isCrewed],[tryCrewing]>)'
         Scaffold              : '([StructureDead],[ScaffoldAlive])'
+        
+        MissileRack           : '[Structure]'
+        MissileRackSmall      : '[Structure]'
         CommRelay             : '[Structure]'
         Pillbox               : '[Structure]'
     }

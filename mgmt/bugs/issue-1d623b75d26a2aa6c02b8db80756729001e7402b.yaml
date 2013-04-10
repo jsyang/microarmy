@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make homing missiles' behaviors work
+desc: the missileracks file but the HomingMissile projectiles don't do their thing
+type: :bugfix
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-04-10 08:46:58.406941 Z
+references: []
+
+id: 1d623b75d26a2aa6c02b8db80756729001e7402b
+log_events: 
+- - 2013-04-10 08:46:59.100438 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

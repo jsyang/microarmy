@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: blood spatter when infantry takes damage
+desc: should be a smokecloud child class
+type: :feature
+component: ma
+release: prealpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-04-04 08:09:36.451050 Z
+references: []
+
+id: 444253b454347a50cd2e8cfbd4d9a494db2fec5d
+log_events: 
+- - 2013-04-04 08:09:37.722835 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

@@ -346,7 +346,7 @@ define [
           max       : 1
           supply    : 3
           maxSupply : 3
-        shootDy : 3
+        shootDy : -20
       }, _
       super @_
       
@@ -373,7 +373,7 @@ define [
         imgh    : @_.img.h
       }
   
-  class MissileRackSmall extends MissileRack
+  class MissileRackSmall extends Structure
     constructor : (_) ->
       @_ = $.extend {
         img : { w:4, h:7, hDist2:18, sheet:'missileracksmall' }
@@ -391,9 +391,11 @@ define [
           max       : 1
           supply    : 12
           maxSupply : 12
-        shootDy : 2
+        shootDy : -8
       }, _
       super @_
+      
+    gfx : MissileRack.prototype.gfx
   
   # export
   (Classes) ->

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+<testsuite name="Behaviors (processor)" errors="0" tests="0" failures="0" time="0" timestamp="2013-04-04T02:16:33">
+</testsuite>
+<testsuite name="Behaviors (processor).constructor" errors="0" tests="1" failures="0" time="0.001" timestamp="2013-04-04T02:16:33">
+  <testcase classname="Behaviors (processor).constructor" name="adds Decorators and converts Trees if within options" time="0.001"></testcase>
+</testsuite>
+<testsuite name="Behaviors (processor).ConvertShortHand" errors="0" tests="2" failures="0" time="0" timestamp="2013-04-04T02:16:33">
+  <testcase classname="Behaviors (processor).ConvertShortHand" name="throws if arg is not string" time="0"></testcase>
+  <testcase classname="Behaviors (processor).ConvertShortHand" name="converts selectors and sequences correctly" time="0"></testcase>
+</testsuite>
+<testsuite name="Behaviors (processor).Execute" errors="0" tests="12" failures="0" time="0" timestamp="2013-04-04T02:16:33">
+  <testcase classname="Behaviors (processor).Execute" name="throws if not given a valid btree" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs &lt;[TRUE]&gt; and returns true" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs &lt;[FALSE]&gt; and returns false" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs &lt;[FALSE],[TRUE]&gt; and returns false" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs &lt;[TRUE],[FALSE]&gt; and returns false" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([TRUE]) and returns true" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([FALSE]) and returns false" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([FALSE],[FALSE],[FALSE],[TRUE]) and returns true" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([FALSE],[FALSE],[FALSE],[TRUE],[setHealth0]) and returns true without setting health to 0" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([FALSE],[FALSE],[FALSE]) and returns false" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([sequence2],[sequence1]) and returns true" time="0"></testcase>
+  <testcase classname="Behaviors (processor).Execute" name="runs ([sequence3],[sequence2]) and returns false" time="0"></testcase>
+</testsuite>
+</testsuites>

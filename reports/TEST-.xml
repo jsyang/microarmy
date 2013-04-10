@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+<testsuite name="$" errors="0" tests="0" failures="0" time="0" timestamp="2013-04-04T02:16:33">
+</testsuite>
+<testsuite name="$.R" errors="0" tests="1" failures="0" time="0.008" timestamp="2013-04-04T02:16:33">
+  <testcase classname="$.R" name="returns a random int within the interval inclusive x100" time="0.007"></testcase>
+</testsuite>
+<testsuite name="$.sum" errors="0" tests="2" failures="0" time="0" timestamp="2013-04-04T02:16:33">
+  <testcase classname="$.sum" name="sums dicts correctly" time="0"></testcase>
+  <testcase classname="$.sum" name="sums arrays correctly" time="0"></testcase>
+</testsuite>
+<testsuite name="$.extend" errors="0" tests="3" failures="0" time="0.001" timestamp="2013-04-04T02:16:33">
+  <testcase classname="$.extend" name="returns an empty obj {} if target is undefined" time="0.001"></testcase>
+  <testcase classname="$.extend" name="returns the target obj" time="0"></testcase>
+  <testcase classname="$.extend" name="copies all properties from extender to target with overwrite" time="0"></testcase>
+</testsuite>
+</testsuites>
