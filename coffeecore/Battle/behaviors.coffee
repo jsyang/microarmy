@@ -586,7 +586,7 @@ define ->
         StructureReinforcing  : '<[hasReinforcements],[tryReinforcing]>'
         StructureAttack       : '<[isArmed],([StructureReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
         
-        StructureDead         : '<[isDead],<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>>'
+        StructureDead         : '<[isDead],(<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>,[TRUE])>'
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
         StructureAlive        : '([StructureCrewing],[StructureReinforcing],[StructureAttack])'
