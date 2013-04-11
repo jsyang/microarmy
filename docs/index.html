@@ -8,405 +8,6 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" media="all" href="resources/base.css" />
-  <style>
-/*
- * Skeleton V1.1
- * Copyright 2011, Dave Gamache
- * www.getskeleton.com
- * Free to use under the MIT license.
- * http://www.opensource.org/licenses/mit-license.php
- * 8/17/2011
- */
-
-
-/* #Reset & Basics (Inspired by E. Meyers)
-================================================== */
-  html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline; }
-  article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-  display: block; }
-  body {
-  line-height: 1; }
-  ol, ul {
-  list-style: none; }
-  blockquote, q {
-  quotes: none; }
-  blockquote:before, blockquote:after,
-  q:before, q:after {
-  content: '';
-  content: none; }
-  table {
-  border-collapse: collapse;
-  border-spacing: 0; }
-
-
-/* #Basic Styles
-================================================== */
-  body {
-  background: #fff;
-  font: 14px/21px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #444;
-  -webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
-  -webkit-text-size-adjust: 100%;
- }
-
-
-/* #Typography
-================================================== */
-  h1, h2, h3, h4, h5, h6 {
-  font-family: "Georgia", serif;
-  font-weight: normal; }
-  h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { font-weight: inherit; }
-  h1 { font-size: 28px; line-height: 32px; margin-bottom: 14px;}
-  h2 { font-size: 25px; line-height: 29px; margin-bottom: 10px; }
-  h3 { font-size: 23px; line-height: 34px; margin-bottom: 8px; }
-  h4 { font-size: 19px; line-height: 30px; margin-bottom: 4px; }
-  h5 { font-size: 16px; line-height: 24px; }
-  h6 { font-size: 14px; line-height: 21px; }
-
-  p { margin: 0 0 20px 0; }
-  p img { margin: 0; }
-
-  em { font-style: italic; }
-  strong { font-weight: bold; color: #333; }
-  small { font-size: 80%; }
-
-/*  Blockquotes  */
-  blockquote, blockquote p { font-size: 17px; line-height: 24px; color: #777; font-style: italic; }
-  blockquote { margin: 0 0 20px; padding: 9px 20px 0 19px; border-left: 1px solid #ddd; }
-  blockquote cite { display: block; font-size: 12px; color: #555; }
-  blockquote cite:before { content: "\2014 \0020"; }
-  blockquote cite a, blockquote cite a:visited, blockquote cite a:visited { color: #555; }
-
-  hr { border: solid #ddd; border-width: 1px 0 0; clear: both; margin: 10px 0 30px; height: 0; }
-
-
-/* #Links
-================================================== */
-  a, a:visited {
-    color: #2d81c5;
-    text-decoration: none; outline: 0;
-    -webkit-transition: color 250ms ease-in-out;
-       -moz-transition: color 250ms ease-in-out;
-            transition: color 250ms ease-in-out;
-  }
-  a:hover, a:focus {
-    color: #2569a0;
-  }
-  p a, p a:visited { line-height: inherit; }
-
-
-/* #Lists
-================================================== */
-  ul, ol { margin-bottom: 20px; }
-  ul { list-style: none outside; }
-  ol { list-style: decimal; }
-  ol, ul.square, ul.circle, ul.disc { margin-left: 30px; }
-  ul.square { list-style: square outside; }
-  ul.circle { list-style: circle outside; }
-  ul.disc { list-style: disc outside; }
-  ul ul, ul ol,
-  ol ol, ol ul { margin: 4px 0 5px 30px; font-size: 90%;  }
-  ul ul li, ul ol li,
-  ol ol li, ol ul li { margin-bottom: 6px; }
-  li { line-height: 18px; margin-bottom: 12px; }
-  ul.large li { line-height: 21px; }
-  li p { line-height: 21px; }
-
-
-/* #Images
-================================================== */
-
-  img.scale-with-grid {
-  max-width: 100%;
-  height: auto; }
-
-
-/* #Misc
-================================================== */
-  .remove-bottom { margin-bottom: 0 !important; }
-  .half-bottom { margin-bottom: 10px !important; }
-  .add-bottom { margin-bottom: 20px !important; }
-
-
-/* #Base 960 Grid
-================================================== */
-
-  .container                                  { position: relative; width: 960px; margin: 0 auto; padding: 0; }
-  .container .column                          { float: left; display: inline; margin-left: 10px; margin-right: 10px; }
-  .row                                        { margin-bottom: 20px; }
-
-  /* Base Grid */
-  .container .sidebar.column                  { width: 220px; overflow: hidden; }
-  .container .content.column                  { width: 700px; }
-
-
-/* #Tablet (Portrait)
-================================================== */
-
-  /* Note: Design for a width of 768px */
-
-  @media only screen and (min-width: 768px) and (max-width: 959px) {
-      .container                                  { width: 768px; }
-      .container .column                          { margin-left: 10px; margin-right: 10px;  }
-
-      .container .sidebar.column                  { width: 172px; }
-      .container .content.column                  { width: 556px; }
-  }
-
-
-/*  #Mobile (Portrait)
-================================================== */
-
-  /* Note: Design for a width of 320px */
-
-  @media only screen and (max-width: 767px) {
-      .container { width: 300px; }
-      .container .column { margin: 0; }
-
-      .container .sidebar.column,
-      .container .content.column   { width: 300px; }
-  }
-
-
-/* #Mobile (Landscape)
-================================================== */
-
-  /* Note: Design for a width of 480px */
-
-  @media only screen and (min-width: 480px) and (max-width: 767px) {
-      .container { width: 420px; }
-      .container .column { margin: 0; }
-
-      .container .sidebar.column,
-      .container .content.column  { width: 420px; }
-  }
-
-
-/* #Clearing
-================================================== */
-
-  /* Self Clearing Goodness */
-  .container:after { content: "\0020"; display: block; height: 0; clear: both; visibility: hidden; }
-
-
-/* #CoffeeDoc styles
-================================================== */
-
-code {
-  color: #000;
-  background: #f6f6f6;
-  padding: 2px 4px;
-  border: 1px solid #ccc;
-  font-size: 12px; line-height: 18px;
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
-  border-radius: 2px;
-}
-pre code {
-  display: block;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  padding: 10px;
-}
-header {
-  width: 100%;
-  border-bottom: 1px solid #bbb;
-  margin-bottom: 20px;
-  background-image: -webkit-linear-gradient(top, #fff, #d0d0d0);
-  background-image:    -moz-linear-gradient(top, #fff, #d0d0d0);
-  background-image:         linear-gradient(top, #fff, #d0d0d0);
-}
-header h1 {
-  margin: 0;
-  line-height: 50px;
-  font-size: 20px;
-  text-align: center;
-}
-h1, h2 {
-  border-bottom: 1px solid #ccc;
-}
-h3 {
-  border-bottom: 1px solid #ddd;
-}
-
-
-/* #Module index
-================================================== */
-
-.module {
-  margin-bottom: 25px;
-}
-.module .header h1 {
-  margin-bottom: 20px;
-  border-bottom: none;
-  box-shadow: 0 5px 5px -6px rgba(45, 129, 197, 0.4);
-  -webkit-transition: box-shadow 250ms ease-in-out;
-     -moz-transition: box-shadow 250ms ease-in-out;
-          transition: box-shadow 250ms ease-in-out;
-}
-.module .header h1:hover {
-  box-shadow: 0 5px 5px -6px rgb(45, 129, 197);
-}
-.module-content h1 {
-  font-size: 30px;
-  line-height: 44px;
-}
-
-
-/* #Module pages
-================================================== */
-
-.function, .class {
-  margin-bottom: 30px;
-}
-.method {
-  margin-bottom: 20px;
-}
-.class .header {
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
-}
-.class .header h3 {
-  display: inline;
-  border: none;
-}
-.class .header .parent {
-  color: #aaa;
-}
-.class .header .parent:hover {
-  color: #2569a0;
-}
-
-
-/* #Syntax highlighting
-============================================================== */
-
-/* github.com style (c) Vasily Polovnyov <vast@whiteants.net> */
-
-pre .comment,
-pre .template_comment,
-pre .diff .header,
-pre .javadoc {
-  color: #998;
-  font-style: italic
-}
-
-pre .keyword,
-pre .css .rule .keyword,
-pre .winutils,
-pre .javascript .title,
-pre .lisp .title,
-pre .subst {
-  color: #000;
-  font-weight: bold
-}
-
-pre .number,
-pre .hexcolor {
-  color: #40a070
-}
-
-pre .string,
-pre .tag .value,
-pre .phpdoc,
-pre .tex .formula {
-  color: #d14
-}
-
-pre .title,
-pre .id {
-  color: #900;
-  font-weight: bold
-}
-
-pre .javascript .title,
-pre .lisp .title,
-pre .subst {
-  font-weight: normal
-}
-
-pre .class .title,
-pre .haskell .label,
-pre .tex .command {
-  color: #458;
-  font-weight: bold
-}
-
-pre .tag,
-pre .tag .title,
-pre .rules .property,
-pre .django .tag .keyword {
-  color: #000080;
-  font-weight: normal
-}
-
-pre .attribute,
-pre .variable,
-pre .instancevar,
-pre .lisp .body {
-  color: #008080
-}
-
-pre .regexp {
-  color: #009926
-}
-
-pre .class {
-  color: #458;
-  font-weight: bold
-}
-
-pre .symbol,
-pre .ruby .symbol .string,
-pre .ruby .symbol .keyword,
-pre .ruby .symbol .keymethods,
-pre .lisp .keyword,
-pre .tex .special,
-pre .input_number {
-  color: #990073
-}
-
-pre .builtin,
-pre .built_in,
-pre .lisp .title {
-  color: #0086b3
-}
-
-pre .preprocessor,
-pre .pi,
-pre .doctype,
-pre .shebang,
-pre .cdata {
-  color: #999;
-  font-weight: bold
-}
-
-pre .deletion {
-  background: #fdd
-}
-
-pre .addition {
-  background: #dfd
-}
-
-pre .diff .change {
-  background: #0086b3
-}
-
-pre .chunk {
-  color: #aaa
-}
-
-pre .tex .formula {
-  opacity: 0.5;
-}
-
-  </style>
 </head>
 <body>
   <header>
@@ -416,7 +17,89 @@ pre .tex .formula {
     <div class="sidebar column">
       <ul id="modulelist">
         
+        <li><a href="coffeecore/Battle/Pawn.coffee.html">coffeecore/Battle/Pawn.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Aircraft.coffee.html">coffeecore/Battle/Pawn/Aircraft.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html">coffeecore/Battle/Pawn/Explosion.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Infantry.coffee.html">coffeecore/Battle/Pawn/Infantry.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/PawnController.coffee.html">coffeecore/Battle/Pawn/PawnController.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html">coffeecore/Battle/Pawn/Projectile.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Salvage.coffee.html">coffeecore/Battle/Pawn/Salvage.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html">coffeecore/Battle/Pawn/Structure.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/Pawn/Vehicle.coffee.html">coffeecore/Battle/Pawn/Vehicle.coffee</a></li>
+        
         <li><a href="coffeecore/Battle/SimpleHash.coffee.html">coffeecore/Battle/SimpleHash.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/World.coffee.html">coffeecore/Battle/World.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/XHash.coffee.html">coffeecore/Battle/XHash.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/addTerrain.coffee.html">coffeecore/Battle/addTerrain.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/addUI.coffee.html">coffeecore/Battle/addUI.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/behaviors.coffee.html">coffeecore/Battle/behaviors.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/testSector.coffee.html">coffeecore/Battle/testSector.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/ui/pawnspawn.coffee.html">coffeecore/Battle/ui/pawnspawn.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/view/background.coffee.html">coffeecore/Battle/view/background.coffee</a></li>
+        
+        <li><a href="coffeecore/Battle/view/map.coffee.html">coffeecore/Battle/view/map.coffee</a></li>
+        
+        <li><a href="coffeecore/Behaviors.coffee.html">coffeecore/Behaviors.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/Storage.coffee.html">coffeecore/Campaign/Storage.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addCoarseTerrain.coffee.html">coffeecore/Campaign/addCoarseTerrain.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addExpansionLocations.coffee.html">coffeecore/Campaign/addExpansionLocations.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addFineTerrain.coffee.html">coffeecore/Campaign/addFineTerrain.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addLocations.coffee.html">coffeecore/Campaign/addLocations.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addResources.coffee.html">coffeecore/Campaign/addResources.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addStorage.coffee.html">coffeecore/Campaign/addStorage.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addTransport.coffee.html">coffeecore/Campaign/addTransport.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/addUI.coffee.html">coffeecore/Campaign/addUI.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/behaviors.coffee.html">coffeecore/Campaign/behaviors.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/view/canvasmap.coffee.html">coffeecore/Campaign/view/canvasmap.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/view/inventory.coffee.html">coffeecore/Campaign/view/inventory.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/view/map.coffee.html">coffeecore/Campaign/view/map.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/view/map/drawTerrain.coffee.html">coffeecore/Campaign/view/map/drawTerrain.coffee</a></li>
+        
+        <li><a href="coffeecore/Campaign/view/map/tiles.coffee.html">coffeecore/Campaign/view/map/tiles.coffee</a></li>
+        
+        <li><a href="coffeecore/Resources/campaign.coffee.html">coffeecore/Resources/campaign.coffee</a></li>
+        
+        <li><a href="coffeecore/battle.coffee.html">coffeecore/battle.coffee</a></li>
+        
+        <li><a href="coffeecore/campaign.coffee.html">coffeecore/campaign.coffee</a></li>
+        
+        <li><a href="coffeecore/game.coffee.html">coffeecore/game.coffee</a></li>
+        
+        <li><a href="coffeecore/util/$.coffee.html">coffeecore/util/$.coffee</a></li>
+        
+        <li><a href="coffeecore/util/animation.coffee.html">coffeecore/util/animation.coffee</a></li>
+        
+        <li><a href="coffeecore/util/autoscroll.coffee.html">coffeecore/util/autoscroll.coffee</a></li>
         
       </ul>
     </div>
@@ -424,11 +107,252 @@ pre .tex .formula {
       
       <div class="module">
         <div class="header">
+          <a href="coffeecore/Battle/Pawn.coffee.html"><h1>Pawn.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn.coffee.html#Pawn">Pawn</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Aircraft.coffee.html"><h1>Aircraft.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Aircraft.coffee.html#Aircraft">Aircraft</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Aircraft.coffee.html#AttackHelicopter">AttackHelicopter</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Explosion.coffee.html"><h1>Explosion.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#Explosion">Explosion</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#FragExplosion">FragExplosion</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#SmallExplosion">SmallExplosion</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#FlakExplosion">FlakExplosion</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#HEAPExplosion">HEAPExplosion</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#ChemExplosion">ChemExplosion</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#ChemCloud">ChemCloud</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#SmokeCloud">SmokeCloud</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#SmokeCloudSmall">SmokeCloudSmall</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Explosion.coffee.html#Flame">Flame</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Infantry.coffee.html"><h1>Infantry.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Infantry.coffee.html#Infantry">Infantry</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Infantry.coffee.html#PistolInfantry">PistolInfantry</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Infantry.coffee.html#RocketInfantry">RocketInfantry</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Infantry.coffee.html#EngineerInfantry">EngineerInfantry</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/PawnController.coffee.html"><h1>PawnController.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/PawnController.coffee.html#PawnController">PawnController</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/PawnController.coffee.html#Commander">Commander</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/PawnController.coffee.html#Squad">Squad</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Projectile.coffee.html"><h1>Projectile.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#Projectile">Projectile</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#Bullet">Bullet</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#MGBullet">MGBullet</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#SmallRocket">SmallRocket</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#MortarShell">MortarShell</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#SmallShell">SmallShell</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#SmallMine">SmallMine</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#SmallChemMine">SmallChemMine</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#HomingMissile">HomingMissile</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#HomingMissileSmall">HomingMissileSmall</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Projectile.coffee.html#MediumRocketHE">MediumRocketHE</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Salvage.coffee.html"><h1>Salvage.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Salvage.coffee.html#Salvage">Salvage</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Structure.coffee.html"><h1>Structure.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#Structure">Structure</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#CommCenter">CommCenter</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#Barracks">Barracks</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#Scaffold">Scaffold</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#CommRelay">CommRelay</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#WatchTower">WatchTower</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#AmmoDump">AmmoDump</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#AmmoDumpSmall">AmmoDumpSmall</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#MineFieldSmall">MineFieldSmall</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#Depot">Depot</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#RepairYard">RepairYard</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#Helipad">Helipad</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#Pillbox">Pillbox</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#SmallTurret">SmallTurret</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#MissileRack">MissileRack</a></li>
+            
+            <li><a href="coffeecore/Battle/Pawn/Structure.coffee.html#MissileRackSmall">MissileRackSmall</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/Pawn/Vehicle.coffee.html"><h1>Vehicle.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/Pawn/Vehicle.coffee.html#Vehicle">Vehicle</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
           <a href="coffeecore/Battle/SimpleHash.coffee.html"><h1>SimpleHash.coffee</h1></a>
         </div>
         <div class="module-content">
-          <p>Tallies events which happen within a period<br>ex: Bucket 4 has 45 deaths within last 30 game cycles.</p>
-
+          
           
           <h3>Classes</h3>
           <ul class="classlist">
@@ -436,6 +360,463 @@ pre .tex .formula {
             <li><a href="coffeecore/Battle/SimpleHash.coffee.html#SimpleHash">SimpleHash</a></li>
             
           </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/World.coffee.html"><h1>World.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/World.coffee.html#BattleWorld">BattleWorld</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/XHash.coffee.html"><h1>XHash.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Battle/XHash.coffee.html#XHash">XHash</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/addTerrain.coffee.html"><h1>addTerrain.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/Battle/addTerrain.coffee.html#makePeaks">makePeaks(sector, i)</a></li>
+            
+            <li><a href="coffeecore/Battle/addTerrain.coffee.html#makeHeightMap">makeHeightMap(sectors, battleW, battleH)</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/addUI.coffee.html"><h1>addUI.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/behaviors.coffee.html"><h1>behaviors.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/testSector.coffee.html"><h1>testSector.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/Battle/testSector.coffee.html#makeSector">makeSector(i)</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/ui/pawnspawn.coffee.html"><h1>pawnspawn.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/view/background.coffee.html"><h1>background.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/Battle/view/background.coffee.html#hs2d">hs2d(hs, color)</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Battle/view/map.coffee.html"><h1>map.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/Battle/view/map.coffee.html#clear">clear()</a></li>
+            
+            <li><a href="coffeecore/Battle/view/map.coffee.html#text">text(x, y, t)</a></li>
+            
+            <li><a href="coffeecore/Battle/view/map.coffee.html#draw">draw(gfx)</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Behaviors.coffee.html"><h1>Behaviors.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Behaviors.coffee.html#Behaviors">Behaviors</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/Storage.coffee.html"><h1>Storage.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/Campaign/Storage.coffee.html#CampaignStorage">CampaignStorage</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addCoarseTerrain.coffee.html"><h1>addCoarseTerrain.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addExpansionLocations.coffee.html"><h1>addExpansionLocations.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addFineTerrain.coffee.html"><h1>addFineTerrain.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addLocations.coffee.html"><h1>addLocations.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addResources.coffee.html"><h1>addResources.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addStorage.coffee.html"><h1>addStorage.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addTransport.coffee.html"><h1>addTransport.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/addUI.coffee.html"><h1>addUI.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/behaviors.coffee.html"><h1>behaviors.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/view/canvasmap.coffee.html"><h1>canvasmap.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/Campaign/view/canvasmap.coffee.html#clear">clear()</a></li>
+            
+            <li><a href="coffeecore/Campaign/view/canvasmap.coffee.html#draw">draw(gfx)</a></li>
+            
+            <li><a href="coffeecore/Campaign/view/canvasmap.coffee.html#tileFill">tileFill(x, y, w, h, gfx)</a></li>
+            
+            <li><a href="coffeecore/Campaign/view/canvasmap.coffee.html#tileDraw">tileDraw(x, y, gfx, size)</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/view/inventory.coffee.html"><h1>inventory.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/view/map.coffee.html"><h1>map.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/view/map/drawTerrain.coffee.html"><h1>drawTerrain.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/Campaign/view/map/drawTerrain.coffee.html#gfx8x8">gfx8x8(type, sub)</a></li>
+            
+            <li><a href="coffeecore/Campaign/view/map/drawTerrain.coffee.html#gfxloc">gfxloc(loc)</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Campaign/view/map/tiles.coffee.html"><h1>tiles.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/Resources/campaign.coffee.html"><h1>campaign.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/battle.coffee.html"><h1>battle.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/battle.coffee.html#Battle">Battle</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/campaign.coffee.html"><h1>campaign.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          <h3>Classes</h3>
+          <ul class="classlist">
+            
+            <li><a href="coffeecore/campaign.coffee.html#Campaign">Campaign</a></li>
+            
+          </ul>
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/game.coffee.html"><h1>game.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+          <h3>Functions</h3>
+          <ul class="functionlist">
+            
+            <li><a href="coffeecore/game.coffee.html#startGame">startGame()</a></li>
+            
+          </ul>
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/util/$.coffee.html"><h1>$.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/util/animation.coffee.html"><h1>animation.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
+          
+          
+        </div>
+      </div>
+      
+      <div class="module">
+        <div class="header">
+          <a href="coffeecore/util/autoscroll.coffee.html"><h1>autoscroll.coffee</h1></a>
+        </div>
+        <div class="module-content">
+          
           
           
         </div>
