@@ -531,7 +531,7 @@ define ->
         HomingFindTarget    : '([hasTarget],[findTarget],[TRUE])'
         HomingAbility       : '([!HomingFindTarget],[steerToEnemy],[TRUE])'
         # todo : make the spawnExplosion stuff part of the model?
-        HomingMissile       : '(<[isOutsideWorld],[spawnLargeDetonation],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[spawnSmallLargeDetonation],[remove]>)'
+        HomingMissile       : '(<[isOutsideWorld],[spawnLargeDetonation],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[spawnLargeDetonation],[remove]>)'
         HomingMissileSmall  : '(<[isOutsideWorld],[spawnSmallFlakExplosion],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[log1],[spawnSmallFlakExplosion],[remove]>)'
       
         ################################################################################################################################################################

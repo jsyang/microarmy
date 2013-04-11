@@ -57,8 +57,8 @@ define ->
         _team     : availableTeams[0]
         _teami    : 0
     
-      __onkeypress = (e) ->
-        #console.log(e.which)
+      keypress = (e) ->
+        console.log(e.which)
         
         switch e.which
           # Special options
@@ -112,7 +112,7 @@ define ->
             text : message
             time : 40
     
-      __onclick = (e) ->
+      click = (e) ->
         [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
         [x,   y]      = [e.pageX+sx,      e.pageY+sy]
         currentClass  = world.Classes[currentClick._class]
@@ -147,13 +147,13 @@ define ->
           delete currentClick._special
       
       return {
-        onclick :
+        click :
           context : map
-          func    : __onclick
+          func    : click
         
-        onkeypress :
-          context : window
-          func    : __onkeypress
+        keypress :
+          context : document.body
+          func    : keypress
       }
     else
       throw new Error 'no battle map view / battle world assigned to this ui behavior!'

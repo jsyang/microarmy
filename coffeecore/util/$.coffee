@@ -48,3 +48,27 @@ define ->
       target = {} unless target?
       target[k] = v for k,v of extender
       target
+      
+    # todo : unit test these.
+    # Converted from http://ejohn.org/blog/flexible-javascript-events/
+
+    # ex:    
+    # addEvent( document.getElementById('foo'), 'click', doSomething );
+    # addEvent( obj, 'mouseover', function(){ alert('hello!'); } );
+    # removeEvent( object, eventType, function );
+    
+    addEvent : (obj, type, fn) ->
+      if obj.attachEvent
+        obj["e" + type + fn] = fn
+        obj[type + fn] = ->
+          obj["e" + type + fn](window.event)
+        obj.attachEvent("on" + type, obj[type + fn])
+      else
+        obj.addEventListener(type, fn, false)
+
+    removeEvent : (obj, type, fn) ->
+      if obj.detachEvent
+        obj.detachEvent("on" + type, obj[type + fn])
+        delete obj[type + fn]
+      else
+        obj.removeEventListener(type, fn, false)

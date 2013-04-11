@@ -1,7 +1,6 @@
 define [
   'core/util/autoscroll'
   'core/battle/ui/pawnspawn'
-  ''
 ], (Autoscroll, PawnSpawn) ->
   ->
     world = @World
@@ -10,10 +9,9 @@ define [
     if views?
       Autoscroll(views.Map, world)
       
-      #todo. make various event handler binds work.
       (
-        handler.context
-      ) for handler in PawnSpawn
+        $.addEvent(handler.context, eventName, handler.func)
+      ) for eventName,handler of PawnSpawn(views.Map, world)
       
     else
       throw new Error 'views must be set up prior to adding UI'
