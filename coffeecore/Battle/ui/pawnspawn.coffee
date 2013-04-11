@@ -38,7 +38,10 @@ define ->
           'MissileRack'
           'MissileRackSmall'
         ]
-          
+        Projectile : [
+          'HomingMissile'
+          'HomingMissileSmall'
+        ]
     
       availableClasses = classCategories.Infantry
       
@@ -73,6 +76,8 @@ define ->
             categoryChoose = 'Explosion'
           when 51
             categoryChoose = 'Structure'
+          when 52
+            categoryChoose = 'Projectile'
             
           # Navigate within current category
           when 87, 119 # W
@@ -121,7 +126,11 @@ define ->
           
           switch currentClass.__super__.constructor.name
             when 'Infantry', 'Structure'
-              y = world.height(x)
+              classSpecificOptions =
+                y : world.height(x)
+            when 'Projectile'
+              classSpecificOptions =
+                dy : -4
             
           options = $.extend {
             x
@@ -129,7 +138,7 @@ define ->
             team  : currentClick._team
           }, currentClick._special
           
-          # console.log(options)
+          options = $.extend options, classSpecificOptions
           
           instance = new currentClass(options)
           world.add(instance)

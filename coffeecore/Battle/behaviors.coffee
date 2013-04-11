@@ -68,8 +68,6 @@ define ->
                 if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
                 if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
               
-              # console.log("#{@constructor.name} hit : CTH = #{chanceToHit}")
-              
               if $.r() < chanceToHit
                 t.takeDamage(@_.damage)
                 return true
@@ -87,9 +85,10 @@ define ->
         hasHitEnemy : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
-            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 # 81
+            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 + t._.img.hDist2
               return true
           ) for t in potentialHits
+          
           false
         
         # Special version of hasHitEnemy for explosions
@@ -119,21 +118,23 @@ define ->
         
         spawnChildExplosion : (type, xrange, yrange) ->
           # Call this with .apply(thisArg, args)
-          [x, y] = [@_.x+$.R.apply(xrange), @_.y+$.R.apply(yrange)]
+          [x, y] = [@_.x+$.R.apply(null,xrange), @_.y+$.R.apply(null,yrange)]
           if y>World.height(x) then y = World.height(x)
           World.add(new Classes[type]({x,y}))
         
         spawnSmallFlakExplosion : ->
           (
-            Behaviors.Decorators.spawnChildExplosion.apply(@, ['FlakExplosion',   [-12, 12], [-12, 12]])
-            Behaviors.Decorators.spawnChildExplosion.apply(@, ['SmokeCloudSmall', [-18, 18], [-18, 18]])
+            World.Battle.Behaviors.Decorators.spawnChildExplosion.apply(@, ['FlakExplosion',   [-12, 12], [-12, 12]])
+            World.Battle.Behaviors.Decorators.spawnChildExplosion.apply(@, ['SmokeCloudSmall', [-18, 18], [-18, 18]])
           ) for i in [0..$.R(3,5)]
+          true
         
         spawnLargeDetonation : ->
-          Behaviors.Decorators.spawnChildExplosion.apply(@, ['SmallExplosion', [0,0], [0, 0]])
-          Behaviors.Decorators.spawnChildExplosion.apply(@, ['HEAPExplosion', [-20, 20], [-20, 20]]) for i in [0..1]
-          Behaviors.Decorators.spawnChildExplosion.apply(@, ['SmokeCloud',    [-60, 60], [-20, 20]]) for i in [0..12]
-          Behaviors.Decorators.spawnChildExplosion.apply(@, ['HEAPExplosion', [-40, 40], [-20, 20]]) for i in [0..1]
+          World.Battle.Behaviors.Decorators.spawnChildExplosion.apply(@, ['SmallExplosion', [0,0], [0, 0]])
+          World.Battle.Behaviors.Decorators.spawnChildExplosion.apply(@, ['HEAPExplosion', [-20, 20], [-20, 20]]) for i in [0..1]
+          World.Battle.Behaviors.Decorators.spawnChildExplosion.apply(@, ['SmokeCloud',    [-60, 60], [-20, 20]]) for i in [0..12]
+          World.Battle.Behaviors.Decorators.spawnChildExplosion.apply(@, ['HEAPExplosion', [-40, 40], [-20, 20]]) for i in [0..1]
+          true
         
         steerToEnemy : ->
           if @_.rangeTravelled > @_.homing.delay
@@ -153,12 +154,11 @@ define ->
                 @_.dx *= $.R(70,80)*0.01
               
             else
-              # Gravity
-              @_.dy += @_.ddy
-              
-            true
+              @_.dy += @_.ddy # Gravity
           else
-            false
+            @_.dy += @_.ddy # Gravity
+            
+          true
             
         move : ->
           @_.x += @_.direction
@@ -168,7 +168,7 @@ define ->
         fly : ->
           @_.x += @_.dx
           @_.y += @_.dy
-          if @_.range? then @_.range--
+          @_.range-- if @_.range?
           if @_.rangeTravelled? then @_.rangeTravelled++
           true
       
@@ -252,9 +252,11 @@ define ->
         # attack -> attackWith[class.weapon]
         
         tryStructureAttack : ->
-          accuracy = [0, 0]
+          dist          = @distX(@_.target)
+          accuracy      = [0, 0]
+          bulletWeapon  = false
+          pSpeed        = 4
           
-          bulletWeapon = false
           switch @_.projectile
             
             when 'MGBullet'
@@ -275,6 +277,13 @@ define ->
               strayDy       = $.R(-19,19)*0.01
               sound         = 'rocket'
               bulletWeapon  = true
+            
+            when 'SmallShell'
+              accuracy      = [0.60,0.50]
+              strayDy       = $.R(-12,9)*0.01
+              sound         = 'pistol'
+              pSpeed        = 7
+              bulletWeapon  = true
               
             when 'HomingMissileSmall'
               dx            = @_.direction*5.12
@@ -290,7 +299,7 @@ define ->
           
           if @_.ammo.clip == @_.ammo.max and sound? then soundManager.play(sound)
           
-          pSpeed = 4
+          
           pDx    = @_.direction*(@_.img.w>>1)
           pDy    = @_.shootDy
           
@@ -319,6 +328,8 @@ define ->
             })
           else
             projectile = new Classes[@_.projectile]({
+                dx
+                dy
                 x       : @_.x + pDx
                 y       : @_.y + pDy
                 team    : @_.team
@@ -516,9 +527,12 @@ define ->
         SmallShell          : '[Projectile]'
       
         SmokeTrail          : '(<[hasSmokeTrail],[spawnSmokeTrail]>,[TRUE])'
-        HomingAbility       : '(<[hasHomingAbility],[steerToEnemy],[!fly]>,[!fly])'
-        HomingMissile       : '([removeIfOutsideWorld],[removeIfProjectileNotActive],<[SmokeTrail],[HomingAbility],[log2]>,<[tryProjectileHit],[tryProjectileExplode],[remove]>)'
-        HomingMissileSmall  : '[HomingMissile]'
+        
+        HomingFindTarget    : '([hasTarget],[findTarget],[TRUE])'
+        HomingAbility       : '([!HomingFindTarget],[steerToEnemy],[TRUE])'
+        # todo : make the spawnExplosion stuff part of the model?
+        HomingMissile       : '(<[isOutsideWorld],[spawnLargeDetonation],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[spawnSmallLargeDetonation],[remove]>)'
+        HomingMissileSmall  : '(<[isOutsideWorld],[spawnSmallFlakExplosion],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[log1],[spawnSmallFlakExplosion],[remove]>)'
       
         ################################################################################################################################################################
       
@@ -532,7 +546,7 @@ define ->
         HEAPExplosion   : '[Explosion]'
         ChemExplosion   : '[Explosion]'
         
-        SmokeCloud      : '(<[isPastLastFrame],[!remove]>,[!nextFrame])'
+        SmokeCloud      : '(<[isPastLastFrame],[remove]>,[!nextFrame])'
         SmokeCloudSmall : '[SmokeCloud]'
 
         Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'

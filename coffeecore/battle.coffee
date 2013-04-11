@@ -17,31 +17,32 @@ define [
     Map
   }
   
-  class Battle
-  
+  class Battle  
+    
     constructor : (_) ->
       @_ = $.extend {
         w : 3200
         h : 480
       }, _
       
-      @_.world   = new World(@_)
-      @Behaviors = new Behaviors(BattleBehaviors(@_.world, @_.world.Classes))
-    
+      @World        = new World(@_)
+      @Behaviors    = new Behaviors(BattleBehaviors(@World, @World.Classes))
+      # Parent ref: so World can refer to the Battle to which it belongs
+      @World.Battle = @
+      
     # Create the DOM elements
     render : ->
       @views = {}
       (
-        @views[k] = v(@_.world)
+        @views[k] = v(@World)
         document.body.appendChild @views[k]
       ) for k,v of views
       @
       
     # Apply behaviors to the models held in the world.
     tick : ->
-      world = @_.world
-      world.createNewXHash()
-      world.createNewInstances()
+      @World.createNewXHash()
+      @World.createNewInstances()
       (
         (
           if !p.isPendingRemoval()
@@ -50,34 +51,31 @@ define [
             
             if btree?
               @Behaviors.Execute(p, btree)
-              world.add(p)
+              @World.add(p)
                 
             else
               throw new Error 'no behaviors found for instance of '+p.constructor.name
         ) for p in v
-      ) for k,v of world.Instances
+      ) for k,v of @World.Instances
       
-      world.XHash     = world.XHash_
-      world.Instances = world.Instances_
+      @World.XHash     = @World.XHash_
+      @World.Instances = @World.Instances_
       
-      delete world.XHash_
-      delete world.Instances_
+      delete @World.XHash_
+      delete @World.Instances_
       @
   
     # Visualize the current state of the world.
     redraw : ->
       mapctx  = @views?.Map?.ctx
-      world   = @_.world
-      if mapctx? and world?
+      if mapctx? and @World?
         mapctx.clear()
-        
-        # Drawing order is important here.
-        # todo: skip drawing things that we can't see
+        # Drawing order is based on primitiveCLasses
         (
           (
             mapctx.draw(p.gfx())
-          ) for p in world.Instances[type]
-        ) for type in world.primitiveClasses
+          ) for p in @World.Instances[type]
+        ) for type in @World.primitiveClasses
         
       else
         throw new Error 'no map view to redraw!'

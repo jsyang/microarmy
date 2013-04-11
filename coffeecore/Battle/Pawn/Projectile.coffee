@@ -146,7 +146,8 @@ define [
         ddy               : 0.081
         dspeed            : 0.84
         sight             : 8
-        homingDelay       : 12
+        homing :
+          delay : 12
         smokeTrailType    : 'SmokeCloud'
         smokeTrailLength  : 8
         dx                : 0.01
@@ -154,6 +155,7 @@ define [
         img :
           w     : 15
           h     : 15
+          hDist2: 81
           frame : 0
           sheet : preloader.getFile('missilered')
       }, _
@@ -199,15 +201,17 @@ define [
         range             : 90
         rangeTravelled    : 0
         ddy               : 0.0173
-        dspeed            : 0.84
+        dspeed            : $.R(312,2650)*0.001
         sight             : 8
-        homingDelay       : 12
+        homing :
+          delay : 12
         smokeTrailType    : 'SmokeCloudSmall'
         smokeTrailLength  : 6
         img :
           w     : 10
           h     : 10
           frame : 0
+          hDist2: 64
           sheet : preloader.getFile('missilepurple')
       }, _
       super @_

@@ -38,6 +38,8 @@ define [
       'Explosion'
       #'PawnController'
     ]
+  
+    Battle      : null # Parent Battle which contains the world.
     
     XHash       : null
     Instances   : {}

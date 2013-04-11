@@ -26,6 +26,8 @@ define [
       }, _
       super @_
       @setSpriteSheet()
+      # todo: remove this
+      @_.direction = 1
     
     gfx : ->
       {
@@ -256,7 +258,7 @@ define [
         ammo :
           clip  : 6
           max   : 6
-        shootDy     : 5
+        shootDy     : -5
         sight       : 3
         projectile  : 'MGBullet'
         crew :
@@ -308,7 +310,7 @@ define [
         ammo :
           clip  : 1
           max   : 1
-        shootDy     : 6
+        shootDy     : -6
         sight       : 5
         projectile  : 'SmallShell'
       }, _

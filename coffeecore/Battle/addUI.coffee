@@ -3,7 +3,7 @@ define [
   'core/battle/ui/pawnspawn'
 ], (Autoscroll, PawnSpawn) ->
   ->
-    world = @_.world
+    world = @World
     views = @views
 
     if views?

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make helicopter behaviors work
+desc: make it chase a rally point, patrol to attack and resupply for now. just some basic stuff
+type: :task
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-04-11 02:17:34.745429 Z
+references: []
+
+id: 8f431ba05cd3e6786b11d889ab766fc14df911a5
+log_events: 
+- - 2013-04-11 02:17:35.642176 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

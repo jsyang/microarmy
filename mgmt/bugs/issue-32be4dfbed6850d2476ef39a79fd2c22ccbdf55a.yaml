@@ -5,8 +5,8 @@ type: :feature
 component: ma
 release: battle view 1
 reporter: JSYang <jsyang.ca@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2013-03-30 00:41:44.605201 Z
 references: []
 
@@ -15,4 +15,8 @@ log_events:
 - - 2013-03-30 00:41:45.652652 Z
   - JSYang <jsyang.ca@gmail.com>
   - created
+  - ""
+- - 2013-04-11 02:06:08.781686 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
   - ""
