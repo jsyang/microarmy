@@ -23,7 +23,7 @@ define(
         loader.addFiles.apply(loader, RESOURCES_GFX);
     
         window.soundManager.onready(function() {
-          window.soundManager.defaultOptions.volume = 15;
+          window.soundManager.defaultOptions.volume = 45;
           RESOURCES_SND = RESOURCES_SND.split('\n');
           RESOURCES_SND.forEach(function(v) {
             if(v.length) {

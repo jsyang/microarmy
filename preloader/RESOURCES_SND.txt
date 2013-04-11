@@ -1,6 +1,7 @@
 accomp
 acquireload
 chemspray
+click
 crumble
 die1
 die2

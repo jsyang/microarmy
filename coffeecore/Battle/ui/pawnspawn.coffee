@@ -113,6 +113,9 @@ define ->
             time : 40
     
       click = (e) ->
+        # Play a sound!
+        soundManager.play('click')
+        
         [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
         [x,   y]      = [e.pageX+sx,      e.pageY+sy]
         currentClass  = world.Classes[currentClick._class]
