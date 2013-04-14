@@ -1,3 +1,7 @@
+Procedural story generation!
+http://www.kingsportcases.com/2013/04/touching-surface-of-procedural-story.html
+
+
 Game design notes
 http://androidarts.com/xcom/rebelsquad.htm
 

@@ -534,6 +534,9 @@ define ->
         HomingMissile       : '(<[isOutsideWorld],[spawnLargeDetonation],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[spawnLargeDetonation],[remove]>)'
         HomingMissileSmall  : '(<[isOutsideWorld],[spawnSmallFlakExplosion],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[log1],[spawnSmallFlakExplosion],[remove]>)'
       
+        SmallMine           : '[Projectile]'
+        SmallChemMine       : '[Projectile]'
+
         ################################################################################################################################################################
       
         corpseDecay     : '(<[!isPastLastFrame],[nextFrame]>,[rot])'
@@ -586,6 +589,8 @@ define ->
         StructureReinforcing  : '<[hasReinforcements],[tryReinforcing]>'
         StructureAttack       : '<[isArmed],([StructureReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
         
+        # todo: throw non-explosive shrapnel
+        # todo: throw explosive shrapnel
         StructureDead         : '<[isDead],(<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>,[TRUE])>'
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
@@ -596,9 +601,25 @@ define ->
         ScaffoldAlive         : '(<[isFullyCrewed],[tryScaffoldSpawnChild],[remove]>,<[isCrewed],[tryCrewing]>)'
         Scaffold              : '([StructureDead],[ScaffoldAlive])'
         
-        MissileRack           : '[Structure]'
-        MissileRackSmall      : '[Structure]'
+        CommCenter            : '[Structure]' 
+        Barracks              : '[Structure]'
         CommRelay             : '[Structure]'
+        
+        WatchTower            : '[Structure]'
+        AmmoDump              : '[Structure]'
+        AmmoDumpSmall         : '[Structure]'
+        
+        MineFieldSmall        : '[Structure]'
+        Depot                 : '[Structure]'
+        RepairYard            : '[Structure]'
+        Helipad               : '[Structure]'
+        
         Pillbox               : '[Structure]'
         SmallTurret           : '[Structure]'
+        MissileRack           : '[Structure]'
+        MissileRackSmall      : '[Structure]'
+
+        ################################################################################################################################################################
+
+
     }

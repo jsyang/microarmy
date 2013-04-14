@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: infantry melee animation is moving and not attacking!
+desc: |-
+  when infantry units melee, it looks like they're not playing the attack animation, instead moving animation is being played.
+  maybe this is due to berserking action?
+type: :bugfix
+component: ma
+release: prealpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-04-14 00:30:30.260435 Z
+references: []
+
+id: 6d8c0966b3624a947f9895d59c580bde09174cfa
+log_events: 
+- - 2013-04-14 00:30:31.614158 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
