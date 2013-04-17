@@ -1,4 +1,3 @@
-# todo: load in these tree strings from a text file so they're more easily editable?
 define ->
   (World, Classes) ->
     {      
@@ -507,6 +506,43 @@ define ->
         
         setUntargetable : -> @_.targetable = false
         
+        updateCommanderSquadsStatus : ->
+          newSquads = []
+          (
+            if !squad.isPendingRemoval()
+              newSquads.push(squad)
+          ) for squad in @_.squads.length
+          @_.squads = newSquads
+          true
+
+        tryCommanderCreateSquad : ->
+          if @_.squads.length < @_.squadsLimit
+            squadType = $.WR(@_.squadBias)
+            for
+
+            true
+
+          else 
+            false
+
+        # also calculate average member X
+        isSquadDead : ->
+          if @_.allMembersJoined
+            numMembers = 0
+            sumMemberX = 0
+            (
+              if !member.isDead()
+                numMembers++
+                sumMemberX+=member._.x
+            ) for member in @_.members
+            
+            if numMembers > 0
+              @_.meanX = sumMemberX / numMembers
+
+            return numMembers > 0
+          else
+            false
+
         log1 : ->
           console.log(111)
           true
@@ -621,5 +657,6 @@ define ->
 
         ################################################################################################################################################################
 
+        Commander   : ''
 
     }

@@ -9,7 +9,7 @@ desc: |-
   4. enter woods -- woods contents revealed
 type: :feature
 component: ma
-release: prealpha
+release: battle view 1
 reporter: JSYang <jsyang.ca@gmail.com>
 status: :unstarted
 disposition: 
@@ -22,3 +22,10 @@ log_events:
   - JSYang <jsyang.ca@gmail.com>
   - created
   - ""
+- - 2013-04-16 22:54:42.653468 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - assigned to release battle view 1 from prealpha
+  - |-
+    working on this.
+    tree sprites need rescaling and slight modification
+    grass and other foliage needs to be added too
