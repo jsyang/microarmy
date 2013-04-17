@@ -13,6 +13,7 @@ chemmine0
 chemmine1
 comm0
 comm1
+cursor-select
 cursors
 depot0
 depot1
