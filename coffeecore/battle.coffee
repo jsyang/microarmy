@@ -63,6 +63,9 @@ define [
       
       delete @World.XHash_
       delete @World.Instances_
+
+      # Misc actions that happen per tick.
+      @World.perTick() if @World.perTick?
       @
   
     # Visualize the current state of the world.
@@ -76,7 +79,7 @@ define [
             mapctx.draw(p.gfx())
           ) for p in @World.Instances[type]
         ) for type in @World.primitiveClasses
-        
+
       else
         throw new Error 'no map view to redraw!'
       @

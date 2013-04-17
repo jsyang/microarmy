@@ -1,6 +1,7 @@
 define [
   'core/Battle/view/background'
-], (addBackground) ->
+  'core/Battle/view/foreground'
+], (addBackground, addForeground) ->
 
   #clear = -> @clearRect(0, 0, @width, @height)
   clear = ->
@@ -35,9 +36,12 @@ define [
     el                      = document.createElement 'div'
     canvas                  = document.createElement 'canvas'
     backgroundCanvas        = addBackground(world)
+    foregroundCanvas        = addForeground(world)
+    foregroundCanvas.ctx    = foregroundCanvas.getContext '2d'
     
     el.appendChild backgroundCanvas
     el.appendChild canvas
+    el.appendChild foregroundCanvas
     
     canvas.className        = 'noselect foreground'
     canvas.width            = w
@@ -68,4 +72,7 @@ define [
     # Map debug text API
     el.ctx.Message          = { text : '', time : 0 }
     
+    # Layers API
+    el.FG = foregroundCanvas
+
     el

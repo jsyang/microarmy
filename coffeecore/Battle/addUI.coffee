@@ -1,6 +1,7 @@
 define [
   'core/util/autoscroll'
-  'core/battle/ui/pawnspawn'
+  #'core/battle/ui/pawnspawn'
+  'core/battle/ui/survivalUI'
 ], (Autoscroll, PawnSpawn) ->
   ->
     world = @World
