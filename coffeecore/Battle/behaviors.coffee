@@ -518,7 +518,17 @@ define ->
         tryCommanderCreateSquad : ->
           if @_.squads.length < @_.squadsLimit
             squadType = $.WR(@_.squadBias)
-            for
+            
+            newSquad = new World.Classes.Squad {
+              team      : @_.team
+              commander : @
+            }
+
+            # Issue requests to fill up the squad
+            newSquad.addRequest(@_.memberBias[squadType]) for n in [0...@_.squadSizeLimit]
+            
+            @_.squads.push(newSquad)
+            World.add(newSquad)
 
             true
 
@@ -542,6 +552,22 @@ define ->
             return numMembers > 0
           else
             false
+
+        tryFulfillingRequests : ->
+          numRequests = 0
+          (
+            numRequests++
+            break
+          ) for k,v of @_.requests
+          if numRequests > 0
+            # todo: get depots from 
+            if @_.commander?
+              @_.commander.findDepotForRequest(@_.requests)
+            else
+              false
+          else
+            false
+
 
         log1 : ->
           console.log(111)
@@ -657,6 +683,8 @@ define ->
 
         ################################################################################################################################################################
 
-        Commander   : ''
+        Squad  : '[]'
+
+        #Commander   : '[]'
 
     }

@@ -15,8 +15,6 @@ define [
   
   startGame = ->
     b = new Battle()
-      .render()
-      .addUI()
       .play()
       
     window.game = b

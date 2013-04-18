@@ -8,10 +8,13 @@ define [
   
   # Views
   'core/Battle/view/map'
-  
-  # Controllers
-  'core/Battle/addUI'
-], (Behaviors, BattleBehaviors, World, Map, addUI) ->
+
+  # Map Autoscroll
+  'core/util/autoscroll'
+
+  # Gameplay type
+  'core/Battle/gameplay/survival'
+], (Behaviors, BattleBehaviors, World, Map, Autoscroll, SURVIVAL) ->
   
   views = {
     Map
@@ -27,8 +30,12 @@ define [
       
       @World        = new World(@_)
       @Behaviors    = new Behaviors(BattleBehaviors(@World, @World.Classes))
+      @Gameplay     = SURVIVAL.GAMEPLAY
       # Parent ref: so World can refer to the Battle to which it belongs
       @World.Battle = @
+
+      @render()
+      @addUI(SURVIVAL.UI)
       
     # Create the DOM elements
     render : ->
@@ -64,8 +71,8 @@ define [
       delete @World.XHash_
       delete @World.Instances_
 
-      # Misc actions that happen per tick.
-      @World.perTick() if @World.perTick?
+      # Misc actions that happen per tick. Depending on the gameplay
+      @Gameplay.perTick() if @Gameplay.perTick?
       @
   
     # Visualize the current state of the world.
@@ -98,4 +105,12 @@ define [
       clearInterval(@_.timer)
       @
     
-    addUI : addUI
+    addUI : (UIevents)->
+      if @views?
+        Autoscroll(@views.Map, @World)
+        # Bind list of UI events
+        (
+          $.addEvent(handler.context, eventName, handler.func)
+        ) for eventName,handler of UIevents(@views.Map, @World)
+      else
+        throw new Error 'views must be set up prior to addUI()'
