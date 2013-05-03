@@ -3,15 +3,8 @@ define [
   'core/Battle/view/foreground'
 ], (addBackground, addForeground) ->
 
-  #clear = -> @clearRect(0, 0, @width, @height)
-  clear = ->
-    @clearRect(0, 0, @width, @height)
-    if @Message?.time>0
-      @text(10 + @el.scrollLeft, 10 + @el.scrollTop, @Message.text)
-      @Message.time--
-  
-  text = (x,y,t)-> @fillText(t,x,y)
-  
+  clear = -> @clearRect(0, 0, @width, @height)
+      
   draw = (gfx) ->
     if gfx?.img?
       # Call to the Canvas context method "drawImage"
@@ -39,6 +32,9 @@ define [
     foregroundCanvas        = addForeground(world)
     foregroundCanvas.ctx    = foregroundCanvas.getContext '2d'
     
+    # parent ref.
+    foregroundCanvas.ctx.parent = el
+    
     el.appendChild backgroundCanvas
     el.appendChild canvas
     el.appendChild foregroundCanvas
@@ -51,12 +47,7 @@ define [
     el.style.maxWidth       = window.innerWidth
     el.style.maxHeight      = window.innerHeight
     
-    el.ctx                  = canvas.getContext '2d'
-    
-    # for text.
-    el.ctx.fillStyle        = '#ff0000'
-    el.ctx.textBaseline     = 'top'
-    el.ctx.font             = '10px verdana'
+    el.ctx                  = canvas.getContext('2d')
     
     el.ctx.width            = w
     el.ctx.height           = h
@@ -64,15 +55,12 @@ define [
     # Map view API
     el.ctx.clear            = clear
     el.ctx.draw             = draw
-    el.ctx.text             = text
+    #el.ctx.text             = text
     
     # context2d's parent el
     el.ctx.el               = el
     
-    # Map debug text API
-    el.ctx.Message          = { text : '', time : 0 }
-    
     # Layers API
-    el.FG = foregroundCanvas
+    el.FG = foregroundCanvas.ctx
 
     el

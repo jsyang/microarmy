@@ -1,5 +1,5 @@
 # NPCs and their behaviors
-define
+define ->
   # more of the procedurally generation characteristics than any definite traits
   
   # SPECIAL ###########################################################################################################

@@ -1,12 +1,20 @@
 define ->
   # Foreground layer DOM element to be consumed by the Battle/view/map
-  # Used for special cursors, effects
+  # Used for special cursors, effects, messages
   (world) ->
     if !(world?) then throw new Error 'no world given'
     
-    clear = ->
-      @clearRect(0, 0, @width, @height)
-
+    clear = -> @clearRect(0, 0, @width, @height)
+        
+    text = (message) ->
+      if message.x? and message.y? and message.text?
+        #if message.text != @Message.text
+        lines = message.text.split('\n')
+        @fillText(lines[i], message.x + @parent.scrollLeft, message.y + 10*i + @parent.scrollTop + 2) for i in [0...lines.length]
+        @Message = message
+      else
+        throw new Error 'FG.ctx.text() was called with incomplete args!'
+    
     draw = (gfx) ->
       if gfx?.img?
         # Call to the Canvas context method "drawImage"
@@ -34,9 +42,18 @@ define ->
     canvas.ctx        = canvas.getContext '2d'
     canvas.ctx.width  = w
     canvas.ctx.height = h
-
+    
+    # for text.
+    canvas.ctx.fillStyle        = '#ff0000'
+    canvas.ctx.textBaseline     = 'top'
+    canvas.ctx.font             = '10px verdana'
+    
     # API
     canvas.ctx.clear  = clear
     canvas.ctx.draw   = draw
-
+    canvas.ctx.text   = text
+    
+    # Save the message
+    canvas.ctx.Message = {}
+    
     canvas

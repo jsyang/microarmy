@@ -1,45 +1,8 @@
 define ->
-  (map, world) ->
+  (map, world, gameplay) ->
   
-    if map? and world?
-  
-      # Survival gameplay style.
+    if map? and world? and gameplay?
 
-      # Wave after wave of enemies attack
-      # Kill them, salvage weapons, upgrade your base
-
-      # build / deploy cursor
-
-      survival =
-        funds       : $.R(200,500)
-        funding     : -> $.R(1,2)
-
-        inventory :
-          Barracks        : 1
-          PistolInfantry  : 4
-          AmmoDumpSmall   : 1
-
-      cost = 
-        PistolInfantry    : 50
-        RocketInfantry    : 200
-        EngineerInfantry  : 400
-
-        CommCenter        : 18000
-        Barracks          : 9000
-        CommRelay         : 2000
-        #WatchTower        : 000
-        #AmmoDump          : 000
-        #AmmoDumpSmall     : 000
-        MineFieldSmall    : 700
-        #Depot             : 000
-        #RepairYard        : 000
-        #Helipad           : 000
-        Pillbox           : 3000
-        SmallTurret       : 8000
-        MissileRack       : 32000
-        MissileRackSmall  : 16000
-   
-      
       ACTION =
         BUILD   : 0
         DEPLOY  : 1
@@ -51,16 +14,12 @@ define ->
         action : ACTION.DEPLOY
         click :
           _special  : null
-          
-    
-
 
       keypress = (e) ->
 
         switch e.which
           when 97, 65 # A
             state.action = ACTION.BUILD
-
 
 
         map.ctx.Message =
@@ -96,21 +55,21 @@ define ->
         })
 
       # Hide current cursor
-      map.style.cursor = 'none'
+      # map.style.cursor = 'none'
 
       return {
         click :
           context : map
           func    : click
         
-        mousemove :
-          context : map
-          func    : drawCursor
+        #mousemove :
+        #  context : map
+        #  func    : drawCursor
 
         keypress :
           context : document.body
           func    : keypress
       }
     else
-      throw new Error 'no battle map view / battle world assigned to this ui behavior!'
+      throw new Error 'no battle map view / battle world / gameplay assigned to this ui behavior!'
     

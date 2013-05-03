@@ -14,6 +14,7 @@ define [
 
   # Gameplay type
   'core/Battle/gameplay/survival'
+
 ], (Behaviors, BattleBehaviors, World, Map, Autoscroll, SURVIVAL) ->
   
   views = {
@@ -29,12 +30,12 @@ define [
       }, _
       
       @World        = new World(@_)
+      @World.Battle = @ # parent ref
       @Behaviors    = new Behaviors(BattleBehaviors(@World, @World.Classes))
-      @Gameplay     = SURVIVAL.GAMEPLAY
-      # Parent ref: so World can refer to the Battle to which it belongs
-      @World.Battle = @
 
       @render()
+      
+      @Gameplay     = new SURVIVAL.GAMEPLAY(@World, @views.Map)
       @addUI(SURVIVAL.UI)
       
     # Create the DOM elements
@@ -111,6 +112,6 @@ define [
         # Bind list of UI events
         (
           $.addEvent(handler.context, eventName, handler.func)
-        ) for eventName,handler of UIevents(@views.Map, @World)
+        ) for eventName,handler of UIevents(@views.Map, @World, @Gameplay)
       else
         throw new Error 'views must be set up prior to addUI()'
