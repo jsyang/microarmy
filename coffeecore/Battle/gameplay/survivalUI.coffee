@@ -31,12 +31,12 @@ define ->
         soundManager.play('click')
         
         [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
-        [x,   y]      = [e.pageX+sx,      e.pageY+sy]
-        
+        [x,   y]      = [e.pageX+sx,      e.pageY+sy]        
       
       cursor = null
 
       drawCursor = (e) ->
+        # bound to mousemove
         if !(cursor?)
           cursor = preloader.getFile('cursor-select')
 
@@ -54,6 +54,13 @@ define ->
           worldy  : y - 8
         })
 
+      updateMouseCoords = (e) ->
+        [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
+        [x,   y]      = [e.pageX+sx,      e.pageY+sy]
+        gameplay.UI.mouse = 
+          x
+          y
+      
       # Hide current cursor
       # map.style.cursor = 'none'
 
@@ -62,9 +69,9 @@ define ->
           context : map
           func    : click
         
-        #mousemove :
-        #  context : map
-        #  func    : drawCursor
+        mousemove :
+          context : map
+          func    : updateMouseCoords
 
         keypress :
           context : document.body

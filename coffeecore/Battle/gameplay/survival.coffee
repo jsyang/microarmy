@@ -43,6 +43,11 @@ define [
     WORLD       : 'reference to battle world'
     MAP         : 'reference to battle map'
     
+    UI          : # UI triggers and flags
+      mouse :
+        X : null
+        Y : null
+    
     constructor : (WORLD, MAP) ->
       @current.funds = $.R(10,50)*@difficulty*25
       @WORLD  = WORLD
@@ -56,15 +61,28 @@ define [
       funds       : 0
     
     handleStage : ->
+      fg = @MAP.FG
+      
       switch @current.stage
       
         when @CONST.STAGES.BASECONSTRUCTION
-          @MAP.FG.clear()
-          @MAP.FG.text({
-            text : "Initial base construction.\nClick to lay down Scaffold."
-            x    : 10
-            y    : 10
+          fg.clear()
+          
+          nextUnit = @current.inventory[0]
+          
+          fg.text({
+            text  : "Initial base construction.\nClick to lay down #{nextUnit}."
+            color : 'red'
+            x     : 10
+            y     : 10
           })
+          
+          if @UI.mouse.x?
+            fg.highlight({
+              x     : @UI.mouse.x
+              color : 'green'
+              w     : 32
+            })
     
     perTick : ->
       @handleStage()
