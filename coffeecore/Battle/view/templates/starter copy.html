@@ -1,0 +1,400 @@
+<html>
+<style>
+
+
+@font-face
+{
+    font-family: 'silk';
+    src: url('/gfx/slkscr.ttf');
+}
+
+@font-face
+{
+    font-family: 'silkb';
+    src: url('/gfx/slkscrb.ttf');
+}
+
+.starter
+{
+    width:      800px;
+    height:     400px;
+    border:     solid black 1px;
+    overflow:   hidden;
+    font-smooth: never;
+    -webkit-font-smoothing : none;
+}
+
+.noselect
+{
+  -webkit-touch-callout : none;
+  -webkit-user-select   : none;
+  -khtml-user-select    : none;
+  -moz-user-select      : none;
+  -ms-user-select       : none;
+  user-select           : none;
+}
+
+
+.starter>table
+{
+    left:               0px;
+    top:                0px;
+    background:         #B4B5A1;
+    height:             100%;
+    border-collapse:    collapse;
+}
+
+.starter>table>tbody>tr>td
+{
+    vertical-align: top;
+    padding: 0;
+}
+
+.starter>table>tbody>tr>td:nth-child(1)
+{
+    width:      15%;
+}
+
+.starter>table>tbody>tr>td:nth-child(1)>div
+{
+    padding:        8px;
+    padding-right:  16px;
+    font:           16px silkb;
+    text-align:     right;
+}
+
+
+.starter>table>tbody>tr>td:nth-child(1) .filler-label
+{
+    background:     #706E6E;
+    height:         100%;
+}
+
+/* EQUIP is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='1'] .equip-label
+{
+    color:      #fff;
+    background: #B4B5A1;
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='1'] .escort-label
+{
+    border-top-right-radius:    16px;
+    background:                 #706E6E;
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='1'] .deploy-label
+{
+    background: #706E6E;
+}
+
+
+/* ESCORT is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='2'] .equip-label
+{
+    border-bottom-right-radius: 16px;
+    background: #706E6E;
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='2'] .escort-label
+{
+    color:      #fff;
+    background: #B4B5A1;
+    
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='2'] .deploy-label
+{
+    border-top-right-radius: 16px;
+    background: #706E6E;
+}
+
+/* DEPLOY is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='3'] .equip-label
+{
+    background: #706E6E;
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='3'] .escort-label
+{
+    border-bottom-right-radius: 16px;
+    background: #706E6E;   
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='3'] .deploy-label
+{
+    color:      #fff;
+    background: #B4B5A1;
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='3'] .filler-label
+{
+    border-top-right-radius: 16px;
+    background: #706E6E;
+}
+
+/* options */
+
+.starter>table>tbody>tr>td:nth-child(2)
+{
+    width:          85%;
+    padding:        8px;
+    padding-left:   16px;
+    background:     #B4B5A1;
+    font:           16px silk;
+    color:          #fff;
+}
+
+.starter>table>tbody>tr>td:nth-child(2)>div
+{
+    display: none;
+}
+
+.starter>table>tbody>tr>td:nth-child(2)[data-selected='1'] .equip,
+.starter>table>tbody>tr>td:nth-child(2)[data-selected='2'] .escort,
+.starter>table>tbody>tr>td:nth-child(2)[data-selected='3'] .deploy
+{
+    display: block;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip>#clearance,
+.starter>table>tbody>tr>td:nth-child(2) .equip>#funds
+{
+    width: 50%;
+    float: left;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip>#funds
+{
+    text-align: right;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip .clear
+{
+    clear: both;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip>#title
+{
+    margin-top:     8px;
+    margin-bottom:  4px;
+    color:          blue;
+    font-family:    silkb;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select>table
+{
+    background: #706E6E;
+    color: #fff;
+    border-collapse: collapse;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select
+{
+    height      : 320px;
+    overflow-y  : scroll;
+}
+
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select>table>tbody tr td
+{
+    padding: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select>table>tbody>tr:nth-child(1)
+{
+    color:  #aaa;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select>table>tbody>tr:not(:nth-child(1)):nth-child(even)
+{
+    background:  #444;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select .qty-minus
+{
+    text-align: right;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select .qty-minus:hover,
+.starter>table>tbody>tr>td:nth-child(2) .equip #equip-select .qty-plus:hover
+{
+    outline: 2px solid #fff;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .equip #checkbox-show-hidden
+{
+    margin-top: 4px;
+}
+
+</style>
+<body>
+<div class='starter noselect'>
+    <table width="100%">
+        <tr>
+            <td data-selected='1'>
+                <div class='equip-label'><u>E</u>QUIP</div>
+                <div class='escort-label'>E<u>S</u>CORT</div>
+                <div class='deploy-label'><u>D</u>EPLOY</div>
+                <div class='filler-label'></div>
+            </td>
+            <td data-selected='1'>
+                <div class='equip'>
+                    <div id='clearance'>Clearance Level: 1</div>
+                    <div id='funds'>300 credits left</div>
+                    <div class='clear'></div>
+                    
+                    <div id='title'>Allocate equipment for this mission</div>
+                    <div id='equip-select'>
+                        <table width="100%">
+                            <tr>
+                                <td>CL</td>
+                                <td>NAME</td>
+                                <td>ATTACK</td>
+                                <td>DEF</td>
+                                <td>COST</td>
+                                <td># AVAIL</td>
+                                <td># EMPLOYED</td>                                
+                            </tr>
+                            
+                            <tr>
+                                <td>1</td>
+                                <td>Light Infantry</td>
+                                <td>30</td>
+                                <td>10</td>
+                                <td>100</td>
+                                <td class='qty-minus'>60 -</td>
+                                <td class='qty-plus'>+ 2</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>1</td>
+                                <td>Rocket Infantry</td>
+                                <td>30</td>
+                                <td>10</td>
+                                <td>100</td>
+                                <td class='qty-minus'>60 -</td>
+                                <td class='qty-plus'>+ 2</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Engineer</td>
+                                <td>0</td>
+                                <td>10</td>
+                                <td>200</td>
+                                <td class='qty-minus'>60 -</td>
+                                <td class='qty-plus'>+ 2</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Pillbox</td>
+                                <td>300</td>
+                                <td>200</td>
+                                <td>2000</td>
+                                <td class='qty-minus'>1 -</td>
+                                <td class='qty-plus'>+ 0</td>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                    <div id='checkbox-show-hidden'>
+                        <input type='checkbox' id='show-unavailable' name='show-unavailable'/>
+                        <label for='show-unavailable'>Show items unavailable at current clearance level</label>
+                    </div>
+                </div>
+                <div class='escort'>sup</div>
+                <div class='deploy'></div>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+
+</html>
