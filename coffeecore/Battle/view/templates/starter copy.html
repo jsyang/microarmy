@@ -70,7 +70,35 @@
     height:         100%;
 }
 
+/* BRIEF is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='0'] .brief-label
+{
+    color:      #fff;
+    background: #B4B5A1;
+}
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='0'] .equip-label
+{
+    border-top-right-radius:    16px;
+    background:                 #706E6E;
+}
+
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='0'] .escort-label
+{
+    background: #706E6E;
+}
+
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='0'] .deploy-label
+{
+    background: #706E6E;
+}
+
 /* EQUIP is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='1'] .brief-label
+{
+    border-bottom-right-radius: 16px;
+    background: #706E6E;
+}
+
 .starter>table>tbody>tr>td:nth-child(1)[data-selected='1'] .equip-label
 {
     color:      #fff;
@@ -88,6 +116,10 @@
 
 
 /* ESCORT is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='2'] .brief-label
+{
+    background: #706E6E;
+}
 .starter>table>tbody>tr>td:nth-child(1)[data-selected='2'] .equip-label
 {
     border-bottom-right-radius: 16px;
@@ -106,6 +138,10 @@
 }
 
 /* DEPLOY is selected */
+.starter>table>tbody>tr>td:nth-child(1)[data-selected='3'] .brief-label
+{
+    background: #706E6E;
+}
 .starter>table>tbody>tr>td:nth-child(1)[data-selected='3'] .equip-label
 {
     background: #706E6E;
@@ -133,6 +169,7 @@
     width:          85%;
     padding:        8px;
     padding-left:   16px;
+    padding-right:   16px;
     background:     #B4B5A1;
     font:           16px silk;
     color:          #fff;
@@ -143,6 +180,7 @@
     display: none;
 }
 
+.starter>table>tbody>tr>td:nth-child(2)[data-selected='0'] .brief,
 .starter>table>tbody>tr>td:nth-child(2)[data-selected='1'] .equip,
 .starter>table>tbody>tr>td:nth-child(2)[data-selected='2'] .escort,
 .starter>table>tbody>tr>td:nth-child(2)[data-selected='3'] .deploy
@@ -184,7 +222,7 @@
 
 .starter>table>tbody>tr>td:nth-child(2) .equip #equip-select
 {
-    height      : 320px;
+    height      : 240px;
     overflow-y  : scroll;
 }
 
@@ -222,18 +260,109 @@
     margin-top: 4px;
 }
 
+.starter>table>tbody>tr>td:nth-child(2) .button
+{
+    font-family:    silk;
+    font-size:      16px;
+    color:          #222;
+    border:         2px #fff solid;
+    border-bottom:  2px #888 solid;
+    border-right:   2px #888 solid;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .button:hover
+{
+    border:         2px #fff solid;
+    border-top:     2px #888 solid;
+    border-left:    2px #888 solid;
+}
+
+/*.starter>table>tbody>tr>td:nth-child(2) .brief
+{
+    width:          100%;
+    height:         100%;
+}*/
+
+.starter>table>tbody>tr>td:nth-child(2) .brief .title
+{
+    color:          blue;
+    font-family:    silkb;
+    font-size:      16px;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .brief #buttons-div,
+.starter>table>tbody>tr>td:nth-child(2) .brief .description,
+.starter>table>tbody>tr>td:nth-child(2) .brief #more-intel-1 #more-intel-map
+{
+    margin-top: 8px;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .brief #buttons-div table
+{
+    padding:            0px;
+    border-collapse:    collapse;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .brief #buttons-div table>tbody>tr>td:nth-child(2)
+{
+    text-align: right;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .brief #more-intel-1
+{
+    margin-top: 32px;
+}
+
+.starter>table>tbody>tr>td:nth-child(2) .brief #more-intel-1 #more-intel-map
+{
+    width:      100%;
+    height:     80px;
+    border:     2px #888 solid;
+    background: #706E6E;
+}
+
+
 </style>
 <body>
 <div class='starter noselect'>
     <table width="100%">
         <tr>
             <td data-selected='1'>
+                <div class='brief-label'><u>B</u>RIEF</div>
                 <div class='equip-label'><u>E</u>QUIP</div>
                 <div class='escort-label'>E<u>S</u>CORT</div>
                 <div class='deploy-label'><u>D</u>EPLOY</div>
                 <div class='filler-label'></div>
             </td>
             <td data-selected='1'>
+                <div class='brief'>
+                    <div class='title'>SURVIVAL MISSION</div>
+                    
+                    <div class='description'>
+                        Intelligence from our forward recon units reveals a high level of unopposed enemy activity
+                        in this area. Level the enemy base to create a foundation for our armies.
+                        <br/></br>
+                        Distract their main patrol units while our heavy rocket launchers move into position
+                        at 2200. They will make short work of the enemy base.
+                        <br/><br/>
+                        No launchers must be lost.
+                    </div>
+                    
+                    <!-- todo: http://css-tricks.com/fun-with-blurred-text/, maybe 'typewriter' this message in so that it shows up in new intel box-->
+                    <div id='more-intel-1'>
+                        Intel: blah blah blah missiles, blah blah defenses strong, blah, weak point. Time of day to strike blah.
+                        <div id='more-intel-map'></div>
+                    </div>
+                    
+                    <div id='buttons-div'>
+                        <table width='100%'>
+                            <tr>
+                                <td><button class='button button-intel'>BUY INTEL (-100 credits)</button></td>
+                                <td><button class='button button-ok'>OK</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
                 <div class='equip'>
                     <div id='clearance'>Clearance Level: 1</div>
                     <div id='funds'>300 credits left</div>
@@ -241,6 +370,7 @@
                     
                     <div id='title'>Allocate equipment for this mission</div>
                     <div id='equip-select'>
+                        <!-- todo: autoscroll this element! -->
                         <table width="100%">
                             <tr>
                                 <td>CL</td>
@@ -386,7 +516,10 @@
                     </div>
                     <div id='checkbox-show-hidden'>
                         <input type='checkbox' id='show-unavailable' name='show-unavailable'/>
-                        <label for='show-unavailable'>Show items unavailable at current clearance level</label>
+                        <label for='show-unavailable'>Show equipment unavailable at current clearance level</label>
+                    </div>
+                    <div id='button-ok-div'>
+                        <button class='button-ok'>OK</button>
                     </div>
                 </div>
                 <div class='escort'>sup</div>
