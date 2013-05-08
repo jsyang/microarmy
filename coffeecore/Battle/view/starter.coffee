@@ -9,9 +9,8 @@ define [
     
     if !(world?) or !(map?) or !(gameplay?) then throw new Error 'UI constructor was called with proper args!'
     
-    el            = document.createElement 'div'
-    el.className  = 'starter noselect';
+    el                  = document.createElement 'div'
+    el.className        = 'starter noselect'
+    el.innerHTML        = template
     
-    el.innerHTML  = template
-
     el
