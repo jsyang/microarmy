@@ -8,6 +8,7 @@ define [
   
   # Views
   'core/Battle/view/map'
+  'core/Battle/view/starter'
 
   # Map Autoscroll
   'core/util/autoscroll'
@@ -15,10 +16,11 @@ define [
   # Gameplay type
   'core/Battle/gameplay/survival'
 
-], (Behaviors, BattleBehaviors, World, Map, Autoscroll, SURVIVAL) ->
+], (Behaviors, BattleBehaviors, World, Map, Starter, Autoscroll, SURVIVAL) ->
   
   views = {
     Map
+    Starter
   }
   
   class Battle  
@@ -32,17 +34,19 @@ define [
       @World        = new World(@_)
       @World.Battle = @ # parent ref
       @Behaviors    = new Behaviors(BattleBehaviors(@World, @World.Classes))
-
+      @Gameplay     = new SURVIVAL.GAMEPLAY(@World)
+      
       @render()
       
-      @Gameplay     = new SURVIVAL.GAMEPLAY(@World, @views.Map)
+      @Gameplay.setMap(@views.Map)
+      
       @addUI(SURVIVAL.UI)
       
     # Create the DOM elements
     render : ->
       @views = {}
       (
-        @views[k] = v(@World)
+        @views[k] = v(@World, @views.Map, @Gameplay)
         document.body.appendChild @views[k]
       ) for k,v of views
       @

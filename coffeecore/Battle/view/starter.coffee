@@ -1,5 +1,5 @@
 define [
-  'text!core/Battle/view/templates/starter.html'
+  'text!ui-templates/starter.html'
 ], (template) ->
 
   (world, map, gameplay) ->
@@ -9,9 +9,9 @@ define [
     
     if !(world?) or !(map?) or !(gameplay?) then throw new Error 'UI constructor was called with proper args!'
     
-    [w, h]  = [ map.ctx.width, map.ctx.height ]
-  
-    el           = document.createElement 'div'
-    el.innerHTML = template
+    el            = document.createElement 'div'
+    el.className  = 'starter noselect';
+    
+    el.innerHTML  = template
 
     el

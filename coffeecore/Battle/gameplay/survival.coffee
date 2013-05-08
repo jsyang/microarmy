@@ -51,7 +51,6 @@ define [
     constructor : (WORLD, MAP) ->
       @current.funds = $.R(10,50)*@difficulty*25
       @WORLD  = WORLD
-      @MAP    = MAP
       
       
     current :
@@ -59,6 +58,8 @@ define [
       stage       : CONST.STAGES.BASECONSTRUCTION
       fundingRate : 1
       funds       : 0
+    
+    setMap : (MAP) -> @MAP = MAP
     
     handleStage : ->
       fg = @MAP.FG
