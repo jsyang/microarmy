@@ -1,9 +1,8 @@
 # Microarmy
 Build your pixelized military, fight decisive battles, conquer the world
 
-## Issue tracking
-Can be found by running "ditz" in the mgmt/ directory.  
-Run "ditz html" to build a web snapshot of the issues.
+## Command-line Issue Tracker
+Checkout the *issues* orphan branch and run `ditz` to see issues. Run `ditz html` to build a web snapshot of the issues.
 
 ## Release build commands
 1. Gather gfx and sfx resources for the HTML5Preloader  
