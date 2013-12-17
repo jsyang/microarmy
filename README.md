@@ -1,10 +1,9 @@
 # Microarmy
-Build your pixelized military, fight decisive battles, conquer the world
-
-## Command-line Issue Tracker
-Checkout the *issues* orphan branch and run `ditz` to see issues. Run `ditz html` to build a web snapshot of the issues.
+Build your pixelized military and fight massive battles!  
+(Conquering the world sold separately!)
 
 ## Release build commands
+
 1. Gather gfx and sfx resources for the HTML5Preloader  
 
     ./build-preloader-file-list
@@ -16,20 +15,7 @@ Checkout the *issues* orphan branch and run `ditz` to see issues. Run `ditz html
 3. Start the local microarmy webserver  
 
     ./start
-
-4. [Take a peek at the microarmy wiki](/docs/)  
-
-    http://localhost:8000/docs
-
-5. [Take a peek at the microarmy issues](/mgmt/html/)  
-
-    http://localhost:8000/mgmt/html/
     
-## Generate documentation
-TODO: Perhaps the coffeedoc / docco should be run on the unit tests rather than the core codebase  
-
-    coffeedoc --parser requirejs coffeecore/
-
 ## Tests
 Run the jasmine-node unit tests with  
 
@@ -65,5 +51,5 @@ Run the jasmine-node unit tests with
 - coffeedoc  
   Need to edit the template as to include the base.css otherwise anything within docs/ is overwriten!  
   See lib/index.eco for the docs main template.
-- ditz
+- ditz  
 - coffee
