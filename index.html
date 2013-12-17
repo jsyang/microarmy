@@ -1,18 +1,22 @@
 <html>
+  
   <title>microarmy docs</title>
     
-  <link rel="stylesheet" type="text/css" href="docs.css">
-  <link rel="SHORTCUT ICON" href="../microarmy.ico"/>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
   
-  <script src="../lib/jquery-1.9.1.min.js"></script>
-  <script src="../lib/markdown.js"></script>
-  <script data-main="docs" src="../lib/require.js"></script>
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/markdown.js"></script>
+  <script data-main="init" src="js/require.js"></script>
   <script>
     require.config({
+      baseUrl : './',
       paths : {
-        'text' : '../lib/text'
+        'text' : 'js/text',
+        'init' : 'js/docs'
       }
     });
   </script>
+  
   <body></body>
+  
 </html>
