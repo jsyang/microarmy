@@ -1,0 +1,3 @@
+# Generating HTML documentation
+1. `npm install -g marked`
+2. 
