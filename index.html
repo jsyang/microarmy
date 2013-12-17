@@ -1,11 +1,14 @@
 <html>
+  
   <title>microarmy</title>
+  
   <script>
+    // In case loaded file locally instead of from webserver
     if(window.location.origin.indexOf('file://')!=-1) {
-        // Loaded this file from Finder / shell script. Reload from local webserver.
-        window.location.href = 'http://localhost:8080';
+        window.location.href = 'http://localhost:8000';
     }
   </script>
+  
   <link rel="stylesheet" type="text/css" href="css/microarmy.css">
   <link rel="SHORTCUT ICON" href="microarmy.ico"/>
 
@@ -23,5 +26,7 @@
     
     require(['core/game']);
   </script>
+  
   <body></body>
+
 </html>

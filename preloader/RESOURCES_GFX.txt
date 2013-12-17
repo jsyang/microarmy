@@ -61,6 +61,8 @@ scaffold0
 scaffold1
 scaffold_
 shells
+slkscr
+slkscrb
 smallturret1
 smoke
 smokesmall

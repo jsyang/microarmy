@@ -2,24 +2,12 @@
 Build your pixelized military and fight massive battles!  
 (Conquering the world sold separately!)
 
-## Release build commands
+## Running it
 
-1. Gather gfx and sfx resources for the HTML5Preloader  
-
-    ./build-preloader-file-list
-    
-2. Compile core game sources into JS from CS  
-
-    coffee -b -o core/ coffeecore/
-    
-3. Start the local microarmy webserver  
-
-    ./start
+`shellscripts/start` to do everything to compile from source and run locally.
     
 ## Tests
-Run the jasmine-node unit tests with  
-
-    ./test
+Run the jasmine-node unit tests with `shellscripts`
 
 ## Useful .bash_profile additions
 - Single letter ditz  

@@ -2,12 +2,12 @@
 clear
 
 echo Updating game resources...
-./build-preloader-file-list
+./shellscripts/build-preloader-file-list
 echo Done.
 
-#echo Compiling CS game logic...
-#coffee -b -o core/ coffeecore/
-#echo Done.
+echo Compiling CS game logic...
+coffee -b -o ./core/ ./coffeecore/
+echo Done.
 
 echo ----------------------------------------------------------------
 
