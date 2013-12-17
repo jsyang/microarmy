@@ -30,14 +30,8 @@ Run the jasmine-node unit tests with `shellscripts`
     
     alias cw='cwc --output core/ coffeecore/'
 
-- Autodoc with coffeedoc  
-    alias ad='coffeedoc --parser requirejs coffeecore/'
-
 ## Tools used
 - jasmine-node
 - http-server
-- coffeedoc  
-  Need to edit the template as to include the base.css otherwise anything within docs/ is overwriten!  
-  See lib/index.eco for the docs main template.
 - ditz  
 - coffee
