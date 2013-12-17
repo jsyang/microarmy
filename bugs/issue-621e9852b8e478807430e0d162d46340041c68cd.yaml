@@ -1,0 +1,31 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: foliage and special scenery structures
+desc: |-
+  for infantry to hide in and ambush passing units (hides everything until enemy unit wanders into proximity)
+  3 occulsion states:
+  1. attacked faraway by unit hiding in woods -- cannot see contents, not marked
+  2. attacked at medium distance by unit hiding in woods -- cannot see contents of woods, but marks the territory as enemy
+  3. attacked close range -- woods contents revealed
+  4. enter woods -- woods contents revealed
+type: :feature
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-04 09:13:55.226196 Z
+references: []
+
+id: 621e9852b8e478807430e0d162d46340041c68cd
+log_events: 
+- - 2013-02-04 09:13:56.274407 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-04-16 22:54:42.653468 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - assigned to release battle view 1 from prealpha
+  - |-
+    working on this.
+    tree sprites need rescaling and slight modification
+    grass and other foliage needs to be added too

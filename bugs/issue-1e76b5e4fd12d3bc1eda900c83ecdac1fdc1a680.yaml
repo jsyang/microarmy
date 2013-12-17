@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: test XHash
+desc: need a solid test for this, since all Pawn targeting depends on this functionality
+type: :task
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2013-03-12 10:03:41.439023 Z
+references: []
+
+id: 1e76b5e4fd12d3bc1eda900c83ecdac1fdc1a680
+log_events: 
+- - 2013-03-12 10:03:42.415484 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-03-18 07:48:03.668061 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - added to test suite

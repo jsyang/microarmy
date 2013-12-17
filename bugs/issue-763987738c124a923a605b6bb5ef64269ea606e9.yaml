@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: move items from todo.txt into ditz
+desc: ""
+type: :task
+component: ma
+release: moving issues
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :closed
+disposition: :reorg
+creation_time: 2013-02-04 09:26:17.736141 Z
+references: []
+
+id: 763987738c124a923a605b6bb5ef64269ea606e9
+log_events: 
+- - 2013-02-04 09:26:18.792320 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-02-19 08:44:35.392446 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition reorg
+  - moved them into the docs instead for now. will look at them again to reprioritize things

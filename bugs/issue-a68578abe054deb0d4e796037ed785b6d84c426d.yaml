@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make projectile behaviors work
+desc: fly, find target, explode, hitground, etc
+type: :feature
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2013-03-30 00:40:10.288858 Z
+references: []
+
+id: a68578abe054deb0d4e796037ed785b6d84c426d
+log_events: 
+- - 2013-03-30 00:40:11.657256 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-04-11 02:05:20.812172 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - ""

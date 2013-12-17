@@ -1,0 +1,30 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: battle class redef and reinit
+desc: move stuff into battle class so it behaves like campaign does currently
+type: :task
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2013-03-01 02:08:59.123987 Z
+references: []
+
+id: baf15e5ce2adc75537588c66d274788205a39d7c
+log_events: 
+- - 2013-03-01 02:09:01.347979 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-03-06 09:37:02.307862 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - ported addTerrain and BG today
+- - 2013-03-10 03:37:05.544112 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - |-
+    battle is now handled much like campaign is
+    with additive generators for the models within a battle
+    views are also additive and same with UI
+    needs unit tests and documentation...

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: tie campaign view tiles to a generated battleview
+desc: track time of day in campaign view and use terrain types to determine what to show in battle
+type: :feature
+component: ma
+release: prealpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-05 03:39:56.563221 Z
+references: []
+
+id: 86bdd3e8ccc55460d715dbb4788290562945fe33
+log_events: 
+- - 2013-02-05 03:39:57.483200 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

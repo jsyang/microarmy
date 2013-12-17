@@ -1,0 +1,74 @@
+--- !ditz.rubyforge.org,2008-03-06/project 
+name: ma
+version: "0.5"
+components: 
+- !ditz.rubyforge.org,2008-03-06/component 
+  name: ma
+releases: 
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: moving issues
+  status: :released
+  release_time: 2013-02-26 10:16:05.812059 Z
+  log_events: 
+  - - 2013-02-04 09:05:01.979946 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - moving issues into ditz from all sources.
+  - - 2013-02-26 10:16:05.812071 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - released
+    - done a few commits ago.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: prealpha
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-04 09:09:45.107090 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - pre-alpha version for self-testing mostly. may show some elements to friends.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: alpha
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-04 09:37:38.425761 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - For general testing, enlarge pool of potential testers to more than friends, maybe gamedev meetups.
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: unify docs
+  status: :released
+  release_time: 2013-02-14 09:55:52.539398 Z
+  log_events: 
+  - - 2013-02-04 10:01:16.345287 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - |-
+      includes both the wiki and things like unit descriptions and ad-blurbs perhaps
+      need to consolidate this into this single git repo
+      makes everything much more convenient
+  - - 2013-02-14 09:55:52.539421 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - released
+    - done!
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: campaign view UI 1
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-02-26 10:18:25.951369 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - create the basic interactions for the campaign view so user has something to look at and interact with while in campaign view
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: battle view 1
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2013-03-01 02:08:07.397190 Z
+    - JSYang <jsyang.ca@gmail.com>
+    - created
+    - |-
+      make things work like they did before the switch to coffee and requireJS
+      use parameters from campaign view to generate the new maps

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make structure behaviors work
+desc: attack, deploy, supply, explode, reload
+type: :feature
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-03-30 00:40:51.195292 Z
+references: []
+
+id: 82e19cc85086b0d5f886e30fa7645a75d36b063e
+log_events: 
+- - 2013-03-30 00:40:52.795437 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

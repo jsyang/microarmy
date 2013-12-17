@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: create supply chain view and UI
+desc: |-
+  see routes / broken routes / set routes
+  view cargo, assign convoy
+  view penalties for crossing terrain
+  auto-supply for an intact route
+type: :feature
+component: ma
+release: campaign view UI 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-26 10:20:02.169274 Z
+references: []
+
+id: d2e396a8dfacad5566fe46f6df27461abcbcc351
+log_events: 
+- - 2013-02-26 10:20:03.585208 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

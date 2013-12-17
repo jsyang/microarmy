@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: move github issues into ditz
+desc: ""
+type: :task
+component: ma
+release: moving issues
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2013-02-04 09:08:30.961251 Z
+references: []
+
+id: db3bd7d802fc3277ab8f82fc3c6999a4d6ede351
+log_events: 
+- - 2013-02-04 09:08:32.281282 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-02-04 09:25:45.478036 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - moved most of the coherent github issues into ditz. the few which reference an obsolete state of the project were not entered

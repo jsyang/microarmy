@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: shrapnel class (old mortarshell)
+desc: |-
+  these pieces spawn and then explode when the structure is destroyed, we can reuse the owning structure's spritesheet to get the pieces we need for shrapnel
+  darken these new pieces?
+  or use a generic debris graphic?
+type: :feature
+component: ma
+release: prealpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-04-11 02:14:25.410014 Z
+references: []
+
+id: 2b2e3cd0f6a4aa844f8129176ca48e3b0caec166
+log_events: 
+- - 2013-04-11 02:14:27.058144 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""

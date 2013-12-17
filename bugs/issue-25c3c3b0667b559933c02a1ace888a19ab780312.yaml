@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: projectiles hit far target more often than near targets
+desc: ""
+type: :bugfix
+component: ma
+release: battle view 1
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2013-04-04 05:09:44.493699 Z
+references: []
+
+id: 25c3c3b0667b559933c02a1ace888a19ab780312
+log_events: 
+- - 2013-04-04 05:09:45.390166 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-04-04 05:41:39.113349 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - closed with disposition fixed
+  - projectiles hit fix included changes to the distHit func, it's overwritten in some stuff

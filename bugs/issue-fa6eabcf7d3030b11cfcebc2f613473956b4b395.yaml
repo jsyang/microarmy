@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: clean up Behavior decorators
+desc: |-
+  extremely messy right now. maybe enforce better naming conventions
+  auto-doc the decorators for use in the BTree / graphical Behavior editor
+  this may have to happen later.
+  we should enforce that all behaviors be checked for validity before even trying to execute them (esp ones that have side-effects)
+type: :task
+component: ma
+release: prealpha
+reporter: JSYang <jsyang.ca@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2013-02-04 09:21:27.023439 Z
+references: []
+
+id: fa6eabcf7d3030b11cfcebc2f613473956b4b395
+log_events: 
+- - 2013-02-04 09:21:27.886780 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - created
+  - ""
+- - 2013-02-21 09:19:49.255526 Z
+  - JSYang <jsyang.ca@gmail.com>
+  - commented
+  - rewrote Behavior (old) into Behaviors class, modularized the shit out of it
