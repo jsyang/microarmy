@@ -1,0 +1,110 @@
+Dec. 17, 2013 : Game doesn't work yet. Keep it battle only! Simplify to finish this game!
+Split the campaign view into another game.
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+Procedural story generation!
+http://www.kingsportcases.com/2013/04/touching-surface-of-procedural-story.html
+
+
+Game design notes
+http://androidarts.com/xcom/rebelsquad.htm
+
+Various damage tables and other inspiration for game structure
+http://www.ufopaedia.org/
+
+------------------------------------------------------------------------------------------------------------------------
+
+Sprites
+
+AIRCRAFT -- ESP. BOMBER AIRCRAFT
+http://th09.deviantart.net/fs71/PRE/f/2011/137/a/3/aircraft_sprites_sideways_by_triplepogi2009-d39ytae.png
+
+http://www.xbattlestation.com/forgottencreations/viper.aspx
+http://walen.se/sprites/?level=collection&id=1
+
+
+http://www.atari.st/view.php?id=1535
+
+http://www.hasegawa-model.co.jp/hp/catalog/x72_series/x72_index.html
+
+Naval ship superstructures look like good futuristic military installation buildings
+http://www.fas.org/irp/doddir/navy/rfs/part02.htm
+
+top 50 games.
+http://littlebluething.com/games/top50.php?place=1
+
+http://www.mobygames.com/game/dos/sandstorm/screenshots
+
+Star Control
+http://sc2.sourceforge.net/info.php
+
+http://opengameart.org
+http://www.freesound.org
+http://game-icons.net/
+
+
+------------------------------------------------------------------------------------------------------------------------
+Roguelike characteristics references
+
+http://brogue.createforumhosting.com/brogue-tile-version-t579.html
+http://www.redblobgames.com/articles/visibility/
+http://www.reddit.com/r/roguelikes/comments/16kq4a/new_to_pixel_art_looking_for_suggestions/
+http://doom.chaosforge.org/screenshots
+http://www.reddit.com/r/gamedev/comments/ya1zm/asciito3d_building_generator_i_detail_a_code/
+http://www.reddit.com/r/roguelikedev
+http://www.bay12forums.com/smf/index.php?topic=28410.0
+http://crawl.develz.org/wordpress/
+http://www.rockpapershotgun.com/2013/01/07/tome-is-where-the-heart-is-happy-new-roguelike/
+http://www.roguebase.net/
+http://roguebasin.roguelikedevelopment.org/index.php?title=Main_Page
+http://stuart-morgan.blogspot.co.uk/
+http://prospector.freeforums.org/similar-genre-games-t66.html
+
+discussion on roguelike mechanics -- learning and "annihilation fields"
+https://groups.google.com/forum/?fromgroups=#!topic/rec.games.roguelike.development/adQnhMX9yUM
+
+
+articles on dev up to and include project mgmt
+http://roguebasin.roguelikedevelopment.org/index.php?title=Articles#Fundamentals
+
+------------------------------------------------------------------------------------------------------------------------
+
+- new unit for campaign views: spy / infiltrator (enemy spy)
+  can sabotage the ranks of your army
+  out them with a "purge" mini game -- reading their behaviors / interrogation
+
+-- is a contextual action the same as a contextual menu? hell no
+    - menu --> multiple options, delayed response
+    - action --> 1 action, immediate response
+    - contextual action must be very VERY well designed
+    - who says you can't have both?
+        - contextual actions for some, menus for others
+    - can bind specific actions to a context action (e.g. zelda: A = sword, B = hook)
+
+-- content game...
+    - made as a vehicle (really) for content that's produced from a direction
+    - a story is a content
+    - content is critical, but look at how you are pacing and using it
+
+-- on PERMADEATH: https://groups.google.com/forum/?fromgroups=#!topic/rec.games.roguelike.development/9leesIK3ijg
+Permadeath: Whether it's good for your game or not depends on how
+quickly it happens, how long the game is, how quickly you can restart
+(do you have to pick a new race, class, name, weapon) and especially
+how varied a start can you give the player? Many games fail at this.
+Is the first level lava caves? Dwarven gold caves? Limestone caverns
+eroded? The kings dungeon? The Goblin King's Dungeon? If each game is
+short and starts out interesting it's okay to fail over and over
+because each game is so very different and fun. Modern games don't do
+this though. They want their characters to live and they want hard
+work to be done easily. They create many hours of content meant to
+just be 'gotten through.' Everyone can get through, it's prospering
+that is hard.
+    - alternatives http://roguebasin.roguelikedevelopment.org/index.php?title=Alternatives_to_Permadeath
+
+------------------------------------------------------------------------------------------------------------------------
+
+http://www.nma-fallout.com/forum/viewtopic.php?t=25942&sid=80b0a6b8c10b52bd16c3bc22a4e4d610
+http://gamedev.stackexchange.com/questions/26111/how-to-discourage-micromanagement-in-strategy-games
+http://fallout.wikia.com/wiki/Fallout_combat
