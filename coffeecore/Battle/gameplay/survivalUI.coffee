@@ -57,9 +57,10 @@ define ->
       updateMouseCoords = (e) ->
         [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
         [x,   y]      = [e.pageX+sx,      e.pageY+sy]
-        gameplay.UI.mouse = 
+        gameplay.UI.mouse = {
           x
           y
+        }
       
       # Hide current cursor
       # map.style.cursor = 'none'

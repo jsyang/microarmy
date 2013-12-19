@@ -1,32 +1,33 @@
 <html>
   
-  <title>microarmy</title>
+    <title>microarmy</title>
   
-  <script>
-    // In case loaded file locally instead of from webserver
-    if(window.location.origin.indexOf('file://')!=-1) {
-        window.location.href = 'http://localhost:8000';
-    }
-  </script>
+    <script>
+        // In case loaded file locally instead of from webserver
+        if(window.location.origin.indexOf('file://')!=-1) {
+            window.location.href = 'http://localhost:8000';
+        }
+    </script>
   
-  <link rel="stylesheet" type="text/css" href="css/microarmy.css">
-  <link rel="SHORTCUT ICON" href="microarmy.ico"/>
+    <link rel="stylesheet" type="text/css" href="css/microarmy.css">
+    <link rel="SHORTCUT ICON" href="microarmy.ico"/>
 
-  <script src="lib/underscore.js"></script>
-  <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
-  <script> soundManager.url='./soundmanager2/'; </script>
+    <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
+    <script>
+        soundManager.url='./soundmanager2/';
+    </script>
 
-  <script src="lib/require.js"></script>
-  <script>
-    require.config({
-      paths : {
-        'text' : 'lib/text'
-      }
-    });
-    
-    require(['core/game']);
-  </script>
+    <script src="lib/require.js"></script>
+    <script>
+        require.config({
+          paths : { 
+            'text' : 'lib/text'
+          }
+        });
+        
+        require(['core/game']);
+    </script>
   
-  <body></body>
+    <body></body>
 
 </html>

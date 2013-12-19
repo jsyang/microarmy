@@ -1,0 +1,305 @@
+<table>
+    <tr>
+        <td data-type='tab-label' data-selected='0'>
+        
+            <div class='brief-label' data-selection='0'><u>B</u>RIEF</div>
+            <div class='equip-label' data-selection='1'><u>E</u>QUIP</div>
+            <div class='escort-label' data-selection='2'>E<u>S</u>CORT</div>
+            <div class='deploy-label' data-selection='3'><u>D</u>EPLOY</div>
+            <div class='filler-label'></div>
+            
+        </td>
+        <td data-type='tab-display' data-selected='0'>
+        
+            <div class='brief'>
+                <div class='title'>SURVIVAL MISSION</div>
+                
+                <div class='description'>
+                    Intelligence from our forward recon units reveals a high level of unopposed enemy activity
+                    in this area. Level the enemy base to create a foundation for our armies.
+                    <br/></br>
+                    Distract their main patrol units while our heavy rocket launchers move into position
+                    at 2200. They will make short work of the enemy base.
+                    <br/><br/>
+                    No launchers must be lost.
+                </div>
+                
+                <!-- todo: http://css-tricks.com/fun-with-blurred-text/, maybe 'typewriter' this message in so that it shows up in new intel box-->
+                <div id='more-intel-1'>
+                    Intel: blah blah blah missiles, blah blah defenses strong, blah, weak point. Time of day to strike blah.
+                    <div id='more-intel-map'> insert low res map here </div>
+                </div>
+                
+                <div id='buttons-div'>
+                    <table width='100%'>
+                        <tr>
+                            <td><button class='button button-intel'>BUY INTEL (-100 credits)</button></td>
+                            <td><button class='button button-ok'>CONTINUE</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            
+            <div class='equip'>
+                <div id='title'>Allocate equipment for this mission</div>
+                <div id='clearance'>Clearance Level: 1</div>
+                <div id='funds'>300 credits left</div>
+                <div class='clear'></div>
+                
+                <div id='equip-select'>
+                    <!-- todo: autoscroll this element! -->
+                    <table width="100%">
+                        <tr>
+                            <td>CL</td>
+                            <td>NAME</td>
+                            <td>ATTACK</td>
+                            <td>DEF</td>
+                            <td>COST</td>
+                            <td># AVAIL</td>
+                            <td># EMPLOYED</td>                                
+                        </tr>
+                        
+                        <tr>
+                            <td>1</td>
+                            <td>Light Infantry</td>
+                            <td>30</td>
+                            <td>10</td>
+                            <td>100</td>
+                            <td class='qty-minus'>60 -</td>
+                            <td class='qty-plus'>+ 2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>1</td>
+                            <td>Rocket Infantry</td>
+                            <td>30</td>
+                            <td>10</td>
+                            <td>100</td>
+                            <td class='qty-minus'>60 -</td>
+                            <td class='qty-plus'>+ 2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2</td>
+                            <td>Engineer</td>
+                            <td>0</td>
+                            <td>10</td>
+                            <td>200</td>
+                            <td class='qty-minus'>60 -</td>
+                            <td class='qty-plus'>+ 2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2</td>
+                            <td>Pillbox</td>
+                            <td>300</td>
+                            <td>200</td>
+                            <td>2000</td>
+                            <td class='qty-minus'>1 -</td>
+                            <td class='qty-plus'>+ 0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>2</td>
+                            <td>Small turret</td>
+                            <td>400</td>
+                            <td>500</td>
+                            <td>4000</td>
+                            <td class='qty-minus'>1 -</td>
+                            <td class='qty-plus'>+ 0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>3</td>
+                            <td>Barracks</td>
+                            <td>0</td>
+                            <td>600</td>
+                            <td>20000</td>
+                            <td class='qty-minus'>1 -</td>
+                            <td class='qty-plus'>+ 0</td>
+                        </tr>
+                       
+                        <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class='qty-minus'>0 -</td>
+                            <td class='qty-plus'>+ 0</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+                <div id='counter-div'>
+                    EQUIPMENT <img src='/ui-templates/samplecounter.png'/>
+                </div>
+                
+                <div id='buttons-div'>
+                    <table width='100%'>
+                        <tr>
+                            <td>
+                                <input type='checkbox' id='show-unavailable' name='show-unavailable'/>
+                                <label for='show-unavailable'>hide items unavailable at current clearance level</label>
+                            </td>
+                            <td>
+                                <button class='button button-ok'>CONTINUE</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+            
+            <div class='escort'>
+                <div class='title'>arrange mission escorts</div>
+                <div id='funds'>300 credits left</div>
+                
+                <div class='clear'></div>
+                
+                <div id='escort-select'>
+                    <!-- todo: autoscroll this element! -->
+                    <table width="100%">
+                        <tr>
+                            <td>NAME</td>
+                            <td>Def</td>
+                            <td>SURV</td>
+                            <td>COST</td>
+                            <td>EMPLOYED</td>                                
+                        </tr>
+                        
+                        <tr>
+                            <td>Decoy squad</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>100</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Infantry guard</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>500</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Armored convoy</td>
+                            <td>20</td>
+                            <td>100</td>
+                            <td>2000</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Anti-air guard 1</td>
+                            <td>70</td>
+                            <td>80</td>
+                            <td>5000</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>advance helicopter</td>
+                            <td>100</td>
+                            <td>30</td>
+                            <td>3000</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>scout plane</td>
+                            <td>100</td>
+                            <td>50</td>
+                            <td>1000</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>stealth scout plane</td>
+                            <td>200</td>
+                            <td>150</td>
+                            <td>10000</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>visual camo</td>
+                            <td>40</td>
+                            <td>120</td>
+                            <td>7000</td>
+                            <td>NO</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+                <div class='escort-title'>decoy squad</div>
+                <div class='escort-description'>
+                    specially trained diversionary squad allows main body to retreat or advance to battlefield if ambushed
+                </div>
+            </div>
+            
+            <div class='deploy'>
+                <div class='deploy-title'>order of battle</div>
+                
+                <div class='deploy-summary'>
+                    <table width="100%">
+                        <tr>
+                            <td>12 x Light infantry</td>
+                            <td>1 x defensive machine gun</td>
+                        </tr>
+                        <tr>
+                            <td>3 x rocket infantry</td>
+                            <td>1 x comm tower</td>
+                        </tr>
+                        <tr>
+                            <td>1 x engineer</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>mission escorts</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>decoy squad</td>
+                            <td>visual camo</td>
+                        </tr>
+                        <tr>
+                            <td>scout plane</td>
+                            <td> </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class='deploy-log-title'>travel messages</div>
+                
+                <div class='deploy-log'>
+                    squad re-armed.<br/>
+                    traveled 10 km.<br/>
+                    squad encounters enemy patrol.<br/>
+                    squad successfully evades combat!<br/>
+                    traveled 20 km.<br/>
+                    ambushed by enemy patrol!<br/>
+                    decoy squad laid down covering fire!<br/>
+                    decoy squad laid down covering fire!<br/>
+                    enemy patrol hit!<br/>
+                    enemy patrol fires!<br/>
+                    1 x light infantry lost.
+                </div>
+                
+                <div class='buttons-div'>
+                    <button class='button'>PROCEED TO BATTLE</button>
+                </div>
+            </div>
+            
+        </td>
+    </tr>
+</table>

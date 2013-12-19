@@ -4,7 +4,7 @@ body
 {
     padding     : 0px;
     margin      : 0px;
-    background  : #222;
+    background  : #333;
     font        : 30px sans-serif;
     color       : #fff;
     overflow    : hidden;
@@ -129,8 +129,8 @@ body
   position          : absolute;
   overflow          : hidden;
   left              : 0px;
-  top               : 0px;
-  vertical-align    : middle;
+  top               : 50%;
+  margin-top        : -240px;  
 }
 
 .battlemap canvas.foreground

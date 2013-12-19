@@ -1,37 +1,31 @@
 # Microarmy
-Build your pixelized military and fight massive battles!  
-(Conquering the world sold separately!)
+Fight massive battles with your pixel pawns!
+*`shellscripts/start` to do everything to compile from source and run the game locally.*
+Microarmy is written in Coffeescript (`coffeecore/`), which is compiled into Javascript (`core/`).  
 
-## Running it
-
-`shellscripts/start` to do everything to compile from source and run locally.
-    
 ## Tests
-Run the jasmine-node unit tests with `shellscripts`
+Run the jasmine-node unit tests with `shellscripts/test`
 
 ## Useful .bash_profile additions
-- Single letter ditz  
 
     alias d='/usr/bin/ditz'
-
-- Add coffee cmdline tool to $PATH or /etc/pathd or use this  
-
     alias coffee='/usr/local/share/npm/bin/coffee'
-
-- Coffee Watch Compile  
-    
     alias cwc='coffee -b -w -c'
-
-- Coffee Watch Print (preview compiled JS code from CS source)  
-
     alias cwp='coffee -b -w -p'
-
-- Coffee Watch Compile entire CS source into JS  
-    
     alias cw='cwc --output core/ coffeecore/'
 
-## Tools used
-- jasmine-node
-- http-server
-- ditz  
-- coffee
+## Libs / tools used
+    jasmine-node
+    http-server
+    ditz  
+    coffeescript
+    
+    markdown.js
+    require.js
+      text.js
+    HTML5preloader.js
+    Sound Manager 2
+    
+    Paint.NET
+    Audacity
+    

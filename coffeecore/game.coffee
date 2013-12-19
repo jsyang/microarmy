@@ -15,7 +15,7 @@ define [
   
   startGame = ->
     b = new Battle()
-      .play()
+    b.play()
       
     window.game = b
     

@@ -1,5 +1,6 @@
 define ->
 
+  # Behavior interpreter
   class Behaviors
     constructor : (_) ->
       if _?.Trees?
