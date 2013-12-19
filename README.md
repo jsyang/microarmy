@@ -7,11 +7,11 @@ _Fight massive battles with your pixel pawns!_
 `shellscripts/start` to compile from source and **run the game** locally.  
 Microarmy is written in Coffeescript (`coffeecore/`), which is compiled into Javascript (`core/`).  
 
-## Tests
+### Tests
 
 Run the jasmine-node unit tests with `shellscripts/test`
 
-## Useful .bash_profile additions
+### Useful .bash_profile additions
 
     alias d='/usr/bin/ditz'
     alias coffee='/usr/local/share/npm/bin/coffee'
@@ -19,7 +19,7 @@ Run the jasmine-node unit tests with `shellscripts/test`
     alias cwp='coffee -b -w -p'
     alias cw='cwc --output core/ coffeecore/'
 
-## Libs / tools used
+### Libs / tools used
 
     jasmine-node
     http-server
