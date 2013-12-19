@@ -1,6 +1,7 @@
 # Microarmy
-Fight massive battles with your pixel pawns!
-*`shellscripts/start` to do everything to compile from source and run the game locally.*
+_Fight massive battles with your pixel pawns!_  
+
+`shellscripts/start` to do everything to compile from source and *run the game* locally.  
 Microarmy is written in Coffeescript (`coffeecore/`), which is compiled into Javascript (`core/`).  
 
 ## Tests
