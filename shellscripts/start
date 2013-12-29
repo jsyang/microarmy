@@ -6,6 +6,7 @@ echo Updating game resources...
 echo Done.
 
 echo Compiling CS game logic...
+rm -rf ./core/
 coffee -b -o ./core/ ./coffeecore/
 echo Done.
 

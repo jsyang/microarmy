@@ -3,16 +3,10 @@ define [
   'core/util/$'             # Consumed globally.
   'preloader/preloader'     # Consumed globally.
   
-  'core/campaign'
   'core/battle'
   
-], ($, HTML5Preloader, Campaign, Battle) ->
+], ($, HTML5Preloader, Battle) ->
 
-  #startGame = ->
-  #  b = new Campaign({ w: 30, h: 14 })
-  #    .render()
-  #    .addUI()
-  
   startGame = ->
     b = new Battle()
     b.play()

@@ -14,7 +14,6 @@ Run the jasmine-node unit tests with `shellscripts/test`
 ### Useful .bash_profile additions
 
     alias d='/usr/bin/ditz'
-    alias coffee='/usr/local/share/npm/bin/coffee'
     alias cwc='coffee -b -w -c'
     alias cwp='coffee -b -w -p'
     alias cw='cwc --output core/ coffeecore/'
