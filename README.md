@@ -1,11 +1,18 @@
 # Microarmy
 
-_Fight massive battles with your pixel pawns!_  
+_Fight massive battles with your pixel pawns!_
 
 ### Running the game
 
-`shellscripts/start` to compile from source and **run the game** locally.  
-Microarmy is written in Coffeescript (`coffeecore/`), which is compiled into Javascript (`core/`).  
+0. Create a release build by running `grunt`.
+1. `http-server ./ -p 8000`
+2. Navigate to `http://localhost:8000`
+Microarmy is written in Coffeescript (`coffee/`), which is compiled into Javascript (`core/`) with the Grunt build system.
+
+### Creating a release build
+1. `npm install` to install any dependencies
+2. `grunt`
+3. Profit!
 
 ### Tests
 
@@ -33,4 +40,12 @@ Run the jasmine-node unit tests with `shellscripts/test`
     
     Paint.NET
     Audacity
+
+### Dev log
+
+    Dec 29, 2013
+    Looking to release an alpha soon. Trimming down on feature bloat by deleting things that we no longer need.
+    The initial release should target desktop web, with future plans to incorporate Ejecta or another Canvas API
+    shim layer for native mobile OSes. Thus we should not depend on other than a raw canvas element.
     
+    Added grunt to help with release builds.

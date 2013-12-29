@@ -1,5 +1,0 @@
-#!/bin/bash
-ls -1 ./gfx | sed -e 's/\.[a-zA-Z]*$//' > ./preloader/RESOURCES_GFX.txt
-ls -1 ./snd | sed -e 's/\.[a-zA-Z]*$//' > ./preloader/RESOURCES_SND.txt
-
-echo Sound and graphics file list updated.
