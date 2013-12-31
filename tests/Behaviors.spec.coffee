@@ -1,6 +1,6 @@
 require [
-  '../core/util/$'
-  '../core/Behaviors'
+  '../tmp/util/$'
+  '../tmp/Behaviors'
 ], ($, Behaviors) ->
 
   describe 'Behaviors (processor)', ->

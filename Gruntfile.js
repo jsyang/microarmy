@@ -22,7 +22,29 @@ module.exports = function(grunt) {
         files: {
           'core/<%= pkg.name %>.js' : 'coffee/*.coffee'
         }
-      }
+      },
+      transpile: { // to JS, but don't join the files together
+        options : {
+          bare      : true
+        },
+        files: grunt.file.expandMapping([
+          'coffee/*.coffee',
+          'coffee/util/*.coffee',
+          'coffee/Battle/*.coffee',
+          'coffee/Battle/gameplay/*.coffee',
+          'coffee/Battle/Pawn/*.coffee',
+          'coffee/Battle/ui/*.coffee',
+          'coffee/Battle/view/*.coffee'
+        ],
+          'tmp/',
+        {
+          rename: function(destBase, destPath) {
+            //            "tmp/"     "coffee/game.coffee"
+            var newName = destBase + destPath.replace(/\.coffee$/,".js").replace(/^coffee\//,"");
+            return newName;
+          }
+        })
+      }      
     },
     
     shell: {
@@ -35,20 +57,34 @@ module.exports = function(grunt) {
       },
       clean: {
         command : "rm -rf ./core"
+      },
+      deleteTmp: {
+        command : "rm -rf ./tmp"
       }
       
+    },
+    
+    jasmine_node: {
+      useCoffee: true,
+      verbose: true,
+      extensions: "coffee",
+      projectRoot: "./tests/",
+      requirejs: true
     }
     
   };
   
   grunt.initConfig(gruntConfig);
 
+  grunt.loadNpmTasks('grunt-jasmine-node');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   
-  // todo: add tests as a grunt task
+  
   // todo: compile gfx assets into sprite sheet
   
-  grunt.registerTask('default', ['shell:clean', 'coffee', 'uglify', 'shell:compileGFXList', 'shell:compileSFXList']);
+  grunt.registerTask('clean', ['shell:clean', 'shell:deleteTmp']);
+  grunt.registerTask('test', ['coffee:transpile', 'jasmine_node', "shell:deleteTmp"]);
+  grunt.registerTask('default', ['shell:clean', 'coffee:compile', 'uglify', 'shell:compileGFXList', 'shell:compileSFXList']);
 };
