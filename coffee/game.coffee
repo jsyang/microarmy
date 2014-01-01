@@ -1,7 +1,7 @@
 define [
   
   'core/util/$'             # Consumed globally.
-  'preloader/preloader'     # Consumed globally.
+  'lib/preloader/preloader'     # Consumed globally.
   
   'core/battle'
   

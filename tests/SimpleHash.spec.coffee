@@ -1,6 +1,6 @@
 require [
-  '../tmp/util/$'
-  '../tmp/Battle/SimpleHash'
+  '../core/util/$'
+  '../core/Battle/SimpleHash'
 ], ($, SimpleHash) ->    
   
   describe 'SimpleHash', ->    

@@ -1,7 +1,7 @@
 require [
-  '../tmp/util/$'
-  '../tmp/Battle/XHash'
-  '../tmp/Battle/Pawn'
+  '../core/util/$'
+  '../core/Battle/XHash'
+  '../core/Battle/Pawn'
 ], ($, XHash, Pawn) ->
 
   teams =

@@ -1,21 +1,16 @@
 <html>
-  
+
     <title>microarmy</title>
-  
-    <script>
-        // In case loaded file locally instead of from webserver
-        if(window.location.origin.indexOf('file://')!=-1) {
-            window.location.href = 'http://localhost:8000';
-        }
-    </script>
   
     <link rel="stylesheet" type="text/css" href="css/microarmy.css">
     <link rel="SHORTCUT ICON" href="microarmy.ico"/>
 
-    <script src="soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
+    <script src="lib/soundmanager2/soundmanager2-nodebug-jsmin.js"></script>
     <script>
-        soundManager.url='./soundmanager2/';
+        soundManager.url='./lib/soundmanager2/';
     </script>
+
+    <body></body>
 
     <script src="lib/require.js"></script>
     <script>
@@ -27,7 +22,5 @@
         
         require(['core/game']);
     </script>
-  
-    <body></body>
 
 </html>

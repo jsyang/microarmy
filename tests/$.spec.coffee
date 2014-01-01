@@ -1,5 +1,5 @@
 require [
-  '../tmp/util/$'
+  '../core/util/$'
 ], ($) ->
 
   describe '$', ->
