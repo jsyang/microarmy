@@ -4,9 +4,8 @@ _Fight massive battles with your pixel pawns!_
 
 ### Running the game
 
-0. Create a release build by running `grunt`.
-1. `http-server ./ -p 8000`
-2. Navigate to `http://localhost:8000`
+1. Create a release build.
+2. `http-server ./ -p 8000` then navigate to `http://localhost:8000`  
 Microarmy is written in Coffeescript (`coffee/`), which is compiled into Javascript (`core/`) with the Grunt build system.
 
 ### Creating a release build
@@ -42,6 +41,9 @@ Run the jasmine-node unit tests with `shellscripts/test`
     Audacity
 
 ### Dev log
+
+    Jan 1, 2014
+    Moved all the build steps into one Grunt task with r.js! Deleting lots of unused things.
 
     Dec 29, 2013
     Looking to release an alpha soon. Trimming down on feature bloat by deleting things that we no longer need.
