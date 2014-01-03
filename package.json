@@ -1,12 +1,17 @@
 {
   "name": "microarmy",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "description": "Fight massive battles with your pixel pawns!",
+  "author": {
+    "name": "jsyang.ca@gmail.com",
+    "url": "http://jsyang.ca/"
+  },
   "devDependencies": {
     "grunt":                    "~0.4.2",
-    "grunt-contrib-uglify":     "~0.2.2",
     "grunt-contrib-coffee":     "~0.8.0",
     "grunt-shell":              "~0.6.1",
     "grunt-jasmine-node":       "~0.1.0",
-    "grunt-contrib-requirejs":  "~0.4.1"
+    "grunt-contrib-requirejs":  "~0.4.1",
+    "grunt-spritesmith":        "~1.21.0"
   }
 }

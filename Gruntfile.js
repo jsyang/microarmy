@@ -25,11 +25,19 @@ module.exports = function(grunt) {
     }
   });
   
+  /* Final release build files:
+   * core/microarmy.min.js
+   *
+   * Not compilable yet:
+   * !core/assets/sprites.png
+   * !core/assets/sound/*
+   */
+  
   var gruntConfig = {
     pkg: grunt.file.readJSON('package.json'),
     
     coffee: {
-      transpile: { // to JS, but don't join the files together
+      compileToJS: {
         options : {
           bare      : true
         },
@@ -59,16 +67,41 @@ module.exports = function(grunt) {
     },
     
     requirejs: {
-      compile: {
+      compileNoUglify: {
         options: {
-          optimize: "uglify",
           baseUrl: "./",
+          name: "lib/almond.js",
           include: "core/game",
+          insertRequire: ["core/game"],
           out: "core/<%= pkg.name %>.min.js",
           paths: {
             "text" : "lib/text"
           }
         }
+      },
+      
+      compile: {
+        options: {
+          optimize: "uglify",
+          baseUrl: "./",
+          name: "lib/almond.js",
+          include: "core/game",
+          insertRequire: ["core/game"],
+          out: "core/<%= pkg.name %>.min.js",
+          paths: {
+            "text" : "lib/text"
+          }
+        }
+      }
+    },
+    
+    sprite: {
+      all: {
+        src: ["./gfx/*.png"],
+        destImg: "./core/spritesheet.png",
+        destCSS: "./core/spritesheet.json",
+        algorithm: 'binary-tree',
+        engine: "gm"
       }
     }
     
@@ -80,10 +113,26 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  
-  // todo: compile gfx assets into sprite sheet
-  
+  grunt.loadNpmTasks('grunt-spritesmith');
+   
   grunt.registerTask('clean',   ['shell:clean']);
-  grunt.registerTask('test',    ['shell:clean', 'coffee:transpile', 'jasmine_node']);
-  grunt.registerTask('default', ['shell:clean', 'coffee:transpile', 'shell:compileGFXList', 'shell:compileSFXList', 'requirejs']);
+  grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
+  
+  grunt.registerTask('release', [
+    'shell:clean',
+    'coffee',
+    'shell:compileGFXList',
+    'shell:compileSFXList',
+    'sprite',
+    // todo: add step to use the compiled JSON spritesheet source map in the source
+    'requirejs:compile'
+  ]);
+  
+  grunt.registerTask('default', [
+    'shell:clean',
+    'coffee',
+    'shell:compileGFXList',
+    'shell:compileSFXList',
+    'requirejs:compileNoUglify'
+  ]);
 };
