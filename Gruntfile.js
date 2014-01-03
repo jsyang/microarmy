@@ -92,7 +92,7 @@ module.exports = function(grunt) {
     },
     
     zip: {
-      './core/microarmy.zip' : releaseBuildFiles
+      './microarmy.dist.zip' : releaseBuildFiles
     },
     
     preprocess: {
@@ -143,8 +143,8 @@ module.exports = function(grunt) {
     'sprite',
     // todo: add step to use the compiled JSON spritesheet source map in the source
     'requirejs:compile',
-    'template:createIndexHTML:release'
-    //'zip'
+    'preprocess:release',
+    'zip'
   ]);
   
   grunt.registerTask('default', [
@@ -152,6 +152,6 @@ module.exports = function(grunt) {
     'coffee',
     'shell:compileGFXList',
     'shell:compileSFXList',
-    'preprocess:release'
+    'preprocess:dev'
   ]);
 };

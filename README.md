@@ -4,11 +4,11 @@ _Fight massive battles with your pixel pawns!_
 
 ### Running the game
 
-0. Install a simple web server; ex: `npm install http-server -g`
-1. Create a release build.
+0. Install a simple web server; ex: `sudo npm install http-server -g`
+1. Create a development build of the game.
 2. `http-server` then navigate to `http://localhost:8080`
 
-### Creating a release build
+### Creating a build
 
 **grunt-spritesmith** uses [GraphicsMagick](http://www.graphicsmagick.org/utilities.html) to compile the spritesheet.
 On OSX, you will need to download MacPorts and then
@@ -17,7 +17,7 @@ spritesheet build.
 
 1. `npm install` to install all build tool dependencies.
 2. `grunt release` for a minified build
-3. Or just `grunt` if you don't want to wait for minification
+3. Or `grunt` if you don't want to wait for minification and just want to use the debug build.
 
 ### Tests
 
