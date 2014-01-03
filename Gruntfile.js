@@ -19,19 +19,18 @@ module.exports = function(grunt) {
    */
   var jsSourceFiles = grunt.file.expandMapping( coffeeSourceFiles, 'core/', {
     rename: function(destBase, destPath) {
-      //            "tmp/"     "coffee/game.coffee"
+      //            "core/"    "game.coffee"
       var newName = destBase + destPath.replace(/\.coffee$/,".js").replace(/^coffee\//,"");
       return newName;
     }
   });
   
-  /* Final release build files:
-   * core/microarmy.min.js
-   *
-   * Not compilable yet:
-   * !core/assets/sprites.png
-   * !core/assets/sound/*
-   */
+  // 
+  var releaseBuildFiles = [
+    "core/microarmy.min.js",
+    "core/spritesheet.png",
+    "index.html"
+  ];
   
   var gruntConfig = {
     pkg: grunt.file.readJSON('package.json'),
@@ -67,19 +66,6 @@ module.exports = function(grunt) {
     },
     
     requirejs: {
-      compileNoUglify: {
-        options: {
-          baseUrl: "./",
-          name: "lib/almond.js",
-          include: "core/game",
-          insertRequire: ["core/game"],
-          out: "core/<%= pkg.name %>.min.js",
-          paths: {
-            "text" : "lib/text"
-          }
-        }
-      },
-      
       compile: {
         options: {
           optimize: "uglify",
@@ -103,8 +89,34 @@ module.exports = function(grunt) {
         algorithm: 'binary-tree',
         engine: "gm"
       }
-    }
+    },
     
+    zip: {
+      './core/microarmy.zip' : releaseBuildFiles
+    },
+    
+    preprocess: {
+      release: {
+        options: {
+          context: {
+            ENV : 'release'
+          }
+        },
+        files: {
+          'index.html' : 'index.template.html'
+        }
+      },
+      dev: {
+        options: {
+          context: {
+            ENV : 'dev'
+          }
+        },
+        files: {
+          'index.html' : 'index.template.html'
+        }
+      }
+    }
   };
   
   grunt.initConfig(gruntConfig);
@@ -114,9 +126,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-spritesmith');
+  grunt.loadNpmTasks('grunt-zip');
+  grunt.loadNpmTasks('grunt-preprocess');
    
   grunt.registerTask('clean',   ['shell:clean']);
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
+  
+  // todo: fork https://github.com/STAH/grunt-preprocessor and use the preprocessor to build for
+  // hybrid web app.
   
   grunt.registerTask('release', [
     'shell:clean',
@@ -125,7 +142,9 @@ module.exports = function(grunt) {
     'shell:compileSFXList',
     'sprite',
     // todo: add step to use the compiled JSON spritesheet source map in the source
-    'requirejs:compile'
+    'requirejs:compile',
+    'template:createIndexHTML:release'
+    //'zip'
   ]);
   
   grunt.registerTask('default', [
@@ -133,6 +152,6 @@ module.exports = function(grunt) {
     'coffee',
     'shell:compileGFXList',
     'shell:compileSFXList',
-    'requirejs:compileNoUglify'
+    'preprocess:release'
   ]);
 };

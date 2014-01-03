@@ -1,11 +1,11 @@
 body
 {
-    padding     : 0px;
-    margin      : 0px;
-    background  : #333;
-    font        : 30px sans-serif;
-    color       : #fff;
-    overflow    : hidden;
+  padding     : 0px;
+  margin      : 0px;
+  background  : #333;
+  font        : 30px sans-serif;
+  color       : #fff;
+  overflow    : hidden;
 }
 
 .noselect
@@ -17,7 +17,6 @@ body
   -ms-user-select       : none;
   user-select           : none;
 }
-
 
 .battlemap
 {
@@ -34,4 +33,3 @@ body
   left      : 0px;
   top       : 0px;
 }
-
