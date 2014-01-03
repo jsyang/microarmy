@@ -19,11 +19,23 @@ spritesheet build. Make sure to have `gm` ready before step 1.
 2. `grunt release` for a minified build
 3. Or `grunt` if you don't want to wait for minification and just want to use the debug build.
 
-### Tests
+### Tests, Docs, Issue tracking, Scraps
 
-Units are located within `tests/*.spec.coffee`. Run all the tests for all the units with `grunt test`.
+Units are located within `tests/*.spec.coffee`. Run all the tests for all the units with `grunt test`.  
+
+Docs:   `git checkout docs`  
+
+Issues: `git checkout issues`  
+  You should have [`ditz`](http://stackoverflow.com/questions/2186628/textbased-issue-tracker-todo-list-for-git)
+installed.
+
+Scraps: `git checkout assetscraps`  
+  Things that might inspire future features and various other assets.
 
 ### Dev log
+
+    Jan 3, 2014
+    Continue revising the release build process in Grunt, update the readme with file structure explanations.
 
     Jan 2, 2014
     Used almond.js shim for requirejs when building a release. Also update the `readme`. Looking into compiling
