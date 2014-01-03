@@ -13,7 +13,7 @@ _Fight massive battles with your pixel pawns!_
 **grunt-spritesmith** uses [GraphicsMagick](http://www.graphicsmagick.org/utilities.html) to compile the spritesheet.
 On OSX, you will need to download MacPorts and then
 [`port install GraphicsMagick`](http://www.macports.org/ports.php?by=name&substr=magick) in order to run a successful
-spritesheet build.
+spritesheet build. Make sure to have `gm` ready before step 1.
 
 1. `npm install` to install all build tool dependencies.
 2. `grunt release` for a minified build
@@ -22,22 +22,6 @@ spritesheet build.
 ### Tests
 
 Units are located within `tests/*.spec.coffee`. Run all the tests for all the units with `grunt test`.
-
-### Libs / tools used
-
-    jasmine-node
-    http-server
-    ditz  
-    coffeescript
-    
-    markdown.js
-    require.js
-      text.js
-    HTML5preloader.js
-    Sound Manager 2
-    
-    Paint.NET
-    Audacity
 
 ### Dev log
 
@@ -63,3 +47,67 @@ Units are located within `tests/*.spec.coffee`. Run all the tests for all the un
     shim layer for native mobile OSes. Thus we should not depend on other than a raw canvas element.
     
     Added grunt to help with release builds.
+
+### File structure
+
+    coffee/      
+      Behaviors.coffee                      # Behavior-tree parser and interpreter for game pieces
+      battle.coffee                         # initiates a Battle. controller-like module
+      game.coffee                           # main module. loading this starts the game.
+      ui.coffee                             # main menu.
+      
+      Battle/                               # everything to do with Battles
+      
+      ui/                                   # todo: write this description
+      
+      util/
+        $.coffee                            # generally useful tools, available globally under $
+        animation.coffee                    # shim for jQuery.animate
+        autoscroll.coffee                   # scroll viewport contents when mousing near the edge of the viewport (DOM)
+
+    gfx/                                    # graphics
+    
+    snd/                                    # sounds
+    
+    tests/                                  # unit tests
+
+    dist/                                   # generated specifically for release builds
+      microarmy.zip                         # deploy-ready build product (minified, spritesheeted)
+    
+    core/                                   # generated intermediary files for a build
+    
+    lib/
+      almond.js                             # smaller shim for require.js
+      require.js                            # AMD module loader
+      text.js                               # requirejs plugin for loading text resources
+      
+      preloader/            
+        html5Preloader.js                   # preloading
+        preloader.js                        # preloading shim for namespacing loaded resources
+      
+      soundmanager2/
+        soundmanager2-config-release.js     # point sm2 to the SWF when it's a release build
+        soundmanager2-config.js             # point sm2 to normal SWF location
+        soundmanager2-nodebug-jsmin.js      # hybrid HTML5 + flash sound
+        soundmanager2.swf                   # fallback for sm2 when HTML5 audio fails
+
+### Libs / tools used
+
+    All the packages within package.json.
+    GraphicsMagick
+    
+    http-server
+
+    markdown.js
+    
+    require.js / almond.js
+      text.js
+      
+    HTML5preloader.js
+    soundmanager2.js
+    
+    GruntJS
+    coffeescript
+    ditz
+    Paint.NET
+    Audacity

@@ -25,10 +25,11 @@ module.exports = function(grunt) {
     }
   });
   
-  // 
+  // These files may be altered for a specific build. All these files end up in `dist/microarmy.zip`
   var releaseBuildFiles = [
     "core/microarmy.min.js",
     "core/spritesheet.png",
+    "core/soundmanager2.swf",
     "index.html"
   ];
   
@@ -46,14 +47,17 @@ module.exports = function(grunt) {
     
     shell: {
       // for use with HTML5Preloader
-      compileGFXList : {
+      compileGFXList: {
         command : "ls -1 ./gfx | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_GFX.txt"
       },
-      compileSFXList : {
+      compileSFXList: {
         command : "ls -1 ./snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
       },
+      copySoundManager2SWF: {
+        command : "cp ./lib/soundmanager2/soundmanager2.swf ./core"
+      },
       clean: {
-        command : "rm -rf ./core"
+        command : "rm -rf ./core ; rm -rf ./dist"
       }
     },
     
@@ -71,7 +75,11 @@ module.exports = function(grunt) {
           optimize: "uglify",
           baseUrl: "./",
           name: "lib/almond.js",
-          include: "core/game",
+          include: [
+            "lib/soundmanager2/soundmanager2-nodebug-jsmin.js",
+            "lib/soundmanager2/soundmanager2-config-release.js",
+            "core/game"
+          ],
           insertRequire: ["core/game"],
           out: "core/<%= pkg.name %>.min.js",
           paths: {
@@ -92,7 +100,7 @@ module.exports = function(grunt) {
     },
     
     zip: {
-      './microarmy.dist.zip' : releaseBuildFiles
+      './dist/microarmy.zip' : releaseBuildFiles
     },
     
     preprocess: {
@@ -138,8 +146,9 @@ module.exports = function(grunt) {
   grunt.registerTask('release', [
     'shell:clean',
     'coffee',
-    'shell:compileGFXList',
-    'shell:compileSFXList',
+    'shell:compileGFXList', // todo: remove this?
+    'shell:compileSFXList', // todo: remove this?
+    'shell:copySoundManager2SWF',
     'sprite',
     // todo: add step to use the compiled JSON spritesheet source map in the source
     'requirejs:compile',

@@ -6,6 +6,10 @@
     "name": "jsyang.ca@gmail.com",
     "url": "http://jsyang.ca/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jsyang/microarmy.git"
+  },
   "devDependencies": {
     "grunt":                    "~0.4.2",
     "grunt-contrib-coffee":     "~0.8.0",
