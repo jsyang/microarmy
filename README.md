@@ -15,6 +15,7 @@ On OSX, you will need to download MacPorts and then
 [`port install GraphicsMagick`](http://www.macports.org/ports.php?by=name&substr=magick) in order to run a successful
 spritesheet build. Make sure to have `gm` ready before step 1.
 
+0. You'll need both `node` and `npm` to begin.
 1. `npm install` to install all build tool dependencies.
 2. `grunt release` for a minified build
 3. Or `grunt` if you don't want to wait for minification and just want to use the debug build.
@@ -33,6 +34,9 @@ Scraps: `git checkout assetscraps`
   Things that might inspire future features and various other assets.
 
 ### Dev log
+
+    Jan 4, 2014
+    Set up an EC2 instance and grunt-sftp-deploy task to push a release build onto the server for testing.
 
     Jan 3, 2014
     Continue revising the release build process in Grunt, update the readme with file structure explanations.
@@ -103,23 +107,10 @@ Scraps: `git checkout assetscraps`
         soundmanager2-nodebug-jsmin.js      # hybrid HTML5 + flash sound
         soundmanager2.swf                   # fallback for sm2 when HTML5 audio fails
 
-### Libs / tools used
+### Non-code tools used
 
-    All the packages within package.json.
     GraphicsMagick
-    
     http-server
-
-    markdown.js
-    
-    require.js / almond.js
-      text.js
-      
-    HTML5preloader.js
-    soundmanager2.js
-    
-    GruntJS
-    coffeescript
     ditz
     Paint.NET
     Audacity

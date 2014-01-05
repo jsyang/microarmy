@@ -124,6 +124,19 @@ module.exports = function(grunt) {
           'index.html' : 'index.template.html'
         }
       }
+    },
+    
+    'sftp-deploy': {
+      build: {
+        auth: {
+          host: '54.209.234.153',
+          port: 22,
+          authKey: 'ec2key1'
+        },
+        src: 'dist',
+        dest: '/www',
+        exclusions: ['./dist/**/.DS_Store']
+      }
     }
   };
   
@@ -136,6 +149,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-spritesmith');
   grunt.loadNpmTasks('grunt-zip');
   grunt.loadNpmTasks('grunt-preprocess');
+  grunt.loadNpmTasks('grunt-sftp-deploy');
    
   grunt.registerTask('clean',   ['shell:clean']);
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
@@ -153,7 +167,8 @@ module.exports = function(grunt) {
     // todo: add step to use the compiled JSON spritesheet source map in the source
     'requirejs:compile',
     'preprocess:release',
-    'zip'
+    'zip',
+    'sftp-deploy'
   ]);
   
   grunt.registerTask('default', [
