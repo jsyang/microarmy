@@ -160,15 +160,13 @@ module.exports = function(grunt) {
   
   grunt.registerTask('clean',   ['shell:clean']);
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
-  
-  // todo: fork https://github.com/STAH/grunt-preprocessor and use the preprocessor to build for
-  // hybrid web app.
-  
+    
   grunt.registerTask('release', [
     'shell:clean',
     'coffee',
-    'shell:compileGFXList', // todo: remove this?
-    'shell:compileSFXList', // todo: remove this?
+    'jasmine_node',                   // make sure to fail if the tests fail.
+    'shell:compileGFXList',           // todo: remove this?
+    'shell:compileSFXList',           // todo: remove this?
     'shell:copySoundManager2SWF',
     'sprite',
     // todo: add step to use the compiled JSON spritesheet source map in the source
