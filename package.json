@@ -1,15 +1,18 @@
 {
-  "name": "microarmy",
-  "version": "0.1.1",
-  "description": "Fight massive battles with your pixel pawns!",
+  "name":         "microarmy",
+  "version":      "0.1.1",
+  "description":  "Fight massive battles with your pixel pawns!",
+  
   "author": {
     "name": "jsyang.ca@gmail.com",
-    "url": "http://jsyang.ca/"
+    "url":  "http://jsyang.ca/"
   },
+  
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsyang/microarmy.git"
+    "url":  "git://github.com/jsyang/microarmy.git"
   },
+  
   "devDependencies": {
     "grunt":                    "~0.4.2",
     "grunt-contrib-coffee":     "~0.8.0",

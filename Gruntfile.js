@@ -58,6 +58,13 @@ module.exports = function(grunt) {
       },
       clean: {
         command : "rm -rf ./core ; rm -rf ./dist"
+      },
+      
+      findTodos : {
+        options: {
+            stdout: true
+        },
+        command : "echo '\\n\\n** TODOs located in these files: **'; grep -ril '# todo' coffee/"
       }
     },
     
@@ -150,7 +157,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-zip');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sftp-deploy');
-   
+  
   grunt.registerTask('clean',   ['shell:clean']);
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
   
@@ -176,6 +183,7 @@ module.exports = function(grunt) {
     'coffee',
     'shell:compileGFXList',
     'shell:compileSFXList',
-    'preprocess:dev'
+    'preprocess:dev',
+    'shell:findTodos'
   ]);
 };
