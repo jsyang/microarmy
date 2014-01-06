@@ -43,8 +43,8 @@ define ->
         [sx,  sy]     = [map.scrollLeft,  map.scrollTop]
         [x,   y]      = [e.pageX+sx,      e.pageY+sy]
 
-        map.FG.ctx.clear()
-        map.FG.ctx.draw({
+        map.ctx.clear()
+        map.ctx.draw({
           img     : cursor
           imgdx   : 0
           imgdy   : 0

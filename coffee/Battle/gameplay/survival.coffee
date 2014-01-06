@@ -62,16 +62,14 @@ define [
     setMap : (MAP) -> @MAP = MAP
     
     handleStage : ->
-      fg = @MAP.FG
+      ctx = @MAP.ctx
       
       switch @current.stage
       
-        when @CONST.STAGES.BASECONSTRUCTION
-          fg.clear()
-          
+        when @CONST.STAGES.BASECONSTRUCTION          
           nextUnit = @current.inventory[0]
           
-          fg.text({
+          ctx.text({
             text  : "Initial base construction.\nClick to lay down #{nextUnit}."
             color : 'red'
             x     : 10
@@ -79,7 +77,7 @@ define [
           })
           
           if @UI.mouse.x?
-            fg.highlight({
+            ctx.highlight({
               x     : @UI.mouse.x
               color : 'green'
               w     : 32

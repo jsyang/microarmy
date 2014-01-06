@@ -1,26 +1,19 @@
 define [
   # Model sub
   'core/Behaviors'
-  'core/Battle/behaviors'
-  
+  'core/Battle/behaviors'  
   # Model
   'core/Battle/World'
   
-  # Views
-  'core/Battle/view/map'
-  'core/Battle/view/starter'
-
-  # Map Autoscroll
-  'core/util/autoscroll'
+  'core/Battle/View'
 
   # Gameplay type
   'core/Battle/gameplay/survival'
 
-], (Behaviors, BattleBehaviors, World, Map, Starter, Autoscroll, SURVIVAL) ->
+], (Behaviors, BattleBehaviors, World, Map, SURVIVAL) ->
   
   views = {
     Map
-    Starter
   }
   
   class Battle  
@@ -85,6 +78,7 @@ define [
       mapctx  = @views?.Map?.ctx
       if mapctx? and @World?
         mapctx.clear()
+        mapctx.drawBackground()
         # Drawing order is based on primitiveCLasses
         (
           (
@@ -98,8 +92,8 @@ define [
     
     
     cycle : ->
-      @tick()
       @redraw()
+      @tick()
       @
     
     play : (self=@) ->
@@ -112,7 +106,6 @@ define [
     
     addUI : (UIevents)->
       if @views?
-        Autoscroll(@views.Map, @World)
         # Bind list of UI events
         (
           $.addEvent(handler.context, eventName, handler.func)

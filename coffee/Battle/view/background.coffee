@@ -1,5 +1,4 @@
 define ->
-
   # Hex color string to dec value by color.
   hs2d = (hs, color) ->
     index = {
@@ -9,13 +8,13 @@ define ->
     }[color]
     parseInt(hs[index...index+2], 16)
 
-  # Spit out a background layer DOM element to be consumed by the Battle/view/map
+  # Generates an imgdata to painted as the background (sky + ground)
   (world) ->
     if !(world?) then throw new Error 'no world given'
     
     [w,h]             = [world._.w, world._.h]
+    
     canvas            = document.createElement 'canvas'
-  
     canvas.className  = 'noselect'
     canvas.width      = w
     canvas.height     = h
@@ -25,7 +24,7 @@ define ->
     imgdata = ctx.createImageData(w, h)
     d = imgdata.data
 
-    # todo: make more than 2 color sky gradients?
+    # future: make more than 2 color sky gradients?
     color = [
       ["112111", "acacac"]
       ["442151", "ffac2c"]
@@ -104,6 +103,4 @@ define ->
       [cR, cG, cB] = [cR+dR, cG+dG, cB+dB]
     ) for y in [0...h]
     
-    ctx.putImageData imgdata, 0, 0
-    
-    canvas
+    imgdata

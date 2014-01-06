@@ -30,6 +30,7 @@ module.exports = function(grunt) {
     "core/microarmy.min.js",
     "core/spritesheet.png",
     "core/soundmanager2.swf",
+    "core/snd/*",
     "index.html"
   ];
   
@@ -46,18 +47,20 @@ module.exports = function(grunt) {
     },
     
     shell: {
-      // for use with HTML5Preloader
-      compileGFXList: {
-        command : "ls -1 ./gfx | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_GFX.txt"
-      },
       compileSFXList: {
         command : "ls -1 ./snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
       },
       copySoundManager2SWF: {
         command : "cp ./lib/soundmanager2/soundmanager2.swf ./core"
       },
+      copySounds: {
+        command : "mkdir ./core/snd ; cp ./snd/* ./core/snd"
+      },
       clean: {
-        command : "rm -rf ./core ; rm -rf ./dist"
+        command : [
+          "rm -rf ./core",
+          "rm -rf ./dist/*"
+        ].join(' ; ')
       },
       
       findTodos : {
@@ -93,6 +96,24 @@ module.exports = function(grunt) {
             "text" : "lib/text"
           }
         }
+      },
+      
+      compileNoUglify: {
+        options: {
+          optimize: "none",
+          baseUrl: "./",
+          name: "lib/almond.js",
+          include: [
+            "lib/soundmanager2/soundmanager2-nodebug-jsmin.js",
+            "lib/soundmanager2/soundmanager2-config-release.js",
+            "core/game"
+          ],
+          insertRequire: ["core/game"],
+          out: "core/<%= pkg.name %>.min.js",
+          paths: {
+            "text" : "lib/text"
+          }
+        }
       }
     },
     
@@ -108,6 +129,10 @@ module.exports = function(grunt) {
     
     zip: {
       './dist/microarmy.zip' : releaseBuildFiles
+    },
+    
+    unzip: {
+      './dist' : './dist/microarmy.zip'
     },
     
     preprocess: {
@@ -166,16 +191,19 @@ module.exports = function(grunt) {
   
   grunt.registerTask('release', [
     'shell:clean',
-    'coffee',
-    'shell:compileGFXList', // todo: remove this?
-    'shell:compileSFXList', // todo: remove this?
-    'shell:copySoundManager2SWF',
     'sprite',
+    'coffee',
+    'jasmine_node',
+    'shell:compileSFXList', // todo: remove this when you get audio sprites working?
+    'shell:copySoundManager2SWF',
+    'shell:copySounds',
+    
     // todo: add step to use the compiled JSON spritesheet source map in the source
-    'requirejs:compile',
+    'requirejs:compileNoUglify', // todo: change this to normal compile
     'preprocess:release',
     'zip',
-    'sftp-deploy'
+    'unzip'
+    //'sftp-deploy'
   ]);
   
   grunt.registerTask('default', [
