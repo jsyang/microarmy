@@ -157,9 +157,6 @@ module.exports = function(grunt) {
   
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
   
-  // todo: fork https://github.com/STAH/grunt-preprocessor and use the preprocessor to build for
-  // hybrid web app.
-  
   // Default build is for a web release build.
   grunt.registerTask('default', [
     'shell:clean',
