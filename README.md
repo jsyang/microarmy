@@ -35,6 +35,13 @@ Scraps: `git checkout assetscraps`
 
 ### Dev log
 
+    Jan 5, 2014
+    Moving towards a simpler, flatter code-base. Took out `grunt dev` task, since we can just switch the minification
+    on and off. Less switches the better; every build is more or less testing a release build. Also rewrote some of
+    the display and gameplay logic so the game uses only 1 canvas. May consider moving to atom.coffee later. Deleted
+    the starter screen that I'd worked on before. I need to have the battle piece ready before touching any code
+    for the menus. Hopefully I'll have a good grasp of what to do to organize gameplay types in a simpler way.
+
     Jan 4, 2014
     Set up an EC2 instance and grunt-sftp-deploy task to push a release build onto the server for testing.
 

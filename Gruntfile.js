@@ -87,7 +87,7 @@ module.exports = function(grunt) {
           name: "lib/almond.js",
           include: [
             "lib/soundmanager2/soundmanager2-nodebug-jsmin.js",
-            "lib/soundmanager2/soundmanager2-config-release.js",
+            "lib/soundmanager2/soundmanager2-config.js",
             "core/game"
           ],
           insertRequire: ["core/game"],
