@@ -82,25 +82,7 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          optimize: "uglify",
-          baseUrl: "./",
-          name: "lib/almond.js",
-          include: [
-            "lib/soundmanager2/soundmanager2-nodebug-jsmin.js",
-            "lib/soundmanager2/soundmanager2-config-release.js",
-            "core/game"
-          ],
-          insertRequire: ["core/game"],
-          out: "core/<%= pkg.name %>.min.js",
-          paths: {
-            "text" : "lib/text"
-          }
-        }
-      },
-      
-      compileNoUglify: {
-        options: {
-          optimize: "none",
+          optimize: "none", //"uglify",
           baseUrl: "./",
           name: "lib/almond.js",
           include: [
@@ -145,16 +127,6 @@ module.exports = function(grunt) {
         files: {
           'index.html' : 'index.template.html'
         }
-      },
-      dev: {
-        options: {
-          context: {
-            ENV : 'dev'
-          }
-        },
-        files: {
-          'index.html' : 'index.template.html'
-        }
       }
     },
     
@@ -183,35 +155,25 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sftp-deploy');
   
-  grunt.registerTask('clean',   ['shell:clean']);
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
   
   // todo: fork https://github.com/STAH/grunt-preprocessor and use the preprocessor to build for
   // hybrid web app.
   
-  grunt.registerTask('release', [
+  // Default build is for a web release build.
+  grunt.registerTask('default', [
     'shell:clean',
     'sprite',
     'coffee',
     'jasmine_node',
-    'shell:compileSFXList', // todo: remove this when you get audio sprites working?
+    'shell:compileSFXList',      // todo: remove this when you get audio sprites working? do we even need audio sprites?
     'shell:copySoundManager2SWF',
     'shell:copySounds',
-    
-    // todo: add step to use the compiled JSON spritesheet source map in the source
-    'requirejs:compileNoUglify', // todo: change this to normal compile
+    'requirejs',
     'preprocess:release',
     'zip',
-    'unzip'
-    //'sftp-deploy'
-  ]);
-  
-  grunt.registerTask('default', [
-    'shell:clean',
-    'coffee',
-    'shell:compileGFXList',
-    'shell:compileSFXList',
-    'preprocess:dev',
+    'unzip',
+    //'sftp-deploy',
     'shell:findTodos'
   ]);
 };

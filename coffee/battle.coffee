@@ -1,13 +1,11 @@
 define [
-  # Model sub
   'core/Behaviors'
   'core/Battle/behaviors'  
-  # Model
+
   'core/Battle/World'
   
   'core/Battle/View'
 
-  # Gameplay type
   'core/Battle/gameplay/survival'
 
 ], (Behaviors, BattleBehaviors, World, Map, SURVIVAL) ->
@@ -96,8 +94,8 @@ define [
       @tick()
       @
     
-    play : (self=@) ->
-      @_.timer = setInterval((-> self.cycle()), 40)
+    play : ->
+      @_.timer = setInterval(@cycle.bind(@), 40)
       @
     
     pause : ->
