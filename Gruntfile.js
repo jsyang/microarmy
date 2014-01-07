@@ -3,6 +3,8 @@ module.exports = function(grunt) {
   var coffeeSourceFiles = [
     'coffee/*.coffee',
     'coffee/util/*.coffee',
+    'coffee/atom/*.coffee',
+    'coffee/UI/*.coffee',
     'coffee/Battle/*.coffee',
     'coffee/Battle/gameplay/*.coffee',
     'coffee/Battle/Pawn/*.coffee',

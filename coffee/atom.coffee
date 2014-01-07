@@ -1,11 +1,13 @@
-define ->
+define [
+  'core/atom/spritesheet'
+], (atomSpritesheet)->
 
   if global?
     globalscope = global
   else if window?
     globalscope = window
   else
-    throw new Error 'could not find a global scope to attach $'
+    throw new Error 'could not find a global scope'
 
   window.requestAnimationFrame = window.requestAnimationFrame or
     window.webkitRequestAnimationFrame or
@@ -15,7 +17,7 @@ define ->
     (callback) ->
       window.setTimeout((-> callback 1000 / 60), 1000 / 60)
   
-  # TODO test this on other browsers
+  # todo: test this on other browsers (non-webkit)
   window.cancelAnimationFrame = window.cancelAnimationFrame or
     window.webkitCancelAnimationFrame or
     window.mozCancelAnimationFrame or
@@ -204,12 +206,14 @@ define ->
   atom.loadImage = (url, callback) ->
     try
       request = new Image()
-      request.src = url
     
       request.onload = ->
         callback?(null, request)
+      
       request.onerror = ->
         callback?(error)
+        
+      request.src = url
   
     catch e
       callback? e.message
@@ -220,10 +224,13 @@ define ->
     for name, url of gfx
       toLoad++
       do (name, url) ->
-        atom.loadImage "gfx/#{url}", (error, buffer) ->
+        atom.loadImage url, (error, buffer) ->
           console.error error if error
           atom.gfx[name] = buffer if buffer
           cb?() unless --toLoad
+  
+  # Spritesheet support
+  atomSpritesheet(atom.context)
   
   ## Audio
   

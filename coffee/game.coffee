@@ -16,15 +16,17 @@ define [
       
     update : (dt) ->
       modeSelf = @mode[@mode._current]
-      modeSelf.tick.call(modeSelf, dt)
+      modeSelf.tick(dt)
     
     MODES : MODES
       
     mode :
-      _current : 'mainmenu'
-      battle : null
-      mainmenu : null
+      _current : 'MainMenu'
         
+    switchMode : (modeName) ->
+      @mode[modeName] = new @MODES[modeName]
+      @mode._current = modeName
+      
     draw : ->
       atom.context.clear()
       modeSelf = @mode[@mode._current]

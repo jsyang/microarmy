@@ -8,9 +8,7 @@ define [
   'text!core/RESOURCES_SND.txt'
 ], (_util, _atom, MicroarmyGame, GFXJSON, SFXLIST) ->
 
-  window.Microarmy = {
-    GFXINFO : JSON.parse(GFXJSON)
-  }
+  window.GFXINFO = JSON.parse(GFXJSON)
 
   loaded =
     gfx : false
@@ -18,8 +16,9 @@ define [
     
   isPreloadComplete = ->
     if loaded.gfx and loaded.sfx
-      window.Microarmy.game = new MicroarmyGame()
-      window.Microarmy.game.run()
+      window.Microarmy = new MicroarmyGame()
+      window.Microarmy.switchMode('MainMenu')
+      window.Microarmy.run()
       true
     else
       false
