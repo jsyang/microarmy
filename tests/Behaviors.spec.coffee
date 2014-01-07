@@ -1,5 +1,5 @@
 require [
-  '../core/util/$'
+  '../core/util'
   '../core/Behaviors'
 ], ($, Behaviors) ->
 

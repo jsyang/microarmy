@@ -1,6 +1,6 @@
 require [
-  '../core/util/$'
-  '../core/Battle/XHash'
+  '../core/util'
+  '../core/util/XHash'
   '../core/Battle/Pawn'
 ], ($, XHash, Pawn) ->
 

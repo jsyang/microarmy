@@ -1,6 +1,9 @@
-# SimpleHash tallies events which happen within a period for various Battle Pawns.
-# ex: Bucket 4 has 45 deaths for team 0 within last 30 game cycles.
 define ->
+  # Tallies events which involve Battle Pawn instances that happened within a period of game cycles.
+  # ex: Bucket 4 ( 64 < battlefieldX <= 128 ) has 45 total deaths for team 0 within last 100 game cycles.
+  #     --> Team 0 AI finds location of the most significant events and responds accordingly
+  
+  # todo: rename this?
   class SimpleHash
     constructor : (_) ->
       if _.w?

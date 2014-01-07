@@ -6,8 +6,8 @@ module.exports = function(grunt) {
     'coffee/Battle/*.coffee',
     'coffee/Battle/gameplay/*.coffee',
     'coffee/Battle/Pawn/*.coffee',
-    'coffee/Battle/ui/*.coffee',
-    'coffee/Battle/view/*.coffee'
+    'coffee/Battle/UI/*.coffee',
+    'coffee/Battle/View/*.coffee'
   ];
   
   /* ex:
@@ -29,7 +29,6 @@ module.exports = function(grunt) {
   var releaseBuildFiles = [
     "core/microarmy.min.js",
     "core/spritesheet.png",
-    "core/soundmanager2.swf",
     "core/snd/*",
     "index.html"
   ];
@@ -49,9 +48,6 @@ module.exports = function(grunt) {
     shell: {
       compileSFXList: {
         command : "ls -1 ./snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
-      },
-      copySoundManager2SWF: {
-        command : "cp ./lib/soundmanager2/soundmanager2.swf ./core"
       },
       copySounds: {
         command : "mkdir ./core/snd ; cp ./snd/* ./core/snd"
@@ -86,11 +82,9 @@ module.exports = function(grunt) {
           baseUrl: "./",
           name: "lib/almond.js",
           include: [
-            "lib/soundmanager2/soundmanager2-nodebug-jsmin.js",
-            "lib/soundmanager2/soundmanager2-config.js",
-            "core/game"
+            "core/init"
           ],
-          insertRequire: ["core/game"],
+          insertRequire: ["core/init"],
           out: "core/<%= pkg.name %>.min.js",
           paths: {
             "text" : "lib/text"
@@ -117,19 +111,6 @@ module.exports = function(grunt) {
       './dist' : './dist/microarmy.zip'
     },
     
-    preprocess: {
-      release: {
-        options: {
-          context: {
-            ENV : 'release'
-          }
-        },
-        files: {
-          'index.html' : 'index.template.html'
-        }
-      }
-    },
-    
     'sftp-deploy': {
       build: {
         auth: {
@@ -152,7 +133,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-spritesmith');
   grunt.loadNpmTasks('grunt-zip');
-  grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-sftp-deploy');
   
   grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
@@ -163,11 +143,10 @@ module.exports = function(grunt) {
     'sprite',
     'coffee',
     'jasmine_node',
-    'shell:compileSFXList',      // todo: remove this when you get audio sprites working? do we even need audio sprites?
-    'shell:copySoundManager2SWF',
+    'shell:compileSFXList',
     'shell:copySounds',
     'requirejs',
-    'preprocess:release',
+    //'preprocess:release',
     'zip',
     'unzip',
     //'sftp-deploy',

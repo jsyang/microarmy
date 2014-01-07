@@ -35,6 +35,13 @@ Scraps: `git checkout assetscraps`
 
 ### Dev log
 
+    Jan 6, 2014
+    Using atom.coffee now instead of rewriting everything to fit within previous codebase. This works better since
+    I moved from using multiple canvases to just a single one. A lot of boilerplate work has been taken care of with
+    atom, including: preloading, sound and game loop. I just need to finish the port over so I worry less about
+    the game engine and more about the game itself. Accordingly, I've deleted soundmanager2, preloader and HTML5preloader.
+    The build process has also been simplified, I've removed the preprocess step for now as I'm only targeting web / webkit!
+
     Jan 5, 2014
     Moving towards a simpler, flatter code-base. Took out `grunt dev` task, since we can just switch the minification
     on and off. Less switches the better; every build is more or less testing a release build. Also rewrote some of

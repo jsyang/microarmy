@@ -1,29 +1,31 @@
 define [
-  'core/util/$' # Consumed globally.
   'core/Battle'
+  'core/UI/MainMenu'
+], (Battle, MainMenu) ->
   
-  'text!core/spritesheet.json'
-  'text!core/RESOURCES_SND.txt'
-], ($, Battle, GFXJSON, SFXLIST) ->
-
-  startGame = ->
-    @Microarmy = new Battle()
-    @Microarmy.GFXINFO = JSON.parse(GFXJSON)
+  MODES = {
+    Battle
+    MainMenu
+    #BattleParams
+  }
+  
+  class MicroarmyGame extends atom.Game
+    constructor : ->
+      # register inputs
+      atom.input.bind(atom.button.LEFT, 'mouseleft')
+      
+    update : (dt) ->
+      modeSelf = @mode[@mode._current]
+      modeSelf.tick.call(modeSelf, dt)
     
-    # Start the battle.
-    @Microarmy.play()
-
-  # Preload all the sounds in SM2
-  window.soundManager.onready( ->
-    window.soundManager.defaultOptions.volume = 45
-    SFXLIST.split('\n').forEach(
-      (v) -> window.soundManager.createSound(v,"./core/snd/#{v}") unless v.length is 0
-    )
-  )
-
-  # Preload the spritesheet and start the game when loaded
-  i = new Image()
-  i.onload = startGame.bind(window)
-  i.src = 'core/spritesheet.png'
-  
-  return
+    MODES : MODES
+      
+    mode :
+      _current : 'mainmenu'
+      battle : null
+      mainmenu : null
+        
+    draw : ->
+      atom.context.clear()
+      modeSelf = @mode[@mode._current]
+      modeSelf.draw()

@@ -10,8 +10,8 @@ define [
   'core/Battle/Pawn/Projectile'
   
   # Utils
-  'core/Battle/XHash'
-  'core/Battle/SimpleHash'
+  'core/util/XHash'
+  'core/util/SimpleHash'
   
 ], (Terrain, Structure, Explosion, Infantry, Projectile, XHash, SimpleHash) ->
 
