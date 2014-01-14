@@ -1,19 +1,34 @@
-div
+div.content
 {
-  margin-left : 180;
+  position  : absolute;
+  top       : 0px;
+  left      : 210px;
 }
 
-ol
+ol.nav
 {
-  float         : left;
-  max-width     : 280;
-  margin-right  : 10;
-  position      : fixed;
+  top                     : 0px;
+  left                    : 0px;
+  width                   : 200px;
+  padding-left            : 10px;
+  position                : fixed;
+  -webkit-touch-callout   : none;
+  -webkit-user-select     : none;
+  -khtml-user-select      : none;
+  -moz-user-select        : none;
+  -ms-user-select         : none;
+  user-select             : none;
 }
 
-ol li
+ol.nav li
 {
-  cursor  : pointer;
+  cursor : pointer;
+}
+
+ol.nav li:hover
+{
+  background : #fee;
+  color      : #333;
 }
 
 .selected
@@ -27,15 +42,10 @@ ol li
   display : none;
 }
 
-body
-{
-  font-family : sans-serif;
-  font-size   : 12px;
-}
-
 pre
 {
-  color : #172;
+  color     : #172;
+  font-size : 10px;
 }
 
 img
@@ -45,8 +55,9 @@ img
 
 iframe
 {
-    border: none;
-    width: 400px;
-    height: 200px;
-    position: absolute;
+    border    : none;
+    width     : 400px;
+    height    : 200px;
+    position  : absolute;
+    left      : 0px;
 }

@@ -10,7 +10,7 @@ Behavior Trees implement the entity-component system of the game, where a "compo
 **Decorator**: process itself and return a bool, possibly with side effects.  
 
 syntax diagram for the shorthand:  
-![btreediagram](i/btreediagram.png)
+![btreediagram](images/btreediagram.png)
 
 * Decorator prefix naming standard:  
 is___  = condition check  

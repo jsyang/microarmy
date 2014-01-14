@@ -24,6 +24,9 @@ define ->
     repair            : [28,14]
 
   zoom = (id, w, h, scale=2) ->
+    # filename only. not the path.
+    id = id.split('/').pop()
+      
     [w, h] = sprites[id] unless w? && h?
     
     scale = parseInt scale
@@ -32,7 +35,7 @@ define ->
     
     i = new Image
     
-    i.src = '/gfx/' + id + '1.png'
+    i.src = '/images/ingame/' + id + '1.png'
     
     i.onload = ->
       ctx = c.getContext '2d'

@@ -1,11 +1,18 @@
 <html>
-  
-  <title>microarmy docs</title>
-    
+  <!--http://bootswatch.com/readable/-->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
   
-  <script src="js/jquery-1.9.1.min.js"></script>
-  <script src="js/markdown.js"></script>
+  <!--Markdown parser-->
+  <script src="js/marked.js"></script>
+  <script src="markdownFiles.js"></script>
+  
+  <!--jQuery shim-->
+  <script src="js/zepto.min.js"></script>
+  
+  <body></body>
+  
+  <!--AMD-->
   <script data-main="init" src="js/require.js"></script>
   <script>
     require.config({
@@ -16,7 +23,5 @@
       }
     });
   </script>
-  
-  <body></body>
   
 </html>
