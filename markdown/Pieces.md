@@ -1,104 +1,26 @@
-# Pieces (Battle)
+# Battlefield Setpieces
 
-| Unit / Structure                            | Description
-|---------------------------------------------|------------
-| **Pistol Infantry** <br> [1][1]             | pistol, no bodyarmor <br> currency unit of the battlefield, effective en mass <br> advances with rabid courage <br> joe everyman. he is the foundation of armies
-| **Rocket Infantry** <br> [2][2]             | fires a fragmentation rocket that deals high damage <br> deadly against tight troop formations and buildings <br> can see enemies from twice the distance of other infantry
-| **Engineer Infantry** <br> [3][3]           | low resistance to attack <br> builds new structures by laying down a scaffold <br> - construction site is crewed by Pistol Infantry <br> - structure is fully constructed once crew is full
-| |
-| **Small Scaffold** <br> [4][4]              | framework for constructing fortifications, capturable <br> highly vulnerable to damage <br> any damage to the scaffold risks worker death
-
- 
-
-
-* **Small Land Mine**  
-[zoom](zoom/#images/ingame/mine)
-pressure sensitive anti-personnel mine  
-moderate damage  
-excels at maiming in all occasions
-
-* **Pillbox**  
-[zoom](zoom/#images/ingame/pillbox)
-light machine gun, crew of 4  
-capturable strong point  
-made in china
-
-* **Small Turret**  
-[zoom](zoom/#images/ingame/turret)
-30mm HEAT auto-loading cannon  
-medium range, medium armor  
-"Reach out and touch someone."
-
-* **Small Missile Launcher**  
-[zoom](zoom/#images/ingame/missileracksmall)
-rapid-fire heat seeking missile  
-long range
-
-* **Small Ammo Dump**  
-[zoom](zoom/#images/ingame/ammodumpsmall)
-small missile supplies  
-highly explosive  
-dislikes smokers
-
-* **Surface-to-Surface Missile Launcher**  
-[zoom](zoom/#images/ingame/missilerack)
-requires command signal to engage targets  
-autonomous cruise missile  
-severe damage, extreme range  
-do not point at face
-
-* **Ammo Dump**  
-[zoom](zoom/#images/ingame/ammodump)
-various missile supplies  
-popular at birthday parties and corporate events
-
-* **Guard Tower**  
-[zoom](zoom/#images/ingame/watchtower)
-long range IR / laser scope  
-sights targets for support weapons  
-a valuable tool for any commander
-
-* **Communications Relay**  
-[zoom](zoom/#images/ingame/relay)
-shortwave radio / satellite communication relay  
-TX/RX encrypted strategic orders  
-battle control may be lost if relay is destroyed  
-field commander's connection to HQ
-
-* **Communications Bunker**  
-[zoom](zoom/#images/ingame/comm)
-strategic planning / pistol - rocket - engineer infantry  
-heavy armor  
-kinda looks like a turtle
-
-* **Barracks**  
-[zoom](zoom/#images/ingame/barracks)
-pistol - engineer infantry  
-housing for army groups large and small
-
-* **Vehicle Depot**  
-[zoom](zoom/#images/ingame/depot)
-contains a supply of vehicles: on-site inventory  
-does not manufacture vehicles
-
-* **Helicopter Pad**  
-[zoom](zoom/#images/ingame/helipad)
-helicopter refueling site  
-does not manufacture helicopters
-
-* **Repair Yard**  
-[zoom](zoom/#images/ingame/repair)
-repairs 2 ground vehicles at once  
-repairs up to 80% - 90% of mint condition  
-vehicles cannot attack while under repair  
-repaired vehicles have a rearming delay before reactivating
-
-
-
-
-
-
-
+Infantry                                        | Description
+------------------------------------------------|------------
+Pistol Infantry <br> [1][1]                     | Pistol, no bodyarmor. Currency unit of the battlefield, effective en mass. Advances with rabid courage. Joe everyman; he is the foundation of armies.
+Rocket Infantry <br> [2][2]                     | Fires a fragmentation rocket that deals high damage. Deadly against tight troop formations and buildings. Can see enemies from twice the distance of other infantry.
+Engineer Infantry <br> [3][3]                   | Low resistance to attack. Builds new structures by laying down a scaffold, resulting construction site is crewed by Pistol Infantry. The target structure is fully constructed once the scaffold has been fully crewed.
+**Structure** |     
+Small Scaffold <br> [4][4]                      | Framework for constructing fortifications, is capturable. Highly vulnerable to damage. Any damage to the scaffold risks crew death.
+Small Land Mine <br> [5][5]                     | Pressure sensitive anti-personnel mine. Moderate damage. Excels at maiming in all occasions.
+Pillbox <br>[6][6]                              | Light machine gun, crew of 4. Capturable strong point. Made in China.
+Small Turret <br>[7][7]                         | 30mm HEAT auto-loading cannon. Medium range, medium armor. "Reach out and touch someone."
+Small Missile Launcher <br>[8][8]               | Rapid-fire medium-range heat seeking missile.
+Small Ammo Dump <br>[9][9]                      | Small missile supplies. Highly explosive. Dislikes smokers.
+Surface-to-Surface Missile Launcher<br>[10][10] | Requires command signal to engage targets. Autonomous extreme-range cruise missile. Severe damage, do not point at face.
+Ammo Dump <br>[11][11]                          | Various missile supplies. Popular at birthday parties and corporate events.
+Guard Tower <br>[12][12]                        | Medium range IR / laser scope; sights targets for support weapons. A valuable tool for any commander.
+Communications Relay <br>[13][13]               | Shortwave radio / satellite communication relay. TX/RX encrypted strategic orders. Battle control may be lost if relay is destroyed. It is the field commander's connection to HQ.
+Communications Bunker <br>[14][14]              | Tactical planning center; crewed with infantry. Heavy armor; kinda looks like a turtle.
+Barracks <br>[15][15]                           | Container for light infantry groups large and small.
+Vehicle Depot <br>[16][16]                      | Contains a supply of vehicles: on-site inventory. Does not manufacture vehicles.
+Helicopter Pad <br>[17][17]                     | Helicopter refueling site. Does not manufacture helicopters.
+Repair Yard <br>[18][18]                        | Repairs 2 ground vehicles at once, up to 80% - 90% of mint condition. Vehicles cannot attack while under repair. Repaired vehicles have a rearming delay before reactivating.
 
 
 
@@ -108,3 +30,17 @@ repaired vehicles have a rearming delay before reactivating
 [2]: zoom/#images/ingame/rocket
 [3]: zoom/#images/ingame/engineer
 [4]: zoom/#images/ingame/scaffold
+[5]: zoom/#images/ingame/mine
+[6]: zoom/#images/ingame/pillbox
+[7]: zoom/#images/ingame/turret
+[8]: zoom/#images/ingame/missileracksmall
+[9]: zoom/#images/ingame/ammodumpsmall
+[10]: zoom/#images/ingame/missilerack
+[11]: zoom/#images/ingame/ammodump
+[12]: zoom/#images/ingame/watchtower
+[13]: zoom/#images/ingame/relay
+[14]: zoom/#images/ingame/comm
+[15]: zoom/#images/ingame/barracks
+[16]: zoom/#images/ingame/depot
+[17]: zoom/#images/ingame/helipad
+[18]: zoom/#images/ingame/repair
