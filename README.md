@@ -10,17 +10,13 @@ _Fight massive battles with your pixel pawns!_
 4. Start a web server in the release directory: `cd dist ; http-server`
 5. Navigate to `http://localhost:8080`
 
-### Creating a build
+### Before creating a build
 
+**Install node, npm and GruntJS.**  
 **grunt-spritesmith** uses [GraphicsMagick](http://www.graphicsmagick.org/utilities.html) to compile the spritesheet.
 On OSX, you will need to download MacPorts and then
 [`port install GraphicsMagick`](http://www.macports.org/ports.php?by=name&substr=magick) in order to run a successful
 spritesheet build. Make sure to have `gm` ready before step 1.
-
-0. You'll need both `node` and `npm` to begin.
-1. `npm install` to install all build tool dependencies.
-2. `grunt release` for a minified build
-3. Or `grunt` if you don't want to wait for minification and just want to use the debug build.
 
 ### Tests, Docs, Issue tracking, Scraps
 
