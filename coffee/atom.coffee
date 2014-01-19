@@ -268,7 +268,7 @@ define [
     for name, url of sfx
       toLoad++
       do (name, url) ->
-        atom.loadSound "sfx/#{url}", (error, buffer) ->
+        atom.loadSound url, (error, buffer) ->
           console.error error if error
           atom.sfx[name] = buffer if buffer
           cb?() unless --toLoad

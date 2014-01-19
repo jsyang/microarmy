@@ -97,7 +97,10 @@ module.exports = function(grunt) {
     
     sprite: {
       all: {
-        src: ["./gfx/*.png"],
+        src: [
+          "./gfx/*.png",
+          "./gfx/MainMenu/*.png"
+        ],
         destImg: "./core/spritesheet.png",
         destCSS: "./core/spritesheet.json",
         algorithm: 'binary-tree',

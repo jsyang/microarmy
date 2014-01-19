@@ -13,10 +13,6 @@ define [
     constructor : ->
       # register inputs
       atom.input.bind(atom.button.LEFT, 'mouseleft')
-      
-    update : (dt) ->
-      modeSelf = @mode[@mode._current]
-      modeSelf.tick(dt)
     
     MODES : MODES
       
@@ -26,8 +22,16 @@ define [
     switchMode : (modeName) ->
       @mode[modeName] = new @MODES[modeName]
       @mode._current = modeName
+    
+    update : (dt) ->
+      # 1. Run controller logic, game logic.
+      modeSelf = @mode[@mode._current]
+      modeSelf.tick(dt)
       
     draw : ->
+      # 2. Update the UI.
       atom.context.clear()
       modeSelf = @mode[@mode._current]
       modeSelf.draw()
+      
+    

@@ -4,9 +4,11 @@ _Fight massive battles with your pixel pawns!_
 
 ### Running the game
 
-0. Install a simple web server; ex: `sudo npm install http-server -g`
-1. Create a development build of the game.
-2. `http-server` then navigate to `http://localhost:8080`
+1. Install a simple web server: `sudo npm install http-server -g`
+2. Install all build dependencies: `npm install`.
+3. Build the project: `grunt`.
+4. Start a web server in the release directory: `cd dist ; http-server`
+5. Navigate to `http://localhost:8080`
 
 ### Creating a build
 
@@ -34,6 +36,9 @@ Scraps: `git checkout assetscraps`
   Things that might inspire future features and various other assets.
 
 ### Dev log
+
+    Jan 18, 2014
+    Updated the docs with better formatting.
 
     Jan 6, 2014
     Using atom.coffee now instead of rewriting everything to fit within previous codebase. This works better since
