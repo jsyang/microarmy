@@ -18,18 +18,13 @@ On OSX, you will need to download MacPorts and then
 [`port install GraphicsMagick`](http://www.macports.org/ports.php?by=name&substr=magick) in order to run a successful
 spritesheet build. Make sure to have `gm` ready before step 1.
 grunt
-### Tests, Docs, Issue tracking, Scraps
 
-Units are located within `tests/*.spec.coffee`. Run all the tests for all the units with `grunt test`.  
-
-Docs:   `git checkout docs`  
-
-Issues: `git checkout issues`  
-  You should have [`ditz`](http://stackoverflow.com/questions/2186628/textbased-issue-tracker-todo-list-for-git)
-installed.
-
-Scraps: `git checkout assetscraps`  
-  Things that might inspire future features and various other assets.
+Item | Location
+--- | ---
+Unit tests | `tests/`. Run all the tests for all the units with `grunt test`. All tests are run by default during a build.
+Docs & notes | `git checkout docs`  
+Issues | `git checkout issues`. You should have [`ditz`](http://stackoverflow.com/questions/2186628/textbased-issue-tracker-todo-list-for-git) installed.
+Asset scraps | `git checkout assetscraps` -- things that might inspire future features and various other assets.
 
 ### Dev log
 
