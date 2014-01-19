@@ -88,18 +88,23 @@ Scraps: `git checkout assetscraps`
 
     coffee/      
       Behaviors.coffee                      # Behavior-tree parser and interpreter for game pieces
-      battle.coffee                         # initiates a Battle. controller-like module
-      game.coffee                           # main module. loading this starts the game.
-      ui.coffee                             # main menu.
-      
+      Battle.coffee                         # initiates a Battle. controller-like module
       Battle/                               # everything to do with Battles
       
-      ui/                                   # todo: write this description
+      game.coffee                           # main module. loading this starts the game.
+      atom.coffee                           # atom game framework
+      atom/
+        spritesheet.coffee                  # add atom.context.drawSprite() to use GFXINFO by sprite name
+
+      UI/                                   # UI components
+        MainMenu.coffee
+        UIGroup.coffee                      # stack and align UI elements
+        Button.coffee
       
+      util.coffee                           # generally useful tools, available globally under $
       util/
-        $.coffee                            # generally useful tools, available globally under $
-        animation.coffee                    # shim for jQuery.animate
-        autoscroll.coffee                   # scroll viewport contents when mousing near the edge of the viewport (DOM)
+        SimpleHash.coffee                   # game event tally, with location buckets for the mode of an event
+        XHash.coffee                        # entity hash by location (x)
 
     gfx/                                    # graphics
     
@@ -111,21 +116,11 @@ Scraps: `git checkout assetscraps`
       microarmy.zip                         # deploy-ready build product (minified, spritesheeted)
     
     core/                                   # generated intermediary files for a build
-    
+
     lib/
       almond.js                             # smaller shim for require.js
       require.js                            # AMD module loader
       text.js                               # requirejs plugin for loading text resources
-      
-      preloader/            
-        html5Preloader.js                   # preloading
-        preloader.js                        # preloading shim for namespacing loaded resources
-      
-      soundmanager2/
-        soundmanager2-config-release.js     # point sm2 to the SWF when it's a release build
-        soundmanager2-config.js             # point sm2 to normal SWF location
-        soundmanager2-nodebug-jsmin.js      # hybrid HTML5 + flash sound
-        soundmanager2.swf                   # fallback for sm2 when HTML5 audio fails
 
 ### Non-code tools used
 
