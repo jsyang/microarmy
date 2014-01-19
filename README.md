@@ -8,7 +8,7 @@ _Fight massive battles with your pixel pawns!_
 2. Install all build dependencies: `npm install`.
 3. Build the project: `grunt`.
 4. Start a web server in the release directory: `cd dist ; http-server`
-5. Navigate to `http://localhost:8080`
+5. Navigate to [http://localhost:8080](http://localhost:8080).
 
 ### Before creating a build
 
@@ -17,7 +17,7 @@ _Fight massive battles with your pixel pawns!_
 On OSX, you will need to download MacPorts and then
 [`port install GraphicsMagick`](http://www.macports.org/ports.php?by=name&substr=magick) in order to run a successful
 spritesheet build. Make sure to have `gm` ready before step 1.
-
+grunt
 ### Tests, Docs, Issue tracking, Scraps
 
 Units are located within `tests/*.spec.coffee`. Run all the tests for all the units with `grunt test`.  
@@ -35,7 +35,8 @@ Scraps: `git checkout assetscraps`
 
     Jan 18, 2014
     Updated the docs with better formatting. Added main menu UI group and game title placeholder graphic. UI elements stack in groups.
-    Mock main menu now has all the functionality it needs UI wise. Just needs to be hooked up to actual button results.
+    Mock main menu now has all the functionality it needs UI wise. Just needs to be hooked up to actual button results. Thinking about
+    adding TravicCI into the README.
 
     Jan 6, 2014
     Using atom.coffee now instead of rewriting everything to fit within previous codebase. This works better since
