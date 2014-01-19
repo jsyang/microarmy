@@ -6,9 +6,10 @@ define ->
       sprite = GFXINFO[name]
       @drawImage(
         atom.gfx.spritesheet,
+        
         sprite.x,     sprite.y
         sprite.width, sprite.height,
         
-        x,       y,
+        x,            y,
         sprite.width, sprite.height
       )

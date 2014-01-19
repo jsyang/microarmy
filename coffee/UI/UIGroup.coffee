@@ -7,13 +7,14 @@ define ->
   # Vertical:   top,  middle, bottom
   
   # todo: this is actually a group. rename and repurpose so it horizontally stacks as well.
-  class VerticalStack
+  class UIStack
     x         : 0
     y         : 0
-    w         : 0
-    h         : 0
-    margin    : 10
-    # outerHAlign : 'center'
+    vmargin   : 0
+    hmargin   : 0
+    
+    # todo: orientation : 'horizontal' or 'vertical'
+    # align : 'center middle'
     # children  : {}
     
     constructor : (params) ->
@@ -21,7 +22,6 @@ define ->
       
       @_initAlignments()
       @_alignChildren()
-      @_stackChildren()
     
     # Turn alignments string into dict
     _initAlignments : ->
@@ -32,30 +32,39 @@ define ->
           align[v] = true
         @align = align
     
-    # Set children X values
+    _sumChildrenHeight : ->
+      sum = 0
+      for el, i in @children
+        sum += GFXINFO[el.sprite].height
+        sum += @vmargin unless i is 0
+      sum
+    
+    _sumChildrenWidth : ->
+      sum = 0
+      for el, i in @children
+        sum += GFXINFO[el.sprite].width
+        sum += @hmargin unless i is 0
+      sum
+    
     _alignChildren : ->
       if @children?.length > 0
-        x = @x
         
+        if 'middle' of @align
+            y = @y
+            y += atom.height >> 1
+            y -= @_sumChildrenHeight() >> 1
+            @y = y
+              
         if 'center' of @align
-            x = atom.width >> 1
+            x = @x
+            x += atom.width >> 1
             x -= GFXINFO[@children[0].sprite].width >> 1
-        
-        # todo: if 'middle' of @align
-        
-        for el in @children
-          el.x = x
-    
-    # Set children Y values
-    _stackChildren : ->
-      if @children?.length > 0
-        stackHeight = 0
-        
-        for el in @children
-          el.y = @y + stackHeight
-          stackHeight += GFXINFO[el.sprite].height + @margin
-    
-    # click : -> # click handler
+            
+            stackHeight = 0
+            for el in @children
+              el.x = @x + x
+              el.y = @y + stackHeight
+              stackHeight += GFXINFO[el.sprite].height + @vmargin
     
     draw : ->
       for el in @children

@@ -38,7 +38,8 @@ Scraps: `git checkout assetscraps`
 ### Dev log
 
     Jan 18, 2014
-    Updated the docs with better formatting.
+    Updated the docs with better formatting. Added main menu UI group and game title placeholder graphic. UI elements stack in groups.
+    Mock main menu now has all the functionality it needs UI wise. Just needs to be hooked up to actual button results.
 
     Jan 6, 2014
     Using atom.coffee now instead of rewriting everything to fit within previous codebase. This works better since

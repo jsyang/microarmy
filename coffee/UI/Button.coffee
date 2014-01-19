@@ -13,7 +13,7 @@ define ->
       up      : '#f00'
       
     containsPoint : (x, y) ->
-      return ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
+      return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
 
     draw : ->
       ac = atom.context
@@ -48,9 +48,6 @@ define ->
       if @color?.opacity?
         ac.restore()
     
-    click : ->
-      alert(@sprite)
-    
     constructor : (params) ->
       @[k] = v for k, v of params
       if @sprite?
@@ -59,4 +56,5 @@ define ->
         @w     = sprite.width
         @h     = sprite.height
     
-    
+    click : ->
+      console.log @sprite

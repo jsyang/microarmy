@@ -1,17 +1,15 @@
 define [
   'core/UI/Button'
-  'core/UI/VerticalStack'
-], (Button, VerticalStack) ->
+  'core/UI/UIGroup'
+], (Button, UIGroup) ->
   class MainMenu
     
     constructor : (params) ->
       @[k] = v for k, v of params
       
-      MENUBUTTONS = new VerticalStack({
-        align   : 'center'
-        x       : 50
-        y       : 50
-        margin  : 20
+      MENUBUTTONS = new UIGroup({
+        align    : 'center middle'
+        vmargin  : 20
         children : [
           new Button { sprite : 'mainmenu-title' }
           new Button { sprite : 'mainmenu-newgame' }
@@ -30,6 +28,7 @@ define [
       
       # Check for clicks
       if atom.input.pressed('mouseleft')
+        # Passes the click through the UI group
         for el in @children
           eventTarget = el.containsPoint(mx, my)
           if eventTarget?
