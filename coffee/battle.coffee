@@ -16,15 +16,19 @@ define [
         battle : @
       }
       
+      # background = sky + terrain layer, sits below the instances drawn layer
       @backgroundImgData = makeBackgroundImageData(@world)
+      
+      # behaviors = btree interpreter
       @behaviors = new Behaviors(BattleBehaviors(@world, @world.Classes))
       
-      tick = @world.tick.bind(@world)
+      # world = a battle's "model"
+      @tick = @world.tick.bind(@world)
     
     #tick : ->
      
     draw : ->
-      if @World?
+      if @world?
         @_drawBackground() # scroll position
         
         # Drawing order is based on primitiveCLasses

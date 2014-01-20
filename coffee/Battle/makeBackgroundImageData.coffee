@@ -73,7 +73,7 @@ define ->
     (
       (
         c = (y*w + x)<<2
-        dSurface = world._.heightmap[x]
+        dSurface = world.heightmap[x]
         
         if dSurface > 0
           # Sky
