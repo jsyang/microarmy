@@ -10,18 +10,10 @@ define ->
 
   # Generates an imgdata to painted as the background (sky + ground)
   (world) ->
-    if !(world?) then throw new Error 'no world given'
+    w = world.w
+    h = world.h
     
-    [w,h]             = [world._.w, world._.h]
-    
-    canvas            = document.createElement 'canvas'
-    canvas.className  = 'noselect'
-    canvas.width      = w
-    canvas.height     = h
-    
-    ctx               = canvas.getContext('2d')
-    
-    imgdata = ctx.createImageData(w, h)
+    imgdata = atom.context.createImageData(w, h)
     d = imgdata.data
 
     # future: make more than 2 color sky gradients?

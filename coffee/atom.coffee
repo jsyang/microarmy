@@ -169,8 +169,8 @@ define [
   
   class Game
     constructor: ->
-    update: (dt) ->
-    draw: ->
+    update: (dt) -> # 1. Run controller logic, game logic.
+    draw: ->        # 2. Update the UI.
     run: ->
       return if @running
       @running = true

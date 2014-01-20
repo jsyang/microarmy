@@ -4,6 +4,15 @@ define [
 ], (Button, UIGroup) ->
   class MainMenu
     
+    clickedHelp : ->
+      window.location.href = 'http://jsyang.ca'
+    
+    clickedNewGame : ->
+      @game.switchMode('Battle')
+      
+    clickedRandomBattle : ->
+      console.log '!random'
+    
     constructor : (params) ->
       @[k] = v for k, v of params
       
@@ -12,9 +21,9 @@ define [
         vmargin  : 20
         children : [
           new Button { sprite : 'mainmenu-title' }
-          new Button { sprite : 'mainmenu-newgame' }
-          new Button { sprite : 'mainmenu-randombattle' }
-          new Button { sprite : 'mainmenu-help' }
+          new Button { sprite : 'mainmenu-newgame',       click : @clickedNewGame.bind @ }
+          new Button { sprite : 'mainmenu-randombattle',  click : @clickedRandomBattle.bind @ }
+          new Button { sprite : 'mainmenu-help',          click : @clickedHelp.bind @ }
         ]
       })
       
@@ -26,16 +35,12 @@ define [
       mx = atom.input.mouse.x
       my = atom.input.mouse.y
       
-      # Check for clicks
       if atom.input.pressed('mouseleft')
-        # Passes the click through the UI group
         for el in @children
           eventTarget = el.containsPoint(mx, my)
-          if eventTarget?
-            eventTarget.click()
-            return 
+          eventTarget?.click?()
+          return
       true
     
     draw : ->
-      for el in @children
-        el.draw()
+      el.draw() for el in @children

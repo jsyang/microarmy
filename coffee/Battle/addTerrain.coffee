@@ -56,12 +56,6 @@ define [
     heightmap
   
   # add terrain heightmap to battle world
-  (_) ->
-    if _.w? and _.h?
-      _.heightmap = makeHeightMap(testSectors, _.w, _.h)
-      
-    else
-      throw new Error 'width or height not set!'
-    
-    _
-    
+  (world) ->
+    if world.w? and world.h?
+      world.heightmap = makeHeightMap(testSectors, world.w, world.h)

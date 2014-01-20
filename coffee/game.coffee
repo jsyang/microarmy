@@ -10,28 +10,22 @@ define [
   }
   
   class MicroarmyGame extends atom.Game
+    
     constructor : ->
-      # register inputs
       atom.input.bind(atom.button.LEFT, 'mouseleft')
     
     MODES : MODES
       
-    mode :
-      _current : 'MainMenu'
+    # mode : {}
         
-    switchMode : (modeName) ->
-      @mode[modeName] = new @MODES[modeName]
-      @mode._current = modeName
+    switchMode : (name) ->
+      @mode = new @MODES[name] { game : @ }
     
     update : (dt) ->
-      # 1. Run controller logic, game logic.
-      modeSelf = @mode[@mode._current]
-      modeSelf.tick(dt)
+      @mode.tick(dt)
       
     draw : ->
-      # 2. Update the UI.
       atom.context.clear()
-      modeSelf = @mode[@mode._current]
-      modeSelf.draw()
+      @mode.draw()
       
     

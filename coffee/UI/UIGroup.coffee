@@ -6,8 +6,7 @@ define ->
   # Horizontal: left, center, right
   # Vertical:   top,  middle, bottom
   
-  # todo: this is actually a group. rename and repurpose so it horizontally stacks as well.
-  class UIStack
+  class UIGroup
     x         : 0
     y         : 0
     vmargin   : 0

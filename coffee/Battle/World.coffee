@@ -1,30 +1,16 @@
 define [
-
-  # World builders
   'core/Battle/addTerrain'
   
-  # Classes
+  # Functions to attach Class constructors for the various types of Pawns
   'core/Battle/Pawn/Structure'
   'core/Battle/Pawn/Explosion'
   'core/Battle/Pawn/Infantry'
   'core/Battle/Pawn/Projectile'
   
-  # Utils
   'core/util/XHash'
   'core/util/SimpleHash'
-  
-], (Terrain, Structure, Explosion, Infantry, Projectile, XHash, SimpleHash) ->
-
-  classFactories = [
-    Structure
-    Explosion
-    Infantry
-    Projectile
-  ]
-  
-  worldBuilders = [
-    Terrain
-  ]
+  # add gameplay to a world, instead of to a battle
+], (addTerrain, addStructureClasses, addExplosionClasses, addInfantryClasses, addProjectileClasses, XHash, SimpleHash) ->
 
   class BattleWorld
   
@@ -39,62 +25,81 @@ define [
       #'PawnController'
     ]
   
-    Battle      : null # Parent Battle which contains the world.
-    
-    XHash       : null
-    Instances   : {}
-    Classes     : {}
+    # battle : null # the parent battle instance.
+    Classes   : {}
   
-    # Temporary structures for XHash and Instances (to hold stuff that gets added between a tick)
+    # Make the instances dict so we have an empty structure to add pawn instances to.
+    initInstancesDict : (name) ->
+      @[name] = {}
+      ( @[name][className] = [] ) for className in @primitiveClasses
   
-    initPrimitives  : (objName) ->
-      @[objName] = {}
-      ( @[objName][className] = [] ) for className in @primitiveClasses
-      
-    initInstances : -> @initPrimitives('Instances')
-    initClasses   : -> addTo(@Classes) for addTo in classFactories
-    initWorld     : -> addTo(@_)       for addTo in worldBuilders
-  
-    constructor : (_) ->
-      @XHash      = new XHash     (_)
-      @DeathHash  = new SimpleHash(_)
-      @_          = $.extend {}, _
-      
-      @initInstances()
-      @initClasses()
-      @initWorld()
-      
+    tick : ->
       @createNewXHash()
       @createNewInstances()
+      
+      for k, v of @Instances
+        for entity in v
+          if !entity.isPendingRemoval()
+            btree = entity._.behavior ? entity.constructor.name
+            btree = @battle.behaviors.Trees[btree]
+            
+            if btree?
+              @battle.behaviors.Execute(entity, btree)
+              @add(entity)
+      
+      # Replace the old xhash and instances with new ones
+      @XHash     = @XHash_
+      @Instances = @Instances_
+      
+      delete @XHash_
+      delete @Instances_
   
-    createNewXHash      : -> @XHash_ = new XHash(@_)
-    createNewInstances  : ->
-      @initPrimitives('Instances_')
+    createNewXHash : ->
+      @XHash_ = new XHash {
+        w : @w
+        h : @h
+      }
+    
+    createNewInstances : ->
+      @initInstancesDict 'Instances_'
       
     height : (p) ->
       # Can use either a Pawn or an X value as the query
-      x = if isNaN(p) then p._.x>>0 else p>>0
-      @_.heightmap[x]
+      x = if isNaN(p) then p.x>>0 else p>>0
+      @heightmap[x]
   
-    contains : (p) ->
-      [x,y] = [p._.x>>0, p._.y>>0]
-      !(x<0 || x>=@_.w || y>@_.heightmap[x])
+    contains : (entity) ->
+      [x, y] = [entity.x>>0, entity.y>>0]
+      !(x<0 || x>=@_.w || y>@heightmap[x])
   
-    add : (p) ->
-      for type in @primitiveClasses
-        if p instanceof @Classes[type]              
-            # Add to temp if we're called inside a tick
-            if @XHash_? and @Instances_?
-              @XHash_.add(p) unless !p.isTargetable()
-              if p._.corpsetime > 0
-                return @Instances_[type].push(p)
-              else
-                return
-            # Add to actual if we're outside of a tick
-            else
-              @XHash.add(p) unless !p.isTargetable()
-              if p._.corpsetime > 0
-                return @Instances[type].push(p)
-              else
-                return
-            
+    add : (entity) ->
+      # Add to temp if add() called inside a tick
+      # Otherwsie add to actual xhash if we're outside of a tick
+      xh = @XHash_ ? @XHash
+      i  = @Instances_ ? @Instances
+      
+      for type in @primitiveClasses when entity instanceof @Classes[type]
+        xh.add(p) unless !entity.isTargetable()
+        if entity._.corpsetime > 0
+          return i[type].push entity
+        else
+          return
+        
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      
+      dimensions =
+        w : @w
+        h : @h
+      
+      @XHash     = new XHash dimensions
+      @DeathHash = new SimpleHash dimensions
+      
+      @initInstancesDict 'Instances'
+      
+      addStructureClasses   @Classes
+      addInfantryClasses    @Classes
+      addExplosionClasses   @Classes
+      addProjectileClasses  @Classes
+      
+      addTerrain(@)

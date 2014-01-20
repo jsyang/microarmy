@@ -117,9 +117,8 @@ define [
       @_.target = { _ : @_.build }
       super @_
       
-  # export
-  (Classes) ->
-    $.extend(Classes, {
+  (exportParent) ->
+    $.extend(exportParent, {
       Infantry
       PistolInfantry
       RocketInfantry

@@ -2,11 +2,9 @@ define ->
 
   # Behavior interpreter
   class Behaviors
-    constructor : (_) ->
-      if _?.Trees?
-        @Trees = _.Trees
-        @Trees[k] = @ConvertShortHand(v) for k,v of @Trees
-      if _?.Decorators? then @Decorators = _.Decorators
+    constructor : (params) ->
+      @[k] = v for k, v of params
+      @Trees[k] = @ConvertShortHand(v) for k,v of @Trees
 
     Decorators : {}
     Trees      : {}

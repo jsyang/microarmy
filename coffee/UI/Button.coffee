@@ -56,5 +56,4 @@ define ->
         @w     = sprite.width
         @h     = sprite.height
     
-    click : ->
-      console.log @sprite
+    # click : ->
