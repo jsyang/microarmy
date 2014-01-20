@@ -9,7 +9,6 @@ define [
   
   'core/util/XHash'
   'core/util/SimpleHash'
-  # add gameplay to a world, instead of to a battle
 ], (addTerrain, addStructureClasses, addExplosionClasses, addInfantryClasses, addProjectileClasses, XHash, SimpleHash) ->
 
   class BattleWorld

@@ -1,43 +1,44 @@
-define [
-  'core/Battle/gameplay/survivalUI'
-], (UI) ->
-
-  # Main purpose of this class is to check whether the game has ended
+define ->
+  
+  # Main purpose of this class is to check whether the game has ended, and provide specific action
+  # handlers for the gameplay mode
+  
   # A survival game can only end in one way: player base is overwhelmed and player is defeated.
   
   # 1. Check if wave has been destroyed / beaten into retreat.
   # 2. Check if player has lost.
-  # 3. Check if player has placed all 
-  
-  CONST =
-    COST :
-      PistolInfantry    : 50
-      RocketInfantry    : 200
-      EngineerInfantry  : 400
-  
-      CommCenter        : 18000
-      Barracks          : 9000
-      CommRelay         : 2000
-      WatchTower        : 1000
-      AmmoDump          : 1000
-      AmmoDumpSmall     : 1000
-      MineFieldSmall    : 700
-      Depot             : 1000
-      RepairYard        : 1000
-      Helipad           : 1000
-      Pillbox           : 3000
-      SmallTurret       : 8000
-      MissileRack       : 32000
-      MissileRackSmall  : 16000
-      
-    STAGES :
-      BASECONSTRUCTION : 0
-      DEFENSE : 1
-      OFFENSE : 2
-      IDLE    : 3
+  # 3. Check if player has placed all
   
   class Survival
-    CONST       : CONST
+    
+    CONST :
+      COST :
+        PistolInfantry    : 50
+        RocketInfantry    : 200
+        EngineerInfantry  : 400
+    
+        CommCenter        : 18000
+        Barracks          : 9000
+        CommRelay         : 2000
+        WatchTower        : 1000
+        AmmoDump          : 1000
+        AmmoDumpSmall     : 1000
+        MineFieldSmall    : 700
+        Depot             : 1000
+        RepairYard        : 1000
+        Helipad           : 1000
+        Pillbox           : 3000
+        SmallTurret       : 8000
+        MissileRack       : 32000
+        MissileRackSmall  : 16000
+        
+      STAGES :
+        BASECONSTRUCTION : 0
+        DEFENSE : 1
+        OFFENSE : 2
+        IDLE    : 3
+      
+      
     difficulty  : 1
     
     WORLD       : 'reference to battle world'
@@ -85,14 +86,3 @@ define [
     
     perTick : ->
       @handleStage()
-      
-      
-    
-
-
-
-  return {
-    GAMEPLAY : Survival
-    UI : UI
-  }
-

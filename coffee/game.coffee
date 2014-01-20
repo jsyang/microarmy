@@ -13,6 +13,8 @@ define [
     
     constructor : ->
       atom.input.bind(atom.button.LEFT, 'mouseleft')
+      atom.input.bind(atom.key.A,       'keyA')
+      atom.input.bind(atom.key.D,       'keyD')
     
     MODES : MODES
       
