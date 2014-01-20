@@ -1,11 +1,9 @@
 define ->
-  
   (_atomContext) ->
-    
-    # Assuming the spritesheet data lives in an global object called GFXINFO
-    # and the loaded spritesheet lives in atom.gfx.spritesheet
-    
+    # Bolt-on for atom that draws from sprites on a spritesheet
     _atomContext.drawSprite = (name, x = 0, y = 0) ->
+      # Assuming the spritesheet data lives in an global object called GFXINFO
+      # and the loaded spritesheet lives in atom.gfx.spritesheet
       sprite = GFXINFO[name]
       
       @drawImage(
@@ -16,4 +14,4 @@ define ->
             
         x,                y,
         sprite.width,     sprite.height
-      )
+      ) unless !sprite?

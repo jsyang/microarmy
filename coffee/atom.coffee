@@ -1,6 +1,7 @@
 define [
   'core/atom/spritesheet'
-], (atomSpritesheet)->
+  'core/atom/text'
+], (atomSpritesheet, atomText) ->
 
   if global?
     globalscope = global
@@ -229,8 +230,9 @@ define [
           atom.gfx[name] = buffer if buffer
           cb?() unless --toLoad
   
-  # Spritesheet support
+  # Graphics bolt-ons
   atomSpritesheet(atom.context)
+  atomText(atom.context)
   
   ## Audio
   

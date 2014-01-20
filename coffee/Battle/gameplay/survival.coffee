@@ -11,78 +11,52 @@ define ->
   
   class Survival
     
-    CONST :
-      COST :
-        PistolInfantry    : 50
-        RocketInfantry    : 200
-        EngineerInfantry  : 400
-    
-        CommCenter        : 18000
-        Barracks          : 9000
-        CommRelay         : 2000
-        WatchTower        : 1000
-        AmmoDump          : 1000
-        AmmoDumpSmall     : 1000
-        MineFieldSmall    : 700
-        Depot             : 1000
-        RepairYard        : 1000
-        Helipad           : 1000
-        Pillbox           : 3000
-        SmallTurret       : 8000
-        MissileRack       : 32000
-        MissileRackSmall  : 16000
-        
-      STAGES :
-        BASECONSTRUCTION : 0
-        DEFENSE : 1
-        OFFENSE : 2
-        IDLE    : 3
+    COST :
+      PistolInfantry    : 50
+      RocketInfantry    : 200
+      EngineerInfantry  : 400
+  
+      CommCenter        : 18000
+      Barracks          : 9000
+      CommRelay         : 2000
+      WatchTower        : 1000
+      AmmoDump          : 1000
+      AmmoDumpSmall     : 1000
+      MineFieldSmall    : 700
+      Depot             : 1000
+      RepairYard        : 1000
+      Helipad           : 1000
+      Pillbox           : 3000
+      SmallTurret       : 8000
+      MissileRack       : 32000
+      MissileRackSmall  : 16000
       
+    MODE :
+      BASECONSTRUCTION : 0
+      DEFENSE : 1
+      OFFENSE : 2
+      IDLE    : 3
+
+    fund :
+      qty   : 1000    # Current funding level
+      rate  : 100     # How many funds do we get per 100 cycles?
       
-    difficulty  : 1
+    kit :             # Base starter kit
+      Structure :
+        Barrack : 1
+        Pillbox : 1
     
-    WORLD       : 'reference to battle world'
-    MAP         : 'reference to battle map'
-    
-    UI          : # UI triggers and flags
-      mouse :
-        X : null
-        Y : null
-    
-    constructor : (WORLD, MAP) ->
-      @current.funds = $.R(10,50)*@difficulty*25
-      @WORLD  = WORLD
+    mode : null
       
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      @mode = @MODE.BASECONSTRUCTION
       
-    current :
-      inventory   : ['Barrack','Pillbox']
-      stage       : CONST.STAGES.BASECONSTRUCTION
-      fundingRate : 1
-      funds       : 0
-    
-    setMap : (MAP) -> @MAP = MAP
-    
-    handleStage : ->
-      ctx = @MAP.ctx
+    tick : ->
+      ac = atom.context
       
-      switch @current.stage
-      
-        when @CONST.STAGES.BASECONSTRUCTION          
-          nextUnit = @current.inventory[0]
-          
-          ctx.text({
-            text  : "Initial base construction.\nClick to lay down #{nextUnit}."
-            color : 'red'
-            x     : 10
-            y     : 10
-          })
-          
-          if @UI.mouse.x?
-            ctx.highlight({
-              x     : @UI.mouse.x
-              color : 'green'
-              w     : 32
-            })
-    
-    perTick : ->
-      @handleStage()
+      switch @mode
+        when @MODE.BASECONSTRUCTION
+          ac.drawText 'Base construction mode.'
+        else
+          null
