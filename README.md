@@ -128,4 +128,5 @@ Variable | Range of values
 Entity | Description | Example
 --- | --- | ---
 Barracks | Team 0, facing left, in good shape | `barracks-0-0-0.png`
+PistolInfantry | Team 0, facing left, shooting, frame 0 | `pistolinfantry-0-0-1-0.png`
   
