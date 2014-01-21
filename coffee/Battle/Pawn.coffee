@@ -1,4 +1,13 @@
 define ->
+  
+  DIRECTION =
+    LEFT  : 0
+    RIGHT : 0
+  
+  TEAM =
+    BLUE  : 0
+    GREEN : 1
+  
   class Pawn
     x           : 0
     y           : 0
@@ -15,17 +24,8 @@ define ->
       @[k]  = v for k, v of params
       
     draw : ->
-      
     
-
-######################################################################################################################
-# is*()
-    
-    isAlly          : (pawn) ->
-      if @team is -1
-        true
-      else
-        @team == pawn.team
+    isAlly : (pawn) -> @team == pawn.team
     
     isDead          : -> !(@health?.current > 0)
     
@@ -43,8 +43,6 @@ define ->
     
     isPendingRemoval  : -> @corpsetime <= 0 
     
-######################################################################################################################
-
     remove : -> @corpsetime = 0
         
     takeDamage  : (damageValue) ->
@@ -56,18 +54,12 @@ define ->
     
     setRallyPoint : (x, y) -> @rally = [x, y]
     
-    setDirection : ->
-      switch @team
-        when 0
-          d = 1
-        when 1
-          d = -1
-      @direction = d
+    setDirection : (facing) ->
+      @direction = DIRECTION[facing.toLowerCase()]
     
-    distX       : (pawn) -> Math.abs(@x - pawn.x)
+    distX : (pawn) -> Math.abs(@x - pawn.x)
     
     # Centers. Point to point.
-    # Overwrite this func for certain classes when their sprites show that they should be 
     distHit     : (pawn) ->
       [dx, dy] = [pawn.x, pawn.y]
       [dx, dy] = [Math.abs(@x - dx), Math.abs(@y - dy)]

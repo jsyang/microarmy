@@ -29,7 +29,7 @@ define [
       
       # world = a battle's "model"
       @world = new World {
-        w      : 3200
+        w      : 4000
         h      : 500
         battle : @
       }
