@@ -83,44 +83,6 @@ Asset scraps | `git checkout assetscraps` -- things that might inspire future fe
     
     Added grunt to help with release builds.
 
-### File structure
-
-    coffee/      
-      Behaviors.coffee                      # Behavior-tree parser and interpreter for game pieces
-      Battle.coffee                         # initiates a Battle. controller-like module
-      Battle/                               # everything to do with Battles
-      
-      game.coffee                           # main module. loading this starts the game.
-      atom.coffee                           # atom game framework
-      atom/
-        spritesheet.coffee                  # add atom.context.drawSprite() to use GFXINFO by sprite name
-
-      UI/                                   # UI components
-        MainMenu.coffee
-        UIGroup.coffee                      # stack and align UI elements
-        Button.coffee
-      
-      util.coffee                           # generally useful tools, available globally under $
-      util/
-        SimpleHash.coffee                   # game event tally, with location buckets for the mode of an event
-        XHash.coffee                        # entity hash by location (x)
-
-    gfx/                                    # graphics
-    
-    snd/                                    # sounds
-    
-    tests/                                  # unit tests
-
-    dist/                                   # generated specifically for release builds
-      microarmy.zip                         # deploy-ready build product (minified, spritesheeted)
-    
-    core/                                   # generated intermediary files for a build
-
-    lib/
-      almond.js                             # smaller shim for require.js
-      require.js                            # AMD module loader
-      text.js                               # requirejs plugin for loading text resources
-
 ### Sprite Naming format
 
 `entity_name`-`team`-`direction`-`action_state`-`frame`.png
