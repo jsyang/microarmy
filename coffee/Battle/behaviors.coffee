@@ -7,12 +7,12 @@ define ->
         TRUE  : true
         FALSE : false
         
-        isArmed : -> @_.projectile?
+        isArmed : -> @projectile?
         
         hasHitGround : ->
           if !World.contains(@)
-            @_.x -= @_.dx>>1 if @_.dx?
-            @_.y = World.height(@)
+            @x -= @dx>>1 if @dx?
+            @y = World.height(@)
             true
           else
             false
@@ -21,19 +21,19 @@ define ->
           World.XHash.getNearestEnemy(@)?
         
         faceTarget : ->
-          @_.direction = if @_.target._.x > @_.x then  1 else -1
+          @direction = if @target.x > @x then  1 else -1
           true
 
         setInfantryMoving : ->
-          @_.action = @CONST.ACTION.MOVING
+          @action = @CONST.ACTION.MOVING
           true
           
         faceGoalDirection : ->
           # todo: remove this once testing is done
-          @_.direction = {
+          @direction = {
             '0' : -1
             '1' : 1
-          }[@_.team]
+          }[@team]
           true
           
         gameOver : -> 
@@ -43,48 +43,48 @@ define ->
           true
         
         setFacingFrames : ->
-          @_.frame.first = if @_.direction>0 then  6   else 0
-          @_.frame.last  = if @_.direction>0 then  11  else 5
+          @frame.first = if @direction>0 then  6   else 0
+          @frame.last  = if @direction>0 then  11  else 5
           
           # Make sure we're facing the correct direction immediately.
-          if not( @_.frame.first <= @_.frame.current <= @_.frame.last )
-            @_.frame.current = @_.frame.first + (@_.frame.current % 6)
+          if not( @frame.first <= @frame.current <= @frame.last )
+            @frame.current = @frame.first + (@frame.current % 6)
           true
           
         setInfantryAttackStance : ->
-          @_.action = $.R(@CONST.ACTION.ATTACK_STANDING,@CONST.ACTION.ATTACK_PRONE)
+          @action = $.R(@CONST.ACTION.ATTACK_STANDING,@CONST.ACTION.ATTACK_PRONE)
           true
         
         tryProjectileHit : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 0)
           InfantryClass = Classes['Infantry']
           (
-            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= t._.img.hDist2 + @_.img.hDist2
-              chanceToHit = @_.accuracy[0]
-              if t is @_.target then chanceToHit += @_.accuracy[1]
+            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= t.img.hDist2 + @img.hDist2
+              chanceToHit = @accuracy[0]
+              if t is @target then chanceToHit += @accuracy[1]
               if t instanceof InfantryClass
                 # stance affects chance to be hit.
-                if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
-                if t._.action is InfantryClass.prototype.CONST.ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
+                if t.action is InfantryClass.prototype.CONST.ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
+                if t.action is InfantryClass.prototype.CONST.ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
               
               if $.r() < chanceToHit
-                t.takeDamage(@_.damage)
+                t.takeDamage(@damage)
                 return true
           ) for t in potentialHits
           false
         
         tryProjectileExplode : ->
-          if @_.explosion? and Classes[@_.explosion]?
-            World.add(new Classes[@_.explosion]({
-              x: @_.x
-              y: @_.y
+          if @explosion? and Classes[@explosion]?
+            World.add(new Classes[@explosion]({
+              x: @x
+              y: @y
             }))
           true
         
         hasHitEnemy : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
-            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @_.img.hDist2 + t._.img.hDist2
+            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= @img.hDist2 + t.img.hDist2
               return true
           ) for t in potentialHits
           
@@ -95,29 +95,29 @@ define ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
             # todo: might want to check if this is being triggered on the correct dist
-            if t? and t.distHit(@) <= @_.img.hDist2
-              t.takeDamage(@_.damage)
-              @_.damage -= @_.damageDecay
-              @_.damage = 0 if @_.damage<0
+            if t? and t.distHit(@) <= @img.hDist2
+              t.takeDamage(@damage)
+              @damage -= @damageDecay
+              @damage = 0 if @damage<0
           ) for t in potentialHits
           true
         
         hasSmokeTrail : ->
-          @_.rangeTravelled < @_.smokeTrailLength
+          @rangeTravelled < @smokeTrailLength
           
         hasHomingAbility : ->
-          @_.homing
+          @homing
         
         spawnSmokeTrail : ->
-          World.add(new Classes[@_.smokeTrailType]({
-            x: @_.x-@_.dx
-            y: @_.y-@_.dy
+          World.add(new Classes[@smokeTrailType]({
+            x: @x-@dx
+            y: @y-@dy
           }))
           true
         
         spawnChildExplosion : (type, xrange, yrange) ->
           # Call this with .apply(thisArg, args)
-          [x, y] = [@_.x+$.R.apply(null,xrange), @_.y+$.R.apply(null,yrange)]
+          [x, y] = [@x+$.R.apply(null,xrange), @y+$.R.apply(null,yrange)]
           if y>World.height(x) then y = World.height(x)
           World.add(new Classes[type]({x,y}))
         
@@ -136,127 +136,127 @@ define ->
           true
         
         steerToEnemy : ->
-          if @_.rangeTravelled > @_.homing.delay
-            t = @_.target
+          if @rangeTravelled > @homing.delay
+            t = @target
             if t?
-              @_.dx += if t._.x < @_.x then -@_.dspeed else @_.dspeed
+              @dx += if t.x < @x then -@dspeed else @dspeed
               
-              if t.distX(@)>128 and @_.y>World.height(@_.x)-48
+              if t.distX(@)>128 and @y>World.height(@x)-48
                 # keep it flying steady until it gets close enough
-                @_.dy -= @_.dspeed          
+                @dy -= @dspeed          
               else
-                @_.dy += if t._.y < @_.y then -@_.dspeed else @_.dspeed
+                @dy += if t.y < @y then -@dspeed else @dspeed
               
               # Normalize speed with some feedback
-              if @_.maxSpeed? and @_.dx*@_.dx + @_.dy*@_.dy > @_.maxSpeed
-                @_.dy *= $.R(30,50)*0.01
-                @_.dx *= $.R(70,80)*0.01
+              if @maxSpeed? and @dx*@dx + @dy*@dy > @maxSpeed
+                @dy *= $.R(30,50)*0.01
+                @dx *= $.R(70,80)*0.01
               
             else
-              @_.dy += @_.ddy # Gravity
+              @dy += @ddy # Gravity
           else
-            @_.dy += @_.ddy # Gravity
+            @dy += @ddy # Gravity
             
           true
             
         move : ->
-          @_.x += @_.direction
-          @_.y = World.height(@)
+          @x += @direction
+          @y = World.height(@)
           true
         
         fly : ->
-          @_.x += @_.dx
-          @_.y += @_.dy
-          @_.range-- if @_.range?
-          if @_.rangeTravelled? then @_.rangeTravelled++
+          @x += @dx
+          @y += @dy
+          @range-- if @range?
+          if @rangeTravelled? then @rangeTravelled++
           true
       
         remove : ->
-          if @_.range? then @_.range = 0
-          @_.corpsetime = 0
+          if @range? then @range = 0
+          @corpsetime = 0
           false
       
         nextFrame : ->
-          @_.frame.current++
+          @frame.current++
           true
           
         isPastLastFrame : ->
-          @_.frame.current >= @_.frame.last
+          @frame.current >= @frame.last
         
         gotoFirstFrame : ->
-          @_.frame.current = @_.frame.first
+          @frame.current = @frame.first
           true
         
         isFirstFrame : ->
-          @_.frame.current is @_.frame.first
+          @frame.current is @frame.first
         
         hasCyclesRemaining : ->
-          @_.cycles > 0
+          @cycles > 0
         
         decrementCycles : ->
-          if @_.cycles? then @_.cycles--
+          if @cycles? then @cycles--
           true
         
-        isReloading : -> @_.reload.ing > 0
+        isReloading : -> @reload.ing > 0
         
         tryReloading : ->
-          @_.reload.ing--
-          if @_.reload.ing is 0
+          @reload.ing--
+          if @reload.ing is 0
             # Use ammo from our ammo supply if we're a unit limited by ammo supply
-            if @_.ammo.maxsupply
-              if @_.ammo.supply<@_.ammo.max
-                @_.ammo.clip    = @_.ammo.supply
-                @_.ammo.supply  = 0
+            if @ammo.maxsupply
+              if @ammo.supply<@ammo.max
+                @ammo.clip    = @ammo.supply
+                @ammo.supply  = 0
               else
-                @_.ammo.clip    = @_.ammo.max
-                @_.ammo.supply  -= @_.ammo.max
+                @ammo.clip    = @ammo.max
+                @ammo.supply  -= @ammo.max
             else
-              @_.ammo.clip = @_.ammo.max
+              @ammo.clip = @ammo.max
           true
           
-        isOutOfAmmo : -> @_.ammo.clip <= 0
+        isOutOfAmmo : -> @ammo.clip <= 0
         
         beginReloading : ->
-          @_.reload.ing = if @_.ammo.maxsupply then $.R(30, @_.reload.time) else @_.reload.time
+          @reload.ing = if @ammo.maxsupply then $.R(30, @reload.time) else @reload.time
           true
             
         isBerserking : ->
-          if @_.berserk.ing > 0
-            @_.action = @CONST.ACTION.MOVING
-            @_.berserk.ing--
+          if @berserk.ing > 0
+            @action = @CONST.ACTION.MOVING
+            @berserk.ing--
             true
           else
             false
             
           
         tryBerserking : ->
-          if $.r() < @_.berserk.chance
-            @_.berserk.ing = @_.berserk.time
-          @_.berserk.ing > 0
+          if $.r() < @berserk.chance
+            @berserk.ing = @berserk.time
+          @berserk.ing > 0
           
         clearTarget : ->
           @setTarget()
           true
         
         hasTarget : ->
-          @_.target? and !@_.target?.isDead()
+          @target? and !@target?.isDead()
         
         isOutsideWorld : ->
           !World.contains(@)
           
         seeTarget : ->
-          @distX(@_.target) <= @_.sight*(1<<World.XHash._.BUCKETWIDTH)
+          @distX(@target) <= @sight*(1<<World.XHash.BUCKETWIDTH)
         
         # use weapons for this instead of a specific attack func?
         # attack -> attackWith[class.weapon]
         
         tryStructureAttack : ->
-          dist          = @distX(@_.target)
+          dist          = @distX(@target)
           accuracy      = [0, 0]
           bulletWeapon  = false
           pSpeed        = 4
           
-          switch @_.projectile
+          switch @projectile
             
             when 'MGBullet'
               accuracy      = [0.65, 0.35]  # chanceToHit [periphery, target bonus]
@@ -285,22 +285,22 @@ define ->
               bulletWeapon  = true
               
             when 'HomingMissileSmall'
-              dx            = @_.direction*5.12
+              dx            = @direction*5.12
               dy            = -6.35
               
             when 'HomingMissile'
-              dx            = @_.direction*4.6
+              dx            = @direction*4.6
               dy            = -8.36
               
             else
               accuracy  = [0.2, 0.5]
               strayDy   = $.R(-30,30)*0.01
           
-          if @_.ammo.clip == @_.ammo.max and sound? then soundManager.play(sound)
+          if @ammo.clip == @ammo.max and sound? then soundManager.play(sound)
           
           
-          pDx    = @_.direction*(@_.img.w>>1)
-          pDy    = @_.shootDy
+          pDx    = @direction*(@img.w>>1)
+          pDy    = @shootDy
           
           if bulletWeapon
             if dist > 50
@@ -316,56 +316,56 @@ define ->
               accuracy[0]-=0.01
               accuracy[1]-=0.08
           
-            projectile = new Classes[@_.projectile]({
+            projectile = new Classes[@projectile]({
               accuracy
-              x       : @_.x + pDx
-              y       : @_.y + pDy
-              team    : @_.team
-              target  : @_.target
-              dx      : @_.direction*pSpeed
-              dy      : ((@_.target._.y-(@_.target._.img.h>>1)-(@_.y+pDy))*pSpeed)/dist + strayDy
+              x       : @x + pDx
+              y       : @y + pDy
+              team    : @team
+              target  : @target
+              dx      : @direction*pSpeed
+              dy      : ((@target.y-(@target.img.h>>1)-(@y+pDy))*pSpeed)/dist + strayDy
             })
           else
-            projectile = new Classes[@_.projectile]({
+            projectile = new Classes[@projectile]({
                 dx
                 dy
-                x       : @_.x + pDx
-                y       : @_.y + pDy
-                team    : @_.team
-                target  : @_.target
+                x       : @x + pDx
+                y       : @y + pDy
+                team    : @team
+                target  : @target
             })
           
           World.add(projectile)
-          @_.ammo.clip--
+          @ammo.clip--
           true
         
         tryInfantryBuild : ->
-          if @_.build.x is @_.x
+          if @build.x is @x
             World.add(new Classes['Scaffold']({
-              x     : @_.x
+              x     : @x
               y     : World.height(@)
-              team  : @_.team
-              build : @_.build
+              team  : @team
+              build : @build
             }))
             return true
           false
         
         tryInfantryAttack : ->
-          dist = @distX(@_.target)
-          if dist < @_.img.w
+          dist = @distX(@target)
+          if dist < @img.w
             # melee range
-            if $.r() < @_.berserk.chance
-                @_.target.takeDamage(@_.meleeDmg)
+            if $.r() < @berserk.chance
+                @target.takeDamage(@meleeDmg)
                 # Pretty hard to ignore someone punching your face
-                @_.target._?.target = @
+                @target._?.target = @
           else
           
             # todo: move this into its own decorator
-            if @CONST.SHOTFRAME[@constructor.name][@_.frame.current % 6] is '0' then return true
+            if @CONST.SHOTFRAME[@constructor.name][@frame.current % 6] is '0' then return true
             
             accuracy = [0, 0]
             
-            switch @_.projectile
+            switch @projectile
               when 'MGBullet'
                 accuracy  = [0.65, 0.35]  # chanceToHit [periphery, target bonus]
                 strayDy   = $.R(-15,15)*0.01
@@ -383,11 +383,11 @@ define ->
                 accuracy  = [0.2, 0.5]
                 strayDy   = $.R(-30,30)*0.01
             
-            if @_.ammo.clip == @_.ammo.max and sound? then soundManager.play(sound)
+            if @ammo.clip == @ammo.max and sound? then soundManager.play(sound)
             
             pSpeed = 4
-            pDx    = @_.direction*(@_.img.w>>1)
-            pDy    = if @_.action is @CONST.ACTION.ATTACK_PRONE then -2 else -4
+            pDx    = @direction*(@img.w>>1)
+            pDy    = if @action is @CONST.ACTION.ATTACK_PRONE then -2 else -4
             
             if dist > 50
               accuracy[0]-=0.02
@@ -403,54 +403,54 @@ define ->
               accuracy[1]-=0.08
             
             World.add(
-              new Classes[@_.projectile](
+              new Classes[@projectile](
                 {
                   accuracy
-                  x       : @_.x + pDx
-                  y       : @_.y + pDy
-                  team    : @_.team
-                  target  : @_.target
-                  dx      : @_.direction*pSpeed
-                  dy      : ((@_.target._.y-(@_.target._.img.h>>1)-(@_.y+pDy))*pSpeed)/dist + strayDy
+                  x       : @x + pDx
+                  y       : @y + pDy
+                  team    : @team
+                  target  : @target
+                  dx      : @direction*pSpeed
+                  dy      : ((@target.y-(@target.img.h>>1)-(@y+pDy))*pSpeed)/dist + strayDy
                 }
               )
             )
             
-            @_.ammo.clip--
+            @ammo.clip--
             
           true
         
         setInfantryDying : ->
-          @_.action = $.R(@CONST.ACTION.DEATH1,@CONST.ACTION.DEATH2)
+          @action = $.R(@CONST.ACTION.DEATH1,@CONST.ACTION.DEATH2)
           soundManager.play('die'+$.R(1,4))
           true
         
         isInfantryDying : ->
-          @CONST.ACTION.DEATH1 <= @_.action <= @CONST.ACTION.DEATH2
+          @CONST.ACTION.DEATH1 <= @action <= @CONST.ACTION.DEATH2
         
         isInfantryAttacking : ->
-          @CONST.ACTION.ATTACK_STANDING <= @_.action <= @CONST.ACTION.ATTACK_PRONE
+          @CONST.ACTION.ATTACK_STANDING <= @action <= @CONST.ACTION.ATTACK_PRONE
         
         isProjectileActive : ->
-          @_.range > 0
+          @range > 0
         
         isDead : ->
           @isDead()
           
         rot : ->
-          if @_.corpsetime > 0 then @_.corpsetime--
+          if @corpsetime > 0 then @corpsetime--
           true
         
-        isCrewed : -> @_.crew? and @_.crew?.current? > 0
+        isCrewed : -> @crew? and @crew?.current? > 0
         
-        isFullyCrewed : -> @_.crew? and @_.crew.current is @_.crew.max
+        isFullyCrewed : -> @crew? and @crew.current is @crew.max
         
         tryCrewing : ->
-          if @_.crew.current < @_.crew.max
+          if @crew.current < @crew.max
             potentialCrew = World.XHash.getNBucketsByCoord(@,1)
             (
-              if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@_.img.w>>1) and t.isAlly(@)
-                @_.crew.current++
+              if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@img.w>>1) and t.isAlly(@)
+                @crew.current++
                 t.remove()
                 soundManager.play('sliderack1')
                 return true
@@ -458,12 +458,12 @@ define ->
           false
         
         tryScaffoldSpawnChild : ->
-          child = Classes[@_.build.type]
+          child = Classes[@build.type]
           if child?
             World.add(new child({
-              x     : @_.x
+              x     : @x
               y     : World.height(@)
-              team  : @_.team
+              team  : @team
             })) 
             true
             
@@ -472,62 +472,62 @@ define ->
           
         
         hasReinforcements : ->
-          @_.reinforce?
+          @reinforce?
         
         tryReinforcing : ->
-          if @_.reinforce.ing
-            if  @_.reinforce.supplyNumber > 0 and
-                @_.reinforce.parentSquad?     and
-                @_.reinforce.supplyType?      and
-                @_.reinforce.types[@_.reinforce.supplyType] > 0
+          if @reinforce.ing
+            if  @reinforce.supplyNumber > 0 and
+                @reinforce.parentSquad?     and
+                @reinforce.supplyType?      and
+                @reinforce.types[@reinforce.supplyType] > 0
               # release a unit from the supply
-              @_.reinforce.ing = @_.reinforce.time
-              @_.reinforce.types[@_.reinforce.supplyType]--
-              @_.reinforce.supplyNumber--
+              @reinforce.ing = @reinforce.time
+              @reinforce.types[@reinforce.supplyType]--
+              @reinforce.supplyNumber--
               
               # todo: spawned unit inherits parameters from the structure's reinforce obj
-              instance = new Classes[@_.reinforce.supplyType]({
-                x     : @_.x
+              instance = new Classes[@reinforce.supplyType]({
+                x     : @x
                 y     : World.height(@)
-                team  : @_.team
-                squad : @_.reinforce.parentSquad
+                team  : @team
+                squad : @reinforce.parentSquad
               })
               
               World.add(instance)
               # todo: parentSquad should check if all its members have joined rather than the supplier
-              @_.reinforce.parentSquad.add(instance)
+              @reinforce.parentSquad.add(instance)
               return true
             
           false
         
-        isStructureCrumbling : -> @_.state is @CONST.STATE.WRECK
+        isStructureCrumbling : -> @state is @CONST.STATE.WRECK
         
-        isCrumbled : -> @_.crumbled is true
+        isCrumbled : -> @crumbled is true
         
-        setUntargetable : -> @_.targetable = false
+        setUntargetable : -> @targetable = false
         
         updateCommanderSquadsStatus : ->
           newSquads = []
           (
             if !squad.isPendingRemoval()
               newSquads.push(squad)
-          ) for squad in @_.squads.length
-          @_.squads = newSquads
+          ) for squad in @squads.length
+          @squads = newSquads
           true
 
         tryCommanderCreateSquad : ->
-          if @_.squads.length < @_.squadsLimit
-            squadType = $.WR(@_.squadBias)
+          if @squads.length < @squadsLimit
+            squadType = $.WR(@squadBias)
             
             newSquad = new World.Classes.Squad {
-              team      : @_.team
+              team      : @team
               commander : @
             }
 
             # Issue requests to fill up the squad
-            newSquad.addRequest(@_.memberBias[squadType]) for n in [0...@_.squadSizeLimit]
+            newSquad.addRequest(@memberBias[squadType]) for n in [0...@squadSizeLimit]
             
-            @_.squads.push(newSquad)
+            @squads.push(newSquad)
             World.add(newSquad)
 
             true
@@ -537,17 +537,17 @@ define ->
 
         # also calculate average member X
         isSquadDead : ->
-          if @_.allMembersJoined
+          if @allMembersJoined
             numMembers = 0
             sumMemberX = 0
             (
               if !member.isDead()
                 numMembers++
-                sumMemberX+=member._.x
-            ) for member in @_.members
+                sumMemberX+=member.x
+            ) for member in @members
             
             if numMembers > 0
-              @_.meanX = sumMemberX / numMembers
+              @meanX = sumMemberX / numMembers
 
             return numMembers > 0
           else
@@ -558,11 +558,11 @@ define ->
           (
             numRequests++
             break
-          ) for k,v of @_.requests
+          ) for k,v of @requests
           if numRequests > 0
             # todo: get depots from 
-            if @_.commander?
-              @_.commander.findDepotForRequest(@_.requests)
+            if @commander?
+              @commander.findDepotForRequest(@requests)
             else
               false
           else

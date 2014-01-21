@@ -7,6 +7,7 @@ define ->
     hitDist     : 0   # a point at less than sqrt(histDist) is considered inside the Pawn
     
     # For .draw()
+    direction   : 0
     valign      : 'bottom'
     halign      : 'center'
     

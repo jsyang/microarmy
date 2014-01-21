@@ -24,11 +24,8 @@ define [
     shootDy : 0
     shootDx : 0
     
-    @_name  : 'structure'
-    
-    # todo : get the sprite name
     getName : ->
-      #@_name = 
+      "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@state}"
     
     distHit : (pawn) ->
       dx = pawn.x

@@ -74,6 +74,7 @@ define ->
       @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
     
     tick : ->
+      # bug: dragging the cursor from the battle view into the minimap will scroll the minimap!
       if @containsCursor() and atom.input.down('mouseleft')
         viewMargin = atom.width >> (@scale+1)
         x = atom.input.mouse.x - @x - viewMargin

@@ -43,7 +43,7 @@ define ->
       
       if @cart?
         spriteName = @_getSpriteName()
-        opacity = if @_checkIfLocationValid() then 0.6 else 0.3
+        opacity = if @_checkIfLocationValid() then 0.75 else 0.3
         
         atom.context.drawText "Select location to build #{@cart}"
         atom.context.drawSprite spriteName, mx, @battle.world.height(mx + @battle.scroll.x), 'bottom', 'center', opacity
@@ -62,6 +62,15 @@ define ->
       # Threshold for valid
       w * 0.35 > numberOfDifferentHeights
     
+    _cullInventory : (entity) ->
+      @inventory[entity]-- if @inventory[entity]?
+      delete @inventory[entity] if @inventory[entity] is 0
+      return @cart = k for k, v of @inventory
+      @_constructionComplete()
+      
+    _constructionComplete : ->
+      console.log 'all done!'
+    
     tick : ->
       if @containsCursor()
         if atom.input.pressed('mouseleft')
@@ -76,7 +85,9 @@ define ->
               }
             )
             
+            @_cullInventory @cart
             atom.playSound 'tack'
+          
           else
             atom.playSound 'invalid'
         

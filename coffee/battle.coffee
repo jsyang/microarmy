@@ -10,18 +10,17 @@ define [
   
   class Battle
   
-    MODE : 
-      constructbase : ConstructBase
+    MODE : {
+      ConstructBase
+      #SelectPawn   # nothing selected, idling UI
+      #CommandPawn  # unit(s) selected, awaiting commands
+    }
         
     scroll :
+      margin : 50 # if something is closer than this to the viewport, render it
       x : 0
       y : 0
-      
-    mouse :
-      lastX   : 0
-      lastY   : 0
-      isdown  : 0
-      
+    
     team : 0
     
     constructor : (params) ->
@@ -41,24 +40,13 @@ define [
       @behaviors = new Behaviors(BattleBehaviors(@world, @world.Classes))
       
       # Controller
-      @mode = new @MODE.constructbase { battle : @ }
+      @mode = new @MODE.ConstructBase { battle : @ }
       
       # Various UI components
       @ui =
         minimap : new BattleUIMinimap { world : @world }
     
     tick : ->
-      #mx = atom.input.mouse.x
-      #my = atom.input.mouse.y
-      #
-      ## Start drag
-      #if atom.input.down('mouseleft')
-      #  @scroll.x += mx - @mouse.lastX
-      #  @scroll.y += my - @mouse.lastY
-      #
-      #@mouse.lastX = mx
-      #@mouse.lastY = my
-      
       @mode.tick()
       @ui.minimap.tick()
       @world.tick()
@@ -68,8 +56,19 @@ define [
       
       # Drawing order is based on primitiveCLasses
       for type in @world.primitiveClasses
+        
+        switch type
+          when 'Structure', 'Infantry'
+            valign = 'bottom'
+            halign = 'center'
+          when 'Projectile'
+            valign = 'middle'
+            halign = 'center'
+            
         for p in @world.Instances[type]
-          atom.context.drawSprite(p.gfx())
+          x = p.x - @scroll.x
+          if -@scroll.margin < x < atom.width + @scroll.margin
+            atom.context.drawSprite(p.getName(), x, p.y, valign, halign)
       
       @mode.draw()
       @ui.minimap.draw()
