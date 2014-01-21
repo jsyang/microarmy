@@ -106,6 +106,7 @@ module.exports = function(grunt) {
           "./gfx/ammodumpsmall/*.png",
           "./gfx/barracks/*.png",
           "./gfx/chemmine/*.png",
+          "./gfx/commcenter/*.png",
           "./gfx/engineerinfantry/*.png",
           "./gfx/helipad/*.png",
           "./gfx/mine/*.png",

@@ -6,13 +6,14 @@ define [
   
   'core/Battle/UI/minimap'
   'core/Battle/gameplay/constructbase'
-], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, ConstructBase) ->
+  'core/Battle/gameplay/selectpawn'
+], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, ConstructBase, SelectPawn) ->
   
   class Battle
   
     MODE : {
       ConstructBase
-      #SelectPawn   # nothing selected, idling UI
+      SelectPawn    # nothing selected, idling UI
       #CommandPawn  # unit(s) selected, awaiting commands
     }
         
@@ -45,6 +46,9 @@ define [
       # Various UI components
       @ui =
         minimap : new BattleUIMinimap { world : @world }
+    
+    switchMode : (mode) ->
+      @mode = new @MODE[mode] { battle : @ }
     
     tick : ->
       @mode.tick()

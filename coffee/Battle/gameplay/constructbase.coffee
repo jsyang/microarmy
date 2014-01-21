@@ -1,13 +1,9 @@
 define ->
   
-  MODE =
-    LAYINGSTRUCTURE : 0
-    INVALIDLOCATION : 1
-  
-  # Switch modes once we're done laying down our inventory.
   class ConstructBase
     x : 0
     y : 0
+    direction : 0
     
     containsPoint : (x, y) ->
       return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
@@ -26,16 +22,14 @@ define ->
       @[k]  = v for k, v of params
       @w    = atom.width
       @h    = @battle.world.h
-    
-    mode : MODE.LAYINGSTRUCTURE
-    
+      @_cullInventory()
+      
     _getSpriteName : ->
       name      = @cart.toLowerCase()
-      team      = @battle.team
       direction = 0
       state     = 0
       
-      "#{name}-#{team}-#{direction}-#{state}"
+      "#{name}-#{@battle.team}-#{@direction}-#{state}"
     
     draw : ->
       mx = atom.input.mouse.x
@@ -69,7 +63,7 @@ define ->
       @_constructionComplete()
       
     _constructionComplete : ->
-      console.log 'all done!'
+      @battle.switchMode 'SelectPawn'
     
     tick : ->
       if @containsCursor()
