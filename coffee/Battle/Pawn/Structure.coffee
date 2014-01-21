@@ -2,139 +2,118 @@ define [
   'core/Battle/Pawn'
 ], (Pawn) ->
 
+  STATE =
+    GOOD  : 0
+    BAD   : 1
+    WRECK : 2
+
   class Structure extends Pawn
-    # todo: might have to modify these so the prototype can be mutated by a
-    #       team upon research bonus / experience bonus
-    STATE :
-      GOOD  : 0
-      BAD   : 1
-      WRECK : 2
     
-    constructor : (_) ->
-      @_ = $.extend {
-        targetable  : true
-        crumbled    : false # already destroyed?
-        corpsetime  : 1
-        target      : null
-        state       : @CONST.STATE.GOOD
-        # adjustments to the projectile origin
-        shootDy     : 0
-        shootDx     : 0
-      }, _
-      super @_
-      @setSpriteSheet()
-      # todo: remove this
-      @_.direction = 1
+    STATE : STATE
     
-    gfx : ->
-      {
-        img     : @_.img.sheet
-        imgdx   : if @_.direction>0 then @_.img.w else 0
-        imgdy   : @_.state*@_.img.h
-        worldx  : @_.x-(@_.img.w>>1)
-        worldy  : @_.y-@_.img.h
-        imgw    : @_.img.w
-        imgh    : @_.img.h
-      }
+    # This number is computed usually by squaring the smallest dimension of the sprite
+    hDist2 : 0
+    
+    targetable  : true
+    crumbled    : false # already destroyed?
+    corpsetime  : 1
+    target      : null
+    state       : STATE.GOOD
+    
+    # adjustments to the projectile origin
+    shootDy : 0
+    shootDx : 0
+    
+    @_name  : 'structure'
+    
+    # todo : get the sprite name
+    getName : ->
+      #@_name = 
     
     distHit : (pawn) ->
-      [dx, dy] = [pawn._.x, pawn._.y]
-      # Above ground.
-      [dx, dy] = [Math.abs(@_.x - dx), Math.abs((@_.y-(@_.img.h>>1)) - dy)]
+      dx = pawn.x
+      dy = pawn.y
       
+      dx = Math.abs(@x - dx)
+      # todo : need to use GFXINFO[name] for this
+      dy = Math.abs(@y - (@img.h>>1)) - dy
       dx*dx + dy*dy
-    
-    takeDamage : (damageValue) ->
-      if damageValue > 0
-        @_.health.current -= damageValue
+
+    takeDamage : (dmg) ->
+      if dmg > 0
+        @health.current -= dmg
         
-        if @_.health.current <= 0
-          @_.health.current = 0
-          @_.state = @CONST.STATE.WRECK
+        if @health.current <= 0
+          @health.current = 0
+          @state = @STATE.WRECK
           
-        else if @_.health.current < 0.6*@_.health.max
-          @_.state = @CONST.STATE.BAD
+        else if @health.current < 0.6 * @health.max
+          @state = @STATE.BAD
 
   
   class CommCenter extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:28, h:28, hDist2:196, sheet:'comm' }
-        health :
-          current : $.R(2100,2500)
-          max     : $.R(2500,2600)
-          
-        reinforce :
-          ing   : 0
-          time  : 10
-          
-          supplyType    : null
-          supplyNumber  : 0
-          rallyPoint    : null
-          engineerBuild : null
-          parentSquad   : null      # the squad which spawned unit belongs to when created
-          
-          damageThreshold   : 18    # damage taken above this destroys reinforcement supply
-          damageChance      : 0.4   # chance the reinforcements will be harmed when > damageThreshold
+    hDist2 : 196
+    
+    health :
+      # todo : fix these
+      current : $.R(2100,2500)
+      max     : $.R(2500,2600)
+  
+    reinforce :
+      ing  : 0
+      time : 10
+      
+      supplyType    : null
+      supplyNumber  : 0
+      rallyPoint    : null
+      engineerBuild : null
+      parentSquad   : null      # the squad which spawned unit belongs to when created
+      
+      damageThreshold   : 18    # damage taken above this destroys reinforcement supply
+      damageChance      : 0.4   # chance the reinforcements will be harmed when > damageThreshold
 
-          types :
-            PistolInfantry    : 400
-            RocketInfantry    : 600
-            EngineerInfantry  : 40
-      }, _
-      super @_
+      types :
+        PistolInfantry    : 400
+        RocketInfantry    : 600
+        EngineerInfantry  : 40
   
   class Barracks extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:32, h:12, hDist2:169, sheet:'barracks' }
-        health :
-          current : $.R(1800,1950)
-          max     : $.R(1950,2500)
-          
-        reinforce :
-          ing   : 0
-          time  : 10
-          
-          supplyType    : null
-          supplyNumber  : 0
-          rallyPoint    : null
-          engineerBuild : null
-          parentSquad   : null      # the squad which spawned unit belongs to when created
-          
-          damageThreshold   : 24    # damage taken above this destroys reinforcement supply
-          damageChance      : 0.6   # chance the reinforcements will be harmed when > damageThreshold
+    hDist2 : 169
+    
+    health :
+      current : $.R(1800,1950)
+      max     : $.R(1950,2500)
+      
+    reinforce :
+      ing   : 0
+      time  : 10
+      
+      supplyType    : null
+      supplyNumber  : 0
+      rallyPoint    : null
+      engineerBuild : null
+      parentSquad   : null      # the squad which spawned unit belongs to when created
+      
+      damageThreshold   : 24    # damage taken above this destroys reinforcement supply
+      damageChance      : 0.6   # chance the reinforcements will be harmed when > damageThreshold
 
-          types :
-            PistolInfantry    : 300
-            EngineerInfantry  : 10
-      }, _
-      super @_
+      types :
+        PistolInfantry    : 300
+        EngineerInfantry  : 10
   
   class Scaffold extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:16, h:8, hDist2:64, sheet:'scaffold' }
-        health :
-          current : $.R(360,400)
-          max     : $.R(400,450)
-        build :
-          type : 'Pillbox'
-        crew :
-          current   : 1
-          max       : 2
-          occupied  : 'scaffold'
-          empty     : 'scaffold_'
-          
-          damageThreshold : 5
-          damageChance    : 1
-      }, _
-      super @_
-      @setCrewCount()
-      soundManager.play('tack')
+    hDist2 : 64
     
-    setCrewCount : ->
-      @_.crew.max = {
+    health :
+      current : $.R(360,400)
+      max     : $.R(400,450)
+    
+    build :
+      type : 'Pillbox'
+    
+    crew :
+      current   : 1
+      max       :
         'Pillbox'           : 4
         'MissileRack'       : 8
         'MissileRackSmall'  : 1
@@ -144,175 +123,114 @@ define [
         'MineFieldSmall'    : 1
         'AmmoDumpSmall'     : 1
         'AmmoDump'          : 2
-      }[@_.build.type]
+      occupied  : 'scaffold'
+      empty     : 'scaffold_'
+      
+      damageThreshold : 5
+      damageChance    : 1
   
+  # todo: finish this structure
   class CommRelay extends Structure
-    # todo: this structure needs a purpose!
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:15, h:27, hDist2:220, sheet:'relay' }
-        health :
-          current : $.R(560,600)
-          max     : $.R(600,750)
-      }, _
-      super @_
-  
+    hDist : 220
+    health :
+      current : $.R(560,600)
+      max     : $.R(600,750)
+    
+  # todo: finish this structure
   class WatchTower extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:13, h:21, hDist2:196, sheet:'watchtower' }
-        health :
-          current : $.R(300,350)
-          max     : $.R(360,400)
-        sight : 13
-      }, _
-      super @_
-  
-  # todo: look up how to bind code sniplets
+    hDist : 196      
+    sight : 13
+    health :
+      current : $.R(300,350)
+      max     : $.R(360,400)
   
   class AmmoDump extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:18, h:9, hDist2:100, sheet:'ammodump' }
-        health :
-          current : $.R(80,120)
-          max     : $.R(130,150)
-        reload :
-          ing   : 0
-          time  : 500
-        supply :
-          HomingMissile       : $.R(10,20)
-          HomingMissileSmall  : $.R(60,80)
-        sight : 6
-      }, _
-      @_.totalSupply = $.sum(@_.supply)
-      super @_
+    hDist2 : 100
+    sight  : 6
+    health :
+      current : $.R(80,120)
+      max     : $.R(130,150)
+    reload :
+      ing   : 0
+      time  : 500
+    supply :
+      HomingMissile       : $.R(10,20)
+      HomingMissileSmall  : $.R(60,80)
   
   class AmmoDumpSmall extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:4, h:6, hDist2:25, sheet:'ammodumpsmall' }
-        health :
-          current : $.R(80,120)
-          max     : $.R(130,150)
-        reload :
-          ing   : 0
-          time  : 300
-        supply :
-          HomingMissileSmall  : $.R(30,40)
-        sight : 5
-      }, _
-      @_.totalSupply = $.sum(@_.supply)
-      super @_
-  
+    hDist2 : 25
+    health :
+      current : $.R(80,120)
+      max     : $.R(130,150)
+    reload :
+      ing   : 0
+      time  : 300
+    supply :
+      HomingMissileSmall  : $.R(30,40)
+    sight : 5
+    
   class MineFieldSmall extends Structure
+    corpsetime : 0
+    maxMines   : 4
     # todo: have these spawn some mines
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:200, h: 1 }
-        corpsetime : 0
-        maxMines : $.R(3,4)
-      }, _
-      super @_
-  
-  
+
   # todo: needs a purpose
   class Depot extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:39, h:16, hDist2:260, sheet:'depot' }
-      }, _
-      super @_
+    hDist2 : 260
   
   # todo: needs a purpose
   class RepairYard extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:28, h:14, hDist2:196, sheet:'repair' }
-      }, _
-      super @_
+    hDist2 : 196
       
   # todo: needs a purpose
   class Helipad extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:28, h:11, hDist2:130, sheet:'helipad' }
-      }, _
-      super @_
+    hDist2 : 130
   
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   
   class Pillbox extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:19, h:8, hDist2:64, sheet:'pillbox' }
-        health :
-          current : $.R(800,900)
-          max     : $.R(800,1100)
-        reload :
-          ing   : 0
-          time  : 50
-        ammo :
-          clip  : 6
-          max   : 6
-        shootDy     : -5
-        sight       : 3
-        projectile  : 'MGBullet'
-        crew :
-          current   : 0
-          max       : 4
-          occupied  : 'pillbox'
-          empty     : 'pillbox_'
-          
-          damageThreshold : 23
-          damageChance    : 0.2
-      }, _
-      super @_
-  
-  # CLASS MUTATOR EX # # # # # # # # # # # #
-  # class SmallTurret extends Structure
-  #   properties :
-  #     health :
-  #       current : $.R(1900,2100)
-  #       max     : $.R(2100,2300)
-  #     reload :
-  #       ing   : 0
-  #       time  : 90
-  #     ...
-  #   constructor : (_) ->
-  #     @_ = $.extend @properties, _
-  #
-  # class SmallTurret_0_Fortified extends SmallTurret
-  # $.extend SmallTurret_Fortified.prototype, {
-  #   extraProperties / overridingProperties
-  # }
-  # 
-  # or modify the original
-  # or maybe come up with a better way to do this
+    hDist2 : 64
+    health :
+      current : $.R(800,900)
+      max     : $.R(800,1100)
+    reload :
+      ing   : 0
+      time  : 50
+    ammo :
+      clip  : 6
+      max   : 6
+    shootDy     : -5
+    sight       : 3
+    projectile  : 'MGBullet'
+    crew :
+      current   : 0
+      max       : 4
+      occupied  : 'pillbox'
+      empty     : 'pillbox_'
+      
+      damageThreshold : 23
+      damageChance    : 0.2
   
   class SmallTurret extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:22, h:9, hDist2:90, sheet:'turret' }
-        health :
-          current : $.R(1900,2100)
-          max     : $.R(2100,2300)
-        reload :
-          ing   : 0
-          time  : 90
-        turn :
-          ing     : 0
-          current : 0
-          last    : 4
-        ammo :
-          clip  : 1
-          max   : 1
-        shootDy     : -6
-        sight       : 5
-        projectile  : 'SmallShell'
-      }, _
-      super @_
+    hDist2 : 90
+    health :
+      current : $.R(1900,2100)
+      max     : $.R(2100,2300)
+    reload :
+      ing   : 0
+      time  : 90
+    turn :
+      ing     : 0
+      current : 0
+      last    : 4
+    ammo :
+      clip  : 1
+      max   : 1
+    shootDy     : -6
+    sight       : 5
+    projectile  : 'SmallShell'
     
+    # todo : convert this
     gfx : ->
       # turning graphics
       imgdy = if @_.state!=@CONST.STATE.WRECK then @_.state*45+@_.img.h*@_.turn.current else 90
@@ -329,26 +247,23 @@ define [
       }
   
   class MissileRack extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:5, h:9, hDist2:64, sheet:'missilerack' }
-        sight : 13
-        health :
-          current : $.R(200,280)
-          max     : $.R(280,300)
-        projectile : 'HomingMissile'
-        reload :
-          ing   : 240
-          time  : 2900
-        ammo :
-          clip      : 1
-          max       : 1
-          supply    : 3
-          maxSupply : 3
-        shootDy : -20
-      }, _
-      super @_
-      
+    hDist2 : 64
+    sight : 13
+    health :
+      current : $.R(200,280)
+      max     : $.R(280,300)
+    projectile : 'HomingMissile'
+    reload :
+      ing   : 240
+      time  : 2900
+    ammo :
+      clip      : 1
+      max       : 1
+      supply    : 3
+      maxSupply : 3
+    shootDy : -20
+    
+    # todo : convert this  
     gfx : ->
       imgdy = @_.img.h
       if @_.health.current>0
@@ -373,50 +288,44 @@ define [
       }
   
   class MissileRackSmall extends Structure
-    constructor : (_) ->
-      @_ = $.extend {
-        img : { w:4, h:7, hDist2:18, sheet:'missileracksmall' }
-        sight : 9
-        health :
-          current : $.R(100,180)
-          max     : $.R(180,200)
-        projectile : 'HomingMissileSmall'
-        canTargetAircraft : true
-        reload :
-          ing   : 60
-          time  : 190
-        ammo :
-          clip      : 1
-          max       : 1
-          supply    : 12
-          maxSupply : 12
-        shootDy : -8
-      }, _
-      super @_
-      
+    hDist2 : 18
+    sight : 9
+    health :
+      current : $.R(100,180)
+      max     : $.R(180,200)
+    projectile : 'HomingMissileSmall'
+    canTargetAircraft : true
+    reload :
+      ing   : 60
+      time  : 190
+    ammo :
+      clip      : 1
+      max       : 1
+      supply    : 12
+      maxSupply : 12
+    shootDy : -8
+    
+    # todo : convert this
     gfx : MissileRack.prototype.gfx
   
-  # export
-  (Classes) ->
-    $.extend(Classes, {
-      Structure
-      
-      CommCenter
-      Barracks
-      Scaffold
-      CommRelay
-      
-      WatchTower
-      AmmoDump
-      AmmoDumpSmall
-      
-      MineFieldSmall
-      Depot
-      RepairYard
-      Helipad
-      
-      Pillbox
-      SmallTurret
-      MissileRack
-      MissileRackSmall
-    })
+  exportClasses = {
+    Structure # needed for instanceof check in World::add()
+    CommCenter
+    Barracks
+    Scaffold
+    CommRelay
+    WatchTower
+    AmmoDump
+    AmmoDumpSmall
+    MineFieldSmall
+    Depot
+    RepairYard
+    Helipad
+    Pillbox
+    SmallTurret
+    MissileRack
+    MissileRackSmall
+  }
+    
+  # Attach all these classes to the "importer" object.
+  (importer) -> importer[k] = v for k, v of exportClasses

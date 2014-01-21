@@ -28,6 +28,13 @@ Asset scraps | `git checkout assetscraps` -- things that might inspire future fe
 
 ### Dev log
 
+    Jan (20, 21), 2014
+    Started making sense of the gameplay modes: drafted a "construct base" mode where you can lay down your base structures.
+    Converted most of the graphics into a format that has a filenaming convention which better suits grunt-spritesmith.
+    Begun revamping the behavior engine. Should move is___ checks into the relevant constructors. Ex: isCrewed should be
+    a member of Structure rather than within the default Behaviors. The only stuff that needs to go in there are things
+    which rely on other entities? Or maybe it's a better idea to only keep the stats in the inherited classes...
+
     Jan 18, 2014
     Updated the docs with better formatting. Added main menu UI group and game title placeholder graphic. UI elements stack in groups.
     Mock main menu now has all the functionality it needs UI wise. Just needs to be hooked up to actual button results. Thinking about

@@ -66,6 +66,16 @@ define ->
       if @containsCursor()
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()
+            mx = atom.input.mouse.x
+            
+            @battle.world.add(
+              new @battle.world.Classes[@cart] {
+                x     : mx
+                y     : @battle.world.height(mx)
+                team  : @battle.team
+              }
+            )
+            
             atom.playSound 'tack'
           else
             atom.playSound 'invalid'

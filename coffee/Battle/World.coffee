@@ -39,7 +39,7 @@ define [
       for k, v of @Instances
         for entity in v
           if !entity.isPendingRemoval()
-            btree = entity._.behavior ? entity.constructor.name
+            btree = entity.behavior ? entity.constructor.name
             btree = @battle.behaviors.Trees[btree]
             
             if btree?
@@ -78,8 +78,8 @@ define [
       i  = @Instances_ ? @Instances
       
       for type in @primitiveClasses when entity instanceof @Classes[type]
-        xh.add(p) unless !entity.isTargetable()
-        if entity._.corpsetime > 0
+        xh.add entity unless !entity.isTargetable()
+        if entity.corpsetime > 0
           return i[type].push entity
         else
           return
