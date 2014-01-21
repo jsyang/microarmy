@@ -2,16 +2,13 @@ define [
   'core/Battle/Pawn'
 ], (Pawn) ->
 
-  CONST = 
+  class Structure extends Pawn
+    # todo: might have to modify these so the prototype can be mutated by a
+    #       team upon research bonus / experience bonus
     STATE :
       GOOD  : 0
       BAD   : 1
       WRECK : 2
-
-  class Structure extends Pawn
-    # todo: might have to modify these so the prototype can be mutated by a
-    #       team upon research bonus / experience bonus
-    CONST : CONST
     
     constructor : (_) ->
       @_ = $.extend {

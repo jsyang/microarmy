@@ -114,10 +114,18 @@ Asset scraps | `git checkout assetscraps` -- things that might inspire future fe
       require.js                            # AMD module loader
       text.js                               # requirejs plugin for loading text resources
 
-### Non-code tools used
+### Sprite Naming format
 
-    GraphicsMagick
-    http-server
-    ditz
-    Paint.NET
-    Audacity
+`entity_name`-`team`-`direction`-`action_state`-`frame`.png
+
+Variable | Range of values
+--- | ---
+`structure` | string
+`team` | [0, 1]
+`facing_direction` | [0, 1] - left, right
+`state` | [0, 1, 2] - good, bad, wreck
+
+Entity | Description | Example
+--- | --- | ---
+Barracks | Team 0, facing left, in good shape | `barracks-0-0-0.png`
+  

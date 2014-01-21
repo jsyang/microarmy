@@ -99,7 +99,8 @@ module.exports = function(grunt) {
       all: {
         src: [
           "./gfx/*.png",
-          "./gfx/MainMenu/*.png"
+          "./gfx/MainMenu/*.png",
+          "./gfx/barracks/*.png"
         ],
         destImg: "./core/spritesheet.png",
         destCSS: "./core/spritesheet.json",

@@ -3,31 +3,29 @@
 
 define ->
   class XHash
-    constructor : (_) ->
-      if _.w?
-        @_ = $.extend {
-          BUCKETWIDTH : 6     # each bucket should be 1<<6 = 64 pixels wide.
-          buckets     : null
-          w           : null
-        }, _
-        @flush()
-      else
-        throw new Error 'no width given!'
-        
-    # replace : (buckets) -> @_.buckets = buckets
+    BUCKETWIDTH : 6     # each bucket should be 1<<6 = 64 pixels wide.
+    #buckets     : null
+    #w           : null
+  
+    constructor : (params) ->
+      @[k] = v for k, v of params
+      throw new Error 'missing width!' unless @w?
+      @flush()
+      
+    # replace : (buckets) -> @buckets = buckets
     
     # Make empty buckets for each _BUCKETWIDTH_ sized chunk of the battlefield
     flush : ->
-      @_.buckets = ( [] for i in [0..(@_.w>>@_.BUCKETWIDTH)] )
+      @buckets = ( [] for i in [0..(@w>>@BUCKETWIDTH)] )
     
     add : (pawn) ->
-      targetBucket = @_.buckets[pawn._.x>>@_.BUCKETWIDTH]
+      targetBucket = @buckets[pawn.x>>@BUCKETWIDTH]
       if targetBucket?
         targetBucket.push(pawn)
       return
       
     addFilterDead : (pawn) ->
-      targetBucket = @_.buckets[pawn._.x>>@_.BUCKETWIDTH]
+      targetBucket = @buckets[pawn.x>>@BUCKETWIDTH]
       if targetBucket? and !pawn.isDead()
         targetBucket.push(pawn)
       return
@@ -35,7 +33,7 @@ define ->
     # Get all the things which are within N buckets distance from x
     # If a ray direction is given then only look in that direction
     getNBucketsByCoord : (pawn, n, ray) ->
-      i = pawn._.x>>@_.BUCKETWIDTH
+      i = pawn.x>>@BUCKETWIDTH
       NBuckets = []
       if ray?
         if ray < 0
@@ -46,7 +44,7 @@ define ->
         [l, h] = [i-n, i+n+1]
       
       if l<0 then l = 0
-      b = @_.buckets[l...h]
+      b = @buckets[l...h]
       
       ( NBuckets = NBuckets.concat(bucket) ) for bucket in b
       NBuckets
@@ -54,7 +52,7 @@ define ->
     getNearestEnemy : (pawn) ->
       minDist = Infinity
       pawn.setTarget()
-      potentialTargets = @getNBucketsByCoord(pawn, pawn._.sight)
+      potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
       (
         dist = pawn.distX(t)
         if dist < minDist
@@ -67,12 +65,12 @@ define ->
             pawn.setTarget(t)
             minDist = dist
       ) for t in potentialTargets
-      pawn._.target
+      pawn.target
     
     getCrowdedEnemy : (pawn) ->
       maxEnemies  = 0
       pawn.setTarget()
-      potentialTargets = @getNBucketsByCoord(pawn, pawn._.sight)
+      potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
       (
         bucketEnemies   = 0
         (
@@ -91,12 +89,12 @@ define ->
           maxEnemies = bucketEnemies
       ) for bucket in potentialTargets
       
-      pawn._.target
+      pawn.target
     
     getNearestFriendlyNeedSupply : (pawn) ->
       minDist = Infinity
       pawn.setTarget()
-      potentialTargets = @getNBucketsByCoord(pawn, pawn._.sight)
+      potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
       (
         dist = t.distX(pawn)
         if dist < minDist
@@ -110,5 +108,5 @@ define ->
             minDist = dist
       ) for t in potentialTargets
       
-      pawn._.target
+      pawn.target
     

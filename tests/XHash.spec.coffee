@@ -44,24 +44,24 @@ require [
       it 'clears buckets', ->
         xh = new XHash({ w : 127 })
         ( xh.add(p) ) for p in mockPawns
-        expect(xh._.buckets[0].length).toEqual(5)
-        expect(xh._.buckets[1].length).toEqual(5)
+        expect(xh.buckets[0].length).toEqual(5)
+        expect(xh.buckets[1].length).toEqual(5)
         
         xh.flush()
-        expect(xh._.buckets[0].length).toEqual(0)
-        expect(xh._.buckets[1].length).toEqual(0)
+        expect(xh.buckets[0].length).toEqual(0)
+        expect(xh.buckets[1].length).toEqual(0)
     
     describe 'add', ->
       it 'puts pawns correctly in their buckets', ->
         xh = new XHash({ w : 127 })
         ( xh.add(p) ) for p in mockPawns
-        expect(xh._.buckets[0][0]).toEqual(mockPawns[0])
-        expect(xh._.buckets[1][4]).toEqual(mockPawns[9])
+        expect(xh.buckets[0][0]).toEqual(mockPawns[0])
+        expect(xh.buckets[1][4]).toEqual(mockPawns[9])
       
       it 'does nothing if a pawn is out of bounds', ->
         xh = new XHash({ w : 127 })
         xh.add(outOfBoundsPawn)
-        expect(xh._.buckets).toEqual([[],[]])
+        expect(xh.buckets).toEqual([[],[]])
         
     describe 'getNBucketsByCoord', ->
       it 'fetches the correct buckets', ->

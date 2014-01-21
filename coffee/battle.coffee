@@ -3,14 +3,15 @@ define [
   'core/Battle/behaviors'
   'core/Battle/World'
   'core/Battle/makeBackgroundImageData'
+  
   'core/Battle/UI/minimap'
-  'core/Battle/gameplay/survival'
-], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, g_survival) ->
+  'core/Battle/gameplay/constructbase'
+], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, ConstructBase) ->
   
   class Battle
   
-    GAMEPLAYMODE : 
-      survival : g_survival
+    MODE : 
+      constructbase : ConstructBase
         
     scroll :
       x : 0
@@ -40,7 +41,7 @@ define [
       @behaviors = new Behaviors(BattleBehaviors(@world, @world.Classes))
       
       # Controller
-      @mode = new @GAMEPLAYMODE['survival'] { battle : @ }
+      @mode = new @MODE.constructbase { battle : @ }
       
       # Various UI components
       @ui =
@@ -58,7 +59,7 @@ define [
       #@mouse.lastX = mx
       #@mouse.lastY = my
       
-      @mode.tick?()
+      @mode.tick()
       @ui.minimap.tick()
       @world.tick()
       
@@ -70,6 +71,7 @@ define [
         for p in @world.Instances[type]
           atom.context.drawSprite(p.gfx())
       
+      @mode.draw()
       @ui.minimap.draw()
         
     _drawBackground : (x = 0, y = 0) ->
