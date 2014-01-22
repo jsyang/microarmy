@@ -39,7 +39,7 @@ define ->
         spriteName = @_getSpriteName()
         opacity = if @_checkIfLocationValid() then 0.75 else 0.3
         
-        atom.context.drawText "Select location to build #{@cart}"
+        atom.context.drawText "Select location to build #{@cart} for team #{@battle.team}"
         atom.context.drawSprite spriteName, mx, @battle.world.height(mx + @battle.scroll.x), 'bottom', 'center', opacity
     
     _checkIfLocationValid : ->
@@ -63,18 +63,18 @@ define ->
       @_constructionComplete()
       
     _constructionComplete : ->
-      @battle.switchMode 'SelectPawn'
+      @battle.switchMode 'SpawnPawn' # 'SelectPawn'
     
     tick : ->
       if @containsCursor()
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()
-            mx = atom.input.mouse.x
+            x = atom.input.mouse.x + @battle.scroll.x
             
             @battle.world.add(
               new @battle.world.Classes[@cart] {
-                x     : mx
-                y     : @battle.world.height(mx)
+                x     : x
+                y     : @battle.world.height(x)
                 team  : @battle.team
               }
             )

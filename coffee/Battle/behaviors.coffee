@@ -43,12 +43,12 @@ define ->
           true
         
         setFacingFrames : ->
-          @frame.first = if @direction>0 then  6   else 0
-          @frame.last  = if @direction>0 then  11  else 5
+          @frame_first = if @direction>0 then  6   else 0
+          @frame_last  = if @direction>0 then  11  else 5
           
           # Make sure we're facing the correct direction immediately.
-          if not( @frame.first <= @frame.current <= @frame.last )
-            @frame.current = @frame.first + (@frame.current % 6)
+          if not( @frame_first <= @frame_current <= @frame_last )
+            @frame_current = @frame_first + (@frame_current % 6)
           true
           
         setInfantryAttackStance : ->
@@ -95,7 +95,7 @@ define ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           (
             # todo: might want to check if this is being triggered on the correct dist
-            if t? and t.distHit(@) <= @img.hDist2
+            if t? and t.distHit(@) <= @hDist2
               t.takeDamage(@damage)
               @damage -= @damageDecay
               @damage = 0 if @damage<0
@@ -177,18 +177,18 @@ define ->
           false
       
         nextFrame : ->
-          @frame.current++
+          @frame_current++
           true
           
         isPastLastFrame : ->
-          @frame.current >= @frame.last
+          @frame_current >= @frame_last
         
         gotoFirstFrame : ->
-          @frame.current = @frame.first
+          @frame_current = @frame_first
           true
         
         isFirstFrame : ->
-          @frame.current is @frame.first
+          @frame_current is @frame_first
         
         hasCyclesRemaining : ->
           @cycles > 0
@@ -361,7 +361,7 @@ define ->
           else
           
             # todo: move this into its own decorator
-            if @CONST.SHOTFRAME[@constructor.name][@frame.current % 6] is '0' then return true
+            if @CONST.SHOTFRAME[@constructor.name][@frame_current % 6] is '0' then return true
             
             accuracy = [0, 0]
             
@@ -598,8 +598,6 @@ define ->
       
         SmallMine           : '[Projectile]'
         SmallChemMine       : '[Projectile]'
-
-        ################################################################################################################################################################
       
         corpseDecay     : '(<[!isPastLastFrame],[nextFrame]>,[rot])'
         animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
@@ -616,9 +614,7 @@ define ->
 
         Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'
         ChemCloud       : '[Flame]'
-        
-        ################################################################################################################################################################
-        
+                
         # Berserk means Infantry charges towards target
         
         #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
@@ -643,8 +639,6 @@ define ->
         InfantryMoveToBuild     : '([!faceTarget],[!setFacingFrames],<[tryInfantryBuild],[remove]>)'
         EngineerInfantryAlive   : '([InfantryMoveToBuild],[InfantryMove])'
         EngineerInfantry        : '(<[isDead],[InfantryDead]>,[EngineerInfantryAlive])'
-      
-        ################################################################################################################################################################
         
         StructureReloading    : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[clearTarget]>)'
         StructureCrewing      : '<[isCrewed],[tryCrewing]>'
@@ -680,8 +674,6 @@ define ->
         SmallTurret           : '[Structure]'
         MissileRack           : '[Structure]'
         MissileRackSmall      : '[Structure]'
-
-        ################################################################################################################################################################
 
         Squad  : '[]'
         #Commander   : '[]'

@@ -30,7 +30,8 @@ define [
     # Make the instances dict so we have an empty structure to add pawn instances to.
     initInstancesDict : (name) ->
       @[name] = {}
-      ( @[name][className] = [] ) for className in @primitiveClasses
+      for className in @primitiveClasses
+        @[name][className] = []
   
     tick : ->
       @createNewXHash()
@@ -64,7 +65,7 @@ define [
       
     height : (p) ->
       # Can use either a Pawn or an X value as the query
-      x = if isNaN(p) then p.x>>0 else p>>0
+      x = if isNaN(p) then p.x >> 0 else p >> 0
       @heightmap[x]
   
     contains : (entity) ->
@@ -81,8 +82,6 @@ define [
         xh.add entity unless !entity.isTargetable()
         if entity.corpsetime > 0
           return i[type].push entity
-        else
-          return
         
     constructor : (params) ->
       @[k]  = v for k, v of params

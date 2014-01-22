@@ -12,6 +12,53 @@ module.exports = function(grunt) {
     'coffee/Battle/View/*.coffee'
   ];
   
+  var gfxFiles = [
+    './gfx/MainMenu/',
+    './gfx/ammodump/',
+    './gfx/ammodumpsmall/',
+    './gfx/barracks/',
+    './gfx/chemcloud/',
+    './gfx/chemmine/',
+    './gfx/commcenter/',
+    './gfx/depot/',
+    './gfx/engineerinfantry/',
+    './gfx/explosion0/',
+    './gfx/explosion1/',
+    './gfx/explosion2/',
+    './gfx/explosion3/',
+    './gfx/firesmall0/',
+    './gfx/firesmall1/',
+    './gfx/firetiny0/',
+    './gfx/firetiny1/',
+    './gfx/firetiny2/',
+    './gfx/heli/',
+    './gfx/helipad/',
+    './gfx/mine/',
+    './gfx/missilegray/',
+    './gfx/missilepurple/',
+    './gfx/missilerack/',
+    './gfx/missileracksmall/',
+    './gfx/missilered/',
+    './gfx/pillbox/',
+    './gfx/pistolinfantry/',
+    './gfx/pistolshell/',
+    './gfx/relay/',
+    './gfx/repairbay/',
+    './gfx/rocketinfantry/',
+    './gfx/rocketshell/',
+    './gfx/scaffold/',
+    './gfx/smokelarge/',
+    './gfx/smokesmall/',
+    './gfx/turret/',
+    './gfx/turretshell/',
+    './gfx/watchtower/'
+  ];
+  
+  gfxFiles.push('./gfx/');
+  for (var i=gfxFiles.length; i-->0;) {
+    gfxFiles[i] += '*.png';
+  }
+  
   /* ex:
    * {
    *    'core/*.js' : 'coffee/*.coffee'
@@ -97,35 +144,7 @@ module.exports = function(grunt) {
     
     sprite: {
       all: {
-        src: [
-          "./gfx/*.png",
-          "./gfx/MainMenu/*.png",
-          
-          "./gfx/barracks/*.png",
-          "./gfx/ammodump/*.png",
-          "./gfx/ammodumpsmall/*.png",
-          "./gfx/barracks/*.png",
-          "./gfx/chemmine/*.png",
-          "./gfx/commcenter/*.png",
-          "./gfx/engineerinfantry/*.png",
-          "./gfx/helipad/*.png",
-          "./gfx/mine/*.png",
-          "./gfx/missilerack/*.png",
-          "./gfx/missileracksmall/*.png",
-          "./gfx/pillbox/*.png",
-          "./gfx/pistolinfantry/*.png",
-          "./gfx/pistolshell/*.png",
-          "./gfx/relay/*.png",
-          "./gfx/repairbay/*.png",
-          "./gfx/rocketinfantry/*.png",
-          "./gfx/rocketshell/*.png",
-          "./gfx/scaffold/*.png",
-          "./gfx/smokelarge/*.png",
-          "./gfx/smokesmall/*.png",
-          "./gfx/turret/*.png",
-          "./gfx/turretshell/*.png",
-          "./gfx/watchtower/*.png"
-        ],
+        src: gfxFiles,
         destImg: "./core/spritesheet.png",
         destCSS: "./core/spritesheet.json",
         algorithm: 'binary-tree',

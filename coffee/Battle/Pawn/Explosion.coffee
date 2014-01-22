@@ -3,148 +3,129 @@ define [
 ], (Pawn) ->
 
   class Explosion extends Pawn
-    constructor : (_) ->
-      @_ = $.extend {
-        targetable  : false # Don't want to be able to target explosions
-        damage      : 0
-        damageDecay : 2     # How much will damage decay if we've splash-damaged a bunch of stuff
-        corpsetime  : 1
-      }, _
-      soundManager.play(@_.sound) if @_.sound?
-      super @_
+    targetable    : false # Don't want to be able to target explosions
+    damage        : 0
+    damageDecay   : 2     # How much will damage decay if we've splash-damaged a bunch of stuff
+    corpsetime    : 1
+    frame_current : 0
     
-    gfx : ->
-      {
-        img     : @_.img.sheet
-        imgdx   : @_.frame.current*@_.img.w
-        imgdy   : 0
-        worldx  : @_.x-(@_.img.w>>1)
-        worldy  : @_.y-(@_.img.h>>1)
-        imgw    : @_.img.w
-        imgh    : @_.img.h
-      }
-
+    # _name # sprite name
+    
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      atom.playSound @sound if @sound?
+      @damage = $.R(@minDamage, @maxDamage) if @maxDamage?
+      
+    getName : ->
+      "#{@spriteName}-#{@frame_current}"
+    
   class FragExplosion extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        sound   : 'expfrag'
-        damage  : $.R(28,55)
-        frame   : { current : 0, last : 8 }
-        img     : { w : 41, h : 35, hDist2 : 400, sheet : preloader.getFile('exp1') }
-      }, _
-      super @_
+    # CAVEAT: Nesting objects in the prototype will keep the refs to the same object in the prototype...
+    spriteName    : 'explosion2'
+    sound         : 'expfrag'
+    minDamage     : 28
+    maxDamage     : 55
+    hDist2        : 400
+    frame_last    : 8
       
   class SmallExplosion extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        sound       : 'expsmall'
-        damage      : $.R(12,29)
-        damageDecay : 1
-        frame       : { current : 0, last : 12 }
-        img         : { w : 25, h : 17, hDist2 : 160, sheet : preloader.getFile('exp2') }
-      }, _
-      super @_
+    spriteName    : 'explosion1'
+    sound         : 'expsmall'
+    minDamage     : 12
+    maxDamage     : 29
+    hDist2        : 160
+    damageDecay   : 1
+    frame_last    :12
   
   class FlakExplosion extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        sound       : 'expsmall'
-        damage      : $.R(11,47)
-        damageDecay : 4
-        frame       : { current : -1, last : 6 }
-        img         : { w : 24, h : 17, hDist2 : 260, sheet : preloader.getFile('exp0') }
-      }, _
-      super @_
+    spriteName  : 'explosion0'
+    sound       : 'expsmall'
+    minDamage   : 11
+    maxDamage   : 30
+    hDist2      : 260
+    damageDecay : 1
+    frame_last  : 6
   
   class HEAPExplosion extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        sound       : 'exp2big'
-        damage      : $.R(65,95)
-        damageDecay : 1
-        frame       : { current : -1, last : 22 }
-        img         : { w : 41, h : 28, hDist2 : 460, sheet : preloader.getFile('exp2big') }
-      }, _
-      super @_
+    spriteName  : 'explosion3'
+    sound       : 'exp2big'
+    minDamage   : 65
+    maxDamage   : 95
+    hDist2      : 460
+    damageDecay : 1
+    frame_last  : 22
   
   class ChemExplosion extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        sound       : 'chemspray'
-        damage      : $.R(11,18)
-        damageDecay : 1
-        frame       : { current : -1, last : 3 }
-        img         : { w : 20, h : 20, hDist2 : 360, sheet : preloader.getFile('chemexp') }
-      }, _
-      super @_
+    # todo : no explosion sprite for this yet
+    spriteName  : 'explosion4'
+    sound       : 'chemspray'
+    minDamage   : 11
+    maxDamage   : 18
+    hDist2      : 360
+    damageDecay : 1
+    frame_last  : 3
       
   class ChemCloud extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        damage      : 4
-        damageDecay : 0
-        cycles      : $.R(100,200)
-        driftdx     : $.R(0,1)
-        frame       : { current : $.R(0,2), last : 2 }
-        img         : { w : 20, h : 20, hDist2 : 400, sheet : preloader.getFile('chemcloud') }
-      }, _
-      super @_
+    # todo: no sprites for this yet
+    spriteName  : 'chemcloud'
+    sound       : 'chemspray'
+    hDist2      : 400
+    frame_last  : 2
+    damage      : 4
+    damageDecay : 0
+    
+    constructor : ->
+      super @
+      @cycles  = $.R(100,200)
+      @driftdx = $.R(0,1)
+      @frame_current = $.R(0,2)
   
 # Smoke (explosions that don't have any effects) # # # # # # #
 
   class SmokeCloud extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        damage      : 0
-        frame       : { current : -1, last : 6 }
-        img         : { w : 19, h : 17, sheet : preloader.getFile('smoke') }
-      }, _
-      super @_
-  
+    spriteName  : 'smokelarge'
+    frame_last  : 6
+        
   class SmokeCloudSmall extends Explosion
-    constructor : (_) ->
-      @_ = $.extend {
-        damage      : 0
-        frame       : { current : -1, last : 3 }
-        img         : { w : 8, h : 13, sheet : preloader.getFile('smokesmall') }
-      }, _
-      super @_
+    spriteName  : 'smokesmall'
+    frame_last  : 3
   
   class Flame extends Explosion
-    chooseFlame : ->
+    constructor : ->
+      super @
       flameType = $.r(40)
       if flameType < 4
-        flame =
-          img   : { w : 10, h : 11, sheet : preloader.getFile('firemedium0') }
-          frame : { current : $.R(0,64), last : 64 }
-          cycles: $.R(1,4)
+        @spriteName     = 'firesmall0'
+        @cycles         = $.R(1,4)
+        @frame_last     = 64
+        @frame_current  = $.R(0,64)
+        
       else if flameType < 7
-        flame =
-          img   : { w : 23, h : 23, sheet : preloader.getFile('firemedium1') }
-          frame : { current : $.R(0,14), last : 14 }
-          cycles: $.R(2,14)
+        @spriteName     = 'firesmall1'
+        @cycles         = $.R(2,14)
+        @frame_current  = $.R(0,14)
+        @frame_last     = 14
+        
       else
-        flame =
-          img   : { w : 6, h : 4, sheet : preloader.getFile('firesmall'+$.R(0,2)) }
-          frame : { current : $.R(0,4), last : 4 }
-          cycles: $.R(2,20)
+        variant         = $.R(0,2)
+        @spriteName     = 'firetiny#{variant}'
+        @cycles         = $.R(2,20)
+        @frame_current  = $.R(0,4)
+        @frame_last     = 4
   
-    constructor : (_) ->
-      @_ = $.extend @chooseFlame(), _
-      super @_
+  exportClasses = {
+    Explosion
+    FragExplosion
+    SmallExplosion
+    FlakExplosion
+    HEAPExplosion
+    ChemExplosion
+    
+    SmokeCloud
+    SmokeCloudSmall
+    Flame
+    ChemCloud
+  }
   
-  # export
-  (Classes) ->
-    $.extend(Classes, {
-      Explosion
-      FragExplosion
-      SmallExplosion
-      FlakExplosion
-      HEAPExplosion
-      ChemExplosion
-      
-      SmokeCloud
-      SmokeCloudSmall
-      Flame
-      ChemCloud
-    })
+  # Attach all these classes to the "importer" object.
+  (importer) -> importer[k] = v for k, v of exportClasses

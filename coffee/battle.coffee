@@ -7,13 +7,15 @@ define [
   'core/Battle/UI/minimap'
   'core/Battle/gameplay/constructbase'
   'core/Battle/gameplay/selectpawn'
-], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, ConstructBase, SelectPawn) ->
+  'core/Battle/gameplay/spawnpawn'
+], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, ConstructBase, SelectPawn, SpawnPawn) ->
   
   class Battle
   
     MODE : {
       ConstructBase
       SelectPawn    # nothing selected, idling UI
+      SpawnPawn
       #CommandPawn  # unit(s) selected, awaiting commands
     }
         
@@ -65,7 +67,7 @@ define [
           when 'Structure', 'Infantry'
             valign = 'bottom'
             halign = 'center'
-          when 'Projectile'
+          when 'Projectile', 'Explosion'
             valign = 'middle'
             halign = 'center'
             

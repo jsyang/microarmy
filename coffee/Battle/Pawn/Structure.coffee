@@ -31,9 +31,11 @@ define [
       dx = pawn.x
       dy = pawn.y
       
+      @_halfHeight = GFXINFO[@getName()].height >> 1 unless @_halfHeight?
+      
       dx = Math.abs(@x - dx)
-      # todo : need to use GFXINFO[name] for this
-      dy = Math.abs(@y - (@img.h>>1)) - dy
+      dy = Math.abs(@y - @_halfHeight) - dy
+      
       dx*dx + dy*dy
 
     takeDamage : (dmg) ->
