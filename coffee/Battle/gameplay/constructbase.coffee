@@ -97,6 +97,10 @@ define ['core/Battle/UI'], (BattleUI) ->
     
     tick : ->
       if @containsCursor()
+        if atom.input.pressed('keyW')
+          @battle.team++
+          @battle.team %= 2
+          
         if atom.input.pressed('keyA')
           @direction = 0
         else if atom.input.pressed('keyD')

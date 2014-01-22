@@ -24,7 +24,7 @@ define [
       x : 0
       y : 0
     
-    team : 1
+    team : 0
     
     constructor : (params) ->
       @[k] = v for k, v of params
