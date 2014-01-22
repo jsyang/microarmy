@@ -180,8 +180,11 @@ define ->
           @frame_current++
           true
           
+        isLastFrame : ->
+          @frame_current is @frame_last
+          
         isPastLastFrame : ->
-          @frame_current >= @frame_last
+          @frame_current > @frame_last
         
         gotoFirstFrame : ->
           @frame_current = @frame_first
@@ -599,17 +602,17 @@ define ->
         SmallMine           : '[Projectile]'
         SmallChemMine       : '[Projectile]'
       
-        corpseDecay     : '(<[!isPastLastFrame],[nextFrame]>,[rot])'
-        animate         : '([!nextFrame],<[isPastLastFrame],[decrementCycles],[gotoFirstFrame]>,[TRUE])'
+        corpseDecay     : '(<[!isLastFrame],[nextFrame]>,[rot])'
+        animate         : '(<[isLastFrame],[decrementCycles],[gotoFirstFrame]>,[nextFrame])'
       
-        Explosion       : '(<[isPastLastFrame],[remove]>,[!nextFrame],[explode])'
+        Explosion       : '(<[isLastFrame],[remove]>,[!nextFrame],[explode])'
         SmallExplosion  : '[Explosion]'
         FragExplosion   : '[Explosion]'
         FlakExplosion   : '[Explosion]'
         HEAPExplosion   : '[Explosion]'
         ChemExplosion   : '[Explosion]'
         
-        SmokeCloud      : '(<[isPastLastFrame],[remove]>,[!nextFrame])'
+        SmokeCloud      : '(<[isLastFrame],[remove]>,[!nextFrame])'
         SmokeCloudSmall : '[SmokeCloud]'
 
         Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'

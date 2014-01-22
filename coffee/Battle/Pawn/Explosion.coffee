@@ -91,8 +91,11 @@ define [
     frame_last  : 3
   
   class Flame extends Explosion
-    constructor : ->
-      super @
+    frame_first : 0
+    
+    constructor : (params) ->
+      super params
+      
       flameType = $.r(40)
       if flameType < 4
         @spriteName     = 'firesmall0'

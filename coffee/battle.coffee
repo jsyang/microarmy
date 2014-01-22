@@ -73,7 +73,8 @@ define [
             
         for p in @world.Instances[type]
           x = p.x - @scroll.x
-          if -@scroll.margin < x < atom.width + @scroll.margin
+          
+          if -@scroll.margin < x < atom.width + @scroll.margin and !p.isPendingRemoval()
             atom.context.drawSprite(p.getName(), x, p.y, valign, halign)
       
       @mode.draw()
