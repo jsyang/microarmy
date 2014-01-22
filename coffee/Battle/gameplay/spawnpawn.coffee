@@ -1,30 +1,45 @@
-define ->
+define ['core/Battle/UI'], (BattleUI) ->
   
-  EXPLOSIONS = [
-    'FragExplosion'
-    'SmallExplosion'
-    'FlakExplosion'
-    'HEAPExplosion'
-    'ChemExplosion'
-    'SmokeCloud'
-    'SmokeCloudSmall'
-    'Flame'
-    'ChemCloud'
+  CLASSES = [
+    'CommCenter'
+    'Barracks'
+    'Scaffold'
+    'CommRelay'
+    'WatchTower'
+    'AmmoDump'
+    'AmmoDumpSmall'
+    'MineFieldSmall'
+    'Depot'
+    'RepairYard'
+    'Helipad'
+    'Pillbox'
+    'SmallTurret'
+    'MissileRack'
+    'MissileRackSmall'
+    'HomingMissile'
+    'HomingMissileSmall'
+    #'PistolInfantry'
+    #'RocketInfantry'
+    #'EngineerInfantry'
+    #'FragExplosion'
+    #'SmallExplosion'
+    #'FlakExplosion'
+    #'HEAPExplosion'
+    ##'ChemExplosion'
+    #'SmokeCloud'
+    #'SmokeCloudSmall'
+    #'Flame'
+    #'ChemCloud'
   ]
   
-  class SpawnPawn
-    x         : 0
-    y         : 0
+  class SpawnPawn extends BattleUI
+    x    : 0
+    y    : 0
+    team : 0
     
-    index     : 0
-    className : 'FragExplosion'
-    team      : 0
-      
-    containsPoint : (x, y) ->
-      return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
+    index : 0
     
-    containsCursor : ->
-      @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
+    CLASSES : CLASSES
     
     constructor : (params) ->
       @[k]  = v for k, v of params
@@ -32,35 +47,52 @@ define ->
       @h    = @battle.world.h
     
     draw : ->
-      atom.context.drawText "Click = create #{@className}\nTeam = #{@team}\nWASD = change class / team"
+      teamName = [
+        'blue'
+        'green'
+      ][@team]
+      
+      directionName = [
+        'left'
+        'right'
+      ][@direction]
+      
+      instructionText = [
+        "Click to create #{CLASSES[@index]} for #{teamName} team"
+        "Press A / D to face left / right :: facing #{directionName}"
+        "Press W to toggle team"
+        "Press S to select entity"
+      ]
+      atom.context.drawText instructionText
       
     tick : ->
-      # Previous / next class
-      if atom.input.pressed('keyA') or atom.input.pressed('keyD')
+      if @containsCursor()
+        # Direction
         if atom.input.pressed('keyA')
-          @index--
-        else
+          @direction = 0
+        else if atom.input.pressed('keyD')
+          @direction = 1
+        
+        # Class
+        if atom.input.pressed('keyS')
           @index++
+          @index = 0 if @index >= CLASSES.length
+        
+        # Team
+        if atom.input.pressed('keyW')
+          @team++
+          @team %= 2
+        
+        # Spawn this thing!
+        if atom.input.pressed('mouseleft')
+          mx = atom.input.mouse.x
+          my = atom.input.mouse.y
           
-        @index = EXPLOSIONS.length - 1 if @index < 0
-        @index = 0 if @index >= EXPLOSIONS.length
-        
-        @className = EXPLOSIONS[@index]
-        
-      
-      if atom.input.pressed('keyW') or atom.input.pressed('keyS')
-        @team++
-        @team %= 2
-        
-      
-      if @containsCursor() and atom.input.pressed('mouseleft')
-        mx = atom.input.mouse.x
-        my = atom.input.mouse.y
-        
-        pawn = new @battle.world.Classes[@className] {
-          x     : mx + @battle.scroll.x
-          y     : my
-          team  : @team
-        }
-        
-        @battle.world.add pawn
+          pawn = new @battle.world.Classes[CLASSES[@index]] {
+            x         : mx + @battle.scroll.x
+            y         : my
+            team      : @team
+            direction : @direction
+          }
+          
+          @battle.world.add pawn

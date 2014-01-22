@@ -2,12 +2,13 @@ define [
   'core/battle/testSector'
 ], (testSectors) ->
   
+  # jsyang: wtf do these mean?
   params =
     sectorW           : 1024
     sectorHeightMult  : 18    # height 1 = 24 pixels
     peakMarginMin     : 32
     peakMarginMax     : 128
-    peakDev           : 32
+    peakDev           : 24    # 32
     peakMinH          : 16
   
   # Make all the peaks in one sector
@@ -56,6 +57,4 @@ define [
     heightmap
   
   # add terrain heightmap to battle world
-  (world) ->
-    if world.w? and world.h?
-      world.heightmap = makeHeightMap(testSectors, world.w, world.h)
+  (world) -> world.heightmap = makeHeightMap(testSectors, world.w, world.h)

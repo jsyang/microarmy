@@ -1,21 +1,27 @@
-define ->
+define ['core/Battle/UI'], (BattleUI) ->
   
-  class ConstructBase
-    x : 0
-    y : 0
+  class ConstructBase extends BattleUI
+    
     direction : 0
-    
-    containsPoint : (x, y) ->
-      return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
-    
-    containsCursor : ->
-      @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
     
     # Base starter kit
     inventory :
-      Barracks  : 1
-      Pillbox   : 1
-        
+      'CommCenter'        : 1
+      'CommRelay'         : 1
+      'WatchTower'        : 1
+      'AmmoDump'          : 1
+      'AmmoDumpSmall'     : 1
+      'Pillbox'           : 1
+      #'MineFieldSmall'    : 1
+      'SmallTurret'       : 1
+      'MissileRack'       : 1
+      'MissileRackSmall'  : 1 
+      'Scaffold'          : 1
+      'Barracks'          : 1
+      # 'Depot'
+      # 'RepairYard'
+      # 'Helipad'
+      
     cart : 'Barracks'
       
     constructor : (params) ->
@@ -25,11 +31,13 @@ define ->
       @_cullInventory()
       
     _getSpriteName : ->
-      name      = @cart.toLowerCase()
-      direction = @direction
-      state     = 0
-      
-      "#{name}-#{@battle.team}-#{@direction}-#{state}"
+      if not @_tempInstance?
+        @_tempInstance = new @battle.world.Classes[@cart] {
+          team      : @battle.team
+          direction : @direction
+        }
+      @_tempInstance.direction = @direction
+      @_tempInstance.getName()
     
     draw : ->
       mx = atom.input.mouse.x
@@ -39,11 +47,11 @@ define ->
         spriteName = @_getSpriteName()
         isLocationValid = @_checkIfLocationValid()
         if isLocationValid
-          opacity = 0.75
+          opacity = 0.6
         else
           margin = GFXINFO[spriteName].height + 20
           atom.context.drawText "Cannot build here", mx - 46, @battle.world.height(mx + @battle.scroll.x) - margin, "#ff0000"
-          opacity = 0.3
+          opacity = 0.2
         
         directionName = [
           'left'
@@ -57,9 +65,7 @@ define ->
           
         instructionText = [
           "Click location to build #{@cart} for #{teamName} team"
-          "(Facing #{directionName})"
-          "Press A to build facing left\n"
-          "Press D to build facing right"
+          "Press A / D to build facing left / right :: facing #{directionName}"
         ]
                           
         atom.context.drawText instructionText
@@ -82,6 +88,7 @@ define ->
     _cullInventory : (entity) ->
       @inventory[entity]-- if @inventory[entity]?
       delete @inventory[entity] if @inventory[entity] is 0
+      delete @_tempInstance
       return @cart = k for k, v of @inventory
       @_constructionComplete()
       

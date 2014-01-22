@@ -1,11 +1,26 @@
-define [
-  'core/Battle/Pawn'
-], (Pawn) ->
+define ['core/Battle/Pawn'], (Pawn) ->
 
   STATE =
     GOOD  : 0
     BAD   : 1
     WRECK : 2
+    
+  SCAFFOLD_BUILD_REQUIREMENTS =
+    'Pillbox'           : 4
+    'MissileRack'       : 8
+    'MissileRackSmall'  : 1
+    'SmallTurret'       : 6
+    'Barracks'          : 16
+    'CommCenter'        : 60
+    'MineFieldSmall'    : 1
+    'AmmoDumpSmall'     : 1
+    'AmmoDump'          : 2
+
+  VARIABLESTATS = [
+    'health_current'
+    'health_max'
+  ]
+    
 
   class Structure extends Pawn
     
@@ -30,33 +45,35 @@ define [
     distHit : (pawn) ->
       dx = pawn.x
       dy = pawn.y
-      
-      @_halfHeight = GFXINFO[@getName()].height >> 1 unless @_halfHeight?
-      
       dx = Math.abs(@x - dx)
       dy = Math.abs(@y - @_halfHeight) - dy
       
       dx*dx + dy*dy
 
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      name = @getName()
+      @_halfHeight = GFXINFO[name].height >> 1
+      @_setVariableStats
+      
+    _setVariableStats : ->
+      @[stat] = $.R.apply(@, @[stat]) for stat in VARIABLESTATS when @[stat] instanceof Array
+
     takeDamage : (dmg) ->
       if dmg > 0
-        @health.current -= dmg
+        @health_current -= dmg
         
-        if @health.current <= 0
-          @health.current = 0
+        if @health_current <= 0
+          @health_current = 0
           @state = @STATE.WRECK
           
-        else if @health.current < 0.6 * @health.max
+        else if @health_current < 0.6 * @health_max
           @state = @STATE.BAD
-
   
   class CommCenter extends Structure
     hDist2 : 196
-    
-    health :
-      # todo : fix these
-      current : $.R(2100,2500)
-      max     : $.R(2500,2600)
+    health_current : [2100, 2500]
+    health_max     : [2500, 2600]
   
     reinforce :
       ing  : 0
@@ -78,10 +95,8 @@ define [
   
   class Barracks extends Structure
     hDist2 : 169
-    
-    health :
-      current : $.R(1800,1950)
-      max     : $.R(1950,2500)
+    health_current : [1800, 1950]
+    health_max     : [1950, 2500]
       
     reinforce :
       ing   : 0
@@ -103,52 +118,29 @@ define [
   class Scaffold extends Structure
     hDist2 : 64
     
-    health :
-      current : $.R(360,400)
-      max     : $.R(400,450)
+    health_current : [360, 400]
+    health_max     : [400, 450]
     
     build :
       type : 'Pillbox'
     
     crew :
       current   : 1
-      max       :
-        'Pillbox'           : 4
-        'MissileRack'       : 8
-        'MissileRackSmall'  : 1
-        'SmallTurret'       : 6
-        'Barracks'          : 16
-        'CommCenter'        : 60
-        'MineFieldSmall'    : 1
-        'AmmoDumpSmall'     : 1
-        'AmmoDump'          : 2
+      max : SCAFFOLD_BUILD_REQUIREMENTS
+        
       occupied  : 'scaffold'
       empty     : 'scaffold_'
       
       damageThreshold : 5
       damageChance    : 1
   
-  # todo: finish this structure
-  class CommRelay extends Structure
-    hDist : 220
-    health :
-      current : $.R(560,600)
-      max     : $.R(600,750)
-    
-  # todo: finish this structure
-  class WatchTower extends Structure
-    hDist : 196      
-    sight : 13
-    health :
-      current : $.R(300,350)
-      max     : $.R(360,400)
+  
   
   class AmmoDump extends Structure
     hDist2 : 100
     sight  : 6
-    health :
-      current : $.R(80,120)
-      max     : $.R(130,150)
+    health_current : [80,  120]
+    health_max     : [130, 150]
     reload :
       ing   : 0
       time  : 500
@@ -158,40 +150,48 @@ define [
   
   class AmmoDumpSmall extends Structure
     hDist2 : 25
-    health :
-      current : $.R(80,120)
-      max     : $.R(130,150)
+    health_current : [80,  120]
+    health_max     : [130, 150]
     reload :
       ing   : 0
       time  : 300
     supply :
       HomingMissileSmall  : $.R(30,40)
     sight : 5
-    
+    getName : ->
+      "#{@constructor.name.toLowerCase()}-#{@team}"
+  
   class MineFieldSmall extends Structure
     corpsetime : 0
     maxMines   : 4
     # todo: have these spawn some mines
 
-  # todo: needs a purpose
-  class Depot extends Structure
+  class Depot extends Structure # future.
     hDist2 : 260
   
-  # todo: needs a purpose
   class RepairYard extends Structure
     hDist2 : 196
       
-  # todo: needs a purpose
-  class Helipad extends Structure
+  class Helipad extends Structure # future.
     hDist2 : 130
+  
+  class CommRelay extends Structure # future.
+    hDist : 220
+    health_current : [560, 600]
+    health_max     : [600, 750]
+    
+  class WatchTower extends Structure # future.
+    hDist : 196      
+    sight : 13
+    health_current : [300, 350]
+    health_max     : [360, 400]
   
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   
   class Pillbox extends Structure
     hDist2 : 64
-    health :
-      current : $.R(800,900)
-      max     : $.R(800,1100)
+    health_current : [800, 900]
+    health_max     : [800, 1100]
     reload :
       ing   : 0
       time  : 50
@@ -212,16 +212,16 @@ define [
   
   class SmallTurret extends Structure
     hDist2 : 90
-    health :
-      current : $.R(1900,2100)
-      max     : $.R(2100,2300)
+    health_current : [1900, 2100]
+    health_max     : [2100, 2300]
     reload :
       ing   : 0
       time  : 90
-    turn :
-      ing     : 0
-      current : 0
-      last    : 4
+      
+    turn_ing     : 0
+    turn_current : 0
+    turn_last    : 4
+    
     ammo :
       clip  : 1
       max   : 1
@@ -229,69 +229,38 @@ define [
     sight       : 5
     projectile  : 'SmallShell'
     
-    # todo : convert this
-    gfx : ->
-      # turning graphics
-      imgdy = if @_.state!=@CONST.STATE.WRECK then @_.state*45+@_.img.h*@_.turn.current else 90
-      imgdx = if @_.direction>0 then @_.img.w else 0
-      {
-        img     : @_.img.sheet
-        imgdx
-        imgdy
-          
-        worldx  : @_.x-(@_.img.w>>1)
-        worldy  : @_.y-@_.img.h+1
-        imgw    : @_.img.w
-        imgh    : @_.img.h
-      }
+    getName : ->
+      "turret-#{@team}-#{@direction}-#{@state}-#{@turn_current}"
   
   class MissileRack extends Structure
     hDist2 : 64
     sight : 13
-    health :
-      current : $.R(200,280)
-      max     : $.R(280,300)
+    health_current : [200, 280]
+    health_max     : [280, 300]
     projectile : 'HomingMissile'
     reload :
       ing   : 240
       time  : 2900
-    ammo :
-      clip      : 1
-      max       : 1
-      supply    : 3
-      maxSupply : 3
-    shootDy : -20
+
+    ammo_clip      : 1
+    ammo_max       : 1
+    ammo_supply    : 3
+    ammo_maxSupply : 3
     
-    # todo : convert this  
-    gfx : ->
-      imgdy = @_.img.h
-      if @_.health.current>0
-        if @_.ammo.supply>0 
-          if @_.ammo.clip
-            imgdy = 0
-          else if !@_.ammo.clip and @_.reload.ing<40
-            imgdy = 0
+    shootDy : -20
+    getName : ->
+      if @reload_ing > 40 or @health_current <= 0
+        hasAmmo = 0
       else
-        imgdy = @_.img.h<<1
+        hasAmmo = 1
         
-      imgdx = if @_.direction>0 then @_.img.w else 0
-      
-      {
-        img     : @_.img.sheet
-        imgdx
-        imgdy 
-        worldx  : @_.x-(@_.img.w>>1)
-        worldy  : @_.y-@_.img.h+1
-        imgw    : @_.img.w
-        imgh    : @_.img.h
-      }
+      "missilerack-#{@team}-#{@direction}-#{@state}-#{hasAmmo}"
   
   class MissileRackSmall extends Structure
     hDist2 : 18
     sight : 9
-    health :
-      current : $.R(100,180)
-      max     : $.R(180,200)
+    health_current : [100, 180]
+    health_max     : [180, 200]
     projectile : 'HomingMissileSmall'
     canTargetAircraft : true
     reload :
@@ -303,12 +272,16 @@ define [
       supply    : 12
       maxSupply : 12
     shootDy : -8
-    
-    # todo : convert this
-    gfx : MissileRack.prototype.gfx
+    getName : ->
+      if @reload_ing > 40 or @health_current <= 0
+        hasAmmo = 0
+      else
+        hasAmmo = 1
+        
+      "missileracksmall-#{@team}-#{@direction}-#{@state}-#{hasAmmo}"
   
   exportClasses = {
-    Structure # needed for instanceof check in World::add()
+    Structure
     CommCenter
     Barracks
     Scaffold

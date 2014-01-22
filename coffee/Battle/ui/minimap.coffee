@@ -1,6 +1,6 @@
-define ->
+define ['core/Battle/UI'], (BattleUI) ->
   
-  class BattleUIMiniMap
+  class BattleUIMiniMap extends BattleUI
     x : 0
     y : 500
     scale : 2
@@ -50,9 +50,6 @@ define ->
           d[c+1] = color.g
           d[c+2] = color.b
           d[c+3] = 0xFF
-    
-    containsPoint : (x, y) ->
-      return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
       
     draw : ->
       atom.context.putImageData(@_backgroundImgData, @x, @y)
@@ -70,9 +67,6 @@ define ->
       atom.context.strokeRect(@x + x, @y + y, w, @h-1)
       atom.context.restore()
     
-    containsCursor : ->
-      @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
-    
     tick : ->
       # bug: dragging the cursor from the battle view into the minimap will scroll the minimap!
       if @containsCursor() and atom.input.down('mouseleft')
@@ -81,6 +75,3 @@ define ->
         x = 0 if x < 0
         x = @w - (viewMargin<<1) if x + (viewMargin<<1) > @w
         @world.battle.scroll.x = x << @scale
-    
-    
-    
