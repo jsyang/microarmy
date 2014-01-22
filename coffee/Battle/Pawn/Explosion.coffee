@@ -53,7 +53,7 @@ define [
     maxDamage   : 95
     hDist2      : 460
     damageDecay : 1
-    frame_last  : 22
+    frame_last  : 21
   
   class ChemExplosion extends Explosion
     # todo : no explosion sprite for this yet
@@ -108,7 +108,7 @@ define [
         
       else
         variant         = $.R(0,2)
-        @spriteName     = 'firetiny#{variant}'
+        @spriteName     = "firetiny#{variant}"
         @cycles         = $.R(2,20)
         @frame_current  = $.R(0,4)
         @frame_last     = 4

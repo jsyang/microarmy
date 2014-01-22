@@ -127,9 +127,11 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
+          almond: true,
           optimize: "none", //"uglify",
           baseUrl: "./",
           name: "lib/almond.js",
+          wrap:true,
           include: [
             "core/init"
           ],

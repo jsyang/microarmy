@@ -52,7 +52,8 @@ define ->
         @team++
         @team %= 2
         
-      if atom.input.pressed('mouseleft')
+      
+      if @containsCursor() and atom.input.pressed('mouseleft')
         mx = atom.input.mouse.x
         my = atom.input.mouse.y
         
