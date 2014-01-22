@@ -175,10 +175,7 @@ define [
     run: ->
       return if @running
       @running = true
-  
-      # jsyang: Set target FPS
-      @_FPSTHRESHOLD = 1000 / @TARGETFPS
-  
+
       s = =>
         @step()
         # jsyang: Need this limiter here otherwise CPU climbs to 100%.
@@ -188,26 +185,30 @@ define [
   
       @last_step = Date.now()
       @frameRequest = window.requestAnimationFrame s
-    TARGETFPS : 40
+    
     stop: ->
       cancelAnimationFrame @frameRequest if @frameRequest
       clearTimeout(@_frametimer)
       @frameRequest = null
       @running = false
+
+    #step: ->
+    #  now = Date.now()
+    #  dt = (now - @last_step) * 0.001
+    #  @last_step = now
+    #  @update dt
+    #  @draw()
+
+    FPSTHRESHOLD : 1000 / 40 # TARGETFPS = 40
+    
     step: ->
       now = Date.now()
-      #dt = (now - @last_step) * 0.001
-      #@last_step = now
-      #@update dt
-      #@draw()
-
       dt = now - @last_step
-      if dt >= @_FPSTHRESHOLD
+      if dt >= @FPSTHRESHOLD
         @last_step = now
         # Expensive step here.
         @update()
         atom.input.clearPressed()
-        
       @draw()
         
   atom.Game = Game
