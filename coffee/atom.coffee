@@ -176,15 +176,19 @@ define [
       return if @running
       @running = true
   
+      # jsyang: Set target FPS
+      @_FPSTHRESHOLD = 1000 / @TARGETFPS
+  
       s = =>
         @step()
-        # Need this limiter here otherwise CPU climbs to 100%.
+        # jsyang: Need this limiter here otherwise CPU climbs to 100%.
         # Browser is so fast that it requests a frame nearly every ms.
         # a la http://code.bytespider.eu/post/20484989272/requestanimationframe-and-html5-game-loops
-        @_frametimer = setTimeout(=> @frameRequest = window.requestAnimationFrame s, 60) # jsyang: adjust this number
+        @_frametimer = setTimeout(=> @frameRequest = window.requestAnimationFrame s, 20)
   
       @last_step = Date.now()
       @frameRequest = window.requestAnimationFrame s
+    TARGETFPS : 40
     stop: ->
       cancelAnimationFrame @frameRequest if @frameRequest
       clearTimeout(@_frametimer)
@@ -192,12 +196,20 @@ define [
       @running = false
     step: ->
       now = Date.now()
-      dt = (now - @last_step) * 0.001
-      @last_step = now
-      @update dt
+      #dt = (now - @last_step) * 0.001
+      #@last_step = now
+      #@update dt
+      #@draw()
+
+      dt = now - @last_step
+      if dt >= @_FPSTHRESHOLD
+        @last_step = now
+        # Expensive step here.
+        @update()
+        atom.input.clearPressed()
+        
       @draw()
-      atom.input.clearPressed()
-  
+        
   atom.Game = Game
   
   ## Images
