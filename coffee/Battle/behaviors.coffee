@@ -1,9 +1,8 @@
 define ->
   (World, Classes) ->
-    {      
-      Decorators :
-        # todo: Each of these decorators is a unit... easily unit tested
-        
+    {
+      # todo: Each of these decorators is a unit... easily unit tested
+      Decorators :        
         TRUE  : true
         FALSE : false
         
@@ -11,7 +10,7 @@ define ->
         
         hasHitGround : ->
           if !World.contains(@)
-            @x -= @dx>>1 if @dx?
+            @x -= @dx >> 1 if @dx?
             @y = World.height(@)
             true
           else
@@ -21,27 +20,14 @@ define ->
           World.XHash.getNearestEnemy(@)?
         
         faceTarget : ->
-          @direction = if @target.x > @x then  1 else -1
+          @direction = if @target.x > @x then 1 else 0
           true
 
         setInfantryMoving : ->
-          @action = @CONST.ACTION.MOVING
-          true
-          
-        faceGoalDirection : ->
-          # todo: remove this once testing is done
-          @direction = {
-            '0' : -1
-            '1' : 1
-          }[@team]
-          true
-          
-        gameOver : -> 
-          # todo: this is not the only "game over"
-          # todo: remove this and use mission handlers instead
-          soundManager.play('accomp')
+          @action = @ACTION.MOVING
           true
         
+        # what is this for?
         setFacingFrames : ->
           @frame_first = if @direction>0 then  6   else 0
           @frame_last  = if @direction>0 then  11  else 5
@@ -52,25 +38,24 @@ define ->
           true
           
         setInfantryAttackStance : ->
-          @action = $.R(@CONST.ACTION.ATTACK_STANDING,@CONST.ACTION.ATTACK_PRONE)
+          @action = $.R(@ACTION.ATTACK_STANDING,@ACTION.ATTACK_PRONE)
           true
         
         tryProjectileHit : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 0)
           InfantryClass = Classes['Infantry']
-          (
-            if !t.isAlly(@) and !t.isDead() and t.distHit(@) <= t.img.hDist2 + @img.hDist2
+          for t in potentialHits
+            if !t.isAlly(@) and !t.isDead() and t.isHit(@)
               chanceToHit = @accuracy[0]
               if t is @target then chanceToHit += @accuracy[1]
               if t instanceof InfantryClass
                 # stance affects chance to be hit.
-                if t.action is InfantryClass.prototype.CONST.ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
-                if t.action is InfantryClass.prototype.CONST.ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
+                if t.action is InfantryClass::ACTION.ATTACK_PRONE     then chanceToHit -= 0.11
+                if t.action is InfantryClass::ACTION.ATTACK_CROUCHING then chanceToHit -= 0.06
               
-              if $.r() < chanceToHit
+              if Math.random() < chanceToHit
                 t.takeDamage(@damage)
                 return true
-          ) for t in potentialHits
           false
         
         tryProjectileExplode : ->
@@ -200,27 +185,27 @@ define ->
           if @cycles? then @cycles--
           true
         
-        isReloading : -> @reload.ing > 0
+        isReloading : -> @reload_ing > 0
         
         tryReloading : ->
-          @reload.ing--
-          if @reload.ing is 0
+          @reload_ing--
+          if @reload_ing is 0
             # Use ammo from our ammo supply if we're a unit limited by ammo supply
-            if @ammo.maxsupply
-              if @ammo.supply<@ammo.max
-                @ammo.clip    = @ammo.supply
-                @ammo.supply  = 0
+            if @ammo_maxsupply
+              if @ammo_supply<@ammo_max
+                @ammo_clip    = @ammo_supply
+                @ammo_supply  = 0
               else
-                @ammo.clip    = @ammo.max
-                @ammo.supply  -= @ammo.max
+                @ammo_clip    = @ammo_max
+                @ammo_supply  -= @ammo_max
             else
-              @ammo.clip = @ammo.max
+              @ammo_clip = @ammo_max
           true
           
-        isOutOfAmmo : -> @ammo.clip <= 0
+        isOutOfAmmo : -> @ammo_clip <= 0
         
         beginReloading : ->
-          @reload.ing = if @ammo.maxsupply then $.R(30, @reload.time) else @reload.time
+          @reload_ing = if @ammo_maxsupply then $.R(30, @reload_time) else @reload_time
           true
             
         isBerserking : ->
@@ -299,7 +284,7 @@ define ->
               accuracy  = [0.2, 0.5]
               strayDy   = $.R(-30,30)*0.01
           
-          if @ammo.clip == @ammo.max and sound? then soundManager.play(sound)
+          if @ammo_clip == @ammo_max and sound? then soundManager.play(sound)
           
           
           pDx    = @direction*(@img.w>>1)
@@ -339,7 +324,7 @@ define ->
             })
           
           World.add(projectile)
-          @ammo.clip--
+          @ammo_clip--
           true
         
         tryInfantryBuild : ->
@@ -386,7 +371,7 @@ define ->
                 accuracy  = [0.2, 0.5]
                 strayDy   = $.R(-30,30)*0.01
             
-            if @ammo.clip == @ammo.max and sound? then soundManager.play(sound)
+            if @ammo_clip == @ammo_max and sound? then soundManager.play(sound)
             
             pSpeed = 4
             pDx    = @direction*(@img.w>>1)
@@ -419,7 +404,7 @@ define ->
               )
             )
             
-            @ammo.clip--
+            @ammo_clip--
             
           true
         
@@ -437,27 +422,24 @@ define ->
         isProjectileActive : ->
           @range > 0
         
-        isDead : ->
-          @isDead()
+        isDead : -> @isDead()
           
         rot : ->
           if @corpsetime > 0 then @corpsetime--
           true
         
-        isCrewed : -> @crew? and @crew?.current? > 0
+        isCrewed : -> @crew_current? > 0
         
-        isFullyCrewed : -> @crew? and @crew.current is @crew.max
+        isFullyCrewed : -> @crew_current is @crew_max
         
         tryCrewing : ->
-          if @crew.current < @crew.max
+          if @crew_current < @crew_max
             potentialCrew = World.XHash.getNBucketsByCoord(@,1)
-            (
-              if t instanceof Classes['PistolInfantry'] and !t.isDead() and t.distX(@) <= (@img.w>>1) and t.isAlly(@)
-                @crew.current++
+            for t in potentialCrew when t instanceof Classes['PistolInfantry'] and !t.isDead() and t.isHit(@) and t.isAlly(@)
+                @crew_current++
                 t.remove()
-                soundManager.play('sliderack1')
+                atom.playSound 'sliderack1'
                 return true
-            ) for t in potentialCrew
           false
         
         tryScaffoldSpawnChild : ->
@@ -503,7 +485,7 @@ define ->
             
           false
         
-        isStructureCrumbling : -> @state is @CONST.STATE.WRECK
+        isStructureCrumbling : -> @state is @STATE.WRECK
         
         isCrumbled : -> @crumbled is true
         
@@ -595,6 +577,7 @@ define ->
         
         HomingFindTarget    : '([hasTarget],[findTarget],[TRUE])'
         HomingAbility       : '([!HomingFindTarget],[steerToEnemy],[TRUE])'
+        
         # todo : make the spawnExplosion stuff part of the model?
         HomingMissile       : '(<[isOutsideWorld],[spawnLargeDetonation],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[spawnLargeDetonation],[remove]>)'
         HomingMissileSmall  : '(<[isOutsideWorld],[spawnSmallFlakExplosion],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[log1],[spawnSmallFlakExplosion],[remove]>)'
@@ -643,6 +626,11 @@ define ->
         EngineerInfantryAlive   : '([InfantryMoveToBuild],[InfantryMove])'
         EngineerInfantry        : '(<[isDead],[InfantryDead]>,[EngineerInfantryAlive])'
         
+        # Structures!!!
+        Structure             : '([StructureDead],[StructureAlive])'
+        StructureDead         : '<[isDead],(<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>,[TRUE])>'
+        StructureAlive        : '([StructureCrewing],[StructureReinforcing],[StructureAttack])'
+        
         StructureReloading    : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[clearTarget]>)'
         StructureCrewing      : '<[isCrewed],[tryCrewing]>'
         StructureReinforcing  : '<[hasReinforcements],[tryReinforcing]>'
@@ -650,12 +638,12 @@ define ->
         
         # todo: throw non-explosive shrapnel
         # todo: throw explosive shrapnel
-        StructureDead         : '<[isDead],(<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>,[TRUE])>'
+        
         #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
         
-        StructureAlive        : '([StructureCrewing],[StructureReinforcing],[StructureAttack])'
+        
 
-        Structure             : '([StructureDead],[StructureAlive])'
+        
         
         ScaffoldAlive         : '(<[isFullyCrewed],[tryScaffoldSpawnChild],[remove]>,<[isCrewed],[tryCrewing]>)'
         Scaffold              : '([StructureDead],[ScaffoldAlive])'

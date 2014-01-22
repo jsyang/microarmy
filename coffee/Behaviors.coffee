@@ -63,12 +63,14 @@ define ->
     ConvertShortHand : (code) ->
       if typeof code is 'string'
         btreeJSON = code
+          .replace(/\s+/g,    '')
           .replace(/\[/g,     '{id:"')
           .replace(/\]/g,     '"}')
           .replace(/\(/g,     '{id:"selector",children:[')
           .replace(/</g,      '{id:"sequence",children:[')
           .replace(/(>|\))/g, ']}')
         
+        # todo: evil eval
         btree = eval("(#{btreeJSON})")
       
       else

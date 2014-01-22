@@ -1,67 +1,59 @@
 define ->
   
-  DIRECTION =
-    LEFT  : 0
-    RIGHT : 0
-  
-  TEAM =
-    BLUE  : 0
-    GREEN : 1
-  
   class Pawn
     x           : 0
     y           : 0
-    team        : 0
+    team        : null
     corpsetime  : 1
-    hitDist     : 0   # a point at less than sqrt(histDist) is considered inside the Pawn
-    
-    # For .draw()
+    hDist2      : 0   # a point at less than sqrt(histDist) is considered inside the Pawn
     direction   : 0
-    valign      : 'bottom'
-    halign      : 'center'
     
     constructor : (params) ->
       @[k]  = v for k, v of params
-      
-    draw : ->
     
-    isAlly : (pawn) -> @team == pawn.team
+    isAlly : (pawn) ->
+      @team is pawn.team
     
-    isDead          : -> !(@health?.current > 0)
+    isDead : ->
+      @health_current <= 0
     
-    isCrewDead      : -> if @crew? then @crew.current < 0 else false
+    isCrewDead : ->
+      @crew_current <= 0
     
-    isOutOfAmmo     : -> if @ammo? then @ammo.supply <=0 else false
+    isOutOfAmmo : ->
+      @ammo_supply <= 0
+            
+    isTargetable : ->
+      @targetable
     
-    isAbleToTarget  : (pawn) ->
-      if (pawn.fly? and !@canTargetAircraft)
-        false
-      else
-        true
+    isPendingRemoval : ->
+      @corpsetime <= 0 
+    
+    remove : ->
+      @corpsetime = 0
+      true
         
-    isTargetable      : -> !(@targetable is false)
+    takeDamage : (dmg) ->
+      return unless dmg > 0
+      @health_current -= dmg
+      if @health_current <= 0
+        @health_current = 0      
     
-    isPendingRemoval  : -> @corpsetime <= 0 
+    setTarget : (t) ->
+      if t? then @target = t else delete @target
+      true
     
-    remove : -> @corpsetime = 0
+    setRallyPoint : (x, y) ->
+      @rally = {
+        x
+        y
+      }
         
-    takeDamage  : (damageValue) ->
-      if damageValue > 0
-        @health.current -= damageValue
-        @health.current = 0 if @health.current < 0
+    getDistX : (pawn) ->
+      Math.abs(@x - pawn.x)
     
-    setTarget   : (t) -> if t? then @target = t else delete @target
-    
-    setRallyPoint : (x, y) -> @rally = [x, y]
-    
-    setDirection : (facing) ->
-      @direction = DIRECTION[facing.toLowerCase()]
-    
-    distX : (pawn) -> Math.abs(@x - pawn.x)
-    
-    # Centers. Point to point.
-    distHit     : (pawn) ->
-      [dx, dy] = [pawn.x, pawn.y]
-      [dx, dy] = [Math.abs(@x - dx), Math.abs(@y - dy)]
-      
-      dx*dx + dy*dy
+    isHit : (pawn) ->
+      dx = Math.abs(@x - pawn.x)
+      dy = Math.abs(@y - pawn.y)
+      # Use @hDist2 = 0 for points
+      dx*dx + dy*dy <= pawn.hDist2 + @hDist2

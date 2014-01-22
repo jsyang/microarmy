@@ -1,126 +1,93 @@
-define [
-  'core/Battle/Pawn'
-], (Pawn) ->
+define ['core/Battle/Pawn'], (Pawn) ->
 
-  CONST =
-    ACTION :
-      MOVING            : 0
-      ATTACK_STANDING   : 1
-      ATTACK_CROUCHING  : 2
-      ATTACK_PRONE      : 3
-      DEATH1            : 4
-      DEATH2            : 5
+  ACTION :
+    MOVING            : 0
+    ATTACK_STANDING   : 1
+    ATTACK_CROUCHING  : 2
+    ATTACK_PRONE      : 3
+    DEATH1            : 4
+    DEATH2            : 5
 
-    SHOTFRAME :
-    # in which frames do we want to spawn projectiles?
-      PistolInfantry  : '010100010100'
-      RocketInfantry  : '000100000100'
+  # in which frames do we want to spawn projectiles?
+  SHOTFRAME :
+    PistolInfantry  : '010100010100'
+    RocketInfantry  : '000100000100'
+  
+  VARIABLESTATS = [
+    'health_current'
+    'health_max'
+    'berserk_time'
+    'reload_time'
+  ]
   
   class Infantry extends Pawn
-    CONST : CONST
-    
-    constructor : (_) ->
-      @_ = $.extend {
-        img         : { w:8, h:8, hDist2:20 }
-        imgsheet    : null
-        target      : null
-        squad       : null
-        direction   : null           # don't set the direction here
-        action      : @CONST.ACTION.MOVING
-        corpsetime  : 180
-        frame :
-          current : 0
-          first   : 0
-          last    : 5
-      }, _
-      @setSpriteSheet(@_.imgsheet)
-      super @_
+    ACTION        : ACTION
+    SHOTFRAME     : SHOTFRAME
+    hDist2        : 20
+    #target       : null
+    #squad        : null
+    action        : ACTION.MOVING
+    corpsetime    : 180
+    frame_current : 0
+    frame_first   : 0
+    frame_last    : 5
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      if not @constructor::_halfHeight?
+        name = @getName()
+        @constructor::_halfHeight = GFXINFO[name].height >> 1
+      @_setVariableStats
+    getName : ->
+      "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@action}-#{@frame_current}"
+    isHit : (pawn) ->
+      dx = pawn.x
+      dy = pawn.y
+      dx = Math.abs(@x - dx)
+      dy = Math.abs(@y - @_halfHeight) - dy
+      dx*dx + dy*dy <= pawn.hDist2 + @hDist2
+    _setVariableStats : ->
+      @[stat] = $.R.apply(@, @[stat]) for stat in VARIABLESTATS when @[stat] instanceof Array
+      @[stat] = @[stat]()             for stat in VARIABLESTATS when @[stat] instanceof Function
 
-    distHit : (pawn) ->
-      [dx, dy] = [pawn._.x, pawn._.y]
-      [dx, dy] = [Math.abs(@_.x - dx), Math.abs((@_.y-(@_.img.h>>1)) - dy)]
-      
-      dx*dx + dy*dy
-      
-    gfx : ->
-      {
-        img     : @_.img.sheet                # Sprite sheet
-        imgdx   : @_.frame.current*@_.img.w   # X-frames denote action frames
-        imgdy   : @_.action*@_.img.h          # Y-frames denote actions
-        worldx  : @_.x-(@_.img.w>>1)          # Center sprite horizontally
-        worldy  : @_.y-@_.img.h               # Bottom align
-        imgw    : @_.img.w
-        imgh    : @_.img.h
-      }
-      
   class PistolInfantry extends Infantry
-    constructor : (_) ->
-      @_ = $.extend {
-        imgsheet    : 'pistol'
-        projectile  : 'Bullet'
-        sight       : 3
-        meleeDmg    : 8
-        health :
-          current : $.R(30,70)
-        reload :
-          ing   : 0
-          time  : 40
-        berserk :
-          ing     : 0
-          time    : $.R(10,26)
-          chance  : $.r(0.59)
-        ammo :
-          clip  : 2
-          max   : 2
-      }, _
-      
-      super @_
+    projectile     : 'Bullet'
+    sight          : 3
+    meleeDmg       : 8
+    health_current : [30, 70]
+    reload_ing     : 0
+    reload_time    : 40
+    berserk_ing    : 0
+    berserk_time   : [10, 26]
+    berserk_chance : -> $.r(0.59)
+    ammo_clip      : 2
+    ammo_max       : 2
 
-  
   class RocketInfantry extends Infantry
-    constructor : (_) ->
-      @_ = $.extend {
-        imgsheet    : 'rocket'
-        projectile  : 'SmallRocket'
-        sight       : 6
-        meleeDmg    : 23
-        health :
-          current : $.R(60,90)
-        reload :
-          ing   : 0
-          time  : $.R(60,90)
-        berserk :
-          ing     : 0
-          time    : $.R(6,21)
-          chance  : $.r(0.35)+0.08
-        ammo :
-          clip  : 1
-          max   : 1
-      }, _
-      
-      super @_
-      @setSpriteSheet('rocket')
+    projectile     : 'SmallRocket'
+    sight          : 6
+    meleeDmg       : 23
+    health_current : [60, 90]
+    reload_ing     : 0
+    reload_time    : [60, 90]
+    berserk_ing    : 0
+    berserk_time   : [6, 21]
+    berserk_chance : -> $.r(0.35) + 0.08
+    ammo_clip      : 1
+    ammo_max       : 1
       
   class EngineerInfantry extends Infantry
-    constructor : (_) ->
-      @_ = $.extend {
-        imgsheet    : 'engineer'
-        sight       : 4
-        meleeDmg    : 5
-        build :
-          type : null
-          x    : null
-        health :
-          current : $.R(20,50)
-      }, _
+    sight          : 4
+    meleeDmg       : 15
+    build_type     : null
+    build_x        : null
+    health_current : $.R(20,50)
+
+  exportClasses = {
+    Infantry
+    PistolInfantry
+    RocketInfantry
+    EngineerInfantry
+  }
       
-      @_.target = { _ : @_.build }
-      super @_
-      
-  (exportParent) ->
-    $.extend(exportParent, {
-      Infantry
-      PistolInfantry
-      RocketInfantry
-      EngineerInfantry
-    })
+  # Attach all these classes to the "importer" object.
+  (importer) -> importer[k] = v for k, v of exportClasses

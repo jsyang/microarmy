@@ -8,9 +8,6 @@ define [
     damageDecay   : 2     # How much will damage decay if we've splash-damaged a bunch of stuff
     corpsetime    : 1
     frame_current : 0
-    
-    # _name # sprite name
-    
     constructor : (params) ->
       @[k]  = v for k, v of params
       atom.playSound @sound if @sound?
@@ -73,7 +70,6 @@ define [
     frame_last  : 2
     damage      : 4
     damageDecay : 0
-    
     constructor : ->
       super @
       @cycles  = $.R(100,200)
@@ -92,7 +88,6 @@ define [
   
   class Flame extends Explosion
     frame_first : 0
-    
     constructor : (params) ->
       super params
       
@@ -123,7 +118,6 @@ define [
     FlakExplosion
     HEAPExplosion
     ChemExplosion
-    
     SmokeCloud
     SmokeCloudSmall
     Flame
