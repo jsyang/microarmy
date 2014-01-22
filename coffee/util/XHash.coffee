@@ -54,7 +54,7 @@ define ->
       pawn.setTarget()
       potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
       (
-        dist = pawn.distX(t)
+        dist = Math.abs(pawn.x - t.x)
         if dist < minDist
           if  !(t is pawn)          and
               !t.isAlly(pawn)       and
@@ -96,7 +96,7 @@ define ->
       pawn.setTarget()
       potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
       (
-        dist = t.distX(pawn)
+        dist = Math.abs(pawn.x - t.x)
         if dist < minDist
           if  t.isAlly(pawn)        and
               !t.isDead()           and

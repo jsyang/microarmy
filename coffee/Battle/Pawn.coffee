@@ -13,45 +13,37 @@ define ->
     
     isAlly : (pawn) ->
       @team is pawn.team
-    
     isDead : ->
       @health_current <= 0
-    
     isCrewDead : ->
       @crew_current <= 0
-    
     isOutOfAmmo : ->
       @ammo_supply <= 0
-            
     isTargetable : ->
       @targetable
-    
+    isAbleToTarget  : (pawn) ->
+      if (pawn.fly? and !@canTargetAircraft)
+        false
+      else
+        true
     isPendingRemoval : ->
       @corpsetime <= 0 
-    
     remove : ->
       @corpsetime = 0
       true
-        
     takeDamage : (dmg) ->
       return unless dmg > 0
       @health_current -= dmg
       if @health_current <= 0
         @health_current = 0      
-    
     setTarget : (t) ->
       if t? then @target = t else delete @target
       true
-    
     setRallyPoint : (x, y) ->
       @rally = {
         x
         y
       }
-        
-    getDistX : (pawn) ->
-      Math.abs(@x - pawn.x)
-    
     isHit : (pawn) ->
       dx = Math.abs(@x - pawn.x)
       dy = Math.abs(@y - pawn.y)

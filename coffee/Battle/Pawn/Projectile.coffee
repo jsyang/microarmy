@@ -122,8 +122,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
   # future : Fired from helicopter, locks onto a location, not an entity
   class MediumRocketHE extends HomingMissile
     spriteName        : 'missilepurple'
-    constructor : (_) ->
-      @_ = $.extend {
     maxSpeed          : 65
     range             : 60
     rangeTravelled    : 0

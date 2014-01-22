@@ -6,17 +6,17 @@ require [
 
   teams =
     '0' : [
-      { x : 31,   team : 0, health : { current : 12 } }
-      { x : 26,   team : 0, health : { current : 0 } }
+      { x : 31,   team : 0, health_current : 12 }
+      { x : 26,   team : 0, health_current : 0 }
       { x : 126,  team : 0 }
-      { x : 113,  team : 0, health : { current : 12 } }
-      { x : 27,   team : 0, health : { current : 12 } }
+      { x : 113,  team : 0, health_current : 12 }
+      { x : 27,   team : 0, health_current : 12 }
     ]
     
     '1' : [
       { x : 17,   team : 1 }
       { x : 11,   team : 1 }
-      { x : 73,   team : 1, health : { current : 12 }, sight: 2 }
+      { x : 73,   team : 1, health_current : 12, sight: 2 }
       { x : 78,   team : 1 }
       { x : 111,   team : 1 }
     ]
@@ -33,8 +33,8 @@ require [
   outOfBoundsPawn = new Pawn({ x : 256, team : 2 })
   nBucketsPawn = new Pawn({ x : 130,    team : 1 })
   
-  queryPawn1 = new Pawn({ x : 30,   team : 1, health : { current : 12 }, sight: 2 })
-  queryPawn2 = new Pawn({ x : 25,   team : 1, health : { current : 12 }, sight: 2 })
+  queryPawn1 = new Pawn({ x : 30,   team : 1, health_current : 12, sight: 2 })
+  queryPawn2 = new Pawn({ x : 25,   team : 1, health_current : 12, sight: 2 })
   
   describe 'XHash', ->
     it 'throws if no width is given', ->
