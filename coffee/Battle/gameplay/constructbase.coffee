@@ -26,7 +26,7 @@ define ->
       
     _getSpriteName : ->
       name      = @cart.toLowerCase()
-      direction = 0
+      direction = @direction
       state     = 0
       
       "#{name}-#{@battle.team}-#{@direction}-#{state}"
@@ -37,9 +37,32 @@ define ->
       
       if @cart?
         spriteName = @_getSpriteName()
-        opacity = if @_checkIfLocationValid() then 0.75 else 0.3
+        isLocationValid = @_checkIfLocationValid()
+        if isLocationValid
+          opacity = 0.75
+        else
+          margin = GFXINFO[spriteName].height + 20
+          atom.context.drawText "Cannot build here", mx - 46, @battle.world.height(mx + @battle.scroll.x) - margin, "#ff0000"
+          opacity = 0.3
         
-        atom.context.drawText "Select location to build #{@cart} for team #{@battle.team}"
+        directionName = [
+          'left'
+          'right'
+        ][@direction]
+        
+        teamName = [
+          'blue'
+          'green'
+        ][@battle.team]
+          
+        instructionText = [
+          "Click location to build #{@cart} for #{teamName} team"
+          "(Facing #{directionName})"
+          "Press A to build facing left\n"
+          "Press D to build facing right"
+        ]
+                          
+        atom.context.drawText instructionText
         atom.context.drawSprite spriteName, mx, @battle.world.height(mx + @battle.scroll.x), 'bottom', 'center', opacity
     
     _checkIfLocationValid : ->
@@ -67,15 +90,21 @@ define ->
     
     tick : ->
       if @containsCursor()
+        if atom.input.pressed('keyA')
+          @direction = 0
+        else if atom.input.pressed('keyD')
+          @direction = 1
+          
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()
             x = atom.input.mouse.x + @battle.scroll.x
             
             @battle.world.add(
               new @battle.world.Classes[@cart] {
-                x     : x
-                y     : @battle.world.height(x)
-                team  : @battle.team
+                x         : x
+                y         : @battle.world.height(x)
+                team      : @battle.team
+                direction : @direction
               }
             )
             

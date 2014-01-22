@@ -4,8 +4,16 @@ define ->
     _atomContext.textBaseline = 'top'
     _atomContext.font         = '10px verdana'
 
-    _atomContext.drawText = (text='No text provided.', x = 0, y = 0, color = '#ff0000') ->
-      lines = text.split('\n')
+    _atomContext.drawText = (text='No text provided.', x = 4, y = 0, color = '#889988') ->
+      if text instanceof Array
+        lines = text
+      else
+        lines = text.split('\n')
+      
+      @save()
+      
       @fillStyle = color
       for i in [0...lines.length]
         @fillText(lines[i], x, y + 10*i)
+      
+      @restore()
