@@ -8,11 +8,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
     DEATH1            : 4
     DEATH2            : 5
 
-  # in which frames do we want to spawn projectiles?
-  SHOTFRAME =
-    PistolInfantry  : '010100010100'
-    RocketInfantry  : '000100000100'
-  
   VARIABLESTATS = [
     'health_current'
     'health_max'
@@ -34,23 +29,20 @@ define ['core/Battle/Pawn'], (Pawn) ->
     constructor : (params) ->
       @[k]  = v for k, v of params
       @_setHalfDimensions()
-      @_setVariableStats()
+      @_setVariableStats VARIABLESTATS
     getName : ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@action}-#{@frame_current}"
     isHit : (pawn) ->
       dx = pawn.x
       dy = pawn.y
       dx = Math.abs(@x - dx)
-      dy = Math.abs(@y - @_halfHeight) - dy
+      dy = Math.abs(@y - @::_halfHeight) - dy
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
-    _setVariableStats : ->
-      @[stat] = $.R.apply(@, @[stat]) for stat in VARIABLESTATS when @[stat] instanceof Array
-      @[stat] = @[stat]()             for stat in VARIABLESTATS when @[stat] instanceof Function
 
   class PistolInfantry extends Infantry
     projectile     : 'Bullet'
     sight          : 3
-    meleeDmg       : 8
+    melee_dmg      : 8
     health_current : [30, 70]
     reload_ing     : 0
     reload_time    : 40
@@ -59,11 +51,15 @@ define ['core/Battle/Pawn'], (Pawn) ->
     berserk_chance : -> $.r(0.59)
     ammo_clip      : 2
     ammo_max       : 2
+    # In which attack state frames do we want to spawn projectiles
+    SHOTFRAMES :
+      '1' : true
+      '3' : true
 
   class RocketInfantry extends Infantry
     projectile     : 'SmallRocket'
     sight          : 6
-    meleeDmg       : 23
+    melee_dmg      : 23
     health_current : [60, 90]
     reload_ing     : 0
     reload_time    : [60, 90]
@@ -72,10 +68,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
     berserk_chance : -> $.r(0.35) + 0.08
     ammo_clip      : 1
     ammo_max       : 1
+    SHOTFRAMES :
+      '3' : true
       
   class EngineerInfantry extends Infantry
     sight          : 4
-    meleeDmg       : 15
+    melee_dmg      : 5
     build_type     : null
     build_x        : null
     health_current : $.R(20,50)

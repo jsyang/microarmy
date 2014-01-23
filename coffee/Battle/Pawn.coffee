@@ -17,6 +17,15 @@ define ->
         @constructor::_halfHeight = GFXINFO[name].height >> 1
         @constructor::_halfWidth  = GFXINFO[name].width >> 1
     
+    _setVariableStats : (variablestats) ->
+      for stat in variablestats when stat of @
+        if @[stat] instanceof Array
+          # ex: health_max is random int from 50 to 70
+          @[stat] = $.R.apply(@, @[stat])
+        else if @[stat] instanceof Function
+          # ex: projectile hit bonus = -> $.r(2) # is not an int
+          @[stat] = @[stat]()
+    
     isAlly : (pawn) ->
       @team is pawn.team
     isDead : ->

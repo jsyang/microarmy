@@ -53,7 +53,7 @@ define ->
                 else if t.action is InfantryClass::ACTION.ATTACK_CROUCHING
                   chanceToHit -= 0.06
               if $.r() < chanceToHit
-                t.takeDamage @damage
+                t.setDamage @damage
                 return true
           false
         
@@ -74,7 +74,7 @@ define ->
         doExplosionHit : ->
           potentialHits = World.XHash.getNBucketsByCoord(@, 1)
           for t in potentialHits when t? and @isHit(t)
-            t.takeDamage(@damage)
+            t.setDamage @damage
             @damage -= @damageDecay
             @damage = 0 if @damage < 0
           true
@@ -242,148 +242,49 @@ define ->
         # future: only works in 1D. make this work for 2D (aircraft)
         doSeeTarget : ->
           @getXDist @target <= @sight * (1 << World.XHash.BUCKETWIDTH)
+               
+        isInfantryMeleeDistance : ->
+          @getXDistX @target < (@::_halfWidth << 1)
+       
+        doInfantryMeleeAttack : ->
+          if $.r() < @berserk_chance
+            @target.setDamage @melee_dmg
+            # Enemy cannot ignore melee attack
+            # future: ninjas?
+            @target.setTarget @
         
-        # Inaccuracy due to distance, call with thisArg = projectile stats
-        setStructureBulletWeaponInaccuracy : ->
-          if @dist > 50
-            @accuracy -= 0.02
-            @accuracy_target_bonus -= 0.15
-          if @dist > 120
-            @accuracy -= 0.01
-            @accuracy_target_bonus -= 0.18
-          if @dist > 180
-            @accuracy -= 0.01
-            @accuracy_target_bonus -= 0.08
-          if @dist > 200
-            @accuracy -= 0.01
-            @accuracy_target_bonus -= 0.08
-          true
-        
-        setInfantryBulletWeaponInaccuracy : ->
-          if @dist > 50
-            @accuracy -= 0.02
-            @accuracy_target_bonus -= 0.15
-          if @dist > 120
-            @accuracy -= 0.01
-            @accuracy_target_bonus -= 0.18
-          if @dist > 180
-            @accuracy -= 0.01
-            @accuracy_target_bonus -= 0.08
-          if @dist > 200
-            @accuracy -= 0.01
-            @accuracy_target_bonus -= 0.08
-          true
-        
-        addChildProjectile : (className, params) ->
-          if @direction is 0
-            direction = -1
-          else
-            direction = 1
+        doRangedAttack : ->
+          projectile = new Classes[@projectile] {
+            team   : @team
+            target : @target
+          }
           
-          pDx = @direction * @::_halfWidth
-          pDy = @shoot_dy
+          if @ammo_clip is @ammo_max and projectile.sound?
+            atom.playSound projectile.sound
           
-          if params.bulletWeapon
-            params.dx = direction * params.pSpeed
-            params.dy = ((@target.y - @target::_halfHeight) - (@y + pDy)) * params.pSpeed) / params.dist + params.strayDy
+          if projectile.bullet_weapon
+            infantryClass = Classes['Infantry']
+            pDx = @direction * @::_halfWidth
+            
+            if @ instanceof infantryClass
+              if @action is @ACTION.ATTACK_PRONE
+                pDy = -2
+              else
+                pDy = -4
+            else
+              pDy = @shoot_dy
+            
+            projectile.dx = [-1,1][@direction] * projectile.speed
+            projectile.dy = ((
+              (@target.y - @target::_halfHeight) - (@y + pDy)
+            ) * projectile.speed) / projectile.dist + projectile.stray_dy
           
-          projectileClass = Classes[className]
-          projectile = new projectileClass params
           World.add projectile
-          true
-        
-        doStructureAttack : ->
-          params = @SHOOTSETSTATS[@projectile].call @
-          return true unless params?
-          atom.playSound params.sound if @ammo_clip is @ammo_max and params?
-          d = World.Battle.Behaviors.Decorators
-          d.setBulletWeaponInaccuracy.call params if params.bulletWeapon
-          d.addChildProjectile.call(@, params)
           @ammo_clip--
           true
         
-        isBuildLocation : ->
-          @build_x is @x
-        
-        addScaffold : ->
-          World.add(new Classes['Scaffold'] {
-            x           : @x
-            y           : World.height(@)
-            team        : @team
-            build_type  : @build_type
-          })
-          atom.playSound 'tack'
-          true
-        
-        # todo: break this apart like with the structure
-        tryInfantryAttack : ->
-          dist = @distX(@target)
-          if dist < @img.w
-            # melee range
-            if $.r() < @berserk.chance
-                @target.takeDamage(@meleeDmg)
-                # Pretty hard to ignore someone punching your face
-                @target._?.target = @
-          else
-          
-            # todo: move this into its own decorator
-            if @CONST.SHOTFRAME[@constructor.name][@frame_current % 6] is '0' then return true
-            
-            accuracy = [0, 0]
-            
-            switch @projectile
-              when 'MGBullet'
-                accuracy  = [0.65, 0.35]  # chanceToHit [periphery, target bonus]
-                strayDy   = $.R(-15,15)*0.01
-                sound     = 'mgburst'
-              when 'Bullet'
-                accuracy  = [0.15, 0.85]
-                strayDy   = $.R(-15,15)*0.01
-                sound     = 'pistol'
-              when 'SmallRocket'
-                if dist < 48 then return true
-                accuracy  = [0.28, 0.68]
-                strayDy   = $.R(-19,19)*0.01
-                sound     = 'rocket'
-              else
-                accuracy  = [0.2, 0.5]
-                strayDy   = $.R(-30,30)*0.01
-            
-            if @ammo_clip == @ammo_max and sound? then soundManager.play(sound)
-            
-            pSpeed = 4
-            pDx    = @direction*(@img.w>>1)
-            pDy    = if @action is @CONST.ACTION.ATTACK_PRONE then -2 else -4
-            
-            if dist > 50
-              accuracy[0]-=0.02
-              accuracy[1]-=0.15
-            if dist > 120
-              accuracy[0]-=0.01
-              accuracy[1]-=0.18
-            if dist > 180
-              accuracy[0]-=0.01
-              accuracy[1]-=0.08
-            if dist > 200
-              accuracy[0]-=0.01
-              accuracy[1]-=0.08
-            
-            World.add(
-              new Classes[@projectile](
-                {
-                  accuracy
-                  x       : @x + pDx
-                  y       : @y + pDy
-                  team    : @team
-                  target  : @target
-                  dx      : @direction*pSpeed
-                  dy      : ((@target.y-(@target.img.h>>1)-(@y+pDy))*pSpeed)/dist + strayDy
-                }
-              )
-            )
-            
-            @ammo_clip--
-          true
+        isInfantryInShotFrame : ->
+          "#{@frame_current}" of @SHOTFRAME
         
         setInfantryDying : ->
           @action = $.R(@ACTION.DEATH1, @ACTION.DEATH2)
@@ -403,6 +304,19 @@ define ->
         
         isDead : ->
           @isDead()
+          
+        isBuildLocation : ->
+          @build_x is @x
+        
+        addScaffold : ->
+          World.add(new Classes['Scaffold'] {
+            x           : @x
+            y           : World.height(@)
+            team        : @team
+            build_type  : @build_type
+          })
+          atom.playSound 'tack'
+          true
           
         doRot : ->
           @corpsetime-- if @corpsetime > 0

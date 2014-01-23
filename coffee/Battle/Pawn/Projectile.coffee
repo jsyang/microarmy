@@ -3,9 +3,13 @@ define ['core/Battle/Pawn'], (Pawn) ->
   VARIABLESTATS = [
     'damage'
     'dspeed'
+    'dist'
+    'stray_dy'
   ]
 
   class Projectile extends Pawn
+    spriteName            : ''
+    sound                 : 0
     dx                    : null  # Speed
     dy                    : null
     accuracy              : null  # Base chance to hit enemies
@@ -18,40 +22,90 @@ define ['core/Battle/Pawn'], (Pawn) ->
     hDist2                : 3
     constructor : (params) ->
       super params
-      @_setVariableStats
-    spriteName  : ''
+      @_setDirectionIfTargeting()
+      @_setVariableStats VARIABLESTATS
+      @_setBulletWeaponInaccuracy()
+    _setDirectionIfTargeting : ->
+      if @target?
+        if @target.x > @x
+          @direction = 1
+        else
+          @direction = 0
     getName : ->
       "#{@spriteName}-#{@direction}"      
-    _setVariableStats : ->
-      @[stat] = $.R.apply(@, @[stat]) for stat in VARIABLESTATS when @[stat] instanceof Array
-      
+    # Inaccuracy due to distance, call with thisArg = projectile stats
+    _setBulletWeaponInaccuracy : ->
+      dist = @getXDist @target
+      if dist > 50
+        @accuracy -= 0.02
+        @accuracy_target_bonus -= 0.15
+      if dist > 120
+        @accuracy -= 0.01
+        @accuracy_target_bonus -= 0.18
+      if dist > 180
+        @accuracy -= 0.01
+        @accuracy_target_bonus -= 0.08
+      if dist > 200
+        @accuracy -= 0.01
+        @accuracy_target_bonus -= 0.08
+    
   class Bullet extends Projectile
-    spriteName    : 'pistolshell'
-    range_current : 35
-    damage        : 15
+    spriteName            : 'pistolshell'
+    sound                 : 'pistol'
+    range_current         : 35
+    damage                : 15
+    accuracy              : 0.15
+    accuracy_target_bonus : 0.85
+    speed                 : 4
+    bullet_weapon         : true
+    dist                  : -> @getXDist @target
+    stray_dy              : -> $.R(-15, 15) * 0.01 # How much do we miss by?
   
   class MGBullet extends Projectile
-    spriteName    : 'pistolshell'
-    range_current : 35
-    damage        : [21, 32]
+    spriteName            : 'pistolshell'
+    sound                 : 'mgburst'
+    range_current         : 35
+    damage                : [21, 32]
+    accuracy              : 0.65
+    accuracy_target_bonus : 0.35
+    speed                 : 4
+    bullet_weapon         : true
+    dist                  : -> @getXDist @target
+    stray_dy              : -> $.R(-15, 15) * 0.01 # How much do we miss by?
     
   class SmallRocket extends Projectile
-    spriteName    : 'rocketshell'
-    explosion     : 'SmallExplosion'
-    range_current : 90
-    damage        : 24
+    spriteName            : 'rocketshell'
+    sound                 : 'rocket'
+    explosion             : 'SmallExplosion'
+    range_current         : 90
+    damage                : 24
+    accuracy              : 0.28
+    accuracy_target_bonus : 0.68
+    speed                 : 4
+    bullet_weapon         : true
+    dist                  : -> @getXDist @target
+    stray_dy              : -> $.R(-15, 15) * 0.01 # How much do we miss by?
+  
+  class SmallShell extends Projectile
+    spriteName            : 'turretshell'
+    sound                 : 'turretshot'
+    explosion             : 'SmallExplosion'
+    range_current         : 70
+    damage                : 90
+    accuracy              : 0.60
+    accuracy_target_bonus : 0.50
+    speed                 : 7
+    bullet_weapon         : true
     
+    stray_dy              : -> $.R(-12, 9) * 0.01
+    
+  # todo: shrapnel
   class MortarShell extends Projectile
     spriteName    : 'turretshell'
+    sound         : 'turretshot'
     range_current : 1
     ddy           : 0.41
-      
-  class SmallShell extends Projectile
-    spriteName    : 'turretshell'
-    explosion     : 'SmallExplosion'
-    range_current : 70
-    damage        : 90
-
+    
   class SmallMine extends Projectile
     spriteName            : 'mine'
     accuracy              : 0.6               
@@ -72,20 +126,23 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "chemmine-#{@team}-#{frame}"
   
   class HomingMissile extends Projectile
-    spriteName        : 'missilered'
-    hDist2            : 81
-    maxSpeed          : 90
-    range_current     : 280             
-    range_max         : 280
-    ddy               : 0.081
-    dspeed            : 0.84
-    sight             : 8
-    homing            : true
-    homing_delay      : 12
-    trail_type        : 'SmokeCloud'
-    trail_length      : 280 - 8         # Has a smoke trail above this range
-    dx                : 0.01
-    dy                : 0.01
+    spriteName    : 'missilered'
+    sound         : 'missile1'
+    hDist2        : 81
+    maxSpeed      : 90
+    range_current : 280             
+    range_max     : 280
+    ddy           : 0.081
+    dspeed        : 0.84
+    sight         : 8
+    dx            : -> [-1, 1][@direction] * 4.6
+    dy            : -8.36
+    homing        : true
+    homing_delay  : 12
+    trail_type    : 'SmokeCloud'
+    trail_length  : 280 - 8         # Has a smoke trail above this range
+    
+    dist          : -> @getXDist @target
     getName : ->
       frame = @_getFrame()
       '#{@spriteName}-#{frame}'
@@ -108,6 +165,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     
   class HomingMissileSmall extends HomingMissile
     spriteName        : 'missilepurple'
+    sound             : 'rocket'
     hDist2            : 64
     maxSpeed          : 110
     range_current     : 90
@@ -115,6 +173,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ddy               : 0.0173
     sight             : 8
     homing_delay      : 12
+    dx                : -> [-1, 1][@direction] * 5.12
+    dy                : -6.35
     trail_type        : 'SmokeCloudSmall'
     trail_length      : 90 - 6
     constructor : (params) ->
@@ -124,6 +184,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   # future : Fired from helicopter, locks onto a location, not an entity
   class MediumRocketHE extends HomingMissile
     spriteName        : 'missilepurple'
+    sound             : 'rocket'
     maxSpeed          : 65
     range_current     : 60
     range_max         : 0
