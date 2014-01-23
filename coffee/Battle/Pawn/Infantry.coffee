@@ -1,6 +1,6 @@
 define ['core/Battle/Pawn'], (Pawn) ->
 
-  ACTION :
+  ACTION =
     MOVING            : 0
     ATTACK_STANDING   : 1
     ATTACK_CROUCHING  : 2
@@ -9,7 +9,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     DEATH2            : 5
 
   # in which frames do we want to spawn projectiles?
-  SHOTFRAME :
+  SHOTFRAME =
     PistolInfantry  : '010100010100'
     RocketInfantry  : '000100000100'
   
@@ -33,10 +33,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     frame_last    : 5
     constructor : (params) ->
       @[k]  = v for k, v of params
-      if not @constructor::_halfHeight?
-        name = @getName()
-        @constructor::_halfHeight = GFXINFO[name].height >> 1
-      @_setVariableStats
+      @_setHalfDimensions()
+      @_setVariableStats()
     getName : ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@action}-#{@frame_current}"
     isHit : (pawn) ->

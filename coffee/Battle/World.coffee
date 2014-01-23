@@ -24,7 +24,7 @@ define [
       #'PawnController'
     ]
   
-    # battle : null # the parent battle instance.
+    # battle : = the parent battle instance.
     Classes   : {}
   
     # Make the instances dict so we have an empty structure to add pawn instances to.
@@ -69,8 +69,9 @@ define [
       @heightmap[x]
   
     contains : (entity) ->
-      [x, y] = [entity.x>>0, entity.y>>0]
-      !(x<0 || x>=@w || y>@heightmap[x])
+      x = entity.x >> 0
+      y = entity.y >> 0
+      !(x < 0 || x >= @w || y > @heightmap[x])
   
     add : (entity) ->
       # Add to temp if add() called inside a tick

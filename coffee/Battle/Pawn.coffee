@@ -11,6 +11,12 @@ define ->
     constructor : (params) ->
       @[k]  = v for k, v of params
     
+    _setHalfDimensions : ->
+      if not @constructor::_halfHeight?
+        name = @getName()
+        @constructor::_halfHeight = GFXINFO[name].height >> 1
+        @constructor::_halfWidth  = GFXINFO[name].width >> 1
+    
     isAlly : (pawn) ->
       @team is pawn.team
     isDead : ->
@@ -31,7 +37,7 @@ define ->
     remove : ->
       @corpsetime = 0
       true
-    takeDamage : (dmg) ->
+    setDamage : (dmg) ->
       return unless dmg > 0
       @health_current -= dmg
       if @health_current <= 0
@@ -44,7 +50,10 @@ define ->
         x
         y
       }
+    getXDist : (pawn) ->
+      Math.abs(@x - pawn.x)
     isHit : (pawn) ->
+      # Should adjust for center for ground entities: Structures, Infantry, Vehicles
       dx = Math.abs(@x - pawn.x)
       dy = Math.abs(@y - pawn.y)
       # Use @hDist2 = 0 for points

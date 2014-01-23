@@ -21,15 +21,99 @@ define ['core/Battle/Pawn'], (Pawn) ->
     'health_max'
   ]
 
+  # future: use 2D distance function instead
+  SHOOTSETSTATS =
+    Bullet : ->
+      {
+        team                  : @team
+        target                : @target
+        dist                  : @getXDist @target
+        strayDy               : $.R(-15, 15) * 0.01
+        accuracy              : 0.15
+        accuracy_target_bonus : 0.85
+        bulletWeapon          : true
+        pSpeed                : 4
+        sound                 : 'pistol'
+      }
+    MGBullet : ->
+      {
+        team                  : @team
+        target                : @target
+        dist                  : @getXDist @target
+        strayDy               : $.R(-15, 15) * 0.01
+        accuracy              : 0.65
+        accuracy_target_bonus : 0.35
+        bulletWeapon          : true
+        pSpeed                : 4
+        sound                 : 'mgburst'
+      }
+    SmallShell : ->
+      {
+        team                  : @team
+        target                : @target
+        dist                  : @getXDist @target
+        strayDy               : $.R(-12, 9) * 0.01
+        accuracy              : 0.60
+        accuracy_target_bonus : 0.50
+        bulletWeapon          : true
+        pSpeed                : 7
+        sound                 : 'turretshot'
+      }
+    SmallRocket : ->
+      dist = @getXDist @target
+      # Don't fire if we're too close!
+      return null if dist < 48
+      {
+        team                  : @team
+        target                : @target
+        dist                  : dist
+        strayDy               : $.R(-19, 19) * 0.01
+        accuracy              : 0.28
+        accuracy_target_bonus : 0.68
+        pSpeed                : 4
+        bulletWeapon          : true
+        sound                 : 'rocket'
+      }
+    HomingMissile : ->
+      if @direction is 0
+        direction = -1
+      else
+        direction = 1
+      {
+        team                  : @team
+        target                : @target
+        dist                  : @getXDist @target
+        dx                    : direction * 4.6
+        dy                    : -8.36
+        bulletWeapon          : false
+        sound                 : 'missile1'
+      }
+    HomingMissileSmall : ->
+      if @direction is 0
+        direction = -1
+      else
+        direction = 1
+      {
+        team                  : @team
+        target                : @target
+        dist                  : @getXDist @target
+        dx                    : direction * 5.12
+        dy                    : -6.35
+        bulletWeapon          : false
+        sound                 : 'rocket'
+      }
+
   class Structure extends Pawn
-    STATE       : STATE
-    hDist2      : 0             # This number is computed usually by squaring the smallest dimension of the sprite
-    targetable  : true          # Can enemy units attack this?
-    crumbled    : false         # Already destroyed?
-    corpsetime  : 1
-    state       : STATE.GOOD
-    shoot_dy    : 0             # Where does the projectile origin from, relative to structure
-    shoot_dx    : 0
+    SHOOTSETSTATS   : SHOOTSETSTATS # Set weapon projectile stats when attacking
+    STATE           : STATE
+    hDist2          : 0             # This number is computed usually by squaring the smallest dimension of the sprite
+    targetable      : true          # Can enemy units attack this?
+    crumbled        : false         # Already destroyed?
+    corpsetime      : 1
+    state           : STATE.GOOD
+    #Used for structures that can attack!
+    #shoot_dy        : 0             # Where does the projectile origin from, relative to structure
+    #shoot_dx        : 0
     
     getName : ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@state}"
@@ -38,7 +122,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       dx = pawn.x
       dy = pawn.y
       dx = Math.abs(@x - dx)
-      dy = Math.abs(@y - @_halfHeight) - dy
+      dy = Math.abs(@y - @::_halfHeight) - dy
       dx*dx + dy*dy
 
     constructor : (params) ->
@@ -46,6 +130,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       if not @constructor::_halfHeight?
         name = @getName()
         @constructor::_halfHeight = GFXINFO[name].height >> 1
+        @constructor::_halfWidth  = GFXINFO[name].width >> 1
       @_setVariableStats
       
     _setVariableStats : ->

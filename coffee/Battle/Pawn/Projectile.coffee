@@ -6,15 +6,16 @@ define ['core/Battle/Pawn'], (Pawn) ->
   ]
 
   class Projectile extends Pawn
-    dx          : null
-    dy          : null
-    accuracy    : null
-    range       : null
-    corpsetime  : 1
-    target      : null
-    explosion   : null
-    targetable  : false
-    hDist2      : 3
+    dx                    : null  # Speed
+    dy                    : null
+    accuracy              : null  # Base chance to hit enemies
+    accuracy_target_bonus : null  # Bonus chance to hit for targeted enemy
+    range_current         : null  # # of cycles to exist in world for
+    corpsetime            : 1
+    target                : null
+    explosion             : null  # Does it explode upon hitting something? If so, what type?
+    targetable            : false
+    hDist2                : 3
     constructor : (params) ->
       super params
       @_setVariableStats
@@ -25,36 +26,36 @@ define ['core/Battle/Pawn'], (Pawn) ->
       @[stat] = $.R.apply(@, @[stat]) for stat in VARIABLESTATS when @[stat] instanceof Array
       
   class Bullet extends Projectile
-    spriteName : 'pistolshell'
-    range      : 35
-    damage     : 15
+    spriteName    : 'pistolshell'
+    range_current : 35
+    damage        : 15
   
   class MGBullet extends Projectile
-    spriteName : 'pistolshell'
-    range      : 35
-    damage     : [21, 32]
+    spriteName    : 'pistolshell'
+    range_current : 35
+    damage        : [21, 32]
     
   class SmallRocket extends Projectile
-    spriteName : 'rocketshell'
-    explosion  : 'SmallExplosion'
-    range      : 90
-    damage     : 24
+    spriteName    : 'rocketshell'
+    explosion     : 'SmallExplosion'
+    range_current : 90
+    damage        : 24
     
   class MortarShell extends Projectile
-    spriteName : 'turretshell'
-    range      : 1
-    ddy        : 0.41
+    spriteName    : 'turretshell'
+    range_current : 1
+    ddy           : 0.41
       
   class SmallShell extends Projectile
-    spriteName : 'turretshell'
-    explosion  : 'SmallExplosion'
-    range      : 70
-    damage     : 90
+    spriteName    : 'turretshell'
+    explosion     : 'SmallExplosion'
+    range_current : 70
+    damage        : 90
 
   class SmallMine extends Projectile
     spriteName            : 'mine'
-    accuracy              : 0.6               # Chance to hit other enemies
-    accuracy_target_bonus : 0                 # Additional chance to hit when calculating for target
+    accuracy              : 0.6               
+    accuracy_target_bonus : 0
     explosion             : 'FragExplosion'
     damage                : 20
   
@@ -74,14 +75,15 @@ define ['core/Battle/Pawn'], (Pawn) ->
     spriteName        : 'missilered'
     hDist2            : 81
     maxSpeed          : 90
-    range             : 280
-    rangeTravelled    : 0
+    range_current     : 280             
+    range_max         : 280
     ddy               : 0.081
     dspeed            : 0.84
     sight             : 8
+    homing            : true
     homing_delay      : 12
-    smokeTrailType    : 'SmokeCloud'
-    smokeTrailLength  : 8
+    trail_type        : 'SmokeCloud'
+    trail_length      : 280 - 8         # Has a smoke trail above this range
     dx                : 0.01
     dy                : 0.01
     getName : ->
@@ -108,26 +110,26 @@ define ['core/Battle/Pawn'], (Pawn) ->
     spriteName        : 'missilepurple'
     hDist2            : 64
     maxSpeed          : 110
-    range             : 90
-    rangeTravelled    : 0
+    range_current     : 90
+    range_max         : 0
     ddy               : 0.0173
     sight             : 8
     homing_delay      : 12
-    smokeTrailType    : 'SmokeCloudSmall'
-    smokeTrailLength  : 6
+    trail_type        : 'SmokeCloudSmall'
+    trail_length      : 90 - 6
     constructor : (params) ->
       super params
-      @dspeed = $.R(312,2650) * 0.001
+      @dspeed = $.R(312,2650) * 0.001 # Gravity drift dampener
   
   # future : Fired from helicopter, locks onto a location, not an entity
   class MediumRocketHE extends HomingMissile
     spriteName        : 'missilepurple'
     maxSpeed          : 65
-    range             : 60
-    rangeTravelled    : 0
+    range_current     : 60
+    range_max         : 0
     ddy               : 0.0241
-    smokeTrailType    : 'SmokeCloudSmall'
-    smokeTrailLength  : 12
+    trail_type        : 'SmokeCloudSmall'
+    trail_length      : 60 - 12
     constructor : (params) ->
       super params
       @dspeed = $.R(600,2100) * 0.001
