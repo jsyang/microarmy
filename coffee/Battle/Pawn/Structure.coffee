@@ -22,7 +22,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
   ]
 
   class Structure extends Pawn
-    SHOOTSETSTATS   : SHOOTSETSTATS # Set weapon projectile stats when attacking
     STATE           : STATE
     hDist2          : 0             # This number is computed usually by squaring the smallest dimension of the sprite
     targetable      : true          # Can enemy units attack this?
@@ -46,7 +45,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       @_setHalfDimensions
       @_setVariableStats VARIABLESTATS
 
-    takeDamage : (dmg) ->
+    setDamage : (dmg) ->
       return unless dmg > 0
       @health_current -= dmg
       if @health_current <= 0

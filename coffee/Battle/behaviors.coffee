@@ -284,7 +284,7 @@ define ->
           true
         
         isInfantryInShotFrame : ->
-          "#{@frame_current}" of @SHOTFRAME
+          "#{@frame_current}" of @SHOTFRAMES
         
         setInfantryDying : ->
           @action = $.R(@ACTION.DEATH1, @ACTION.DEATH2)

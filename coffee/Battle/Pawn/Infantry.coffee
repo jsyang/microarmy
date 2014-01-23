@@ -17,7 +17,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class Infantry extends Pawn
     ACTION        : ACTION
-    SHOTFRAME     : SHOTFRAME
     hDist2        : 20
     #target       : null
     #squad        : null
