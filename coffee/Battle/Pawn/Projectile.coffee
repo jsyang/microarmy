@@ -65,7 +65,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     spriteName            : 'pistolshell'
     sound                 : 'mgburst'
     range_current         : 50
-    damage                : [21, 32]
+    damage                : [20, 35]
     accuracy              : 0.65
     accuracy_target_bonus : 0.35
     speed                 : 4
@@ -91,12 +91,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
     sound                 : 'turretshot'
     explosion             : 'SmallExplosion'
     range_current         : 70
-    damage                : 90
+    damage                : 50
     accuracy              : 0.60
     accuracy_target_bonus : 0.50
     speed                 : 7
     bullet_weapon         : true
-    
+    dist                  : -> @getXDist @target
     stray_dy              : -> $.R(-12, 9) * 0.01
     
   # todo: shrapnel

@@ -16,7 +16,6 @@ define [
       @[k]  = v for k, v of params
       atom.playSound @sound if @sound?
       @_setVariableStats(VARIABLESTATS)
-      
     getName : ->
       "#{@spriteName}-#{@frame_current}"
     
@@ -86,8 +85,6 @@ define [
   
   class Flame extends Explosion
     frame_first : 0
-    halign      : 'center'
-    valign      : 'bottom'
     constructor : (params) ->
       super params
       

@@ -32,7 +32,7 @@ define ->
         sprite.x,         sprite.y
         sprite.width,     sprite.height,
             
-        x + dx,           y + dy,
+        (x + dx) >> 0,    (y + dy) >> 0,
         sprite.width,     sprite.height
       ) unless !sprite?
       

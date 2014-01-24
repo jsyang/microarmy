@@ -4,7 +4,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     GOOD  : 0
     BAD   : 1
     WRECK : 2
-    
+  
   SCAFFOLD_BUILD_REQUIREMENTS =
     'Pillbox'           : 4
     'MissileRack'       : 8
@@ -150,14 +150,14 @@ define ['core/Battle/Pawn'], (Pawn) ->
     reload_ing     : 0
     reload_time    : 90
     turn_ing       : 0
-    turn_current   : 0
+    turn_rate      : 0.25
     turn_last      : 4
     ammo_clip      : 1
     ammo_max       : 1
     shoot_dy        : -6
     projectile     : 'SmallShell'
     getName : ->
-      "turret-#{@team}-#{@direction}-#{@state}-#{@turn_current}"
+      "turret-#{@team}-#{@direction}-#{@state}-#{@turn_ing>>0}"
   
   class MissileRack extends Structure
     hDist2          : 64

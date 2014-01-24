@@ -46,6 +46,10 @@ define ->
         doFindTarget : ->
           World.XHash.getNearestEnemy(@)?
         
+        isFacingTarget : ->
+          (@target.x > @x and @direction is 1) or
+          (@target.x < @x and @direction is 0)
+        
         setFaceTarget : ->
           @direction = if @target.x > @x then 1 else 0
           true
@@ -125,7 +129,7 @@ define ->
         addStructureSmallExplosion : ->
           explode = World.battle.behaviors.Decorators.addChildExplosion
           addExplosion = explode.bind(@, 'SmallExplosion', [-8, 8],   [-8, 8])
-          addFlames    = explode.bind(@, 'Flame',          [-18, 18], [18, 0])
+          addFlames    = explode.bind(@, 'Flame',          [-18, 18], [0, 20])
           addExplosion()
           addFlames() for i in [1..$.R(4, 8)]
           true
@@ -217,6 +221,16 @@ define ->
         isReloading : ->
           @reload_ing > 0
         
+        doTurning : ->
+          @turn_ing += @turn_rate
+          if @turn_ing > @turn_last
+            @turn_ing = 0
+            if @direction is 0
+              @direction = 1
+            else
+              @direction = 0
+          true
+        
         doReloading : ->
           # Begin reloading if we need to reload
           if @reload_ing is 0
@@ -286,7 +300,8 @@ define ->
           
           if projectile.bullet_weapon
             infantryClass = Classes['Infantry']
-            pDx = @direction * @_halfWidth
+            direction = [-1,1][@direction]
+            pDx = direction * @_halfWidth
             
             if @ instanceof infantryClass
               if @action is @ACTION.ATTACK_PRONE
@@ -298,7 +313,7 @@ define ->
             
             projectile.x += pDx
             projectile.y += pDy
-            projectile.dx = [-1,1][@direction] * projectile.speed
+            projectile.dx = direction * projectile.speed
             projectile.dy = ((
               (@target.y - @target._halfHeight) - (@y + pDy)
             ) * projectile.speed) / projectile.dist + projectile.stray_dy
@@ -401,33 +416,37 @@ define ->
         StructureDeadCrumble        : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
         StructureDeadCrumbleExplode : '<[StructureDeadCrumble],[addStructureSmallExplosion]>'
         
-        StructureAlive        : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[doRangedAttack]>'
-        StructureCrew         : '<[!isFullyCrewed],[doCrewing]>'
-        StructureNeedsReload  : '<[isOutOfAmmo],[doReloading]>'
+        StructureAlive              : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[doRangedAttack]>'
+        StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
+        StructureNeedsReload        : '<[isOutOfAmmo],[doReloading]>'
         
         # Referenced by HomingMissileSteer
-        StructureTarget       : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
+        StructureTarget             : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
 
-        Scaffold              : '[Structure]'
+        Scaffold                    : '[Structure]'
         
-        PillboxTarget         : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
-        PillboxAlive          : '<[~StructureCrew],[!StructureNeedsReload],[PillboxTarget],[doRangedAttack]>'
-        Pillbox               : '([StructureDeadExplode],[PillboxAlive])'
+        PillboxTarget               : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
+        PillboxAlive                : '<[~StructureCrew],[!StructureNeedsReload],[PillboxTarget],[doRangedAttack]>'
+        Pillbox                     : '([StructureDeadExplode],[PillboxAlive])'
         
-        CommCenter            : '[Structure]' 
-        Barracks              : '[Structure]'
-        CommRelay             : '[Structure]'
-        WatchTower            : '[Structure]'
-        AmmoDump              : '[Structure]'
-        AmmoDumpSmall         : '([StructureDeadRemove],[StructureAlive])'
-        MineFieldSmall        : '[Structure]'
-        Depot                 : '[Structure]'
-        RepairYard            : '[Structure]'
-        Helipad               : '[Structure]'
+        SmallTurretNeedsTurn        : '<[!isFacingTarget], [doTurning]>'
+        SmallTurretAlive            : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[!SmallTurretNeedsTurn],[doRangedAttack]>'
+        SmallTurret                 : '([StructureDeadExplode],[SmallTurretAlive])'
         
-        SmallTurret           : '[Structure]'
-        MissileRack           : '[Structure]'
-        MissileRackSmall      : '[Structure]'
+        CommCenter                  : '[Structure]' 
+        Barracks                    : '[Structure]'
+        CommRelay                   : '[Structure]'
+        WatchTower                  : '[Structure]'
+        AmmoDump                    : '[Structure]'
+        AmmoDumpSmall               : '([StructureDeadRemove],[StructureAlive])'
+        MineFieldSmall              : '[Structure]'
+        Depot                       : '[Structure]'
+        RepairYard                  : '[Structure]'
+        Helipad                     : '[Structure]'
+              
+              
+        MissileRack                 : '[Structure]'
+        MissileRackSmall            : '[Structure]'
         
         
         Explosion                   : '<[ExplosionDoneRemove],[setNextFrame],[doExplosionHit]>'

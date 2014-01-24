@@ -35,7 +35,7 @@ define ->
     getNBucketsByCoord : (pawn, n, ray) ->
       i = pawn.x >> @BUCKETWIDTH
       NBuckets = []
-      if ray?
+      if ray
         if pawn.direction is 1
           [l, h] = [i, i+n]
         else
@@ -50,7 +50,7 @@ define ->
       (NBuckets = NBuckets.concat(bucket)) for bucket in b
       NBuckets
 
-    getNearestEnemy : (pawn, ray = false) ->
+    getNearestEnemy : (pawn, ray) ->
       minDist = Infinity
       pawn.setTarget()
       potentialTargets = @getNBucketsByCoord(pawn, pawn.sight, ray)

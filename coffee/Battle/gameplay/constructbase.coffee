@@ -11,9 +11,9 @@ define ['core/Battle/UI'], (BattleUI) ->
       #'WatchTower'        : 1
       #'AmmoDump'          : 1
       #'AmmoDumpSmall'     : 1
-      'Pillbox'           : 1
+      #'Pillbox'           : 1
       #'MineFieldSmall'    : 1
-      #'SmallTurret'       : 1
+      'SmallTurret'       : 1
       #'MissileRack'       : 1
       #'MissileRackSmall'  : 1 
       #'Scaffold'          : 1
