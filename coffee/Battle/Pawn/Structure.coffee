@@ -170,7 +170,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ammo_clip       : 1
     ammo_max        : 1
     ammo_supply     : 3
-    ammo_maxSupply  : 3
+    ammo_maxsupply  : 3
     shoot_dy        : -20
     getName : ->
       if @health_current <= 0
@@ -193,13 +193,15 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ammo_clip         : 1
     ammo_max          : 1
     ammo_supply       : 12
-    ammo_maxSupply    : 12
+    ammo_maxsupply    : 12
     shoot_dy          : -8
     getName : ->
-      if @reload_ing > 30 or @health_current <= 0 or @ammo_clip > 0
-        hasAmmo = 0
-      else
+      if @health_current <= 0
+        hasAmmo = 2
+      else if @reload_ing > 30
         hasAmmo = 1
+      else
+        hasAmmo = 0
       "missileracksmall-#{@team}-#{@direction}-#{hasAmmo}"
   
   # future: NOT YET IMPLEMENTED #

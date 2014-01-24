@@ -170,14 +170,16 @@ define ['core/Battle/Pawn'], (Pawn) ->
     hDist2            : 64
     maxSpeed          : 110
     range_current     : 90
-    range_max         : 0
+    range_max         : 90
     ddy               : 0.0173
     sight             : 8
+    homing            : true
     homing_delay      : 12
     dx                : -> [-1, 1][@direction] * 5.12
     dy                : -6.35
     trail_type        : 'SmokeCloudSmall'
     trail_length      : 90 - 6
+    dist              : -> @getXDist @target
     constructor : (params) ->
       super params
       @dspeed = $.R(312,2650) * 0.001 # Gravity drift dampener

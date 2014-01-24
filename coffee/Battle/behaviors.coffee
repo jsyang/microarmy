@@ -434,7 +434,7 @@ define ->
         SmallTurret                 : '([StructureDeadExplode],[SmallTurretAlive])'
         
         MissileRack                 : '([StructureDeadExplode],[StructureAlive])'
-        MissileRackSmall            : '[Structure]'
+        MissileRackSmall            : '[MissileRack]'
         
         CommCenter                  : '[Structure]' 
         Barracks                    : '[Structure]'
@@ -483,4 +483,5 @@ define ->
         HomingMissileHitEntity      : '<[hasProjectileHitEnemy],[addLargeDetonation],[doRemove]>'
         HomingMissileSmallHitGround : '<[isGroundHit],[addSmallFlakExplosion],[doRemove]>'
         HomingMissileSmallHitEntity : '<[hasProjectileHitEnemy],[addSmallFlakExplosion],[doRemove]>'
+        HomingMissileSmall          : '<[!ProjectileNotActive],[!HomingMissileSmallHitGround],[!HomingMissileSmallHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
     }
