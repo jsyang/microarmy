@@ -34,10 +34,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@state}"
     
     isHit : (pawn) ->
-      dx = pawn.x
-      dy = pawn.y
-      dx = Math.abs(@x - dx)
-      dy = Math.abs(@y - @constructor::_halfHeight) - dy
+      dx = @x - pawn.x
+      dy = @y - @_halfHeight - pawn.y
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
     constructor : (params) ->

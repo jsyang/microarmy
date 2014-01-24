@@ -45,7 +45,7 @@ define ->
       return unless dmg > 0
       @health_current -= dmg
       if @health_current <= 0
-        @health_current = 0      
+        @health_current = 0
     setTarget : (t) ->
       if t? then @target = t else delete @target
       true
@@ -57,8 +57,7 @@ define ->
     getXDist : (pawn) ->
       Math.abs(@x - pawn.x)
     isHit : (pawn) ->
-      # Should adjust for center for ground entities: Structures, Infantry, Vehicles
-      dx = Math.abs(@x - pawn.x)
-      dy = Math.abs(@y - pawn.y)
+      dx = @x - pawn.x
+      dy = @y - pawn.y
       # Use @hDist2 = 0 for points
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2

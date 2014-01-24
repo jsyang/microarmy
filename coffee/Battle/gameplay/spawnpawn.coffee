@@ -18,13 +18,13 @@ define ['core/Battle/UI'], (BattleUI) ->
     'MissileRackSmall'
     #'HomingMissile'
     #'HomingMissileSmall'
-    #'PistolInfantry'
+    'PistolInfantry'
     #'RocketInfantry'
     #'EngineerInfantry'
-    'FragExplosion'
-    'SmallExplosion'
-    'FlakExplosion'
-    'HEAPExplosion'
+    #'FragExplosion'
+    #'SmallExplosion'
+    #'FlakExplosion'
+    #'HEAPExplosion'
     ##'ChemExplosion'
     #'SmokeCloud'
     #'SmokeCloudSmall'
@@ -88,9 +88,18 @@ define ['core/Battle/UI'], (BattleUI) ->
           mx = atom.input.mouse.x
           my = atom.input.mouse.y
           
+          x = mx + @battle.scroll.x
+          y = my
+          
+          classes = @battle.world.Classes
+          instanceClass = classes[CLASSES[@index]]
+          
+          if instanceClass::constructor instanceof classes['Infantry']
+            console.log 'ayy!'
+          
           pawn = new @battle.world.Classes[CLASSES[@index]] {
-            x         : mx + @battle.scroll.x
-            y         : my
+            x         : x
+            y         : y
             team      : @team
             direction : @direction
           }

@@ -32,6 +32,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     frame_current : 0
     frame_first   : 0
     frame_last    : 5
+    targetable    : true
     constructor : (params) ->
       @[k]  = v for k, v of params
       @_setHalfDimensions()
@@ -39,10 +40,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     getName : ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@action}-#{@frame_current}"
     isHit : (pawn) ->
-      dx = pawn.x
-      dy = pawn.y
-      dx = Math.abs(@x - dx)
-      dy = Math.abs(@y - @::_halfHeight) - dy
+      dx = @x - pawn.x
+      dy = @y - @_halfHeight - pawn.y
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
   class PistolInfantry extends Infantry

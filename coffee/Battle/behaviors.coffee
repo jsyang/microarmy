@@ -62,6 +62,22 @@ define ->
           @action = $.R(@ACTION.ATTACK_STANDING, @ACTION.ATTACK_PRONE)
           true
         
+        doInfantryDying : ->
+          @action = $.R(@ACTION.DEATH1, @ACTION.DEATH2)
+          @frame_current = @frame_first
+          atom.playSound "die#{$.R(1,4)}"
+          true
+        
+        isInfantryDying : ->
+          @action is @ACTION.DEATH1 or
+          @action is @ACTION.DEATH2
+        
+        hasMissileHitTarget : ->
+          if @target?
+            @isHit @target
+          else
+            false
+        
         hasProjectileHitEnemy : ->
           InfantryClass = Classes['Infantry']
           potentialHits = World.XHash.getNBucketsByCoord(@, 0)
@@ -357,7 +373,7 @@ define ->
           atom.playSound 'tack'
           true
           
-        doRot : ->
+        doRotting : ->
           @corpsetime-- if @corpsetime > 0
           true
         
@@ -481,13 +497,19 @@ define ->
         HomingMissileSteer          : '<[StructureTarget],[doProjectileSteer]>'
         HomingMissile               : '<[!ProjectileNotActive],[!HomingMissileHitGround],[!HomingMissileHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
         HomingMissileHitGround      : '<[isGroundHit],[addLargeDetonation],[doRemove]>'
-        HomingMissileHitEntity      : '<[hasProjectileHitEnemy],[addLargeDetonation],[doRemove]>'
+        HomingMissileHitEntity      : '<[hasMissileHitTarget],[addLargeDetonation],[doRemove]>'
         
         HomingMissileSmall          : '<[!ProjectileNotActive],[!HomingMissileSmallHitGround],[!HomingMissileSmallHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
         HomingMissileSmallHitGround : '<[isGroundHit],[addSmallFlakExplosion],[doRemove]>'
-        HomingMissileSmallHitEntity : '<[hasProjectileHitEnemy],[addSmallFlakExplosion],[doRemove]>'
+        HomingMissileSmallHitEntity : '<[hasMissileHitTarget],[addSmallFlakExplosion],[doRemove]>'
         
         # # #
         
+        Infantry                    : '([InfantryDead],[InfantryAlive])'
+        InfantryMoveAnimate         : '<[doMoveOnGround],[setNextFrame],[isPastLastFrame],[setFirstFrame]>'
+        InfantryAlive               : '[~InfantryMoveAnimate]'
+        InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying]>,<[!isLastFrame],[setNextFrame]>)'
+        InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         
+        PistolInfantry              : '[Infantry]'
     }
