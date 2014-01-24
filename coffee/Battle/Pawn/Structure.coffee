@@ -28,7 +28,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     crumbled        : false         # Already destroyed?
     corpsetime      : 1
     state           : STATE.GOOD
-    #shoot_dy        : 0             # Where does the projectile origin from, relative to structure
+    #shoot_dy        : 0            # Where does the projectile origin from, relative to structure
     
     getName : ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@state}"
@@ -37,12 +37,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
       dx = pawn.x
       dy = pawn.y
       dx = Math.abs(@x - dx)
-      dy = Math.abs(@y - @::_halfHeight) - dy
+      dy = Math.abs(@y - @constructor::_halfHeight) - dy
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
     constructor : (params) ->
       @[k]  = v for k, v of params
-      @_setHalfDimensions
+      @_setHalfDimensions()
       @_setVariableStats VARIABLESTATS
 
     setDamage : (dmg) ->
@@ -137,7 +137,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ammo_max        : 6
     shoot_dy        : -5
     projectile      : 'MGBullet'
-    crew_current    : 0
+    crew_current    : 1
     crew_max        : 4
     crew_killDamage : 23   # Damage > this has a chance of killing some crew 
     crew_killChance : 0.2  # Chance 1 crew member is killed
@@ -173,7 +173,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ammo_maxSupply  : 3
     shoot_dy        : -20
     getName : ->
-      if @reload_ing > 40 or @health_current <= 0
+      if @reload_ing > 40 or @health_current <= 0 or @ammo_clip > 0
         hasAmmo = 0
       else
         hasAmmo = 1
@@ -194,7 +194,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ammo_maxSupply    : 12
     shoot_dy          : -8
     getName : ->
-      if @reload_ing > 30 or @health_current <= 0
+      if @reload_ing > 30 or @health_current <= 0 or @ammo_clip > 0
         hasAmmo = 0
       else
         hasAmmo = 1

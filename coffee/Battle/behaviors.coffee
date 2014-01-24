@@ -1,18 +1,20 @@
 define ->
-  # todo: Each of these decorators is a unit... easily unit tested
+  # future: Each of these is easily unit tested...
+
   (World, Classes) ->
   # Prefix          Explanation
   # ----            -----------
   # has_            returns a boolean state, with possible side effects
-  # get_            returns a state, without side effects (not used within behaviors)
+  # get_            returns a state, without side effects (used within logic only as helpers)
   # is_             returns a boolean state, without side effects
   # set_            returns TRUE, sets a property
   # add_            returns TRUE, adds entity to world
   # do_             returns TRUE, definite side effects, possible side effects on other entities
     {
-      Decorators :        
-        TRUE  : true
-        FALSE : false
+      Decorators :
+        
+        QUIT : ->
+          Infinity
         
         isArmed : ->
           @projectile?
@@ -30,7 +32,7 @@ define ->
         setFaceTarget : ->
           @direction = if @target.x > @x then 1 else 0
           true
-
+  
         setInfantryMoving : ->
           @action = @ACTION.MOVING
           true
@@ -183,7 +185,7 @@ define ->
         isCyclingFrames : ->
           @cycles > 0
         
-        doDecrementCycles : ->
+        setDecrementCycles : ->
           @cycles--
           true
         
@@ -197,7 +199,7 @@ define ->
               @reload_ing = $.R(30, @reload_time) + 1
             else
               @reload_ing = @reload_time + 1
-
+  
           @reload_ing--
           
           # Continue reloading
@@ -216,7 +218,7 @@ define ->
           
         isOutOfAmmo : ->
           @ammo_clip <= 0
-
+  
         isBerserking : ->
           @berserk_ing? and @berserk_ing > 0
         
@@ -224,7 +226,7 @@ define ->
           @action = @ACTION.MOVING
           @berserk_ing--
           true
-
+  
         doTryBerserking : ->
           @berserk_ing = @berserk_time if $.r() < @berserk_chance
           true
@@ -240,11 +242,11 @@ define ->
           !World.contains @
           
         # future: only works in 1D. make this work for 2D (aircraft)
-        doSeeTarget : ->
-          @getXDist @target <= @sight * (1 << World.XHash.BUCKETWIDTH)
+        isTargetVisible : ->
+          @getXDist(@target) <= @sight * (1 << World.XHash.BUCKETWIDTH)
                
         isInfantryMeleeDistance : ->
-          @getXDistX @target < (@::_halfWidth << 1)
+          @getXDistX @target < (@_halfWidth << 1)
        
         doInfantryMeleeAttack : ->
           if $.r() < @berserk_chance
@@ -255,6 +257,8 @@ define ->
         
         doRangedAttack : ->
           projectile = new Classes[@projectile] {
+            x      : @x
+            y      : @y
             team   : @team
             target : @target
           }
@@ -264,7 +268,7 @@ define ->
           
           if projectile.bullet_weapon
             infantryClass = Classes['Infantry']
-            pDx = @direction * @::_halfWidth
+            pDx = @direction * @_halfWidth
             
             if @ instanceof infantryClass
               if @action is @ACTION.ATTACK_PRONE
@@ -274,9 +278,11 @@ define ->
             else
               pDy = @shoot_dy
             
+            projectile.x += pDx
+            projectile.y += pDy
             projectile.dx = [-1,1][@direction] * projectile.speed
             projectile.dy = ((
-              (@target.y - @target::_halfHeight) - (@y + pDy)
+              (@target.y - @target._halfHeight) - (@y + pDy)
             ) * projectile.speed) / projectile.dist + projectile.stray_dy
           
           World.add projectile
@@ -323,7 +329,7 @@ define ->
           true
         
         isCrewed : ->
-          @crew_current? and @crew_current > 0
+          @crew_current > 0
         
         isFullyCrewed : ->
           @crew_current is @crew_max
@@ -354,210 +360,81 @@ define ->
         isStructureCrumbled : ->
           @crumbled is true
         
+        setStructureCrumbled : ->
+          @crumbled = true
+          atom.playSound 'crumble'
+          true
+        
         setUntargetable : ->
           @targetable = false
           true
-        
-        
-        # todo: ai versions of user behaviors # stuff below has to do with AI, not yet in
-        # proper format
-        
-        hasReinforcements : ->
-          @ai_reinforce_ing?
-        
-        tryReinforcing : ->
-          if @reinforce.ing
-            if  @reinforce.supplyNumber > 0 and
-                @reinforce.parentSquad?     and
-                @reinforce.supplyType?      and
-                @reinforce.types[@reinforce.supplyType] > 0
-              # release a unit from the supply
-              @reinforce.ing = @reinforce.time
-              @reinforce.types[@reinforce.supplyType]--
-              @reinforce.supplyNumber--
-              
-              # todo: spawned unit inherits parameters from the structure's reinforce obj
-              instance = new Classes[@reinforce.supplyType]({
-                x     : @x
-                y     : World.height(@)
-                team  : @team
-                squad : @reinforce.parentSquad
-              })
-              
-              World.add(instance)
-              # todo: parentSquad should check if all its members have joined rather than the supplier
-              @reinforce.parentSquad.add(instance)
-              return true
-            
-          false
-        
-        updateCommanderSquadsStatus : ->
-          newSquads = []
-          (
-            if !squad.isPendingRemoval()
-              newSquads.push(squad)
-          ) for squad in @squads.length
-          @squads = newSquads
-          true
-
-        tryCommanderCreateSquad : ->
-          if @squads.length < @squadsLimit
-            squadType = $.WR(@squadBias)
-            
-            newSquad = new World.Classes.Squad {
-              team      : @team
-              commander : @
-            }
-
-            # Issue requests to fill up the squad
-            newSquad.addRequest(@memberBias[squadType]) for n in [0...@squadSizeLimit]
-            
-            @squads.push(newSquad)
-            World.add(newSquad)
-
-            true
-
-          else 
-            false
-
-        # also calculate average member X
-        isSquadDead : ->
-          if @allMembersJoined
-            numMembers = 0
-            sumMemberX = 0
-            (
-              if !member.isDead()
-                numMembers++
-                sumMemberX+=member.x
-            ) for member in @members
-            
-            if numMembers > 0
-              @meanX = sumMemberX / numMembers
-
-            return numMembers > 0
-          else
-            false
-
-        tryFulfillingRequests : ->
-          numRequests = 0
-          (
-            numRequests++
-            break
-          ) for k,v of @requests
-          if numRequests > 0
-            # todo: get depots from 
-            if @commander?
-              @commander.findDepotForRequest(@requests)
-            else
-              false
-          else
-            false
-        
+  
+      # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+      # Prefix          Result
+      # ------          ------
+      # !               Negate the boolean result
+      # ~               Always return true
+      
       Trees :
-
-        removeIfOutsideWorld        : '<[isOutsideWorld],[remove]>'
-        removeIfProjectileNotActive : '<[!isProjectileActive],[remove]>'
-
-        Projectile          : '([removeIfOutsideWorld],[removeIfProjectileNotActive],[!fly],<[tryProjectileHit],[tryProjectileExplode],[remove]>)'
-        Bullet              : '[Projectile]'
-        MGBullet            : '[Projectile]'
-        SmallRocket         : '[Projectile]'
-        SmallShell          : '[Projectile]'
-      
-        SmokeTrail          : '(<[hasSmokeTrail],[spawnSmokeTrail]>,[TRUE])'
-        
-        HomingFindTarget    : '([hasTarget],[findTarget],[TRUE])'
-        HomingAbility       : '([!HomingFindTarget],[steerToEnemy],[TRUE])'
-        
-        # todo : make the spawnExplosion stuff part of the model?
-        HomingMissile       : '(<[isOutsideWorld],[spawnLargeDetonation],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[spawnLargeDetonation],[remove]>)'
-        HomingMissileSmall  : '(<[isOutsideWorld],[spawnSmallFlakExplosion],[remove]>,[removeIfProjectileNotActive],[!SmokeTrail],[!HomingAbility],[!fly],<[hasHitEnemy],[log1],[spawnSmallFlakExplosion],[remove]>)'
-      
-        SmallMine           : '[Projectile]'
-        SmallChemMine       : '[Projectile]'
-      
-        corpseDecay     : '(<[!isLastFrame],[nextFrame]>,[rot])'
-        animate         : '(<[isLastFrame],[decrementCycles],[gotoFirstFrame]>,[nextFrame])'
-      
-        Explosion       : '(<[isLastFrame],[remove]>,[!nextFrame],[explode])'
-        SmallExplosion  : '[Explosion]'
-        FragExplosion   : '[Explosion]'
-        FlakExplosion   : '[Explosion]'
-        HEAPExplosion   : '[Explosion]'
-        ChemExplosion   : '[Explosion]'
-        
-        SmokeCloud      : '(<[isLastFrame],[remove]>,[!nextFrame])'
-        SmokeCloudSmall : '[SmokeCloud]'
-
-        Flame           : '(<[!hasCyclesRemaining],[remove]>,[animate])'
-        ChemCloud       : '[Flame]'
-                
-        # Berserk means Infantry charges towards target
-        
-        #InfantrySpawn           : '' # Make the spawned Infantry either parachute down or at ground level
-        InfantryDead            : '<[!hasCorpseTime],(<[!isDyingInfantry],[animateDyingInfantry]>,[rotCorpse])>'
-        InfantryReloading       : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[setInfantryAttackStance],[clearTarget],[gotoFirstFrame]>)'
-        InfantryBerserking      : '<[isBerserking],[move],[animate]>'
-        InfantryFindTarget      : '<[findTarget],[seeTarget]>'
-        InfantrySetStance       : '([isInfantryAttacking],[setInfantryAttackStance])'
-        InfantryDoAttack        : '<[tryInfantryAttack],[animate],([tryBerserking],[TRUE])>'
-        InfantryTryAttack       : '(<[hasTarget],[seeTarget],[faceTarget],[setFacingFrames],[InfantryDoAttack]>,[InfantryFindTarget])'
-        InfantryMoveToGoal      : '([!faceGoalDirection],[!setFacingFrames])'
-        InfantryMove            : '(<[isOutsideWorld],[gameOver],[remove]>,[!setInfantryMoving],[!move],[animate])'
-        
-        InfantryAlive           : '([InfantryReloading],[InfantryBerserking],[InfantryTryAttack],[InfantryMoveToGoal],[InfantryMove])'
-        InfantryDead            : '(<[!isInfantryDying],[setInfantryDying],[gotoFirstFrame]>,[corpseDecay])'
-        
-        Infantry                : '(<[isDead],[InfantryDead]>,[InfantryAlive])'
-        
-        PistolInfantry          : '[Infantry]'
-        RocketInfantry          : '[Infantry]'
-        
-        InfantryMoveToBuild     : '([!faceTarget],[!setFacingFrames],<[tryInfantryBuild],[remove]>)'
-        EngineerInfantryAlive   : '([InfantryMoveToBuild],[InfantryMove])'
-        EngineerInfantry        : '(<[isDead],[InfantryDead]>,[EngineerInfantryAlive])'
-        
-        # Structures!!!
         Structure             : '([StructureDead],[StructureAlive])'
-        StructureDead         : '<[isDead],(<[isCrumbled],[isCrumblingStructure],[setUntargetable],[crumbleStructure]>,[TRUE])>'
-        StructureAlive        : '([StructureCrewing],[StructureReinforcing],[StructureAttack])'
+        StructureDead         : '<[isDead],[~StructureDeadCrumble]>'
+        StructureDeadRemove   : '<[isDead],[setStructureCrumbled],[setUntargetable],[doRemove]>'
+        StructureDeadCrumble  : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
+        StructureAlive        : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[doRangedAttack]>'
+        StructureCrew         : '<[!isFullyCrewed],[doCrewing]>'
+        StructureNeedsReload  : '<[isOutOfAmmo],[doReloading]>'
         
-        StructureReloading    : '(<[isReloading],[tryReloading]>,<[isOutOfAmmo],[beginReloading],[clearTarget]>)'
-        StructureCrewing      : '<[isCrewed],[tryCrewing]>'
-        StructureReinforcing  : '<[hasReinforcements],[tryReinforcing]>'
-        StructureAttack       : '<[isArmed],([StructureReloading],<[hasTarget],[seeTarget],[tryStructureAttack]>,[findTarget])>'
-        
-        # todo: throw non-explosive shrapnel
-        # todo: throw explosive shrapnel
-        
-        #StructureDeadExplode  : '<[!isCrumblingStructure],[crumbleStructure],[throwShrapnel]>'
-        
-        
+        # Referenced by HomingMissileSteer
+        StructureTarget       : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
 
-        
-        
-        ScaffoldAlive         : '(<[isFullyCrewed],[tryScaffoldSpawnChild],[remove]>,<[isCrewed],[tryCrewing]>)'
-        Scaffold              : '([StructureDead],[ScaffoldAlive])'
-        
+        Scaffold              : '[Structure]'
+
         CommCenter            : '[Structure]' 
         Barracks              : '[Structure]'
         CommRelay             : '[Structure]'
-        
         WatchTower            : '[Structure]'
         AmmoDump              : '[Structure]'
-        AmmoDumpSmall         : '[Structure]'
-        
+        AmmoDumpSmall         : '([StructureDeadRemove],[StructureAlive])'
         MineFieldSmall        : '[Structure]'
         Depot                 : '[Structure]'
         RepairYard            : '[Structure]'
         Helipad               : '[Structure]'
-        
         Pillbox               : '[Structure]'
         SmallTurret           : '[Structure]'
         MissileRack           : '[Structure]'
         MissileRackSmall      : '[Structure]'
-
-        Squad  : '[]'
-        #Commander   : '[]'
-
+        
+        
+        Explosion                   : '<[ExplosionDoneRemove],[setNextFrame],[doExplosionHit]>'
+        ExplosionDoneRemove         : '([!isLastFrame],[doRemove])'
+        ExplosionCycleFrames        : '<[isLastFrame],[setDecrementCycles],[setFirstFrame]>'
+        ExplosionDoneCycles         : '<[!isCyclingFrames],[doRemove]>'
+        SmallExplosion              : '[Explosion]'
+        FragExplosion               : '[Explosion]'
+        FlakExplosion               : '[Explosion]'
+        HEAPExplosion               : '[Explosion]'
+        ChemExplosion               : '[Explosion]'
+        SmokeCloud                  : '<[ExplosionDoneRemove],[!nextFrame]>'
+        SmokeCloudSmall             : '[SmokeCloud]'
+        Flame                       : '([ExplosionDoneCycles],[ExplosionCycleFrames])'
+        ChemCloud                   : '[Flame]'
+        
+        
+        Projectile                  : '<[!ProjectileNotActive],[!ProjectileHitGround],[!ProjectileHitEntity],[doProjectileFly]>'
+        ProjectileNotActive         : '<[!isProjectileActive],[doRemove]>'
+        ProjectileHitGround         : '<[isGroundHit],[addProjectileExplosion],[doRemove]>'
+        ProjectileHitEntity         : '<[hasProjectileHitEnemy],[addProjectileExplosion],[doRemove]>'
+        Bullet                      : '[Projectile]'
+        MGBullet                    : '[Projectile]'
+        SmallRocket                 : '[Projectile]'
+        SmallShell                  : '[Projectile]'
+        
+        SmokeTrail                  : '<[isTrailing],[addTrail]>'
+        
+        HomingMissileSteer          : '<[StructureTarget],[doProjectileSteer]>'
+        HomingMissile               : '<[!ProjectileNotActive],[!HomingMissileHitGround],[!HomingMissileHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
+        HomingMissileHitGround      : '<[isGroundHit],[addLargeDetonation],[doRemove]>'
+        HomingMissileHitEntity      : '<[hasProjectileHitEnemy],[addLargeDetonation],[doRemove]>'
+        HomingMissileSmallHitGround : '<[isGroundHit],[addSmallFlakExplosion],[doRemove]>'
+        HomingMissileSmallHitEntity : '<[hasProjectileHitEnemy],[addSmallFlakExplosion],[doRemove]>'
     }

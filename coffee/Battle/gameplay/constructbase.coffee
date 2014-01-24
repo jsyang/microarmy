@@ -6,18 +6,18 @@ define ['core/Battle/UI'], (BattleUI) ->
     
     # Base starter kit
     inventory :
-      'CommCenter'        : 1
-      'CommRelay'         : 1
-      'WatchTower'        : 1
-      'AmmoDump'          : 1
-      'AmmoDumpSmall'     : 1
+      #'CommCenter'        : 1
+      #'CommRelay'         : 1
+      #'WatchTower'        : 1
+      #'AmmoDump'          : 1
+      #'AmmoDumpSmall'     : 1
       'Pillbox'           : 1
       #'MineFieldSmall'    : 1
-      'SmallTurret'       : 1
-      'MissileRack'       : 1
-      'MissileRackSmall'  : 1 
-      'Scaffold'          : 1
-      'Barracks'          : 1
+      #'SmallTurret'       : 1
+      #'MissileRack'       : 1
+      #'MissileRackSmall'  : 1 
+      #'Scaffold'          : 1
+      #'Barracks'          : 1
       # 'Depot'
       # 'RepairYard'
       # 'Helipad'

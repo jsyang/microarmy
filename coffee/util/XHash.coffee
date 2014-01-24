@@ -16,16 +16,16 @@ define ->
     
     # Make empty buckets for each _BUCKETWIDTH_ sized chunk of the battlefield
     flush : ->
-      @buckets = ( [] for i in [0..(@w>>@BUCKETWIDTH)] )
+      @buckets = ( [] for i in [0..(@w >> @BUCKETWIDTH)] )
     
     add : (pawn) ->
-      targetBucket = @buckets[pawn.x>>@BUCKETWIDTH]
+      targetBucket = @buckets[pawn.x >> @BUCKETWIDTH]
       if targetBucket?
         targetBucket.push(pawn)
       return
       
     addFilterDead : (pawn) ->
-      targetBucket = @buckets[pawn.x>>@BUCKETWIDTH]
+      targetBucket = @buckets[pawn.x >> @BUCKETWIDTH]
       if targetBucket? and !pawn.isDead()
         targetBucket.push(pawn)
       return
@@ -33,7 +33,7 @@ define ->
     # Get all the things which are within N buckets distance from x
     # If a ray direction is given then only look in that direction
     getNBucketsByCoord : (pawn, n, ray) ->
-      i = pawn.x>>@BUCKETWIDTH
+      i = pawn.x >> @BUCKETWIDTH
       NBuckets = []
       if ray?
         if ray < 0
@@ -46,25 +46,23 @@ define ->
       if l<0 then l = 0
       b = @buckets[l...h]
       
-      ( NBuckets = NBuckets.concat(bucket) ) for bucket in b
+      (NBuckets = NBuckets.concat(bucket)) for bucket in b
       NBuckets
 
     getNearestEnemy : (pawn) ->
       minDist = Infinity
       pawn.setTarget()
       potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
-      (
+      for t in potentialTargets
         dist = Math.abs(pawn.x - t.x)
         if dist < minDist
           if  !(t is pawn)          and
               !t.isAlly(pawn)       and
               !t.isDead()           and
               !t.isPendingRemoval() and
-              !t.isCrewDead()       and
-              pawn.isAbleToTarget(t)
+              !t.isCrewDead()
             pawn.setTarget(t)
             minDist = dist
-      ) for t in potentialTargets
       pawn.target
     
     getCrowdedEnemy : (pawn) ->

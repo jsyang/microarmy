@@ -2,14 +2,6 @@ define [
   'core/atom/spritesheet'
   'core/atom/text'
 ], (atomSpritesheet, atomText) ->
-
-  if global?
-    globalscope = global
-  else if window?
-    globalscope = window
-  else
-    throw new Error 'could not find a global scope'
-
   window.requestAnimationFrame = window.requestAnimationFrame or
     window.webkitRequestAnimationFrame or
     window.mozRequestAnimationFrame or
@@ -328,4 +320,5 @@ define [
   atom.setVolume = (v) ->
     atom._mixer?.gain.value = v
 
+  globalscope = global ? window
   globalscope.atom = atom

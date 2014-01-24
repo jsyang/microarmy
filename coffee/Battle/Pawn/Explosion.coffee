@@ -7,7 +7,7 @@ define [
     damage        : 0
     damageDecay   : 2     # How much will damage decay if we've splash-damaged a bunch of stuff
     corpsetime    : 1
-    frame_current : 0
+    frame_current : -1    # Next frame is set when it's created
     constructor : (params) ->
       @[k]  = v for k, v of params
       atom.playSound @sound if @sound?

@@ -32,8 +32,12 @@ define ->
         
           # Custom behaviors and decorators
           else
-            negate  = btree.id[0] is '!'
-            id_     = if negate then btree.id[1..] else btree.id
+            negate  = btree.id.indexOf('!') > -1
+            pass    = btree.id.indexOf('~') > -1
+            
+            id_ = btree.id
+            id_ = id_[1..] if negate
+            id_ = id_[1..] if pass
             
             # Look in Decorators first
             subtree = @Decorators[id_]
@@ -43,6 +47,7 @@ define ->
               else
                 result = subtree.call thisArg
                 if negate then result = !result
+                if pass   then result = true
                 return result
         
             # Look in Trees
@@ -50,12 +55,13 @@ define ->
             if subtree?
               result = @Execute(thisArg, subtree)
               if negate then result = !result
+              if pass   then result = true
               return result
             
             else
               throw new Error "Tree/Decorator '#{id_}' not found!"
       else
-        throw new Error 'No behavior tree specified!'
+        throw new Error 'No behavior tree specified for #{thisArg::constructor.name}!'
       
       return
     

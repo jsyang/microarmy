@@ -6,15 +6,19 @@ define [
   'core/Battle/Pawn/Explosion'
   'core/Battle/Pawn/Infantry'
   'core/Battle/Pawn/Projectile'
-  
+    
   'core/util/XHash'
   'core/util/SimpleHash'
-], (addTerrain, addStructureClasses, addExplosionClasses, addInfantryClasses, addProjectileClasses, XHash, SimpleHash) ->
+], (addTerrain,
+    addStructureClasses,
+    addExplosionClasses,
+    addInfantryClasses,
+    addProjectileClasses,
+    XHash,
+    SimpleHash) ->
 
   class BattleWorld
-  
-    # Also used for drawing order
-    primitiveClasses : [
+    primitiveClasses : [  # Also used for drawing order
       'Structure'
       #'Vehicle'
       #'Aircraft'
@@ -36,19 +40,16 @@ define [
     tick : ->
       @createNewXHash()
       @createNewInstances()
-      
+
+      # see logic.coffee for more details.
       for k, v of @Instances
-        for entity in v
-          if !entity.isPendingRemoval()
-            btree = entity.behavior ? entity.constructor.name
-            btree = @battle.behaviors.Trees[btree]
-            
-            if btree?
-              @battle.behaviors.Execute(entity, btree)
-              @add(entity)
-      
-      # Replace the old xhash and instances with new ones
-      @XHash     = @XHash_
+        for entity in v when !entity.isPendingRemoval()
+          btree = entity.behavior ? entity.constructor.name
+          btree = @battle.behaviors.Trees[btree]
+          @battle.behaviors.Execute(entity, btree)
+          @add(entity)
+  
+      @XHash     = @XHash_        # Replace the old xhash and instances with new ones
       @Instances = @Instances_
       
       delete @XHash_
@@ -74,11 +75,10 @@ define [
       !(x < 0 || x >= @w || y > @heightmap[x])
   
     add : (entity) ->
-      # Add to temp if add() called inside a tick
-      # Otherwsie add to actual xhash if we're outside of a tick
+      # Add to temporary structure if add() called inside a tick
+      # Otherwise add to actual ones if we're outside of a tick
       xh = @XHash_ ? @XHash
       i  = @Instances_ ? @Instances
-      
       for type in @primitiveClasses when entity instanceof @Classes[type]
         xh.add entity unless !entity.isTargetable()
         if entity.corpsetime > 0

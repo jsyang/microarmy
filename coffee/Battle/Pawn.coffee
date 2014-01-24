@@ -36,11 +36,6 @@ define ->
       @ammo_supply <= 0
     isTargetable : ->
       @targetable
-    isAbleToTarget  : (pawn) ->
-      if (pawn.fly? and !@canTargetAircraft)
-        false
-      else
-        true
     isPendingRemoval : ->
       @corpsetime <= 0 
     remove : ->

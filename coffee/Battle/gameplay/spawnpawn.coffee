@@ -1,30 +1,30 @@
 define ['core/Battle/UI'], (BattleUI) ->
   
   CLASSES = [
-    'CommCenter'
-    'Barracks'
-    'Scaffold'
-    'CommRelay'
-    'WatchTower'
-    'AmmoDump'
-    'AmmoDumpSmall'
-    'MineFieldSmall'
-    'Depot'
-    'RepairYard'
-    'Helipad'
+    #'CommCenter'
+    #'Barracks'
+    #'Scaffold'
+    #'CommRelay'
+    #'WatchTower'
+    #'AmmoDump'
+    #'AmmoDumpSmall'
+    #'MineFieldSmall'
+    #'Depot'
+    #'RepairYard'
+    #'Helipad'
     'Pillbox'
     'SmallTurret'
     'MissileRack'
     'MissileRackSmall'
-    'HomingMissile'
-    'HomingMissileSmall'
+    #'HomingMissile'
+    #'HomingMissileSmall'
     #'PistolInfantry'
     #'RocketInfantry'
     #'EngineerInfantry'
-    #'FragExplosion'
-    #'SmallExplosion'
-    #'FlakExplosion'
-    #'HEAPExplosion'
+    'FragExplosion'
+    'SmallExplosion'
+    'FlakExplosion'
+    'HEAPExplosion'
     ##'ChemExplosion'
     #'SmokeCloud'
     #'SmokeCloudSmall'
@@ -33,11 +33,11 @@ define ['core/Battle/UI'], (BattleUI) ->
   ]
   
   class SpawnPawn extends BattleUI
-    x    : 0
-    y    : 0
-    team : 0
-    
-    index : 0
+    x         : 0
+    y         : 0
+    team      : 0
+    direction : 0
+    index     : 0
     
     CLASSES : CLASSES
     
