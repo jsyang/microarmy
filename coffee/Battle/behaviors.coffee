@@ -26,6 +26,24 @@ define ->
           @y = World.height @
           true
         
+        isTargetVisibleRay : ->
+          # Pillboxes and things that can only see in 1 direction
+          return false if @direction is 0 and @target.x > @x
+          return false if @direction is 1 and @target.x < @x
+          sightDist = @sight * (1 << World.XHash.BUCKETWIDTH)
+          @getXDist(@target) <= sightDist
+          
+        isTargetVisible : ->
+          # future: only works in 1D. make this work for 2D (aircraft)
+          @getXDist(@target) <= @sight * (1 << World.XHash.BUCKETWIDTH)
+        
+        isTargeting : ->
+          @target? and not @target.isDead()
+        
+        doFindTargetRay : ->
+          # Pillboxes
+          World.XHash.getNearestEnemy(@, true)?
+        
         doFindTarget : ->
           World.XHash.getNearestEnemy(@)?
         
@@ -234,16 +252,9 @@ define ->
         doClearTarget : ->
           @setTarget()
           true
-        
-        isTargeting : ->
-          @target? and not @target.isDead()
-        
+
         isOutsideWorld : ->
           !World.contains @
-          
-        # future: only works in 1D. make this work for 2D (aircraft)
-        isTargetVisible : ->
-          @getXDist(@target) <= @sight * (1 << World.XHash.BUCKETWIDTH)
                
         isInfantryMeleeDistance : ->
           @getXDistX @target < (@_halfWidth << 1)
@@ -389,6 +400,10 @@ define ->
 
         Scaffold              : '[Structure]'
 
+        PillboxTarget         : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
+        PillboxAlive          : '<[~StructureCrew],[!StructureNeedsReload],[PillboxTarget],[doRangedAttack]>'
+        Pillbox               : '([StructureDead],[PillboxAlive])'
+        
         CommCenter            : '[Structure]' 
         Barracks              : '[Structure]'
         CommRelay             : '[Structure]'
@@ -399,7 +414,7 @@ define ->
         Depot                 : '[Structure]'
         RepairYard            : '[Structure]'
         Helipad               : '[Structure]'
-        Pillbox               : '[Structure]'
+        
         SmallTurret           : '[Structure]'
         MissileRack           : '[Structure]'
         MissileRackSmall      : '[Structure]'

@@ -36,23 +36,24 @@ define ->
       i = pawn.x >> @BUCKETWIDTH
       NBuckets = []
       if ray?
-        if ray < 0
-          [l, h] = [i-n, i+1]
+        if pawn.direction is 1
+          [l, h] = [i, i+n]
         else
-          [l, h] = [i, i+n+1]
+          [l, h] = [i-n, i]
+          
       else
-        [l, h] = [i-n, i+n+1]
+        [l, h] = [i-n, i+n]
       
-      if l<0 then l = 0
-      b = @buckets[l...h]
+      if l < 0 then l = 0
+      b = @buckets[l..h]
       
       (NBuckets = NBuckets.concat(bucket)) for bucket in b
       NBuckets
 
-    getNearestEnemy : (pawn) ->
+    getNearestEnemy : (pawn, ray = false) ->
       minDist = Infinity
       pawn.setTarget()
-      potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
+      potentialTargets = @getNBucketsByCoord(pawn, pawn.sight, ray)
       for t in potentialTargets
         dist = Math.abs(pawn.x - t.x)
         if dist < minDist

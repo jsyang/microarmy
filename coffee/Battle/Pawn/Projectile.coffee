@@ -200,7 +200,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
     Bullet
     MGBullet
     SmallRocket
-    MortarShell
     SmallShell
     
     SmallMine
