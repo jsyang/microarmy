@@ -8,10 +8,17 @@ define ['core/Battle/Pawn'], (Pawn) ->
     DEATH1            : 4
     DEATH2            : 5
 
+  GOAL =
+    MOVETOPOINT : 0
+    GUARDTARGET : 1
+    GUARDPOINT  : 2
+    SCOUT       : 3
+
   VARIABLESTATS = [
     'health_current'
     'health_max'
     'berserk_time'
+    'berserk_chance'
     'reload_time'
   ]
   
@@ -75,7 +82,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     melee_dmg      : 5
     build_type     : null
     build_x        : null
-    health_current : $.R(20,50)
+    health_current : [20, 50]
 
   exportClasses = {
     Infantry

@@ -133,13 +133,13 @@ define ['core/Battle/Pawn'], (Pawn) ->
     maxSpeed      : 90
     range_current : 280             
     range_max     : 280
-    ddy           : 0.081
+    d_dy          : 0.081           # downward drift "gravity"
     dspeed        : 0.84
     sight         : 8
     dx            : -> [-1, 1][@direction] * 4.6
     dy            : -8.36
     homing        : true
-    homing_delay  : 12
+    homing_delay  : 20
     trail_type    : 'SmokeCloud'
     trail_length  : 280 - 8         # Has a smoke trail above this range
     dist          : -> @getXDist @target
@@ -171,10 +171,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     maxSpeed          : 110
     range_current     : 90
     range_max         : 90
-    ddy               : 0.0173
+    d_dy              : 0.0173
     sight             : 8
-    homing            : true
-    homing_delay      : 12
     dx                : -> [-1, 1][@direction] * 5.12
     dy                : -6.35
     trail_type        : 'SmokeCloudSmall'

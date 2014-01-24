@@ -175,7 +175,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     getName : ->
       if @health_current <= 0
         hasAmmo = 2
-      else if @reload_ing > 40
+      else if @reload_ing > 40 or @ammo_supply is 0
         hasAmmo = 1
       else
         hasAmmo = 0
@@ -198,7 +198,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     getName : ->
       if @health_current <= 0
         hasAmmo = 2
-      else if @reload_ing > 30
+      else if @reload_ing > 30 or @ammo_supply is 0
         hasAmmo = 1
       else
         hasAmmo = 0

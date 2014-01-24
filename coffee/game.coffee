@@ -12,7 +12,9 @@ define [
   class MicroarmyGame extends atom.Game
     
     constructor : ->
-      atom.setVolume 0.1
+      # It can get really loud.
+      # future: Cap the amplitude of the waveform in the mixer?
+      atom.setVolume 0.5
       atom.input.bind(atom.button.LEFT, 'mouseleft')
       atom.input.bind(atom.key.W,       'keyW')
       atom.input.bind(atom.key.A,       'keyA')

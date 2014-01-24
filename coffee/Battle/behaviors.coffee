@@ -170,9 +170,9 @@ define ->
                 @dy *= $.R(30,50) * 0.01
                 @dx *= $.R(70,80) * 0.01
             else
-              @dy += @ddy # Gravity drift
+              @dy += @d_dy # Gravity drift
           else
-            @dy += @ddy # Gravity drift
+            @dy += @d_dy # Gravity drift
           true
             
         doMoveOnGround : ->
@@ -446,10 +446,8 @@ define ->
         Depot                       : '[Structure]'
         RepairYard                  : '[Structure]'
         Helipad                     : '[Structure]'
-              
-              
         
-        
+        # # #
         
         Explosion                   : '<[ExplosionDoneRemove],[setNextFrame],[doExplosionHit]>'
         ExplosionDoneRemove         : '([!isLastFrame],[doRemove])'
@@ -465,6 +463,7 @@ define ->
         Flame                       : '([ExplosionDoneCycles],[ExplosionCycleFrames])'
         ChemCloud                   : '[Flame]'
         
+        # # #
         
         Projectile                  : '<[!ProjectileNotActive],[!ProjectileHitGround],[!ProjectileHitEntity],[doProjectileFly]>'
         ProjectileNotActive         : '<[!isProjectileActive],[doRemove]>'
@@ -475,13 +474,20 @@ define ->
         SmallRocket                 : '[Projectile]'
         SmallShell                  : '[Projectile]'
         
+        # # #
+        
         SmokeTrail                  : '<[isTrailing],[addTrail]>'
         
         HomingMissileSteer          : '<[StructureTarget],[doProjectileSteer]>'
         HomingMissile               : '<[!ProjectileNotActive],[!HomingMissileHitGround],[!HomingMissileHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
         HomingMissileHitGround      : '<[isGroundHit],[addLargeDetonation],[doRemove]>'
         HomingMissileHitEntity      : '<[hasProjectileHitEnemy],[addLargeDetonation],[doRemove]>'
+        
+        HomingMissileSmall          : '<[!ProjectileNotActive],[!HomingMissileSmallHitGround],[!HomingMissileSmallHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
         HomingMissileSmallHitGround : '<[isGroundHit],[addSmallFlakExplosion],[doRemove]>'
         HomingMissileSmallHitEntity : '<[hasProjectileHitEnemy],[addSmallFlakExplosion],[doRemove]>'
-        HomingMissileSmall          : '<[!ProjectileNotActive],[!HomingMissileSmallHitGround],[!HomingMissileSmallHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
+        
+        # # #
+        
+        
     }
