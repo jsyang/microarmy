@@ -34,8 +34,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@state}"
     
     isHit : (pawn) ->
-      dx = @x - pawn.x
-      dy = @y - @_halfHeight - pawn.y
+      dx = pawn.x - @x
+      dy = pawn.y - @y + @_halfHeight
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
     constructor : (params) ->
@@ -152,7 +152,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     turn_last      : 4
     ammo_clip      : 1
     ammo_max       : 1
-    shoot_dy        : -6
+    shoot_dy       : -7
     projectile     : 'SmallShell'
     getName : ->
       "turret-#{@team}-#{@direction}-#{@state}-#{@turn_ing>>0}"

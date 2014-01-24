@@ -40,8 +40,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     getName : ->
       "#{@constructor.name.toLowerCase()}-#{@team}-#{@direction}-#{@action}-#{@frame_current}"
     isHit : (pawn) ->
-      dx = @x - pawn.x
-      dy = @y - @_halfHeight - pawn.y
+      dx = pawn.x - @x
+      dy = pawn.y - @y + @_halfHeight
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
   class PistolInfantry extends Infantry

@@ -217,6 +217,9 @@ define ->
         setFirstFrame : ->
           @frame_current = @frame_first
           true
+        
+        setBeforeFirstFrame : ->
+          @frame_current = @frame_first - 1
           
         isLastFrame : ->
           @frame_current is @frame_last
@@ -294,14 +297,18 @@ define ->
           !World.contains @
                
         isInfantryMeleeDistance : ->
-          @getXDistX @target < (@_halfWidth << 1)
+          @getXDist(@target) < (@_halfWidth << 1)
+       
+       
+        isInfantryMeleeSuccessful : ->
+          $.r() < @berserk_chance
        
         doInfantryMeleeAttack : ->
-          if $.r() < @berserk_chance
-            @target.setDamage @melee_dmg
-            # Enemy cannot ignore melee attack
-            # future: ninjas?
-            @target.setTarget @
+          # Enemy cannot ignore melee attack
+          # future: ninjas?
+          @target.setDamage @melee_dmg
+          @target.setTarget @
+          true
         
         doRangedAttack : ->
           projectile = new Classes[@projectile] {
@@ -425,6 +432,15 @@ define ->
       # ~               Always return true
       
       Trees :
+        
+        # # #
+        
+        PawnTarget                  : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
+        PawnRetarget                : '<[doClearTarget],[PawnTarget]>'
+        PawnNeedsReload             : '<[isOutOfAmmo],[doReloading]>'
+        
+        # # # 
+        
         Structure                   : '([StructureDead],[StructureAlive])'
         StructureDeadExplode        : '<[isDead],[~StructureDeadCrumbleExplode]>'
         StructureDead               : '<[isDead],[~StructureDeadCrumble]>'
@@ -432,21 +448,17 @@ define ->
         StructureDeadCrumble        : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
         StructureDeadCrumbleExplode : '<[StructureDeadCrumble],[addStructureSmallExplosion]>'
         
-        StructureAlive              : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[doRangedAttack]>'
+        StructureAlive              : '<[~StructureCrew],[!PawnNeedsReload],[PawnTarget],[doRangedAttack]>'
         StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
-        StructureNeedsReload        : '<[isOutOfAmmo],[doReloading]>'
         
-        # Referenced by HomingMissileSteer
-        StructureTarget             : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
-
         Scaffold                    : '[Structure]'
         
         PillboxTarget               : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
-        PillboxAlive                : '<[~StructureCrew],[!StructureNeedsReload],[PillboxTarget],[doRangedAttack]>'
+        PillboxAlive                : '<[~StructureCrew],[!PawnNeedsReload],[PillboxTarget],[doRangedAttack]>'
         Pillbox                     : '([StructureDeadExplode],[PillboxAlive])'
         
         SmallTurretNeedsTurn        : '<[!isFacingTarget], [doTurning]>'
-        SmallTurretAlive            : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[!SmallTurretNeedsTurn],[doRangedAttack]>'
+        SmallTurretAlive            : '<[~StructureCrew],[!PawnNeedsReload],[PawnTarget],[!SmallTurretNeedsTurn],[doRangedAttack]>'
         SmallTurret                 : '([StructureDeadExplode],[SmallTurretAlive])'
         
         MissileRack                 : '([StructureDeadExplode],[StructureAlive])'
@@ -494,7 +506,7 @@ define ->
         
         SmokeTrail                  : '<[isTrailing],[addTrail]>'
         
-        HomingMissileSteer          : '<[StructureTarget],[doProjectileSteer]>'
+        HomingMissileSteer          : '<[PawnTarget],[doProjectileSteer]>'
         HomingMissile               : '<[!ProjectileNotActive],[!HomingMissileHitGround],[!HomingMissileHitEntity],[~HomingMissileSteer],[~SmokeTrail],[doProjectileFly]>'
         HomingMissileHitGround      : '<[isGroundHit],[addLargeDetonation],[doRemove]>'
         HomingMissileHitEntity      : '<[hasMissileHitTarget],[addLargeDetonation],[doRemove]>'
@@ -506,8 +518,18 @@ define ->
         # # #
         
         Infantry                    : '([InfantryDead],[InfantryAlive])'
-        InfantryMoveAnimate         : '<[doMoveOnGround],[setNextFrame],[isPastLastFrame],[setFirstFrame]>'
-        InfantryAlive               : '[~InfantryMoveAnimate]'
+        InfantryNeedsReload         : '<[isOutOfAmmo],[doReloading],[setFirstFrame],[~PawnRetarget]>'
+        InfantryMove                : '<[setInfantryMoving],[doMoveOnGround],[~InfantryAnimate]>'
+        InfantryAnimate             : '<[setNextFrame],[isPastLastFrame],[setFirstFrame]>'
+        InfantryRangedAttack        : '<[isInfantryInShotFrame],[doRangedAttack]>'
+        InfantryMeleeAttack         : '<[isInfantryMeleeDistance],[isInfantryMeleeSuccessful],[doInfantryMeleeAttack]>'
+        InfantryCombat              : '<[~InfantryCombatBegin],[!InfantryMeleeAttack],[InfantryRangedAttack]>'
+        InfantryCombatBegin         : '<[!isInfantryAttacking],[setInfantryAttackStance],[setFirstFrame]>'
+        InfantryAttack              : '<[PawnTarget],[setFaceTarget],[~InfantryCombat],[~InfantryAnimate]>'
+        
+        #InfantryBerserk             :
+        
+        InfantryAlive               : '([InfantryNeedsReload],[InfantryAttack],[InfantryMove])'
         InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying]>,<[!isLastFrame],[setNextFrame]>)'
         InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         
