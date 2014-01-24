@@ -433,6 +433,9 @@ define ->
         SmallTurretAlive            : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[!SmallTurretNeedsTurn],[doRangedAttack]>'
         SmallTurret                 : '([StructureDeadExplode],[SmallTurretAlive])'
         
+        MissileRack                 : '([StructureDeadExplode],[StructureAlive])'
+        MissileRackSmall            : '[Structure]'
+        
         CommCenter                  : '[Structure]' 
         Barracks                    : '[Structure]'
         CommRelay                   : '[Structure]'
@@ -445,8 +448,7 @@ define ->
         Helipad                     : '[Structure]'
               
               
-        MissileRack                 : '[Structure]'
-        MissileRackSmall            : '[Structure]'
+        
         
         
         Explosion                   : '<[ExplosionDoneRemove],[setNextFrame],[doExplosionHit]>'

@@ -5,6 +5,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     'dspeed'
     'dist'
     'stray_dy'
+    'dx'
   ]
 
   class Projectile extends Pawn
@@ -141,11 +142,11 @@ define ['core/Battle/Pawn'], (Pawn) ->
     homing_delay  : 12
     trail_type    : 'SmokeCloud'
     trail_length  : 280 - 8         # Has a smoke trail above this range
-    
     dist          : -> @getXDist @target
     getName : ->
       frame = @_getFrame()
-      '#{@spriteName}-#{frame}'
+      "#{@spriteName}-#{frame}"
+      
     _getFrame : ->
       if @dx is 0 then @dx = 0.001
       if @dy is 0 then @dy = 0.001      

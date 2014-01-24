@@ -13,8 +13,8 @@ define ['core/Battle/UI'], (BattleUI) ->
       #'AmmoDumpSmall'     : 1
       #'Pillbox'           : 1
       #'MineFieldSmall'    : 1
-      'SmallTurret'       : 1
-      #'MissileRack'       : 1
+      # 'SmallTurret'       : 1
+      'MissileRack'       : 1
       #'MissileRackSmall'  : 1 
       #'Scaffold'          : 1
       #'Barracks'          : 1

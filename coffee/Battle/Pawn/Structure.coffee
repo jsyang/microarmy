@@ -173,10 +173,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ammo_maxSupply  : 3
     shoot_dy        : -20
     getName : ->
-      if @reload_ing > 40 or @health_current <= 0 or @ammo_clip > 0
-        hasAmmo = 0
-      else
+      if @health_current <= 0
+        hasAmmo = 2
+      else if @reload_ing > 40
         hasAmmo = 1
+      else
+        hasAmmo = 0
       "missilerack-#{@team}-#{@direction}-#{hasAmmo}"
   
   class MissileRackSmall extends Structure
