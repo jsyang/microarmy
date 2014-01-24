@@ -59,9 +59,9 @@ define ->
               return result
             
             else
-              throw new Error "Tree/Decorator '#{id_}' not found!"
+              throw new Error "Tree/Decorator '#{id_}' not found for #{thisArg.constructor.name}!"
       else
-        throw new Error 'No behavior tree specified for #{thisArg::constructor.name}!'
+        throw new Error 'No behavior tree specified for #{thisArg.constructor.name}!'
       
       return
     

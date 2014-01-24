@@ -2,43 +2,43 @@ define [
   'core/Battle/Pawn'
 ], (Pawn) ->
 
+  VARIABLESTATS = [
+    'damage'
+  ]
+
   class Explosion extends Pawn
     targetable    : false # Don't want to be able to target explosions
     damage        : 0
     damageDecay   : 2     # How much will damage decay if we've splash-damaged a bunch of stuff
     corpsetime    : 1
-    frame_current : -1    # Next frame is set when it's created
+    frame_current : 0
     constructor : (params) ->
       @[k]  = v for k, v of params
       atom.playSound @sound if @sound?
-      @damage = $.R(@minDamage, @maxDamage) if @maxDamage?
+      @_setVariableStats(VARIABLESTATS)
       
     getName : ->
       "#{@spriteName}-#{@frame_current}"
     
   class FragExplosion extends Explosion
-    # CAVEAT: Nesting objects in the prototype will keep the refs to the same object in the prototype...
-    spriteName    : 'explosion2'
-    sound         : 'expfrag'
-    minDamage     : 28
-    maxDamage     : 55
-    hDist2        : 400
-    frame_last    : 8
+    spriteName  : 'explosion1'
+    sound       : 'expfrag'
+    damage      : [28, 55]
+    hDist2      : 400
+    frame_last  : 12
       
   class SmallExplosion extends Explosion
-    spriteName    : 'explosion1'
-    sound         : 'expsmall'
-    minDamage     : 12
-    maxDamage     : 29
-    hDist2        : 160
-    damageDecay   : 1
-    frame_last    :12
+    spriteName  : 'explosion2'
+    sound       : 'expsmall'
+    damage      : [12, 29]
+    hDist2      : 160
+    damageDecay : 2
+    frame_last  : 8
   
   class FlakExplosion extends Explosion
     spriteName  : 'explosion0'
     sound       : 'expsmall'
-    minDamage   : 11
-    maxDamage   : 30
+    damage      : [11, 30]
     hDist2      : 260
     damageDecay : 1
     frame_last  : 6
@@ -46,8 +46,7 @@ define [
   class HEAPExplosion extends Explosion
     spriteName  : 'explosion3'
     sound       : 'exp2big'
-    minDamage   : 65
-    maxDamage   : 95
+    damage      : [65, 95]
     hDist2      : 460
     damageDecay : 1
     frame_last  : 21
@@ -56,8 +55,7 @@ define [
     # todo : no explosion sprite for this yet
     spriteName  : 'explosion4'
     sound       : 'chemspray'
-    minDamage   : 11
-    maxDamage   : 18
+    damage      : [11, 18]
     hDist2      : 360
     damageDecay : 1
     frame_last  : 3
@@ -88,6 +86,8 @@ define [
   
   class Flame extends Explosion
     frame_first : 0
+    halign      : 'center'
+    valign      : 'bottom'
     constructor : (params) ->
       super params
       

@@ -64,7 +64,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   class MGBullet extends Projectile
     spriteName            : 'pistolshell'
     sound                 : 'mgburst'
-    range_current         : 35
+    range_current         : 50
     damage                : [21, 32]
     accuracy              : 0.65
     accuracy_target_bonus : 0.35

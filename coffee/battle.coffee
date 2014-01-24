@@ -62,16 +62,19 @@ define [
       
       # Drawing order is based on primitiveCLasses
       for type in @world.primitiveClasses
+        switch type
+          when 'Structure', 'Infantry'
+            valign = 'bottom'
+            halign = 'center'
+          when 'Projectile', 'Explosion'
+            valign = 'middle'
+            halign = 'center'
+        
         for p in @world.Instances[type] when !p.isPendingRemoval()
           x = p.x - @scroll.x
-          switch type
-            when 'Structure', 'Infantry'
-              valign = 'bottom'
-              halign = 'center'
-            when 'Projectile', 'Explosion'
-              valign = 'middle'
-              halign = 'center'
-          
+          #valign = p.valign ? valign
+          #halign = p.halign ? halign
+
           if -@scroll.margin < x < atom.width + @scroll.margin
             atom.context.drawSprite(p.getName(), x, p.y, valign, halign)
       

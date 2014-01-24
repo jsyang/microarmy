@@ -12,9 +12,8 @@ define ->
   # do_             returns TRUE, definite side effects, possible side effects on other entities
     {
       Decorators :
-        
-        QUIT : ->
-          Infinity
+        TRUE  : true
+        FALSE : false
         
         isArmed : ->
           @projectile?
@@ -123,9 +122,17 @@ define ->
           World.add(new explosionClass {x, y})
           true
         
+        addStructureSmallExplosion : ->
+          explode = World.battle.behaviors.Decorators.addChildExplosion
+          addExplosion = explode.bind(@, 'SmallExplosion', [-8, 8],   [-8, 8])
+          addFlames    = explode.bind(@, 'Flame',          [-18, 18], [18, 0])
+          addExplosion()
+          addFlames() for i in [1..$.R(4, 8)]
+          true
+          
         addSmallFlakExplosion : ->
           # missile-purple explosion
-          explode = World.Battle.Behaviors.Decorators.addChildExplosion
+          explode = World.battle.behaviors.Decorators.addChildExplosion
           addExplosion = explode.bind(@, 'FlakExplosion',   [-12, 12], [-12, 12])
           addSmoke     = explode.bind(@, 'SmokeCloudSmall', [-18, 18], [-18, 18])
           for i in [1..$.R(3, 5)]
@@ -135,7 +142,7 @@ define ->
         
         addLargeDetonation : ->
           # missile-red explosion
-          explode = World.Battle.Behaviors.Decorators.addChildExplosion
+          explode = World.battle.behaviors.Decorators.addChildExplosion
           explode.call(@, 'SmallExplosion', [0,0],     [0, 0])
           explode.call(@, 'HEAPExplosion',  [-20, 20], [-20, 20])
           explode.call(@, 'HEAPExplosion',  [-20, 20], [-20, 20])
@@ -387,10 +394,13 @@ define ->
       # ~               Always return true
       
       Trees :
-        Structure             : '([StructureDead],[StructureAlive])'
-        StructureDead         : '<[isDead],[~StructureDeadCrumble]>'
-        StructureDeadRemove   : '<[isDead],[setStructureCrumbled],[setUntargetable],[doRemove]>'
-        StructureDeadCrumble  : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
+        Structure                   : '([StructureDead],[StructureAlive])'
+        StructureDeadExplode        : '<[isDead],[~StructureDeadCrumbleExplode]>'
+        StructureDead               : '<[isDead],[~StructureDeadCrumble]>'
+        StructureDeadRemove         : '<[isDead],[setStructureCrumbled],[setUntargetable],[doRemove]>'
+        StructureDeadCrumble        : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
+        StructureDeadCrumbleExplode : '<[StructureDeadCrumble],[addStructureSmallExplosion]>'
+        
         StructureAlive        : '<[~StructureCrew],[!StructureNeedsReload],[StructureTarget],[doRangedAttack]>'
         StructureCrew         : '<[!isFullyCrewed],[doCrewing]>'
         StructureNeedsReload  : '<[isOutOfAmmo],[doReloading]>'
@@ -399,10 +409,10 @@ define ->
         StructureTarget       : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
 
         Scaffold              : '[Structure]'
-
+        
         PillboxTarget         : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
         PillboxAlive          : '<[~StructureCrew],[!StructureNeedsReload],[PillboxTarget],[doRangedAttack]>'
-        Pillbox               : '([StructureDead],[PillboxAlive])'
+        Pillbox               : '([StructureDeadExplode],[PillboxAlive])'
         
         CommCenter            : '[Structure]' 
         Barracks              : '[Structure]'
@@ -422,14 +432,14 @@ define ->
         
         Explosion                   : '<[ExplosionDoneRemove],[setNextFrame],[doExplosionHit]>'
         ExplosionDoneRemove         : '([!isLastFrame],[doRemove])'
-        ExplosionCycleFrames        : '<[isLastFrame],[setDecrementCycles],[setFirstFrame]>'
+        ExplosionCycleFrames        : '(<[isLastFrame],[setDecrementCycles],[setFirstFrame]>,[setNextFrame])'
         ExplosionDoneCycles         : '<[!isCyclingFrames],[doRemove]>'
         SmallExplosion              : '[Explosion]'
         FragExplosion               : '[Explosion]'
         FlakExplosion               : '[Explosion]'
         HEAPExplosion               : '[Explosion]'
         ChemExplosion               : '[Explosion]'
-        SmokeCloud                  : '<[ExplosionDoneRemove],[!nextFrame]>'
+        SmokeCloud                  : '<[ExplosionDoneRemove],[setNextFrame]>'
         SmokeCloudSmall             : '[SmokeCloud]'
         Flame                       : '([ExplosionDoneCycles],[ExplosionCycleFrames])'
         ChemCloud                   : '[Flame]'
