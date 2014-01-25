@@ -5,10 +5,19 @@ define [
   'core/Battle/makeBackgroundImageData'
   
   'core/Battle/UI/minimap'
+  'core/Battle/UI/cursor'
+  
   'core/Battle/gameplay/constructbase'
   'core/Battle/gameplay/selectpawn'
   'core/Battle/gameplay/spawnpawn'
-], (Behaviors, BattleBehaviors, World, makeBackgroundImageData, BattleUIMinimap, ConstructBase, SelectPawn, SpawnPawn) ->
+], (Behaviors,
+    BattleBehaviors,
+    World, makeBackgroundImageData,
+    BattleUIMinimap,
+    BattleUICursor,
+    ConstructBase,
+    SelectPawn,
+    SpawnPawn) ->
   
   class Battle
   
@@ -48,12 +57,13 @@ define [
       # Various UI components
       @ui =
         minimap : new BattleUIMinimap { world : @world }
+        cursor  : new BattleUICursor  { battle : @ }
     
     switchMode : (mode) ->
       @mode = new @MODE[mode] { battle : @ }
     
     tick : ->
-      @mode.tick()
+      @mode.tick?()
       @ui.minimap.tick()
       @world.tick()
       
@@ -78,8 +88,9 @@ define [
           if -@scroll.margin < x < atom.width + @scroll.margin
             atom.context.drawSprite(p.getName(), x, p.y, valign, halign)
       
-      @mode.draw()
+      @mode.draw?()
       @ui.minimap.draw()
+      @ui.cursor.draw()
         
     _drawBackground : (x = 0, y = 0) ->
       atom.context.putImageData(@backgroundImgData, x, y)

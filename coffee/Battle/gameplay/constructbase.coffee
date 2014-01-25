@@ -93,7 +93,7 @@ define ['core/Battle/UI'], (BattleUI) ->
       @_constructionComplete()
       
     _constructionComplete : ->
-      @battle.switchMode 'SpawnPawn' # 'SelectPawn'
+      @battle.switchMode 'SelectPawn' # 'SpawnPawn'
     
     tick : ->
       if @containsCursor()

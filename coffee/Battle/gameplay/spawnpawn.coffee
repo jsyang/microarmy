@@ -93,10 +93,7 @@ define ['core/Battle/UI'], (BattleUI) ->
           
           classes = @battle.world.Classes
           instanceClass = classes[CLASSES[@index]]
-          
-          if instanceClass::constructor instanceof classes['Infantry']
-            console.log 'ayy!'
-          
+                    
           pawn = new @battle.world.Classes[CLASSES[@index]] {
             x         : x
             y         : y

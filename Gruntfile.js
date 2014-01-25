@@ -13,6 +13,7 @@ module.exports = function(grunt) {
   ];
   
   var gfxFiles = [
+    './gfx/',
     './gfx/MainMenu/',
     './gfx/ammodump/',
     './gfx/ammodumpsmall/',
