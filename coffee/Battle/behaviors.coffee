@@ -527,9 +527,9 @@ define ->
         InfantryCombatBegin         : '<[!isInfantryAttacking],[setInfantryAttackStance],[setFirstFrame]>'
         InfantryAttack              : '<[PawnTarget],[setFaceTarget],[~InfantryCombat],[~InfantryAnimate]>'
         
-        #InfantryBerserk             :
+        InfantryBerserk             : '(<[isBerserking],[doBerserking],[InfantryMove]>,<[isTargeting],[!doTryBerserking]>)'
         
-        InfantryAlive               : '([InfantryNeedsReload],[InfantryAttack],[InfantryMove])'
+        InfantryAlive               : '([InfantryNeedsReload],[InfantryBerserk],[InfantryAttack],[InfantryMove])'
         InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying]>,<[!isLastFrame],[setNextFrame]>)'
         InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         
