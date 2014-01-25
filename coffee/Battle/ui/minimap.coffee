@@ -5,6 +5,8 @@ define ['core/Battle/UI'], (BattleUI) ->
     y : 500
     scale : 2
     
+    _isDragging : false
+    
     constructor : (params) ->
       @[k] = v for k, v of params
       @_generateMinimapImageData()
@@ -34,7 +36,7 @@ define ['core/Battle/UI'], (BattleUI) ->
         b : 30
       
       for x in [0...w]
-        height = @world.height(x<<@scale) >> @scale
+        height = @world.height(x << @scale) >> @scale
         
         for y in [0...h]
           if y > height
@@ -67,11 +69,21 @@ define ['core/Battle/UI'], (BattleUI) ->
       atom.context.strokeRect(@x + x, @y + y, w, @h-1)
       atom.context.restore()
     
+    _scrollBattleView : ->
+      viewMargin = atom.width >> (@scale+1)
+      x = atom.input.mouse.x - @x - viewMargin
+      x = 0 if x < 0
+      x = @w - (viewMargin<<1) if x + (viewMargin<<1) > @w
+      @world.battle.scroll.x = x << @scale
+    
     tick : ->
-      # bug: dragging the cursor from the battle view into the minimap will scroll the minimap!
-      if @containsCursor() and atom.input.down('mouseleft')
-        viewMargin = atom.width >> (@scale+1)
-        x = atom.input.mouse.x - @x - viewMargin
-        x = 0 if x < 0
-        x = @w - (viewMargin<<1) if x + (viewMargin<<1) > @w
-        @world.battle.scroll.x = x << @scale
+      if @containsCursor()
+        if atom.input.down 'mouseleft'
+          if @_isDragging
+            @_scrollBattleView()
+          else
+            if atom.input.pressed 'mouseleft'
+              @_isDragging = true
+      else
+        @_isDragging = false
+    
