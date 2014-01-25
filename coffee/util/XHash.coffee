@@ -90,11 +90,36 @@ define ->
       
       pawn.target
     
+    # todo : test this function
+    _groundPawnContainsPoint : (t, point) ->
+      #tx1 = t.x - t._halfWidth - 24
+      #tx2 = t.x + t._halfWidth + 24
+      #ty1 = t.y - t._halfHeight - 24
+      #ty2 = t.y + t._halfHeight + 24
+      tx1 = t.x - 20
+      tx2 = t.x + 20
+      ty1 = t.y - t._halfHeight - 20
+      ty2 = t.y - t._halfHeight + 20
+      tx1 <= point.x <= tx2 and ty1 <= point.y <= ty2
+    
+    # todo : test this function
+    getNearestFriendlyUI : (cursor) ->
+      minDist = Infinity
+      potentialTargets = @getNBucketsByCoord(cursor, 0)
+      for t in potentialTargets
+        if @_groundPawnContainsPoint(t, cursor) and
+           t.team is cursor.team and
+           !t.isDead() and
+           !t.isCrewDead() and
+           !t.isPendingRemoval()
+          return t
+      null
+    
     getNearestFriendlyNeedSupply : (pawn) ->
       minDist = Infinity
       pawn.setTarget()
       potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
-      (
+      for t in potentialTargets
         dist = Math.abs(pawn.x - t.x)
         if dist < minDist
           if  t.isAlly(pawn)        and
@@ -105,7 +130,5 @@ define ->
               pawn.isAbleToTarget(t)
             pawn.setTarget(t)
             minDist = dist
-      ) for t in potentialTargets
-      
       pawn.target
     
