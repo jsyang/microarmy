@@ -1,11 +1,11 @@
-define ->
+define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
   
   class SelectPawn
     x : 0
     y : 0
         
     structure : null
-    units : null
+    units     : null
     
     containsPoint : (x, y) ->
       return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
@@ -14,6 +14,7 @@ define ->
       @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
     
     _clearSelection : ->
+      delete @statsbox
       delete @structure
       delete @units
     
@@ -28,8 +29,11 @@ define ->
       @[k]  = v for k, v of params
       @w    = atom.width
       @h    = @battle.world.h
-      @_STRUCTURE = @battle.world.Classes['Structure']
-      @_INFANTRY  = @battle.world.Classes['Infantry']
+      
+      @statsbox  = null
+      
+      @STRUCTURE = @battle.world.Classes['Structure']
+      @INFANTRY  = @battle.world.Classes['Infantry']
       @units = []
     
     _calculateSelectionBounds : ->
@@ -61,9 +65,9 @@ define ->
         team  : @battle.team
       }
       if result?
-        if result instanceof @_INFANTRY
+        if result instanceof @INFANTRY
           @units = [result]
-        else if result instanceof @_STRUCTURE
+        else if result instanceof @STRUCTURE
           @structure = result
       result
       
@@ -71,6 +75,10 @@ define ->
     _updateSelection : ->
     
     draw : ->
+      if @statsbox?
+        @statsbox.draw()
+        
+        
       if @isDragging
         atom.context.save()
         atom.context.lineWidth = '1'
@@ -89,9 +97,10 @@ define ->
         down      = atom.input.down     'mouseleft'
             
         if pressed and not @isDragging
-          found = @_findSingle()
-          if found?
-            atom.playSound 'accomp' # haha
+          foundSingle = @_findSingle()
+          if foundSingle?
+            @statsbox = new PawnStatsBox foundSingle
+            # atom.playSound 'accomp'
           else
             @isDragging = true
             @dragRect =
