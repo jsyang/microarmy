@@ -4,6 +4,8 @@ define [
   'core/Battle/World'
   'core/Battle/makeBackgroundImageData'
   
+  'core/Battle/EVA'
+  
   'core/Battle/UI/minimap'
   'core/Battle/UI/cursor'
   
@@ -14,6 +16,9 @@ define [
     BattleBehaviors,
     World,
     makeBackgroundImageData,
+    
+    BattleEVA,
+    
     BattleUIMinimap,
     BattleUICursor,
     
@@ -60,11 +65,14 @@ define [
       @ui =
         minimap : new BattleUIMinimap { world : @world }
         cursor  : new BattleUICursor  { battle : @ }
+        
+      @EVA = new BattleEVA
     
     switchMode : (mode) ->
       @mode = new @MODE[mode] { battle : @ }
     
     tick : ->
+      @EVA.tick()
       @mode.tick?()
       @ui.minimap.tick()
       @world.tick()
