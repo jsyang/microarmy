@@ -1,7 +1,6 @@
 define ->
   class ElectronicVoiceAgent
     MESSAGES : [
-      'v_selectlocationtobuildstructures'
       100
       'incomingobjective'
       90
@@ -12,6 +11,8 @@ define ->
       'v_and'
       6
       'v_constructbasetosecurethisregion'
+      100
+      'v_selectlocationtobuildstructures'
     ]
     
     delay : 0
