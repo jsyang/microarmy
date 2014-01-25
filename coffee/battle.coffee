@@ -7,14 +7,16 @@ define [
   'core/Battle/UI/minimap'
   'core/Battle/UI/cursor'
   
-  'core/Battle/gameplay/constructbase'
-  'core/Battle/gameplay/selectpawn'
-  'core/Battle/gameplay/spawnpawn'
+  'core/Battle/mode/constructbase'
+  'core/Battle/mode/selectpawn'
+  'core/Battle/mode/spawnpawn'
 ], (Behaviors,
     BattleBehaviors,
-    World, makeBackgroundImageData,
+    World,
+    makeBackgroundImageData,
     BattleUIMinimap,
     BattleUICursor,
+    
     ConstructBase,
     SelectPawn,
     SpawnPawn) ->
@@ -84,7 +86,6 @@ define [
           x = p.x - @scroll.x
           #valign = p.valign ? valign
           #halign = p.halign ? halign
-
           if -@scroll.margin < x < atom.width + @scroll.margin
             atom.context.drawSprite(p.getName(), x, p.y, valign, halign)
       

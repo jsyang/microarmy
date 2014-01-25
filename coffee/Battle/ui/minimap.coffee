@@ -54,7 +54,7 @@ define ['core/Battle/UI'], (BattleUI) ->
           d[c+3] = 0xFF
       
     draw : ->
-      atom.context.putImageData(@_backgroundImgData, @x, @y)
+      atom.context.putImageData(@_backgroundImgData, @x, @y, )
       @_drawHighlight()
     
     # Box to show where player is looking at, in relation to battlefield

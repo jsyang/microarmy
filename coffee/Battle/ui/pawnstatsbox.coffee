@@ -1,14 +1,17 @@
 define ->
+
+  # Shows vital stats for important units.
+  # There should only be one onscreen at a time.
+
   class BattleUIPawnStatsBox
     w           : 90
     margin      : 32
     lineHeight  : 12
-    constructor : (pawn) ->
+    constructor : (pawn, battle) ->
+      @battle = battle
       @pawn = pawn
-      @w2 = @w >> 1
       @pawnName = pawn.constructor.name
       @pawnSpriteHeight = @pawn._halfHeight << 1
-      #@pawnSpriteWidth  = @pawn._halfWidth  << 1
       @_setColors(pawn.team)
     
     _setColors : (team) ->
@@ -34,7 +37,7 @@ define ->
       lines = @_getText()
       h     = lines.length * @lineHeight
       
-      x = @pawn.x - @w2 + 0.5
+      x = @pawn.x - (@w >> 1) + 0.5 - @battle.scroll.x
       y = @pawn.y - h - @pawnSpriteHeight - @margin + 0.5
       
       atom.context.lineWidth   = '1'
@@ -51,8 +54,11 @@ define ->
       
       y1 = @pawn.y - @pawnSpriteHeight + 0.5
       y2 = y1 - @margin
-      atom.context.moveTo @pawn.x + 0.5, y1 - 8
-      atom.context.lineTo @pawn.x + 0.5, y2 
+      
+      x = @pawn.x + 0.5 - @battle.scroll.x
+      atom.context.beginPath()
+      atom.context.moveTo x, y1 - 8
+      atom.context.lineTo x, y2
       atom.context.stroke()
       
       atom.context.restore()

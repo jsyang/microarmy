@@ -6,10 +6,9 @@ module.exports = function(grunt) {
     'coffee/atom/*.coffee',
     'coffee/UI/*.coffee',
     'coffee/Battle/*.coffee',
-    'coffee/Battle/gameplay/*.coffee',
+    'coffee/Battle/mode/*.coffee',
     'coffee/Battle/Pawn/*.coffee',
-    'coffee/Battle/UI/*.coffee',
-    'coffee/Battle/View/*.coffee'
+    'coffee/Battle/UI/*.coffee'
   ];
   
   var gfxFiles = [

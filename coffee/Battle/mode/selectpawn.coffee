@@ -1,11 +1,15 @@
-define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
+define [
+  'core/Battle/UI/pawnstatsbox'
+  'core/Battle/UI/pawnhealthbar'
+], (PawnStatsBox, PawnHealthBar) ->
   
   class SelectPawn
     x : 0
     y : 0
         
-    structure : null
-    units     : null
+    structure  : null
+    units      : null
+    healthbars : null
     
     containsPoint : (x, y) ->
       return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
@@ -16,7 +20,8 @@ define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
     _clearSelection : ->
       delete @statsbox
       delete @structure
-      delete @units
+      @units = []
+      @healthbars = []
     
     isDragging : false
     
@@ -30,11 +35,9 @@ define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
       @w    = atom.width
       @h    = @battle.world.h
       
-      @statsbox  = null
-      
       @STRUCTURE = @battle.world.Classes['Structure']
       @INFANTRY  = @battle.world.Classes['Infantry']
-      @units = []
+      @_clearSelection()
     
     _calculateSelectionBounds : ->
       dr = @dragRect
@@ -74,11 +77,15 @@ define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
     # Prune dead things from our selection
     _updateSelection : ->
     
+    
+    _drawHealthBars : ->
+      for i in @healthbars
+        i.draw()
+        
     draw : ->
       if @statsbox?
         @statsbox.draw()
-        
-        
+      
       if @isDragging
         atom.context.save()
         atom.context.lineWidth = '1'
@@ -86,6 +93,8 @@ define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
         dr = @_calculateSelectionBounds()
         atom.context.strokeRect dr.x + 0.5, dr.y + 0.5, dr.w, dr.h
         atom.context.restore()
+      else
+        @_drawHealthBars()
     
     tick : ->
       if @containsCursor()
@@ -99,8 +108,8 @@ define ['core/Battle/UI/pawnstatsbox'], (PawnStatsBox) ->
         if pressed and not @isDragging
           foundSingle = @_findSingle()
           if foundSingle?
-            @statsbox = new PawnStatsBox foundSingle
-            # atom.playSound 'accomp'
+            @statsbox = new PawnStatsBox foundSingle, @battle
+            @healthbars.push new PawnHealthBar foundSingle, @battle
           else
             @isDragging = true
             @dragRect =
