@@ -38,7 +38,9 @@ define ->
         atom.context.fillStyle = @COLOR.background
         atom.context.fillRect p.x, p.y, @w, @h
         atom.context.fillStyle = @COLOR[type]
-        atom.context.fillRect p.x + 1, p.y + 1, @_getBarWidth(type) - 2, @h - 2
+        w = @_getBarWidth(type) - 2
+        w = 1 if w < 1
+        atom.context.fillRect p.x + 1, p.y + 1, w, @h - 2
         p.y -= @h
     
     draw : ->
