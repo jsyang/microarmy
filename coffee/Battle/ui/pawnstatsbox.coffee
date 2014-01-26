@@ -27,7 +27,7 @@ define ->
     
     _getText : ->
       [
-        @pawnName
+        @pawn.nameText
         "#{@pawn.health_current} / #{@pawn.health_max} HP"
       ]
     
