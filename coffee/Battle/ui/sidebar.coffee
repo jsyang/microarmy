@@ -1,24 +1,54 @@
-define ->
+define [
+  'core/Battle/UI'
+  'core/UI/UIGroup'
+  'core/UI/Button'
+], (BattleUI, UIGroup, Button) ->
   
-  class BattleUISidebar
-    x : 0
-    y : 0
+  class BattleUISidebar extends BattleUI
     w : 202
 
-    containsPoint : (x, y) ->
-      return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
-    
-    containsCursor : ->
-      @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
-    
     COLOR_BACKGROUND  : 'rgb(36,36,36)'
     COLOR_FRAME       : 'rgb(88,88,88)'
     COLOR_FRAME_DARK  : 'rgb(60,60,60)'
-        
+         
     constructor : (params) ->
       @[k]  = v for k, v of params
-      window.p = @
-
+      @resize()
+      
+    _setScrollButtons : (x, y) ->
+      @SCROLLBUTTON =
+        # 0 = left column, 0 = up button
+        COL00 : new Button {
+          x : x + 1
+          y : y
+          sprite_up   : 'sidebar-button-0-0'
+          sprite_down : 'sidebar-button-0-1'
+        }
+        COL01 : new Button {
+          x : x + 1
+          y : atom.height - 30
+          sprite_up   : 'sidebar-button-1-0'
+          sprite_down : 'sidebar-button-1-1'
+        }
+        
+        COL10 : new Button {
+          x : x + 100 + 1
+          y : y
+          sprite_up   : 'sidebar-button-0-0'
+          sprite_down : 'sidebar-button-0-1'
+        }
+        COL11 : new Button {
+          x : x + 100 + 1
+          y : atom.height - 30
+          sprite_up   : 'sidebar-button-1-0'
+          sprite_down : 'sidebar-button-1-1'
+        }
+      
+    resize : ->
+      delete @SCROLLBUTTON
+      @h = atom.height
+      @x = atom.width - @w
+    
     messages     : []
     messages_max : 6
     
@@ -61,4 +91,13 @@ define ->
       atom.context.fillStyle = @COLOR_FRAME_DARK
       atom.context.fillRect x + 1, y, @w - 2, atom.height - y - 1
       
+      if !(@SCROLLBUTTON?)
+        @_setScrollButtons x, y
+      else
+        v.draw() for k, v of @SCROLLBUTTON
+      
       atom.context.restore()
+    
+    tick : ->
+      if @containsCursor()
+        v.tick() for k, v of @SCROLLBUTTON

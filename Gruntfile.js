@@ -16,6 +16,7 @@ module.exports = function(grunt) {
     './gfx/MainMenu/',
     './gfx/ammodump/',
     './gfx/ammodumpsmall/',
+    './gfx/battleui/',
     './gfx/barracks/',
     './gfx/chemcloud/',
     './gfx/chemmine/',

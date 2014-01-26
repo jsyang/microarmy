@@ -89,6 +89,7 @@ define [
       @EVA.tick()
       @mode.tick?()
       @ui.minimap.tick()
+      @ui.sidebar.tick()
       @world.tick()
       
     draw : ->
