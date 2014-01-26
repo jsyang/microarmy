@@ -73,6 +73,10 @@ define [
       
       # todo: flesh this out later
       @EVA = new BattleEVA
+
+    resize : ->
+      for k, v of @ui
+        v.resize() if v.resize?
     
     resetMode : ->
       @switchMode 'CommandPawn'

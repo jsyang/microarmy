@@ -21,16 +21,19 @@ define [
       atom.input.bind(atom.key.A,        'keyA')
       atom.input.bind(atom.key.S,        'keyS')
       atom.input.bind(atom.key.D,        'keyD')
-    
-    MODES : MODES
-      
-    # mode : {}
         
+    MODES : MODES
+
     switchMode : (name) ->
       @mode = new @MODES[name] { game : @ }
+      
+      # Resizing should resize UI elements
+      window.removeEventListener 'resize', @listener if @listener?
+      @listener = @mode.resize.bind(@mode)
+      window.addEventListener "resize", @listener, false
     
-    update : (dt) ->
-      @mode.tick(dt)
+    update : ->
+      @mode.tick()
       
     draw : ->
       atom.context.clear()

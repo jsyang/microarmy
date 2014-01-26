@@ -147,12 +147,18 @@ define [
   atom.canvas.onmouseup       = atom.input.onmouseup.bind(atom.input)
   atom.canvas.onmousewheel    = atom.input.onmousewheel.bind(atom.input)
   atom.canvas.oncontextmenu   = atom.input.oncontextmenu.bind(atom.input)
+
+  # jsyang : Graphics bolt-ons
+  atomSpritesheet atom.context
+  atomText atom.context
   
   window.onresize = (e) ->
     atom.canvas.width = window.innerWidth
     atom.canvas.height = window.innerHeight
     atom.width = atom.canvas.width
     atom.height = atom.canvas.height
+    # jsyang : Needed since ctx.fillText does not keep font or baseline properties on resize
+    atomText atom.context
   window.onresize()
   
   #window.onorientationchange = (e) ->
@@ -234,10 +240,6 @@ define [
           console.error error if error
           atom.gfx[name] = buffer if buffer
           cb?() unless --toLoad
-  
-  # Graphics bolt-ons
-  atomSpritesheet(atom.context)
-  atomText(atom.context)
   
   ## Audio
   

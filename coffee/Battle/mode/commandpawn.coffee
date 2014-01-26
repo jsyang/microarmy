@@ -1,7 +1,7 @@
 define [
-  'core/Battle/UI/pawn.options.box'
+  'core/Battle/UI/pawn.label.box'
   'core/Battle/UI/pawn.stats'
-], (PawnOptionsBox, PawnStatsBar) ->
+], (PawnLabelBox, PawnStatsBar) ->
   # Select and send orders to selected entities.
   class CommandPawn
     x : 0
@@ -115,7 +115,7 @@ define [
         if pressed and not @isDragging
           foundSingle = @_findSingle()
           if foundSingle?
-            @optionsbox = new PawnOptionsBox foundSingle, @battle
+            @optionsbox = new PawnLabelBox foundSingle, @battle
             @statsbars.push new PawnStatsBar foundSingle, @battle
           else
             @isDragging = true

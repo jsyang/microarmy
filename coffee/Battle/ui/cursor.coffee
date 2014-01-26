@@ -10,24 +10,55 @@ define ->
   class BattleUICursor
     MODE  : MODE    
     mode  : MODE.SELECT_NONE
-    _text : null
+    text : null
 
-    constructor : ->
+    _setColors : (team) ->
+      @body_color = [
+        'rgb(211,220,235)'
+        'rgb(212,235,211)'
+      ][team]
+
+    constructor : (params) ->
+      @[k] = v for k, v of params
       document.body.style.cursor = 'crosshair'
+      @_setColors @battle.team
 
     switchCursor : (name) ->
       @mode = MODE[name]
 
     clearText : ->
-      delete @_text
+      delete @text
       
     setText : (textObj) ->
-      @_text = textObj
+      if !(textObj.value instanceof Array)
+        textObj.value = [textObj.value]
+      @text = textObj
+
+    _getBoxWidth : ->
+      length = 0
+      for l in @text.value when l.length > length
+        longestLine = l
+      atom.context.measureText(longestLine).width
 
     draw : ->
-      mx = atom.input.mouse.x
-      my = atom.input.mouse.y
-      # 16 = CURSOR_SPRITE_HEIGHT >> 1
-      atom.context.drawText @_text.value, mx, my + 8, @_text.color, @_text.halign if @_text?
-      # Using default cursors on desktop for now.
-      # atom.context.drawSprite "cursor-#{@mode}", mx, my, 'middle', 'center'
+      if @text?
+        x = atom.input.mouse.x
+        y = atom.input.mouse.y + 8
+        
+        w = @_getBoxWidth() + 4
+        w2 = w >> 1
+        h = @text.value.length * atom.context.drawText.lineHeight + 2
+        
+        
+        atom.context.save()
+        atom.context.fillStyle = '#000'
+        atom.context.fillRect x - w2, y, w, h
+        
+        atom.context.fillStyle = @body_color
+        atom.context.fillRect x - w2 + 1, y + 1, w - 2, h - 2
+        
+        atom.context.drawText @text.value, x, y, @text.color, @text.halign
+        atom.context.restore()
+
+        # Using default cursors on desktop for now.
+        #atom.context.drawSprite "cursor-#{@mode}", mx, my, 'middle', 'center'
