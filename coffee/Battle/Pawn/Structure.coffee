@@ -5,17 +5,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
     BAD   : 1
     WRECK : 2
   
-  SCAFFOLD_BUILD_REQUIREMENTS =
-    'Pillbox'           : 4
-    'MissileRack'       : 8
-    'MissileRackSmall'  : 1
-    'SmallTurret'       : 6
-    'Barracks'          : 16
-    'CommCenter'        : 60
-    'MineFieldSmall'    : 1
-    'AmmoDumpSmall'     : 1
-    'AmmoDump'          : 2
-
   VARIABLESTATS = [
     'health_current'
     'health_max'
@@ -81,21 +70,25 @@ define ['core/Battle/Pawn'], (Pawn) ->
     crew_type          : 'PistolInfantry' # Crew type if crew exits the building
   
   class Scaffold extends Structure
-    nameText        : 'Construction site'
+    nameText        : 'Construction Site'
     hDist2          : 64
     health_current  : [360, 400]
     health_max      : [400, 450]
+    build_current   : 0                    # Current build progress
     build_type      : 'Pillbox'            # What are we building?
-    crew_current    : 1
-    crew_max        : 80
-    crew_killDamage : 6                    # Damage > this has a chance of killing some crew 
-    crew_killChance : 0.8                  # Chance 1 crew member is killed
     constructor : (params) ->
       super params
-      @build_crew = SCAFFOLD_BUILD_REQUIREMENTS[@build_type]
+      @build_max = { # Build times.
+        'Pillbox'           : 60
+        'MissileRack'       : 800
+        'MissileRackSmall'  : 140
+        'SmallTurret'       : 100
+        'Barracks'          : 1600
+        'CommCenter'        : 6000
+      }[@build_type]
   
   class AmmoDump extends Structure
-    nameText       : 'Ammo dump'
+    nameText       : 'Ammo Dump'
     hDist2         : 100
     sight          : 6
     health_current : [80,  120]
@@ -109,7 +102,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       super params
   
   class AmmoDumpSmall extends Structure
-    nameText       : 'Ammo crate'
+    nameText       : 'Ammo Crate'
     hDist2         : 25
     sight          : 5
     health_current : [80,  120]
@@ -148,7 +141,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     crew_killChance : 0.2  # Chance 1 crew member is killed
   
   class SmallTurret extends Structure
-    nameText       : 'Automated turret'
+    nameText       : 'Turret'
     hDist2         : 90
     sight          : 5
     health_current : [1900, 2100]
@@ -166,7 +159,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "turret-#{@team}-#{@direction}-#{@state}-#{@turn_ing>>0}"
   
   class MissileRack extends Structure
-    nameText        : 'Cruise missile launcher'
+    nameText        : 'Heavy Missile Launcher'
     hDist2          : 64
     sight           : 13
     health_current  : [200, 280]
@@ -189,7 +182,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "missilerack-#{@team}-#{@direction}-#{hasAmmo}"
   
   class MissileRackSmall extends Structure
-    nameText          : 'Missile launcher'
+    nameText          : 'Missile Launcher'
     hDist2            : 18
     sight             : 9
     health_current    : [100, 180]

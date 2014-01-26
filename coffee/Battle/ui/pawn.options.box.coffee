@@ -51,13 +51,13 @@ define ->
       
       atom.context.drawText lines, x + 1, y - 1, @stroke_color
       
-      y1 = @pawn.y - @pawnSpriteHeight + 0.5
-      y2 = y1 - @margin
-      
-      x = @pawn.x + 0.5 - @battle.scroll.x
-      atom.context.beginPath()
-      atom.context.moveTo x, y1 - 8
-      atom.context.lineTo x, y2
-      atom.context.stroke()
+      #y1 = @pawn.y - @pawnSpriteHeight + 0.5
+      #y2 = y1 - @margin
+      #
+      #x = @pawn.x + 0.5 - @battle.scroll.x
+      #atom.context.beginPath()
+      #atom.context.moveTo x, y1 - 8
+      #atom.context.lineTo x, y2
+      #atom.context.stroke()
       
       atom.context.restore()

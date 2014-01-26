@@ -76,7 +76,9 @@ define [
       
     # Prune dead things from our selection
     _updateSelection : ->
-    
+      if @structure?.isPendingRemoval()
+        @_clearSelection()
+      # else if # Prune unit selections
     
     _drawStatsBars : ->
       for i in @statsbars
@@ -97,6 +99,8 @@ define [
         @_drawStatsBars()
     
     tick : ->
+      @_updateSelection()
+      
       if @containsCursor()
         mx = atom.input.mouse.x
         my = atom.input.mouse.y

@@ -104,13 +104,13 @@ define ['core/Battle/UI'], (BattleUI) ->
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()
             x = atom.input.mouse.x + @battle.scroll.x
-            
             @battle.world.add(
-              new @battle.world.Classes[@cart] {
-                x         : x
-                y         : @battle.world.height(x)
-                team      : @battle.team
-                direction : @direction
+              new @battle.world.Classes['Scaffold'] {
+                build_type : @cart
+                x          : x
+                y          : @battle.world.height(x)
+                team       : @battle.team
+                direction  : @direction
               }
             )
             

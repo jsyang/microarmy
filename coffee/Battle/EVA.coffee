@@ -13,6 +13,8 @@ define ->
       #'v_constructbasetosecurethisregion'
       # 100
       #
+      'incomingobjective'
+      15
       'v_selectlocationtobuildstructures'
     ]
     

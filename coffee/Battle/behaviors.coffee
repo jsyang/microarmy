@@ -401,14 +401,15 @@ define ->
               return true
           true
           
-        addScaffoldChild : ->
+        addBuiltEntity : ->
           childClass = Classes[@build_type]
           World.add(new childClass {
-            x     : @x
-            y     : World.height @
-            team  : @team
+            x         : @x
+            y         : World.height @
+            team      : @team
+            direction : @direction
           }) 
-          true          
+          true  
         
         isStructureCrumbling : ->
           @state is @STATE.WRECK
@@ -424,6 +425,13 @@ define ->
         setUntargetable : ->
           @targetable = false
           true
+          
+        isBuilding : ->
+          @build_current < @build_max
+        
+        doBuilding : ->
+          @build_current++
+        
   
       # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
       # Prefix          Result
@@ -451,7 +459,9 @@ define ->
         StructureAlive              : '<[~StructureCrew],[!PawnNeedsReload],[PawnTarget],[doRangedAttack]>'
         StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
         
-        Scaffold                    : '[Structure]'
+        ScaffoldAliveBuilding       : '<[isBuilding],[doBuilding]>'
+        ScaffoldAlive               : '([ScaffoldAliveBuilding],<[addBuiltEntity],[setUntargetable],[doRemove]>)'
+        Scaffold                    : '([StructureDeadRemove],[ScaffoldAlive])'
         
         PillboxTarget               : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
         PillboxAlive                : '<[~StructureCrew],[!PawnNeedsReload],[PillboxTarget],[doRangedAttack]>'
