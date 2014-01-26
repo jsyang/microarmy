@@ -1,21 +1,16 @@
 define [
+  'core/Battle/UI'
   'core/Battle/UI/pawn.label.box'
   'core/Battle/UI/pawn.stats'
-], (PawnLabelBox, PawnStatsBar) ->
+], (BattleUI, PawnLabelBox, PawnStatsBar) ->
   # Select and send orders to selected entities.
-  class CommandPawn
+  class CommandPawn extends BattleUI
     x : 0
     y : 0
         
     structure  : null
     units      : null
     statsbars : null
-    
-    containsPoint : (x, y) ->
-      return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
-    
-    containsCursor : ->
-      @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
     
     _clearSelection : ->
       delete @optionsbox
