@@ -4,7 +4,7 @@ define ->
   # There should only be one onscreen at a time.
 
   class BattleUIPawnStatsBox
-    w           : 90
+    w           : 200
     margin      : 32
     constructor : (pawn, battle) ->
       @battle = battle
@@ -25,9 +25,11 @@ define ->
       ][team]
     
     _getText : ->
-      [
-        @pawn.nameText
-      ]
+      lines = [ @pawn.nameText ]
+      c = @battle.world.Classes
+      if @pawn instanceof c['Scaffold']
+        lines.push "Building #{c[@pawn.build_type]::nameText}"
+      lines
     
     draw : ->
       atom.context.save()

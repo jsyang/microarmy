@@ -23,4 +23,4 @@ define ->
         @fillText(lines[i], dx, y + 10*i)      
       @restore()
       
-    _atomContext.drawText.lineHeight = 12
+    _atomContext.drawText.lineHeight = 11

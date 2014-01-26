@@ -89,8 +89,7 @@ define ['core/Battle/UI'], (BattleUI) ->
       x = atom.input.mouse.x - @x - highlightW2
       x = 0 if x < 0
       x = @w - @highlightW if x > @w - @highlightW
-      newScrollX = (x * @_1scaleW) >> 0 
-      @battle.scroll.x = newScrollX
+      @battle.scroll.x = (x * @_1scaleW) >> 0 
     
     tick : ->
       if @containsCursor()
