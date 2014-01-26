@@ -6,7 +6,6 @@ define ->
   class BattleUIPawnStatsBox
     w           : 90
     margin      : 32
-    lineHeight  : 12
     constructor : (pawn, battle) ->
       @battle = battle
       @pawn = pawn
@@ -34,7 +33,7 @@ define ->
       atom.context.save()
       
       lines = @_getText()
-      h     = lines.length * @lineHeight
+      h     = lines.length * atom.context.drawText.lineHeight
       
       x = @pawn.x - (@w >> 1) + 0.5 - @battle.scroll.x
       y = @pawn.y - h - @pawnSpriteHeight - @margin + 0.5
@@ -47,7 +46,7 @@ define ->
       atom.context.fillRect x + 1, y + 1, @w - 2, h - 2
       
       atom.context.fillStyle   = @header_color
-      atom.context.fillRect x + 1, y + 1, @w - 2, @lineHeight - 1
+      atom.context.fillRect x + 1, y + 1, @w - 2, atom.context.drawText.lineHeight - 1
       
       atom.context.drawText lines, x + 1, y - 1, @stroke_color
       

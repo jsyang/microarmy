@@ -253,7 +253,7 @@ define ->
         doReloading : ->
           # Begin reloading if we need to reload
           if @reload_ing is 0
-            if @ammo_maxsupply?
+            if @ammo_supply_max?
               @reload_ing = $.R(30, @reload_time) + 1
             else
               @reload_ing = @reload_time + 1
@@ -263,19 +263,19 @@ define ->
           # Continue reloading
           if @reload_ing is 0
             # Use ammo from our ammo supply if we're a unit limited by ammo supply
-            if @ammo_maxsupply?
+            if @ammo_supply_max?
               if @ammo_supply < @ammo_max
-                @ammo_clip   = @ammo_supply
+                @ammo_current   = @ammo_supply
                 @ammo_supply = 0
               else
-                @ammo_clip   = @ammo_max
+                @ammo_current   = @ammo_max
                 @ammo_supply -= @ammo_max
             else
-              @ammo_clip = @ammo_max
+              @ammo_current = @ammo_max
           true
           
         isOutOfAmmo : ->
-          @ammo_clip <= 0
+          @ammo_current <= 0
   
         isBerserking : ->
           @berserk_ing? and @berserk_ing > 0
@@ -318,7 +318,7 @@ define ->
             target : @target
           }
           
-          if @ammo_clip is @ammo_max and projectile.sound?
+          if @ammo_current is @ammo_max and projectile.sound?
             atom.playSound projectile.sound
           
           if projectile.bullet_weapon
@@ -342,7 +342,7 @@ define ->
             ) * projectile.speed) / projectile.dist + projectile.stray_dy
           
           World.add projectile
-          @ammo_clip--
+          @ammo_current--
           true
         
         isInfantryInShotFrame : ->
@@ -402,13 +402,14 @@ define ->
           true
           
         addBuiltEntity : ->
-          childClass = Classes[@build_type]
-          World.add(new childClass {
+          child = new Classes[@build_type] {
             x         : @x
             y         : World.height @
             team      : @team
             direction : @direction
-          }) 
+          }
+          World.add child
+          child.playConstructedSound() if child.playConstructedSound?
           true  
         
         isStructureCrumbling : ->

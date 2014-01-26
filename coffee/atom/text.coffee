@@ -3,7 +3,7 @@ define ->
     # Bolt-on for atom that does multi-line text.
     _atomContext.textBaseline = 'top'
     _atomContext.font         = '10px verdana'
-
+    
     _atomContext.drawText = (text='No text provided.', x = 4, y = 0, color = '#889988', halign = 'left') ->
       if text instanceof Array
         lines = text
@@ -22,3 +22,5 @@ define ->
         
         @fillText(lines[i], dx, y + 10*i)      
       @restore()
+      
+    _atomContext.drawText.lineHeight = 12

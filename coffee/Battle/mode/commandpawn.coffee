@@ -2,8 +2,8 @@ define [
   'core/Battle/UI/pawn.options.box'
   'core/Battle/UI/pawn.stats'
 ], (PawnOptionsBox, PawnStatsBar) ->
-  
-  class SelectPawn
+  # Select and send orders to selected entities.
+  class CommandPawn
     x : 0
     y : 0
         
@@ -32,12 +32,15 @@ define [
       
     constructor : (params) ->
       @[k]  = v for k, v of params
-      @w    = atom.width
-      @h    = @battle.world.h
+      @resize()
       
       @STRUCTURE = @battle.world.Classes['Structure']
       @INFANTRY  = @battle.world.Classes['Infantry']
       @_clearSelection()
+    
+    resize : ->
+      @w = atom.width - @battle.ui.sidebar.w
+      @h = @battle.world.h
     
     _calculateSelectionBounds : ->
       dr = @dragRect

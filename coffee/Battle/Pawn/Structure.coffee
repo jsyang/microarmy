@@ -33,6 +33,9 @@ define ['core/Battle/Pawn'], (Pawn) ->
       @_setHalfDimensions()
       @_setVariableStats VARIABLESTATS
 
+    playConstructedSound : ->
+      atom.playSound @construct_sound if @construct_sound?
+
     setDamage : (dmg) ->
       return unless dmg > 0
       @health_current -= dmg
@@ -44,6 +47,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class CommCenter extends Structure
     nameText           : 'Fortified HQ'
+    construct_sound    : 'compute'
     hDist2             : 196
     sight              : 6
     health_current     : [2400, 2700]
@@ -71,6 +75,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class Scaffold extends Structure
     nameText        : 'Construction Site'
+    construct_sound : 'dropitem'
     hDist2          : 64
     health_current  : [360, 400]
     health_max      : [400, 450]
@@ -79,12 +84,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
     constructor : (params) ->
       super params
       @build_max = { # Build times.
-        'Pillbox'           : 60
-        'MissileRack'       : 800
+        'Pillbox'           : 170
+        'MissileRack'       : 300
         'MissileRackSmall'  : 140
-        'SmallTurret'       : 100
-        'Barracks'          : 1600
-        'CommCenter'        : 6000
+        'SmallTurret'       : 300
+        'Barracks'          : 1200
+        'CommCenter'        : 2000
       }[@build_type]
   
   class AmmoDump extends Structure
@@ -125,13 +130,14 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class Pillbox extends Structure
     nameText        : 'Pillbox'
+    construct_sound : 'sliderack1'
     hDist2          : 64
     sight           : 3
     health_current  : [800, 900]
     health_max      : [800, 1100]
     reload_ing      : 0
     reload_time     : 50
-    ammo_clip       : 6
+    ammo_current    : 6
     ammo_max        : 6
     shoot_dy        : -5
     projectile      : 'MGBullet'
@@ -141,20 +147,21 @@ define ['core/Battle/Pawn'], (Pawn) ->
     crew_killChance : 0.2  # Chance 1 crew member is killed
   
   class SmallTurret extends Structure
-    nameText       : 'Turret'
-    hDist2         : 90
-    sight          : 5
-    health_current : [1900, 2100]
-    health_max     : [2100, 2300]
-    reload_ing     : 0
-    reload_time    : 90
-    turn_ing       : 0
-    turn_rate      : 0.25
-    turn_last      : 4
-    ammo_clip      : 1
-    ammo_max       : 1
-    shoot_dy       : -7
-    projectile     : 'SmallShell'
+    nameText        : 'Turret'
+    construct_sound : 'sliderack1'
+    hDist2          : 90
+    sight           : 5
+    health_current  : [1900, 2100]
+    health_max      : [2100, 2300]
+    reload_ing      : 0
+    reload_time     : 90
+    turn_ing        : 0
+    turn_rate       : 0.25
+    turn_last       : 4
+    ammo_current    : 1
+    ammo_max        : 1
+    shoot_dy        : -7
+    projectile      : 'SmallShell'
     getName : ->
       "turret-#{@team}-#{@direction}-#{@state}-#{@turn_ing>>0}"
   
@@ -167,10 +174,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
     projectile      : 'HomingMissile'
     reload_ing      : 0
     reload_time     : 2900
-    ammo_clip       : 1
+    ammo_current    : 1
     ammo_max        : 1
     ammo_supply     : 3
-    ammo_maxsupply  : 3
+    ammo_supply_max : 3
     shoot_dy        : -20
     getName : ->
       if @health_current <= 0
@@ -191,10 +198,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
     canTargetAircraft : true
     reload_ing        : 0
     reload_time       : 190
-    ammo_clip         : 1
+    ammo_current      : 1
     ammo_max          : 1
     ammo_supply       : 12
-    ammo_maxsupply    : 12
+    ammo_supply_max   : 12
     shoot_dy          : -8
     getName : ->
       if @health_current <= 0

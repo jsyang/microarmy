@@ -3,27 +3,39 @@ define ['core/Battle/UI'], (BattleUI) ->
   class BattleUIMiniMap extends BattleUI
     x : 0
     y : 500
-    scale : 2
     
-    _isDragging : false
+    COLOR_HIGHLIGHT : 'rgb(144,245,93)'
+    
+    isDragging : false
     
     constructor : (params) ->
       @[k] = v for k, v of params
-      @_generateMinimapImageData()
+      @resize()
+      
     
+    resize : ->
+      @w = atom.width - @battle.ui.sidebar.w
+      @h = atom.height - @battle.world.h
+      @w2 = @w * 0.5
+      # Multipliers to convert Battle world coords to minimap coords
+      @scaleW   = @w / @battle.world.w
+      @scaleH   = @h / @battle.world.h
+      @_1scaleW = 1 / @scaleW
+      @_1scaleH = 1 / @scaleH
+      @highlightW = @w * @scaleW
+      @_generateMinimapImageData()
+      
     # Minimap analog of battlefield.
-    # Background image with sky and terrain.
     _generateMinimapImageData : ->
-      w = @world.w >> @scale
-      h = @world.h >> @scale
-      [@mapw, @maph] = [w, h]
-        
       # future: if the map is larger than our
       # max size for the minimap component, we'll need to cull the view
-      [@w, @h] = [w, h]
+      w = @w >> 0
+      h = @h >> 0
       
-      @_backgroundImgData = atom.context.createImageData(w, h)
-      d = @_backgroundImgData.data
+      # todo : split this up into 2 drawn layers, fogged areas and radar penetrating areas
+      # We cannot see all enemies on the minimap.
+      @BACKGROUNDIMAGEDATA = atom.context.createImageData(w, h)
+      d = @BACKGROUNDIMAGEDATA.data
       
       c_darkgreen =
         r : 49
@@ -31,12 +43,12 @@ define ['core/Battle/UI'], (BattleUI) ->
         b : 76
       
       c_dark =
-        r : 30
-        g : 30
-        b : 30
+        r : 40
+        g : 40
+        b : 40
       
       for x in [0...w]
-        height = @world.height(x << @scale) >> @scale
+        height = @battle.world.height(x * @_1scaleW) * @scaleH
         
         for y in [0...h]
           if y > height
@@ -45,7 +57,7 @@ define ['core/Battle/UI'], (BattleUI) ->
             color = c_dark
           
           # Pixel index
-          c = (y*w + x) << 2
+          c = (y * w + x) << 2
           
           # Set the minimap color
           d[c+0] = color.r
@@ -54,36 +66,40 @@ define ['core/Battle/UI'], (BattleUI) ->
           d[c+3] = 0xFF
       
     draw : ->
-      atom.context.putImageData(@_backgroundImgData, @x, @y, )
+      atom.context.putImageData(@BACKGROUNDIMAGEDATA, @x, @y)
       @_drawHighlight()
     
     # Box to show where player is looking at, in relation to battlefield
     _drawHighlight : ->
       atom.context.save()
       atom.context.lineWidth = '1'
-      atom.context.strokeStyle = 'rgb(144,245,93)'
-      x = (@world.battle.scroll.x>>@scale) + 0.5
-      y = (@world.battle.scroll.y>>@scale) + 0.5
-      w = (atom.width>>@scale)
+      atom.context.strokeStyle = @COLOR_HIGHLIGHT
+      x = @battle.scroll.x * @scaleW
+      y = @battle.scroll.y * @scaleH
+      x = (x >> 0) + 0.5
+      y = (y >> 0) + 0.5
+      w = (atom.width - @battle.ui.sidebar.w) * @scaleW
+      w >>= 0
       
-      atom.context.strokeRect(@x + x, @y + y, w, @h-1)
+      atom.context.strokeRect(@x + x, @y + y, w, @h - 1)
       atom.context.restore()
     
     _scrollBattleView : ->
-      viewMargin = atom.width >> (@scale+1)
-      x = atom.input.mouse.x - @x - viewMargin
+      highlightW2 = @highlightW * 0.5
+      x = atom.input.mouse.x - @x - highlightW2
       x = 0 if x < 0
-      x = @w - (viewMargin<<1) if x + (viewMargin<<1) > @w
-      @world.battle.scroll.x = x << @scale
+      x = @w - @highlightW if x > @w - @highlightW
+      newScrollX = (x * @_1scaleW) >> 0 
+      @battle.scroll.x = newScrollX
     
     tick : ->
       if @containsCursor()
         if atom.input.down 'mouseleft'
-          if @_isDragging
+          if @isDragging
             @_scrollBattleView()
           else
             if atom.input.pressed 'mouseleft'
-              @_isDragging = true
+              @isDragging = true
       else
-        @_isDragging = false
+        @isDragging = false
     

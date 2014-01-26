@@ -6,12 +6,12 @@ define ['core/Battle/UI'], (BattleUI) ->
     
     # Base starter kit
     inventory :
-      #'CommCenter'        : 1
+      'CommCenter'        : 1
       #'CommRelay'         : 1
       #'WatchTower'        : 1
       #'AmmoDump'          : 1
       #'AmmoDumpSmall'     : 1
-      #'Pillbox'           : 1
+      'Pillbox'           : 1
       #'MineFieldSmall'    : 1
       'SmallTurret'       : 1
       #'MissileRack'       : 1
@@ -26,10 +26,13 @@ define ['core/Battle/UI'], (BattleUI) ->
       
     constructor : (params) ->
       @[k]  = v for k, v of params
-      @w    = atom.width
-      @h    = @battle.world.h
+      @resize()
       @_cullInventory()
-      
+    
+    resize : ->
+      @w = atom.width - @battle.ui.sidebar.w
+      @h = @battle.world.h
+    
     _getSpriteName : ->
       if not @_tempInstance?
         @_tempInstance = new @battle.world.Classes[@cart] {
@@ -87,7 +90,7 @@ define ['core/Battle/UI'], (BattleUI) ->
       @_constructionComplete()
       
     _constructionComplete : ->
-      @battle.switchMode 'SelectPawn' # 'SpawnPawn'
+      @battle.resetMode()
     
     tick : ->
       if @containsCursor()
@@ -104,6 +107,7 @@ define ['core/Battle/UI'], (BattleUI) ->
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()
             x = atom.input.mouse.x + @battle.scroll.x
+            atom.playSound 'dropitem'
             @battle.world.add(
               new @battle.world.Classes['Scaffold'] {
                 build_type : @cart
@@ -113,10 +117,7 @@ define ['core/Battle/UI'], (BattleUI) ->
                 direction  : @direction
               }
             )
-            
             @_cullInventory @cart
-            atom.playSound 'tack'
-          
           else
             atom.playSound 'invalid'
         

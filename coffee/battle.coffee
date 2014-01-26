@@ -8,9 +8,10 @@ define [
   
   'core/Battle/UI/minimap'
   'core/Battle/UI/cursor'
+  'core/Battle/UI/sidebar'
   
   'core/Battle/mode/constructbase'
-  'core/Battle/mode/selectpawn'
+  'core/Battle/mode/commandpawn'
   'core/Battle/mode/spawnpawn'
 ], (Behaviors,
     BattleBehaviors,
@@ -21,18 +22,18 @@ define [
     
     BattleUIMinimap,
     BattleUICursor,
+    BattleUISidebar,
     
     ConstructBase,
-    SelectPawn,
+    CommandPawn,
     SpawnPawn) ->
   
   class Battle
   
     MODE : {
       ConstructBase
-      SelectPawn    # nothing selected, idling UI
+      CommandPawn
       SpawnPawn
-      #CommandPawn  # unit(s) selected, awaiting commands
     }
         
     scroll :
@@ -40,7 +41,8 @@ define [
       x : 0
       y : 0
     
-    team : 1
+    team  : 0
+    funds : 5000
     
     constructor : (params) ->
       @[k] = v for k, v of params
@@ -55,19 +57,25 @@ define [
       # background = sky + terrain layer, sits below the instances drawn layer
       @backgroundImgData = makeBackgroundImageData(@world)
       
-      # behaviors = btree interpreter
+      # BTree interpreter
       @behaviors = new Behaviors(BattleBehaviors(@world, @world.Classes))
       
-      # Controller
-      @mode = new @MODE.ConstructBase { battle : @ }
-      
-      # Various UI components
-      @ui =
-        minimap : new BattleUIMinimap { world : @world }
-        cursor  : new BattleUICursor  { battle : @ }
+      # Various UI components, must be init in order.
+      uiParams = { battle : @ }
+      @ui = {}
+      @ui.sidebar = new BattleUISidebar uiParams
+      @ui.minimap = new BattleUIMinimap uiParams
+      @ui.cursor  = new BattleUICursor  uiParams
         
+      
+      # Controller
+      @mode = new @MODE.ConstructBase uiParams
+      
       # todo: flesh this out later
       @EVA = new BattleEVA
+    
+    resetMode : ->
+      @switchMode 'CommandPawn'
     
     switchMode : (mode) ->
       @ui.cursor.clearText()
@@ -101,6 +109,7 @@ define [
       
       @mode.draw?()
       @ui.minimap.draw()
+      @ui.sidebar.draw()
       @ui.cursor.draw()
         
     _drawBackground : (x = 0, y = 0) ->

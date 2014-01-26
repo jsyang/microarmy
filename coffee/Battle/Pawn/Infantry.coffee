@@ -25,8 +25,6 @@ define ['core/Battle/Pawn'], (Pawn) ->
   class Infantry extends Pawn
     ACTION        : ACTION
     hDist2        : 20
-    #target       : null
-    #squad        : null
     action        : ACTION.MOVING
     corpsetime    : 180
     frame_current : 0
@@ -54,7 +52,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     berserk_ing    : 0
     berserk_time   : [10, 26]
     berserk_chance : -> $.r(0.59)
-    ammo_clip      : 2
+    ammo_current   : 2
     ammo_max       : 2
     # In which attack state frames do we want to spawn projectiles
     SHOTFRAMES :
@@ -71,7 +69,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     berserk_ing    : 0
     berserk_time   : [6, 21]
     berserk_chance : -> $.r(0.35) + 0.08
-    ammo_clip      : 1
+    ammo_current   : 1
     ammo_max       : 1
     SHOTFRAMES :
       '3' : true

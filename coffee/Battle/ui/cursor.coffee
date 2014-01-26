@@ -12,6 +12,9 @@ define ->
     mode  : MODE.SELECT_NONE
     _text : null
 
+    constructor : ->
+      document.body.style.cursor = 'crosshair'
+
     switchCursor : (name) ->
       @mode = MODE[name]
 
@@ -26,4 +29,5 @@ define ->
       my = atom.input.mouse.y
       # 16 = CURSOR_SPRITE_HEIGHT >> 1
       atom.context.drawText @_text.value, mx, my + 16, @_text.color, @_text.halign if @_text?
-      atom.context.drawSprite "cursor-#{@mode}", mx, my, 'middle', 'center'
+      # Using default cursors on desktop for now.
+      # atom.context.drawSprite "cursor-#{@mode}", mx, my, 'middle', 'center'
