@@ -1,7 +1,7 @@
 define [
-  'core/Battle/UI/pawnstatsbox'
-  'core/Battle/UI/pawnhealthbar'
-], (PawnStatsBox, PawnHealthBar) ->
+  'core/Battle/UI/pawn.options.box'
+  'core/Battle/UI/pawn.stats'
+], (PawnOptionsBox, PawnStatsBar) ->
   
   class SelectPawn
     x : 0
@@ -9,7 +9,7 @@ define [
         
     structure  : null
     units      : null
-    healthbars : null
+    statsbars : null
     
     containsPoint : (x, y) ->
       return @ if ( @x <= x <= @x+@w ) and ( @y <= y <= @y+@h )
@@ -18,10 +18,10 @@ define [
       @containsPoint(atom.input.mouse.x, atom.input.mouse.y)
     
     _clearSelection : ->
-      delete @statsbox
+      delete @optionsbox
       delete @structure
       @units = []
-      @healthbars = []
+      @statsbars = []
     
     isDragging : false
     
@@ -78,13 +78,13 @@ define [
     _updateSelection : ->
     
     
-    _drawHealthBars : ->
-      for i in @healthbars
+    _drawStatsBars : ->
+      for i in @statsbars
         i.draw()
         
     draw : ->
-      if @statsbox?
-        @statsbox.draw()
+      if @optionsbox?
+        @optionsbox.draw()
       
       if @isDragging
         atom.context.save()
@@ -94,7 +94,7 @@ define [
         atom.context.strokeRect dr.x + 0.5, dr.y + 0.5, dr.w, dr.h
         atom.context.restore()
       else
-        @_drawHealthBars()
+        @_drawStatsBars()
     
     tick : ->
       if @containsCursor()
@@ -108,8 +108,8 @@ define [
         if pressed and not @isDragging
           foundSingle = @_findSingle()
           if foundSingle?
-            @statsbox = new PawnStatsBox foundSingle, @battle
-            @healthbars.push new PawnHealthBar foundSingle, @battle
+            @optionsbox = new PawnOptionsBox foundSingle, @battle
+            @statsbars.push new PawnStatsBar foundSingle, @battle
           else
             @isDragging = true
             @dragRect =

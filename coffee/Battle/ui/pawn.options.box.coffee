@@ -28,7 +28,6 @@ define ->
     _getText : ->
       [
         @pawn.nameText
-        "#{@pawn.health_current} / #{@pawn.health_max} HP"
       ]
     
     draw : ->
@@ -48,9 +47,9 @@ define ->
       atom.context.fillRect x + 1, y + 1, @w - 2, h - 2
       
       atom.context.fillStyle   = @header_color
-      atom.context.fillRect x + 1, y + 1, @w - 2, @lineHeight
+      atom.context.fillRect x + 1, y + 1, @w - 2, @lineHeight - 1
       
-      atom.context.drawText lines, x + 1, y + 1, @stroke_color
+      atom.context.drawText lines, x + 1, y - 1, @stroke_color
       
       y1 = @pawn.y - @pawnSpriteHeight + 0.5
       y2 = y1 - @margin

@@ -38,39 +38,33 @@ define ['core/Battle/UI'], (BattleUI) ->
         }
       @_tempInstance.direction = @direction
       @_tempInstance.getName()
-    
+       
     draw : ->
-      mx = atom.input.mouse.x
-      my = atom.input.mouse.y
-      
-      if @cart?
-        spriteName = @_getSpriteName()
-        isLocationValid = @_checkIfLocationValid()
-        if isLocationValid
-          opacity = 0.6
-        else
-          margin = GFXINFO[spriteName].height + 20
-          atom.context.drawText "Cannot build here", mx - 46, @battle.world.height(mx + @battle.scroll.x) - margin, "#ff0000"
-          opacity = 0.2
-        
-        directionName = [
-          'left'
-          'right'
-        ][@direction]
-        
-        teamName = [
-          'blue'
-          'green'
-        ][@battle.team]
+      if @containsCursor()
+        if @cart?
+          mx = atom.input.mouse.x
+          my = atom.input.mouse.y
           
-        instructionText = [
-          "Click location to build #{@cart} for #{teamName} team"
-          "Press A / D to build facing left / right :: facing #{directionName}"
-        ]
-                          
-        atom.context.drawText instructionText
-        atom.context.drawSprite spriteName, mx, @battle.world.height(mx + @battle.scroll.x), 'bottom', 'center', opacity
-    
+          spriteName = @_getSpriteName()
+          isLocationValid = @_checkIfLocationValid()        
+          if isLocationValid
+            opacity   = 0.6
+            @battle.ui.cursor.setText {
+              value  : "Right click to change direction."
+              color  : "#555555"
+              halign : 'center'
+            }
+          else
+            opacity = 0.2
+            @battle.ui.cursor.setText {
+              value  : "Cannot build here!"
+              color  : "#ff0000"
+              halign : 'center'
+            }
+          atom.context.drawSprite spriteName, mx, @battle.world.height(mx + @battle.scroll.x), 'bottom', 'center', opacity
+      else
+        @battle.ui.cursor.clearText()
+        
     _checkIfLocationValid : ->
       x = @battle.scroll.x + atom.input.mouse.x
       name = @_getSpriteName()
@@ -101,10 +95,11 @@ define ['core/Battle/UI'], (BattleUI) ->
           @battle.team++
           @battle.team %= 2
           
-        if atom.input.pressed('keyA')
-          @direction = 0
-        else if atom.input.pressed('keyD')
-          @direction = 1
+        if atom.input.pressed('mouseright')
+          if @direction is 0
+            @direction = 1
+          else
+            @direction = 0
           
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()

@@ -66,9 +66,11 @@ define [
         minimap : new BattleUIMinimap { world : @world }
         cursor  : new BattleUICursor  { battle : @ }
         
+      # todo: flesh this out later
       @EVA = new BattleEVA
     
     switchMode : (mode) ->
+      @ui.cursor.clearText()
       @mode = new @MODE[mode] { battle : @ }
     
     tick : ->
