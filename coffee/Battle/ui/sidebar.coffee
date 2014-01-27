@@ -49,22 +49,19 @@ define [
       buildable_list = @battle.player["buildable_#{buildable_type}"]
       if buildable_list.length
         for type in buildable_list
+          typeClass = @battle.world.Classes[type]
           button = new Button {
             x
             y
             sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
             sprite_down : "sidebar-button-#{type.toLowerCase()}-1"
-            pressed : =>
-              @battle.player.build type
-              # todo: build queue
-            over : =>
-              name = @battle.world.Classes[type]::NAMETEXT
-              cost = @battle.world.Classes[type]::COST
-              @battle.ui.cursor.setText {
+            pressed     : @battle.player.build.bind @battle.player, type
+            over : ((name, cost) ->
+              @setText {
                 value  : "#{name} ($#{cost})"
                 halign : 'center'
                 color  : '#000'
-              }
+              }).bind @battle.ui.cursor, typeClass::NAMETEXT, typeClass::COST
             out : =>
               @battle.ui.cursor.clearText()
           }

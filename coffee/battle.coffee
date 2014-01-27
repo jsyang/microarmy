@@ -104,7 +104,7 @@ define [
         battle : @
         starting_inventory : {
           # Base starter kit
-          # 'CommCenter'        : 1
+          'CommCenter'        : 1
           #'CommRelay'         : 1
           #'WatchTower'        : 1
           #'AmmoDump'          : 1

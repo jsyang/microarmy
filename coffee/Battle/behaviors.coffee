@@ -596,4 +596,5 @@ define ->
         InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         
         PistolInfantry              : '[Infantry]'
+        RocketInfantry              : '[Infantry]'
     }

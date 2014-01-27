@@ -12,15 +12,14 @@ define ['core/Battle/Pawn'], (Pawn) ->
 
   BUILDMODIFIER =
     
-    BARRACKS_SPAWN_AT_DOOR : (b) ->
+    SPAWN_AT_DOOR : (b) ->
       @x += [-1, 1][@direction] * b.DX_DOOR
     
-    BARRACKS_SET_RALLY_POINT : (b) ->
+    SET_RALLY_POINT : (b) ->
       @goal = 0 # Move to rally point.
       @rally =
         x : b.x + $.R(-20, 20)
         y : b.y
-    
 
   class Structure extends Pawn
     NAMETEXT        : 'Generic structure'
@@ -67,7 +66,9 @@ define ['core/Battle/Pawn'], (Pawn) ->
     buildable_type     : 'RocketInfantry'
     build_current      : 0
     build_max          : 60
-  
+    build_modifiers    : [
+      BUILDMODIFIER.SET_RALLY_POINT
+    ]
   
   
   class Barracks extends Structure
@@ -81,8 +82,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     build_current      : 0
     build_max          : 30
     build_modifiers    : [
-      BUILDMODIFIER.BARRACKS_SPAWN_AT_DOOR
-      BUILDMODIFIER.BARRACKS_SET_RALLY_POINT
+      BUILDMODIFIER.SPAWN_AT_DOOR
+      BUILDMODIFIER.SET_RALLY_POINT
     ]
   
   class Scaffold extends Structure
@@ -101,7 +102,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
         'MissileRackSmall'  : 140
         'SmallTurret'       : 300
         'Barracks'          : 10#1200
-        'CommCenter'        : 2000
+        'CommCenter'        : 10#2000
       }[@build_type]
   
   class AmmoDump extends Structure

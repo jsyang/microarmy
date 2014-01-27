@@ -23,6 +23,7 @@ define ->
         factory = @factory[name][0]
         if factory.build_type?
           # Already building something.
+          # todo: build queue
           atom.playSound 'invalid'
         else
           factory.build_type = name
