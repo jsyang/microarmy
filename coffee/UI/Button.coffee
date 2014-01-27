@@ -2,6 +2,7 @@
 define ['core/Battle/UI'], (UI) ->
   class Button extends UI   
     state : 'up'
+    contained_cursor : false
     
     constructor : (params) ->
       @[k] = v for k, v of params
@@ -19,10 +20,14 @@ define ['core/Battle/UI'], (UI) ->
       pressed = atom.input.pressed 'mouseleft'
       down    = atom.input.down 'mouseleft'
       if @containsCursor()
-        if pressed and down
-          @state = 'down'
-          @pressed?()
+        @contained_cursor = true
+        @state = 'up'
+        @state = 'down' if down
+        @pressed?() if pressed
         @over?()
       else
+        if @contained_cursor
+          @out?()
+          @contained_cursor = false
         @state = 'up'
       

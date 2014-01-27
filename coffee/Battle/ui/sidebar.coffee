@@ -53,10 +53,20 @@ define [
             x
             y
             sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
-            sprite_down : "sidebar-button-#{type.toLowerCase()}-0"
+            sprite_down : "sidebar-button-#{type.toLowerCase()}-1"
             pressed : =>
               @battle.player.build type
               atom.playSound 'feed'
+            over : =>
+              name = @battle.world.Classes[type]::NAMETEXT
+              cost = @battle.world.Classes[type]::COST
+              @battle.ui.cursor.setText {
+                value  : "#{name} ($#{cost})"
+                halign : 'center'
+                color  : '#000'
+              }
+            out : =>
+              @battle.ui.cursor.clearText()
           }
           y += 100
           @["COL#{col}BUTTONS"].push button
@@ -112,11 +122,13 @@ define [
       atom.context.fillStyle = @COLOR_FRAME_DARK
       atom.context.fillRect x + 1, y, @w - 2, atom.height - y - 1
       
+      # SCROLL BUTTONS
       unless @SCROLLBUTTON?
         @_setScrollButtons x, y
       v.draw() for k, v of @SCROLLBUTTON
-      
       y += 30
+      
+      # CONSTRUCTION OPTION BUTTONS
       unless @COL0BUTTONS? and @COL1BUTTONS?
         @_setColButtons x + 1, y, 0
         @_setColButtons x + 100 + 1, y, 1
@@ -130,7 +142,9 @@ define [
         v.tick() for k, v of @SCROLLBUTTON
         v.tick() for v    in @COL0BUTTONS
         v.tick() for v    in @COL1BUTTONS
-      true
+        true
+      else
+        false
 
     constructor : (params) ->
       @[k]  = v for k, v of params

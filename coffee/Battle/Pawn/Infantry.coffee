@@ -7,6 +7,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ATTACK_PRONE      : 3
     DEATH1            : 4
     DEATH2            : 5
+    IDLE              : 6
 
   GOAL =
     MOVETOPOINT : 0
