@@ -43,11 +43,13 @@ define ['core/Battle/Pawn'], (Pawn) ->
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
   class PistolInfantry extends Infantry
-    COST           : 25
+    NAMETEXT       : 'Soldier'
+    COST           : 150
     projectile     : 'Bullet'
     sight          : 3
     melee_dmg      : 8
     health_current : [30, 70]
+    health_max     : 70
     reload_ing     : 0
     reload_time    : 40
     berserk_ing    : 0
@@ -61,10 +63,13 @@ define ['core/Battle/Pawn'], (Pawn) ->
       '3' : true
 
   class RocketInfantry extends Infantry
+    NAMETEXT       : 'Elite Soldier'
+    COST           : 300
     projectile     : 'SmallRocket'
     sight          : 6
     melee_dmg      : 23
     health_current : [60, 90]
+    health_max     : 80
     reload_ing     : 0
     reload_time    : [60, 90]
     berserk_ing    : 0
@@ -76,11 +81,14 @@ define ['core/Battle/Pawn'], (Pawn) ->
       '3' : true
       
   class EngineerInfantry extends Infantry
+    NAMETEXT       : 'Elite Soldier'
+    COST           : 500
     sight          : 4
     melee_dmg      : 5
     build_type     : null
     build_x        : null
     health_current : [20, 50]
+    health_max     : 40
 
   exportClasses = {
     Infantry

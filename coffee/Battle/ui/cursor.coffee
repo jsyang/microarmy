@@ -22,8 +22,8 @@ define ->
       @text = textObj
 
     _getBoxWidth : ->
-      length = 0
-      for l in @text.value when l.length > length
+      longestLine = ''
+      for l in @text.value when l.length > longestLine.length
         longestLine = l
       atom.context.measureText(longestLine).width
 

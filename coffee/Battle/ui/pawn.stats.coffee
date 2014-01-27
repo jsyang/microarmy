@@ -20,7 +20,9 @@ define ->
         @has[p] = true
     
     _getBarWidth : (type) ->
-      (@pawn["#{type}_current"] * @["_1#{type}_max"] * @pawnSpriteWidth) >> 0
+      value = @pawn["#{type}_current"] * @["_1#{type}_max"]
+      value = 1 if value > 1
+      (value * @pawnSpriteWidth) >> 0
       
     _drawBar : (p, type) ->
       if @has[type]
@@ -28,7 +30,7 @@ define ->
         atom.context.fillRect p.x, p.y, @w, @h
         atom.context.fillStyle = @COLOR[type]
         w = @_getBarWidth(type) - 2
-        w = 1 if w < 1
+        w = 0 if w < 0
         atom.context.fillRect p.x + 1, p.y + 1, w, @h - 2
         p.y -= @h - 1
     

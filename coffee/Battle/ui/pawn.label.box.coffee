@@ -1,17 +1,12 @@
 define ->
   # Additional info tooltip for selected entities.
   class BattleUIPawnLabelBox
-    w           : 200
-    margin      : 32
-    constructor : (pawn, battle) ->
-      @battle = battle
-      @pawn = pawn
-      @pawnName = pawn.constructor.name
-      @pawnSpriteHeight = @pawn._halfHeight << 1
-      @_setColors(pawn.team)
+    margin : 16
+    
+    border_color : 'rgb(11,11,11)'
     
     _setColors : (team) ->
-      @stroke_color     = 'rgb(11,11,11)'
+      
       @header_color = [
         'rgb(135,171,237)'
         'rgb(147,217,147)'
@@ -21,6 +16,12 @@ define ->
         'rgb(212,235,211)'
       ][team]
     
+    _getBoxWidth : (lines) ->
+      longestLine = ''
+      for l in lines when l.length > longestLine.length
+        longestLine = l
+      atom.context.measureText(longestLine).width
+    
     _getText : ->
       lines = [ @pawn.NAMETEXT ]
       c = @battle.world.Classes
@@ -29,33 +30,34 @@ define ->
       lines
     
     draw : ->
+      lines = @_getText()
+      w = @_getBoxWidth(lines) + 4
+      w2 = w >> 1
+      h = lines.length * atom.context.drawText.lineHeight + 2
+      
+      x = @pawn.x - w2 - @battle.scroll.x
+      y = @pawn.y - h - @pawnSpriteHeight - @margin
+      
       atom.context.save()
       
-      lines = @_getText()
-      h     = lines.length * atom.context.drawText.lineHeight
+      atom.context.fillStyle = @border_color
+      atom.context.fillRect x, y, w, h
       
-      x = @pawn.x - (@w >> 1) + 0.5 - @battle.scroll.x
-      y = @pawn.y - h - @pawnSpriteHeight - @margin + 0.5
+      x += 1
       
-      atom.context.lineWidth   = '1'
-      atom.context.strokeStyle = @stroke_color
-      atom.context.strokeRect x, y, @w, h
+      atom.context.fillStyle = @body_color
+      atom.context.fillRect x, y + 1, w - 2, h - 2
       
-      atom.context.fillStyle   = @body_color
-      atom.context.fillRect x + 1, y + 1, @w - 2, h - 2
+      atom.context.fillStyle = @header_color
+      atom.context.fillRect x, y + 1, w - 2, atom.context.drawText.lineHeight - 1
       
-      atom.context.fillStyle   = @header_color
-      atom.context.fillRect x + 1, y + 1, @w - 2, atom.context.drawText.lineHeight - 1
-      
-      atom.context.drawText lines, x + 1, y - 1, @stroke_color
-      
-      #y1 = @pawn.y - @pawnSpriteHeight + 0.5
-      #y2 = y1 - @margin
-      #
-      #x = @pawn.x + 0.5 - @battle.scroll.x
-      #atom.context.beginPath()
-      #atom.context.moveTo x, y1 - 8
-      #atom.context.lineTo x, y2
-      #atom.context.stroke()
+      atom.context.drawText lines, x, y, @border_color
       
       atom.context.restore()
+    
+    constructor : (pawn, battle) ->
+      @battle = battle
+      @pawn   = pawn
+      @NAMETEXT = pawn.NAMETEXT
+      @pawnSpriteHeight = @pawn._halfHeight << 1
+      @_setColors pawn.team
