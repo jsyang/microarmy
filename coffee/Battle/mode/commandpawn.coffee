@@ -50,8 +50,6 @@ define [
           rect.y + rect.h,
           @battle.player.team
         )
-        
-        @battle.voices.UNITSSELECTED()
         return true
       false
       
@@ -108,6 +106,7 @@ define [
       @_clearSelection()
       foundMultiple = @_findMultiple()
       if foundMultiple
+        @battle.voices.UNITSSELECTED()
         for u in @units
           @statsbars.push new PawnStatsBar u, @battle
     

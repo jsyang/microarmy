@@ -28,8 +28,8 @@ define ->
           factory.build_type = name
           @funds -= buildClass::COST
           atom.playSound 'feed'
-        
-        
+      else
+        atom.playSound 'invalid'
     
     _canBuyPawn : (p) ->
       p::COST <= @funds
