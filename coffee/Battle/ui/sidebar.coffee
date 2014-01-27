@@ -54,6 +54,9 @@ define [
             y
             sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
             sprite_down : "sidebar-button-#{type.toLowerCase()}-0"
+            pressed : =>
+              @battle.player.build type
+              atom.playSound 'feed'
           }
           y += 100
           @["COL#{col}BUTTONS"].push button
@@ -115,8 +118,8 @@ define [
       
       y += 30
       unless @COL0BUTTONS? and @COL1BUTTONS?
-        @_setColButtons x, y, 0
-        @_setColButtons x + 100, y, 1
+        @_setColButtons x + 1, y, 0
+        @_setColButtons x + 100 + 1, y, 1
       v.draw() for v in @COL0BUTTONS
       v.draw() for v in @COL1BUTTONS
         
@@ -125,6 +128,9 @@ define [
     tick : ->
       if @containsCursor()
         v.tick() for k, v of @SCROLLBUTTON
+        v.tick() for v    in @COL0BUTTONS
+        v.tick() for v    in @COL1BUTTONS
+      true
 
     constructor : (params) ->
       @[k]  = v for k, v of params

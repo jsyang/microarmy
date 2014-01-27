@@ -408,9 +408,17 @@ define ->
             team      : @team
             direction : @direction
           }
-          World.add child
+          
+          if World.battle.player.team is @team
+            World.battle.player.addEntity child
+          World.add child  
           child.playConstructedSound() if child.playConstructedSound?
           true  
+        
+        doClearBuildOrder : ->
+          delete @build_type
+          @build_current = 0
+          true
         
         isStructureCrumbling : ->
           @state is @STATE.WRECK
@@ -426,7 +434,10 @@ define ->
         setUntargetable : ->
           @targetable = false
           true
-          
+        
+        isBuildingOrder : ->
+          @build_type?
+        
         isBuilding : ->
           @build_current < @build_max
         
@@ -457,11 +468,13 @@ define ->
         StructureDeadCrumble        : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
         StructureDeadCrumbleExplode : '<[StructureDeadCrumble],[addStructureSmallExplosion]>'
         
-        StructureAlive              : '<[~StructureCrew],[!PawnNeedsReload],[PawnTarget],[doRangedAttack]>'
+        StructureBuilding           : '<[isBuilding],[doBuilding]>'
+        StructureBuildingDone       : '<[addBuiltEntity],[doClearBuildOrder]>'
+        StructureBuild              : '<[isBuildingOrder],([StructureBuilding],[StructureBuildingDone])>'
+        StructureAlive              : '<[~StructureBuild],[!PawnNeedsReload],[PawnTarget],[doRangedAttack]>'
         StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
         
-        ScaffoldAliveBuilding       : '<[isBuilding],[doBuilding]>'
-        ScaffoldAlive               : '([ScaffoldAliveBuilding],<[addBuiltEntity],[setUntargetable],[doRemove]>)'
+        ScaffoldAlive               : '([StructureBuilding],<[addBuiltEntity],[setUntargetable],[doRemove]>)'
         Scaffold                    : '([StructureDeadRemove],[ScaffoldAlive])'
         
         PillboxTarget               : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'

@@ -17,14 +17,28 @@ define ->
       
       #@unbuildable_locations = []
     
+    build : (name) ->
+      factory = @factory[name][0]
+      factory.build_type = name
+    
     canBuyPawn : (p) ->
       p.COST <= @funds
+    
+    _updateBuildButtons : ->
+      @battle.ui.sidebar.updateBuildButtons()
+    
+    _removeFactory : (p) ->
+      if p.buildable_type?
+        factories = @factory[p.buildable_type]
+        index = factories.indexOf p
+        factories.splice index, 1
+        @_updateBuildButtons()
     
     removeEntity : (p) ->
       return unless p.team is @team
       if p instanceof @battle.world.Classes.Structure
         arrayName = 'structures'
-        
+        @_removeFactory p
       else
         arrayName = 'units'      
       index = @[arrayName].indexOf(p)
@@ -37,18 +51,18 @@ define ->
       for p in @[name]
         if p? and p.team is @team and not p.isDead() and not p.isPendingRemoval()
           newArray.push p
-      @[name] = newArray        
+      @[name] = newArray
     
     _addBuildCapability : (p) ->
       if p.buildable_type?
         if p.buildable_type instanceof Array
+          # not used yet
           for type in p.buildable_type when @buildable_units.indexOf(type) is -1
             @buildable_units = @buildable_units.concat p.buildable_type
         else
           @buildable_units.push p.buildable_type
-        @battle.ui.sidebar.updateBuildButtons()
-          
-    # todo : _addBuildTree : ->
+          @factory[p.buildable_type] = [p]
+        @_updateBuildButtons()
     
     addEntity : (p) -> # Calls to this should be explicit
       if p instanceof @battle.world.Classes.Structure

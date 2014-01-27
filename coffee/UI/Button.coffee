@@ -1,9 +1,6 @@
 # todo : move the Battle/UI class into parent dir, since it's an overall UI class.
 define ['core/Battle/UI'], (UI) ->
-  class Button extends UI
-    x : 0
-    y : 0
-    
+  class Button extends UI   
     state : 'up'
     
     constructor : (params) ->
@@ -19,9 +16,13 @@ define ['core/Battle/UI'], (UI) ->
       @["sprite_#{@state}"]
         
     tick : ->
-      down = atom.input.down 'mouseleft'
-      if @containsCursor() and down
-        @state = 'down'
+      pressed = atom.input.pressed 'mouseleft'
+      down    = atom.input.down 'mouseleft'
+      if @containsCursor()
+        if pressed and down
+          @state = 'down'
+          @pressed?()
+        @over?()
       else
         @state = 'up'
       

@@ -63,6 +63,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     health_current     : [1800, 1950]
     health_max         : [1950, 2500]
     buildable_type     : 'PistolInfantry'
+    # build_type = null means we're not currently on orders to build anything
     build_current      : 0
     build_max          : 30
   
@@ -81,7 +82,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
         'MissileRack'       : 300
         'MissileRackSmall'  : 140
         'SmallTurret'       : 300
-        'Barracks'          : 1200
+        'Barracks'          : 10#1200
         'CommCenter'        : 2000
       }[@build_type]
   

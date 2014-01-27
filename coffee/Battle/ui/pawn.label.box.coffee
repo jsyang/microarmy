@@ -1,8 +1,5 @@
 define ->
-
-  # Shows vital stats for important units.
-  # There should only be one onscreen at a time.
-
+  # Additional info tooltip for selected entities.
   class BattleUIPawnLabelBox
     w           : 200
     margin      : 32
