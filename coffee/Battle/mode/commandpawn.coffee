@@ -63,7 +63,7 @@ define [
       result = @battle.world.XHash.getNearestFriendlyUI {
         x     : @battle.scroll.x + atom.input.mouse.x
         y     : @battle.scroll.y + atom.input.mouse.y
-        team  : @battle.team
+        team  : @battle.player.team
       }
       if result?
         if result instanceof @INFANTRY

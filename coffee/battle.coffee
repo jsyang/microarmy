@@ -1,10 +1,11 @@
 define [
-  'core/Behaviors'
+  'core/BehaviorExecutor'
   'core/Battle/behaviors'
   'core/Battle/World'
   'core/Battle/makeBackgroundImageData'
   
   'core/Battle/EVA'
+  'core/Battle/Player'
   
   'core/Battle/UI/minimap'
   'core/Battle/UI/cursor'
@@ -13,12 +14,13 @@ define [
   'core/Battle/mode/constructbase'
   'core/Battle/mode/commandpawn'
   'core/Battle/mode/spawnpawn'
-], (Behaviors,
+], (BehaviorExecutor,
     BattleBehaviors,
     World,
     makeBackgroundImageData,
     
     BattleEVA,
+    BattlePlayer,
     
     BattleUIMinimap,
     BattleUICursor,
@@ -29,8 +31,7 @@ define [
     SpawnPawn) ->
   
   class Battle
-  
-    MODE : {
+    MODE : { # UI controller
       ConstructBase
       CommandPawn
       SpawnPawn
@@ -41,42 +42,8 @@ define [
       x : 0
       y : 0
     
-    team  : 0
-    funds : 5000
-    
-    constructor : (params) ->
-      @[k] = v for k, v of params
-      
-      # world = a battle's "model"
-      @world = new World {
-        w      : 4000
-        h      : 500
-        battle : @
-      }
-      
-      # background = sky + terrain layer, sits below the instances drawn layer
-      @backgroundImgData = makeBackgroundImageData(@world)
-      
-      # BTree interpreter
-      @behaviors = new Behaviors(BattleBehaviors(@world, @world.Classes))
-      
-      # Various UI components, must be init in order.
-      uiParams = { battle : @ }
-      @ui = {}
-      @ui.sidebar = new BattleUISidebar uiParams
-      @ui.minimap = new BattleUIMinimap uiParams
-      @ui.cursor  = new BattleUICursor  uiParams
-        
-      
-      # Controller
-      @mode = new @MODE.ConstructBase uiParams
-      
-      # todo: flesh this out later
-      @EVA = new BattleEVA
-
-    resize : ->
-      for k, v of @ui
-        v.resize() if v.resize?
+    _drawBackground : (x = 0, y = 0) ->
+      atom.context.putImageData(@backgroundImgData, x, y)
     
     resetMode : ->
       @switchMode 'CommandPawn'
@@ -85,12 +52,8 @@ define [
       @ui.cursor.clearText()
       @mode = new @MODE[mode] { battle : @ }
     
-    tick : ->
-      @EVA.tick()
-      @mode.tick?()
-      @ui.minimap.tick()
-      @ui.sidebar.tick()
-      @world.tick()
+    resize : ->
+      v.resize?() for k, v of @ui
       
     draw : ->
       @_drawBackground(-@scroll.x, -@scroll.y) # scroll position
@@ -107,8 +70,6 @@ define [
         
         for p in @world.Instances[type] when !p.isPendingRemoval()
           x = p.x - @scroll.x
-          #valign = p.valign ? valign
-          #halign = p.halign ? halign
           if -@scroll.margin < x < atom.width + @scroll.margin
             atom.context.drawSprite(p.getName(), x, p.y, valign, halign)
       
@@ -116,6 +77,55 @@ define [
       @ui.minimap.draw()
       @ui.sidebar.draw()
       @ui.cursor.draw()
-        
-    _drawBackground : (x = 0, y = 0) ->
-      atom.context.putImageData(@backgroundImgData, x, y)
+
+    tick : ->
+      @EVA.tick()
+      @mode.tick?()
+      @ui.minimap.tick()
+      @ui.sidebar.tick()
+      @world.tick()
+      
+    constructor : (params) ->
+      @[k] = v for k, v of params
+      
+      @world = new World { battle : @ }
+      
+      # background = sky + terrain layer, sits below the instances drawn layer
+      @backgroundImgData = makeBackgroundImageData(@world)
+      
+      # BTree interpreter
+      @behaviors = new BehaviorExecutor BattleBehaviors(@world, @world.Classes)
+      
+      @player = new BattlePlayer {
+        team   : 0
+        funds  : 2000
+        battle : @
+        starting_inventory : {
+          # Base starter kit
+          # 'CommCenter'        : 1
+          #'CommRelay'         : 1
+          #'WatchTower'        : 1
+          #'AmmoDump'          : 1
+          #'AmmoDumpSmall'     : 1
+          'Pillbox'           : 1
+          #'MineFieldSmall'    : 1
+          # 'SmallTurret'       : 1
+          #'MissileRack'       : 1
+          # 'MissileRackSmall'  : 1 
+          #'Scaffold'          : 1
+          'Barracks'          : 1
+          # 'Depot'
+          # 'RepairYard'
+          # 'Helipad'
+        }
+      }
+      
+      # Various UI components, must be init in order.
+      uiParams = { battle : @ }
+      @ui = {}
+      @ui.sidebar = new BattleUISidebar uiParams
+      @ui.minimap = new BattleUIMinimap uiParams
+      @ui.cursor  = new BattleUICursor  uiParams
+
+      @mode       = new @MODE.ConstructBase uiParams
+      @EVA        = new BattleEVA

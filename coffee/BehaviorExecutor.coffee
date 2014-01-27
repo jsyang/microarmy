@@ -1,7 +1,5 @@
 define ->
-
-  # Behavior interpreter
-  class Behaviors
+  class BehaviorExecutor
     constructor : (params) ->
       @[k] = v for k, v of params
       @Trees[k] = @ConvertShortHand(v) for k,v of @Trees

@@ -1,5 +1,4 @@
 define ->
-  
   class BattleUIPawnHealthBar
     h      : 4 # Bar height
     margin : 4 # Bottom margin only.
@@ -19,17 +18,7 @@ define ->
       for p in @PROPERTY when @pawn["#{p}_current"]?
         @["_1#{p}_max"] = 1 / @pawn["#{p}_max"]
         @has[p] = true
-        
-    constructor : (pawn, battle) ->
-      @battle = battle
-      @pawn = pawn
-      @_setMultipliers()
-      name = pawn.getName()
-      @pawnSpriteHeight = GFXINFO[name].height
-      @pawnSpriteWidth  = GFXINFO[name].width
-      @w  = @pawnSpriteWidth
-      @w2 = @w >> 1
-      
+    
     _getBarWidth : (type) ->
       (@pawn["#{type}_current"] * @["_1#{type}_max"] * @pawnSpriteWidth) >> 0
       
@@ -41,15 +30,22 @@ define ->
         w = @_getBarWidth(type) - 2
         w = 1 if w < 1
         atom.context.fillRect p.x + 1, p.y + 1, w, @h - 2
-        p.y -= @h
+        p.y -= @h - 1
     
     draw : ->
       position = 
         x : @pawn.x - @w2 - @battle.scroll.x
         y : @pawn.y - @pawnSpriteHeight - @margin - @h
       atom.context.save()
-      @_drawBar position, 'health'
-      @_drawBar position, 'build'
+      @_drawBar(position, property) for property in @PROPERTY
       atom.context.restore()
       
-      
+    constructor : (pawn, battle) ->
+      @battle = battle
+      @pawn = pawn
+      @_setMultipliers()
+      name = pawn.getName()
+      @pawnSpriteHeight = GFXINFO[name].height
+      @pawnSpriteWidth  = GFXINFO[name].width
+      @w  = @pawnSpriteWidth
+      @w2 = @w >> 1

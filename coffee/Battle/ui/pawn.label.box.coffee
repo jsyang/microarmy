@@ -25,10 +25,10 @@ define ->
       ][team]
     
     _getText : ->
-      lines = [ @pawn.nameText ]
+      lines = [ @pawn.NAMETEXT ]
       c = @battle.world.Classes
       if @pawn instanceof c['Scaffold']
-        lines.push "Building #{c[@pawn.build_type]::nameText}"
+        lines.push "Building #{c[@pawn.build_type]::NAMETEXT}"
       lines
     
     draw : ->

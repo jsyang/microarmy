@@ -7,14 +7,13 @@ define [
   class BattleUISidebar extends BattleUI
     w : 202
 
+    messages     : []
+    messages_max : 6
+
     COLOR_BACKGROUND  : 'rgb(36,36,36)'
     COLOR_FRAME       : 'rgb(88,88,88)'
     COLOR_FRAME_DARK  : 'rgb(60,60,60)'
          
-    constructor : (params) ->
-      @[k]  = v for k, v of params
-      @resize()
-      
     _setScrollButtons : (x, y) ->
       @SCROLLBUTTON =
         # 0 = left column, 0 = up button
@@ -43,19 +42,37 @@ define [
           sprite_up   : 'sidebar-button-1-0'
           sprite_down : 'sidebar-button-1-1'
         }
-      
-    resize : ->
-      delete @SCROLLBUTTON
-      @h = atom.height
-      @x = atom.width - @w
     
-    messages     : []
-    messages_max : 6
+    _setColButtons : (x, y, col) ->
+      @["COL#{col}BUTTONS"] = []
+      buildable_type = ['structures', 'units'][col]
+      buildable_list = @battle.player["buildable_#{buildable_type}"]
+      if buildable_list.length
+        for type in buildable_list
+          button = new Button {
+            x
+            y
+            sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
+            sprite_down : "sidebar-button-#{type.toLowerCase()}-0"
+          }
+          y += 100
+          @["COL#{col}BUTTONS"].push button
+    
+    updateBuildButtons : ->
+      delete @COL0BUTTONS
+      delete @COL1BUTTONS
     
     addMessage : (m) ->
       @messages.push m
       @messages.shift() if @messages.length > @messages_max
-      
+    
+    resize : ->
+      delete @SCROLLBUTTON
+      delete @COL0BUTTONS
+      delete @COL1BUTTONS
+      @h = atom.height
+      @x = atom.width - @w
+    
     draw : ->
       x = atom.width - @w
       y = @y
@@ -65,9 +82,10 @@ define [
       atom.context.fillRect x, y, @w, atom.height
       
       # FUNDS
-      atom.context.fillStyle = @COLOR_FRAME
-      atom.context.fillRect x + 1, y, @w - 2, atom.context.drawText.lineHeight
-      atom.context.drawText "FUNDS : #{@battle.funds}", x + 2, y, '#fff'
+      if @battle.player?
+        atom.context.fillStyle = @COLOR_FRAME
+        atom.context.fillRect x + 1, y, @w - 2, atom.context.drawText.lineHeight
+        atom.context.drawText "FUNDS : #{@battle.player.funds}", x + 2, y, '#fff'
       y += atom.context.drawText.lineHeight + 1
       
       # MESSAGES HEADER
@@ -91,13 +109,23 @@ define [
       atom.context.fillStyle = @COLOR_FRAME_DARK
       atom.context.fillRect x + 1, y, @w - 2, atom.height - y - 1
       
-      if !(@SCROLLBUTTON?)
+      unless @SCROLLBUTTON?
         @_setScrollButtons x, y
-      else
-        v.draw() for k, v of @SCROLLBUTTON
+      v.draw() for k, v of @SCROLLBUTTON
       
+      y += 30
+      unless @COL0BUTTONS? and @COL1BUTTONS?
+        @_setColButtons x, y, 0
+        @_setColButtons x + 100, y, 1
+      v.draw() for v in @COL0BUTTONS
+      v.draw() for v in @COL1BUTTONS
+        
       atom.context.restore()
     
     tick : ->
       if @containsCursor()
         v.tick() for k, v of @SCROLLBUTTON
+
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      @resize()

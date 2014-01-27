@@ -1,13 +1,13 @@
 require [
   '../core/util'
-  '../core/Behaviors'
-], ($, Behaviors) ->
+  '../core/BehaviorExecutor'
+], ($, BehaviorExecutor) ->
 
-  describe 'Behaviors (processor)', ->
+  describe 'BehaviorExecutor', ->
     
     describe 'constructor', ->
       it 'adds Decorators and converts Trees if within options', ->
-        b = new Behaviors({
+        b = new BehaviorExecutor({
           Trees :
             Sample : '([doStuff])'
           
@@ -25,7 +25,7 @@ require [
       b = {}
       
       beforeEach ->
-        b = new Behaviors()
+        b = new BehaviorExecutor()
         
       it 'throws if arg is not string', ->
         expect(-> b.ConvertShortHand({ stuff : 0 })).toThrow()
@@ -71,7 +71,7 @@ require [
         mockPawn = 
           health : 30
             
-      b = new Behaviors({
+      b = new BehaviorExecutor({
         Decorators :
           setHealth0 : -> @health = 0
           TRUE       : true

@@ -18,6 +18,9 @@ define [
     SimpleHash) ->
 
   class BattleWorld
+    w : 4000
+    h : 500
+  
     primitiveClasses : [  # Also used for drawing order
       'Structure'
       #'Vehicle'

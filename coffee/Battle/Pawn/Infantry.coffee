@@ -43,6 +43,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       dx*dx + dy*dy <= pawn.hDist2 + @hDist2
 
   class PistolInfantry extends Infantry
+    COST           : 25
     projectile     : 'Bullet'
     sight          : 3
     melee_dmg      : 8

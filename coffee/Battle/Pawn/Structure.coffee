@@ -11,7 +11,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   ]
 
   class Structure extends Pawn
-    nameText        : 'Generic structure'
+    NAMETEXT        : 'Generic structure'
     STATE           : STATE
     hDist2          : 0             # This number is computed usually by squaring the smallest dimension of the sprite
     targetable      : true          # Can enemy units attack this?
@@ -46,35 +46,28 @@ define ['core/Battle/Pawn'], (Pawn) ->
         @state = @STATE.BAD
   
   class CommCenter extends Structure
-    nameText           : 'Fortified HQ'
+    NAMETEXT           : 'Fortified HQ'
     construct_sound    : 'compute'
     hDist2             : 196
     sight              : 6
     health_current     : [2400, 2700]
     health_max         : [2700, 3200]
-    ai_reinforce_ing   : 0     
-    ai_reinforce_time  : 10               # Speed of AI building a squad from here
-    crew_current       : 40
-    crew_max           : 40
-    crew_killDamage    : 70               # Damage > this has a chance of killing some crew 
-    crew_killChance    : 0.05             # Chance 1 crew member is killed
-    crew_type          : 'RocketInfantry' # Crew type if crew exits the building
+    buildable_type     : 'RocketInfantry'
+    build_current      : 0
+    build_max          : 60
     
   class Barracks extends Structure
-    nameText           : 'Barracks'
+    NAMETEXT           : 'Barracks'
+    construct_sound    : 'tack'
     hDist2             : 169
     health_current     : [1800, 1950]
     health_max         : [1950, 2500]
-    ai_reinforce_ing   : 0
-    ai_reinforce_time  : 10
-    crew_current       : 40
-    crew_max           : 80
-    crew_killDamage    : 40               # Damage > this has a chance of killing some crew 
-    crew_killChance    : 0.1              # Chance 1 crew member is killed
-    crew_type          : 'PistolInfantry' # Crew type if crew exits the building
+    buildable_type     : 'PistolInfantry'
+    build_current      : 0
+    build_max          : 30
   
   class Scaffold extends Structure
-    nameText        : 'Construction Site'
+    NAMETEXT        : 'Construction Site'
     construct_sound : 'dropitem'
     hDist2          : 64
     health_current  : [360, 400]
@@ -93,7 +86,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       }[@build_type]
   
   class AmmoDump extends Structure
-    nameText       : 'Ammo Dump'
+    NAMETEXT       : 'Ammo Dump'
     hDist2         : 100
     sight          : 6
     health_current : [80,  120]
@@ -107,7 +100,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       super params
   
   class AmmoDumpSmall extends Structure
-    nameText       : 'Ammo Crate'
+    NAMETEXT       : 'Ammo Crate'
     hDist2         : 25
     sight          : 5
     health_current : [80,  120]
@@ -129,7 +122,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   
   class Pillbox extends Structure
-    nameText        : 'Pillbox'
+    NAMETEXT        : 'Pillbox'
     construct_sound : 'sliderack1'
     hDist2          : 64
     sight           : 3
@@ -147,7 +140,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     crew_killChance : 0.2  # Chance 1 crew member is killed
   
   class SmallTurret extends Structure
-    nameText        : 'Turret'
+    NAMETEXT        : 'Turret'
     construct_sound : 'sliderack1'
     hDist2          : 90
     sight           : 5
@@ -166,7 +159,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "turret-#{@team}-#{@direction}-#{@state}-#{@turn_ing>>0}"
   
   class MissileRack extends Structure
-    nameText        : 'Heavy Missile Launcher'
+    NAMETEXT        : 'Heavy Missile Launcher'
     hDist2          : 64
     sight           : 13
     health_current  : [200, 280]
@@ -189,7 +182,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "missilerack-#{@team}-#{@direction}-#{hasAmmo}"
   
   class MissileRackSmall extends Structure
-    nameText          : 'Missile Launcher'
+    NAMETEXT          : 'Missile Launcher'
     hDist2            : 18
     sight             : 9
     health_current    : [100, 180]
