@@ -24,14 +24,15 @@ define ['core/Battle/Pawn'], (Pawn) ->
   ]
   
   class Infantry extends Pawn
-    ACTION        : ACTION
-    hDist2        : 20
-    action        : ACTION.MOVING
-    corpsetime    : 180
-    frame_current : 0
-    frame_first   : 0
-    frame_last    : 5
-    targetable    : true
+    ACTION          : ACTION
+    hDist2          : 20
+    action          : ACTION.MOVING
+    corpsetime      : 180
+    frame_current   : 0
+    frame_first     : 0
+    frame_last      : 5
+    targetable      : true
+    multiselectable : true # Is selected by user selection rect?
     constructor : (params) ->
       @[k]  = v for k, v of params
       @_setHalfDimensions()

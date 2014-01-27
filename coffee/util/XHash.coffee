@@ -50,6 +50,15 @@ define ->
       (NBuckets = NBuckets.concat(bucket)) for bucket in b
       NBuckets
 
+    # todo : test this
+    # In one direction only, used for selection rect.
+    getNBucketsFromCoord : (x, n) ->
+      i = x >> @BUCKETWIDTH
+      NBuckets = []
+      b = @buckets[i .. i + n]
+      (NBuckets = NBuckets.concat(bucket)) for bucket in b
+      NBuckets
+
     getNearestEnemy : (pawn, ray) ->
       minDist = Infinity
       pawn.setTarget()
@@ -114,6 +123,19 @@ define ->
            !t.isPendingRemoval()
           return t
       null
+    
+    # todo : test this
+    getFriendlyWithinBoundsUI : (x1, y1, x2, y2, team) ->
+      i1 = x1 >> @BUCKETWIDTH
+      i2 = x2 >> @BUCKETWIDTH
+      n  = i2 - i1 + 1
+      result = []
+      units = @getNBucketsFromCoord(x1, n)
+      for u in units when u.team is team
+        if !u.isDead() and !u.isPendingRemoval() and u.multiselectable
+          if x1 <= u.x <= x2 and y1 <= u.y <= y2
+            result.push u
+      result
     
     getNearestFriendlyNeedSupply : (pawn) ->
       minDist = Infinity

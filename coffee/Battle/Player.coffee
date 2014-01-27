@@ -18,11 +18,15 @@ define ->
       #@unbuildable_locations = []
     
     build : (name) ->
-      factory = @factory[name][0]
-      factory.build_type = name
+      buildClass = @battle.world.Classes[name]
+      if @_canBuyPawn buildClass
+        atom.playSound 'feed'
+        @funds -= buildClass::COST
+        factory = @factory[name][0]
+        factory.build_type = name
     
-    canBuyPawn : (p) ->
-      p.COST <= @funds
+    _canBuyPawn : (p) ->
+      p::COST <= @funds
     
     _updateBuildButtons : ->
       @battle.ui.sidebar.updateBuildButtons()
