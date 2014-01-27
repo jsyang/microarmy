@@ -402,12 +402,19 @@ define ->
           true
           
         addBuiltEntity : ->
-          child = new Classes[@build_type] {
+          buildParams = {
             x         : @x
             y         : World.height @
             team      : @team
             direction : @direction
           }
+          
+          # Extra modifiers... set rally points, etc.
+          if @build_modifiers?
+            for mod in @build_modifiers
+              mod.call buildParams, @
+          
+          child = new Classes[@build_type] buildParams
           
           if World.battle.player.team is @team
             World.battle.player.addEntity child
@@ -443,7 +450,34 @@ define ->
         
         doBuilding : ->
           @build_current++
+          true
         
+        isInfantryGoalMoveToRally : ->
+          @goal is @GOAL.MOVE_TO_RALLY
+          
+        setFaceRally : ->
+          @direction = if @rally.x > @x then 1 else 0
+          true
+          
+        isAtRally : ->
+          @x is @rally.x
+        
+        doClearRally : ->
+          delete @rally
+          true
+        
+        doClearGoal : ->
+          delete @goal
+          true
+        
+        setInfantryIdle : ->
+          @frame_current = 0
+          @action = @ACTION.IDLE
+          true
+  
+        hasGoal : ->
+          @goal?
+          
   
       # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
       # Prefix          Result
@@ -553,7 +587,11 @@ define ->
         
         InfantryBerserk             : '(<[isBerserking],[doBerserking],[InfantryMove]>,<[isTargeting],[!doTryBerserking]>)'
         
-        InfantryAlive               : '([InfantryNeedsReload],[InfantryBerserk],[InfantryAttack],[InfantryMove])'
+        InfantryGoalMoveToRally     : '<[isInfantryGoalMoveToRally],[setFaceRally],[InfantryMove],<[isAtRally],[doClearGoal],[setInfantryIdle]>>'
+        InfantryGoalIdle            : '<[!hasGoal],([InfantryBerserk],[InfantryAttack])>'
+        InfantryFulfillGoal         : '([InfantryGoalMoveToRally],[InfantryGoalIdle])'
+
+        InfantryAlive               : '([InfantryNeedsReload],[InfantryFulfillGoal])'
         InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying]>,<[!isLastFrame],[setNextFrame]>)'
         InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         

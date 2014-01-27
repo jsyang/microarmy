@@ -10,6 +10,18 @@ define ['core/Battle/Pawn'], (Pawn) ->
     'health_max'
   ]
 
+  BUILDMODIFIER =
+    
+    BARRACKS_SPAWN_AT_DOOR : (b) ->
+      @x += [-1, 1][@direction] * b.DX_DOOR
+    
+    BARRACKS_SET_RALLY_POINT : (b) ->
+      @goal = 0 # Move to rally point.
+      @rally =
+        x : b.x + $.R(-20, 20)
+        y : b.y
+    
+
   class Structure extends Pawn
     NAMETEXT        : 'Generic structure'
     STATE           : STATE
@@ -55,17 +67,23 @@ define ['core/Battle/Pawn'], (Pawn) ->
     buildable_type     : 'RocketInfantry'
     build_current      : 0
     build_max          : 60
-    
+  
+  
+  
   class Barracks extends Structure
     NAMETEXT           : 'Barracks'
     construct_sound    : 'tack'
     hDist2             : 169
     health_current     : [1800, 1950]
     health_max         : [1950, 2500]
+    DX_DOOR            : 6
     buildable_type     : 'PistolInfantry'
-    # build_type = null means we're not currently on orders to build anything
     build_current      : 0
     build_max          : 30
+    build_modifiers    : [
+      BUILDMODIFIER.BARRACKS_SPAWN_AT_DOOR
+      BUILDMODIFIER.BARRACKS_SET_RALLY_POINT
+    ]
   
   class Scaffold extends Structure
     NAMETEXT        : 'Construction Site'

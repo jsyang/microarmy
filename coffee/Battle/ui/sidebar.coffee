@@ -56,7 +56,7 @@ define [
             sprite_down : "sidebar-button-#{type.toLowerCase()}-1"
             pressed : =>
               @battle.player.build type
-              atom.playSound 'feed'
+              # todo: build queue
             over : =>
               name = @battle.world.Classes[type]::NAMETEXT
               cost = @battle.world.Classes[type]::COST

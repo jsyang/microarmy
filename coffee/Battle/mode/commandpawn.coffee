@@ -55,13 +55,13 @@ define [
       
     # Single select = both units and structures
     _findSingle : ->
-      @_clearSelection()
       result = @battle.world.XHash.getNearestFriendlyUI {
         x     : @battle.scroll.x + atom.input.mouse.x
         y     : @battle.scroll.y + atom.input.mouse.y
         team  : @battle.player.team
       }
       if result?
+        @_clearSelection()
         if result instanceof @INFANTRY
           @units = [result]
         else if result instanceof @STRUCTURE
@@ -75,12 +75,16 @@ define [
           @_clearSelection()
       else if @units.length
         newUnits = []
-        for u in @units when not u.isDead()
-          newUnits.push u
+        for u in @units
+          if u.isDead() or u.isPendingRemoval()
+            for b, i in @statsbars when b? and b.pawn is u
+              delete @statsbars[i]
+          else
+            newUnits.push u
         @units = newUnits
     
     _drawStatsBars : ->
-      for i in @statsbars
+      for i in @statsbars when i?
         i.draw()
         
     _selectSingleOrDrag : ->
@@ -104,6 +108,22 @@ define [
         for u in @units
           @statsbars.push new PawnStatsBar u, @battle
     
+    _hasSelection : ->
+      @structure? or @units.length > 0
+    
+    _selectedSetRally : ->
+      if @units.length
+        x = 0
+        for u, i in @units
+          u.goal = u.GOAL.MOVE_TO_RALLY
+          u.rally = {
+            x : atom.input.mouse.x + @battle.scroll.x + x
+            y : atom.input.mouse.y
+          }
+          x += $.R(1, u._halfWidth << 2) # Move as a group but not into 1 spot.
+        # Make sure we don't deselect
+        @isDragging = false
+    
     resize : ->
       @w = atom.width - @battle.ui.sidebar.w
       @h = @battle.world.h
@@ -123,20 +143,30 @@ define [
         @_drawStatsBars()
     
     tick : ->
-      @_updateSelection()
+      selected = @_hasSelection()
+      
+      @_updateSelection() if selected
       
       if @containsCursor()
-        mx = atom.input.mouse.x
-        my = atom.input.mouse.y
+        Lpressed   = atom.input.pressed  'mouseleft'
+        Lreleased  = atom.input.released 'mouseleft'
+        Ldown      = atom.input.down     'mouseleft'
         
-        pressed   = atom.input.pressed  'mouseleft'
-        released  = atom.input.released 'mouseleft'
-        down      = atom.input.down     'mouseleft'
-            
-        if pressed and not @isDragging
-          @_selectSingleOrDrag()
-        else if released and @isDragging
-          @_selectMultipleOrCancelDrag()
+        Rpressed   = atom.input.pressed  'mouseright'
+        Rreleased  = atom.input.pressed  'mouseright'
+        Rdown      = atom.input.down     'mouseright'
+
+        if @isDragging
+          if Lreleased
+            @_selectMultipleOrCancelDrag()
+        
+        else
+          if Lpressed
+            foundSingle = @_selectSingleOrDrag()
+            if not foundSingle
+              @_selectedSetRally()
+          if Rpressed
+            @_clearSelection()
       else
         @isDragging = false
         

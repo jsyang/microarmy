@@ -48,6 +48,7 @@ module.exports = function(grunt) {
     './gfx/pistolinfantry/attack_prone/',
     './gfx/pistolinfantry/death1/',
     './gfx/pistolinfantry/death2/',
+    './gfx/pistolinfantry/idle/',
     './gfx/rocketinfantry/moving/',
     './gfx/rocketinfantry/attack_standing/',
     './gfx/rocketinfantry/attack_crouching/',

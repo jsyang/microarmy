@@ -17,13 +17,14 @@ define ['core/Battle/UI'], (UI) ->
       @["sprite_#{@state}"]
         
     tick : ->
-      pressed = atom.input.pressed 'mouseleft'
-      down    = atom.input.down 'mouseleft'
+      pressed   = atom.input.pressed 'mouseleft'
+      released  = atom.input.pressed 'mouseleft'
+      down      = atom.input.down 'mouseleft'
       if @containsCursor()
         @contained_cursor = true
         @state = 'up'
         @state = 'down' if down
-        @pressed?() if pressed
+        @pressed?() if released
         @over?()
       else
         if @contained_cursor

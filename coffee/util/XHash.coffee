@@ -9,7 +9,6 @@ define ->
   
     constructor : (params) ->
       @[k] = v for k, v of params
-      throw new Error 'missing width!' unless @w?
       @flush()
       
     # replace : (buckets) -> @buckets = buckets
@@ -101,10 +100,6 @@ define ->
     
     # todo : test this function
     _groundPawnContainsPoint : (t, point) ->
-      #tx1 = t.x - t._halfWidth - 24
-      #tx2 = t.x + t._halfWidth + 24
-      #ty1 = t.y - t._halfHeight - 24
-      #ty2 = t.y + t._halfHeight + 24
       tx1 = t.x - 20
       tx2 = t.x + 20
       ty1 = t.y - t._halfHeight - 20

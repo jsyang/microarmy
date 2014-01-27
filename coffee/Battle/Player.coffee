@@ -20,10 +20,16 @@ define ->
     build : (name) ->
       buildClass = @battle.world.Classes[name]
       if @_canBuyPawn buildClass
-        atom.playSound 'feed'
-        @funds -= buildClass::COST
         factory = @factory[name][0]
-        factory.build_type = name
+        if factory.build_type?
+          # Already building something.
+          atom.playSound 'invalid'
+        else
+          factory.build_type = name
+          @funds -= buildClass::COST
+          atom.playSound 'feed'
+        
+        
     
     _canBuyPawn : (p) ->
       p::COST <= @funds

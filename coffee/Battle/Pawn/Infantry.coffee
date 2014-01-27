@@ -7,13 +7,13 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ATTACK_PRONE      : 3
     DEATH1            : 4
     DEATH2            : 5
-    IDLE              : 6
+    IDLE              : 6 # IDLE ANIMATIONS
 
+  # Player selected goals.
   GOAL =
-    MOVETOPOINT : 0
-    GUARDTARGET : 1
-    GUARDPOINT  : 2
-    SCOUT       : 3
+    MOVE_TO_RALLY : 0
+    ATTACK_TARGET : 1
+    SCOUT         : 2
 
   VARIABLESTATS = [
     'health_current'
@@ -25,6 +25,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class Infantry extends Pawn
     ACTION          : ACTION
+    GOAL            : GOAL
     hDist2          : 20
     action          : ACTION.MOVING
     corpsetime      : 180
@@ -83,7 +84,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       '3' : true
       
   class EngineerInfantry extends Infantry
-    NAMETEXT       : 'Elite Soldier'
+    NAMETEXT       : 'Engineer'
     COST           : 500
     sight          : 4
     melee_dmg      : 5
