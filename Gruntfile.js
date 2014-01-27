@@ -146,7 +146,8 @@ module.exports = function(grunt) {
       compile: {
         options: {
           almond: true,
-          optimize: "none", //"uglify",
+          optimize: "none",
+          //optimize: "uglify",
           baseUrl: "./",
           name: "lib/almond.js",
           wrap:true,
@@ -218,7 +219,7 @@ module.exports = function(grunt) {
     //'preprocess:release',
     'zip',
     'unzip',
-    //'sftp-deploy',
+    //'sftp-deploy', // todo : deploy is broken, fix for later
     'shell:findTodos'
   ]);
 };

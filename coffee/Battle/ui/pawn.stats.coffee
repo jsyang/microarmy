@@ -7,6 +7,7 @@ define ->
       background  : 'rgb(44,44,44)'
       health      : 'rgb(44,252,44)'
       build       : 'rgb(255,252,71)'
+      ammo_supply : 'rgb(232,44,44)'
     
     PROPERTY : [
       'health'
