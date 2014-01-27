@@ -58,6 +58,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class CommCenter extends Structure
     NAMETEXT           : 'Fortified HQ'
+    COST               : 100000
     construct_sound    : 'compute'
     hDist2             : 196
     sight              : 6
@@ -73,6 +74,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class Barracks extends Structure
     NAMETEXT           : 'Barracks'
+    COST               : 3000
     construct_sound    : 'tack'
     hDist2             : 169
     health_current     : [1800, 1950]
@@ -107,6 +109,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class AmmoDump extends Structure
     NAMETEXT       : 'Ammo Dump'
+    COST           : 600
     hDist2         : 100
     sight          : 6
     health_current : [80,  120]
@@ -121,6 +124,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class AmmoDumpSmall extends Structure
     NAMETEXT       : 'Ammo Crate'
+    COST           : 200
     hDist2         : 25
     sight          : 5
     health_current : [80,  120]
@@ -143,6 +147,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class Pillbox extends Structure
     NAMETEXT        : 'Pillbox'
+    COST            : 600
     construct_sound : 'sliderack1'
     hDist2          : 64
     sight           : 3
@@ -161,6 +166,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class SmallTurret extends Structure
     NAMETEXT        : 'Turret'
+    COST            : 900
     construct_sound : 'sliderack1'
     hDist2          : 90
     sight           : 5
@@ -180,6 +186,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class MissileRack extends Structure
     NAMETEXT        : 'Heavy Missile Launcher'
+    COST            : 2500
     hDist2          : 64
     sight           : 13
     health_current  : [200, 280]
@@ -203,6 +210,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class MissileRackSmall extends Structure
     NAMETEXT          : 'Missile Launcher'
+    COST              : 1200
     hDist2            : 18
     sight             : 9
     health_current    : [100, 180]
