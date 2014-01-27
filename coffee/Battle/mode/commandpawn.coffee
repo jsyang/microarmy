@@ -70,13 +70,39 @@ define [
       
     # Prune dead things from our selection
     _updateSelection : ->
-      if @structure?.isDead()
-        @_clearSelection()
-      # else if # Prune unit selections
+      if @structure?
+        if @structure.isDead() or @structure.isPendingRemoval()
+          @_clearSelection()
+      else if @units.length
+        newUnits = []
+        for u in @units when not u.isDead()
+          newUnits.push u
+        @units = newUnits
     
     _drawStatsBars : ->
       for i in @statsbars
         i.draw()
+        
+    _selectSingleOrDrag : ->
+      foundSingle = @_findSingle()
+      if foundSingle?
+        @optionsbox = new PawnLabelBox foundSingle, @battle
+        @statsbars.push new PawnStatsBar foundSingle, @battle
+        return true
+      else
+        @isDragging = true
+        @dragRect =
+          x : atom.input.mouse.x
+          y : atom.input.mouse.y
+        return false
+    
+    _selectMultipleOrCancelDrag : ->
+      @isDragging = false
+      @_clearSelection()
+      foundMultiple = @_findMultiple()
+      if foundMultiple
+        for u in @units
+          @statsbars.push new PawnStatsBar u, @battle
     
     resize : ->
       @w = atom.width - @battle.ui.sidebar.w
@@ -108,23 +134,9 @@ define [
         down      = atom.input.down     'mouseleft'
             
         if pressed and not @isDragging
-          foundSingle = @_findSingle()
-          if foundSingle?
-            @optionsbox = new PawnLabelBox foundSingle, @battle
-            @statsbars.push new PawnStatsBar foundSingle, @battle
-          else
-            @isDragging = true
-            @dragRect =
-              x : mx
-              y : my
-              
+          @_selectSingleOrDrag()
         else if released and @isDragging
-          @isDragging = false
-          @_clearSelection()
-          foundMultiple = @_findMultiple()
-          if foundMultiple
-            for u in @units
-              @statsbars.push new PawnStatsBar u, @battle
+          @_selectMultipleOrCancelDrag()
       else
         @isDragging = false
         
