@@ -50,7 +50,7 @@ define [
           rect.y + rect.h,
           @battle.player.team
         )
-        return true
+        return @units.length > 0
       false
       
     # Single select = both units and structures
