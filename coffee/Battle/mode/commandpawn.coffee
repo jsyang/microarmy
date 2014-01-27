@@ -50,6 +50,8 @@ define [
           rect.y + rect.h,
           @battle.player.team
         )
+        
+        @battle.voices.UNITSSELECTED()
         return true
       false
       
@@ -64,6 +66,7 @@ define [
         @_clearSelection()
         if result instanceof @INFANTRY
           @units = [result]
+          @battle.voices.UNITSSELECTED()
         else if result instanceof @STRUCTURE
           @structure = result
       result
@@ -121,6 +124,7 @@ define [
             y : atom.input.mouse.y
           }
           x += $.R(1, u._halfWidth << 2) # Move as a group but not into 1 spot.
+        @battle.voices.UNITORDERRECEIVED()
         # Make sure we don't deselect
         @isDragging = false
     

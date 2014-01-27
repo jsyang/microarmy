@@ -5,6 +5,7 @@ define [
   'core/Battle/makeBackgroundImageData'
   
   'core/Battle/EVA'
+  'core/Battle/Voices'
   'core/Battle/Player'
   
   'core/Battle/UI/minimap'
@@ -20,6 +21,7 @@ define [
     makeBackgroundImageData,
     
     BattleEVA,
+    BattleVoices,
     BattlePlayer,
     
     BattleUIMinimap,
@@ -129,3 +131,4 @@ define [
 
       @mode       = new @MODE.ConstructBase uiParams
       @EVA        = new BattleEVA
+      @voices     = new BattleVoices
