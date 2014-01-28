@@ -17,9 +17,17 @@ define ['core/Battle/Pawn'], (Pawn) ->
     
     SET_RALLY_POINT : (b) ->
       @goal = 0 # Move to rally point.
-      @rally =
-        x : b.x + $.R(-20, 20)
-        y : b.y
+      
+      if b.build_structure and b.build_type is 'EngineerInfantry'
+        # Sending EngineerInfantry to a spot we wanted to build at.
+        @build_type = b.build_structure_type
+        @rally =
+          x : b.build_structure_x
+          y : b.y
+      else
+        @rally =
+          x : b.x + $.R(-20, 20)
+          y : b.y
 
   class Structure extends Pawn
     NAMETEXT        : 'Generic structure'
@@ -57,20 +65,24 @@ define ['core/Battle/Pawn'], (Pawn) ->
         @state = @STATE.BAD
   
   class CommCenter extends Structure
-    NAMETEXT           : 'Fortified HQ'
-    COST               : 100000
-    construct_sound    : 'compute'
-    hDist2             : 196
-    sight              : 6
-    health_current     : [2400, 2700]
-    health_max         : [2700, 3200]
-    buildable_type     : [
+    NAMETEXT             : 'Fortified HQ'
+    COST                 : 10000
+    construct_sound      : 'compute'
+    hDist2               : 196
+    sight                : 6
+    health_current       : [2400, 2700]
+    health_max           : [2700, 3200]
+    build_structure      : false
+    build_structure_type : null           # What are we sending our Engineer to build?
+    build_structure_x    : null           # Where do we send our Engineer off to?
+    build_current        : 0
+    build_max            : 120
+    buildable_type       : [
       'RocketInfantry'
       'EngineerInfantry'
+      'Pillbox'
     ]
-    build_current      : 0
-    build_max          : 60
-    build_modifiers    : [
+    build_modifiers      : [
       BUILDMODIFIER.SET_RALLY_POINT
     ]
   

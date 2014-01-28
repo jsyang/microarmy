@@ -1,4 +1,5 @@
 define ['core/Battle/UI'], (BattleUI) ->
+  # Initial base construction as well as structure construction location select.
   class ConstructBase extends BattleUI   
     direction : 0
     
@@ -48,6 +49,9 @@ define ['core/Battle/UI'], (BattleUI) ->
       }
       @battle.world.add entity
       @battle.player.addEntity entity
+    
+    _setBuildLocationToCursor : ->
+      @battle.player.sendEngineerToBuildStructure @build_structure_type, atom.input.mouse.x + @battle.scroll.x
       
     resize : ->
       @w = atom.width - @battle.ui.sidebar.w
@@ -89,14 +93,23 @@ define ['core/Battle/UI'], (BattleUI) ->
           
         if atom.input.pressed('mouseleft')
           if @_checkIfLocationValid()
-            @_addInventoryToWorld()
-            @_cullInventory @cart
+            if @build_structure
+              @_setBuildLocationToCursor()
+              @_constructionComplete()
+            else
+              @_addInventoryToWorld()
+              @_cullInventory @cart
           else
             atom.playSound 'invalid'
 
     constructor : (params) ->
       @[k]  = v for k, v of params
       @team = @battle.player.team
-      @inventory = @battle.player.starting_inventory
+      if @build_structure
+        @battle.EVA.add 'v_selectlocationtobuildstructures'
+        @cart = @build_structure_type
+      else
+        @inventory = @battle.player.starting_inventory
+        @_cullInventory()
       @resize()
-      @_cullInventory()
+      

@@ -88,8 +88,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     COST           : 500
     sight          : 4
     melee_dmg      : 5
-    build_type     : null
-    build_x        : null
+    #build_type     : 'Pillbox'
     health_current : [20, 50]
     health_max     : 40
 

@@ -50,6 +50,7 @@ define ->
       if p instanceof @battle.world.Classes.Structure
         arrayName = 'structures'
         @_removeFactory p
+        @_updateBuildButtons()
       else
         arrayName = 'units'      
       index = @[arrayName].indexOf(p)
@@ -68,13 +69,31 @@ define ->
       if p.buildable_type?
         if p.buildable_type instanceof Array
           for type in p.buildable_type when @buildable_units.indexOf(type) is -1
-            @factory[type] = [p] unless @factory[type]?
-            @factory[type].push p
-          @buildable_units = @buildable_units.concat p.buildable_type
+            if @battle.world.Classes[type].__super__.constructor.name is 'Structure'
+              @buildable_structures.push type
+            else
+              @factory[type] = [p] unless @factory[type]?
+              @factory[type].push p
+              @buildable_units.push type
         else
-          @buildable_units.push p.buildable_type
-          @factory[p.buildable_type] = [p]
+          type = p.buildable_type
+          if @battle.world.Classes[type] instanceof @battle.world.Classes.Structure
+            @buildable_structures.push type
+          else
+            @buildable_units.push type
+            @factory[type] = [p]
+          
         @_updateBuildButtons()
+      
+    
+    sendEngineerToBuildStructure : (name, x) ->
+      f = @factory['EngineerInfantry']
+      if f? and f.length > 0
+        f = f[0]
+        f.build_structure = true
+        f.build_structure_type = name
+        f.build_structure_x = x
+        @build 'EngineerInfantry'
     
     addEntity : (p) -> # Calls to this should be explicit
       if p instanceof @battle.world.Classes.Structure

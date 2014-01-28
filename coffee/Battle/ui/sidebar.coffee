@@ -50,21 +50,43 @@ define [
       if buildable_list.length
         for type in buildable_list
           typeClass = @battle.world.Classes[type]
+          name = typeClass::NAMETEXT
+          cost = typeClass::COST
+          isStructure = typeClass.__super__.constructor.name is 'Structure'
+          
+          # todo: This is probably a really horrible way to go about it, come up with something better later.
+          # Add the cost of sending an Engineer from the CommCenter
+          if isStructure
+            cost += @battle.world.Classes.EngineerInfantry::COST
+            buildFunction = (type, _battle) ->
+              @state = 'down'
+              _battle.switchMode 'ConstructBase', {
+                build_structure : true
+                build_structure_type : type
+              }
+          else
+            buildFunction = @battle.player.build.bind @battle.player, type
+            
           button = new Button {
             x
             y
             sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
             sprite_down : "sidebar-button-#{type.toLowerCase()}-1"
-            pressed     : @battle.player.build.bind @battle.player, type
+            pressed     : buildFunction
             over : ((name, cost) ->
               @setText {
                 value  : "#{name} ($#{cost})"
                 halign : 'center'
                 color  : '#000'
-              }).bind @battle.ui.cursor, typeClass::NAMETEXT, typeClass::COST
+              }).bind @battle.ui.cursor, name, cost
             out : =>
               @battle.ui.cursor.clearText()
           }
+          
+          # Build mode, click again to select location.
+          if isStructure
+            button.pressed = button.pressed.bind button, type, @battle
+            
           y += 100
           @["COL#{col}BUTTONS"].push button
     
@@ -123,7 +145,7 @@ define [
       unless @SCROLLBUTTON?
         @_setScrollButtons x, y
       v.draw() for k, v of @SCROLLBUTTON
-      y += 30
+      y += @SCROLLBUTTON.COL00.h
       
       # CONSTRUCTION OPTION BUTTONS
       unless @COL0BUTTONS? and @COL1BUTTONS?

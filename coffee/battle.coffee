@@ -50,9 +50,12 @@ define [
     resetMode : ->
       @switchMode 'CommandPawn'
     
-    switchMode : (mode) ->
+    switchMode : (mode, params) ->
       @ui.cursor.clearText()
-      @mode = new @MODE[mode] { battle : @ }
+      modeParams = { battle : @ }
+      if params?
+        modeParams[k] = v for k, v of params
+      @mode = new @MODE[mode] modeParams
     
     resize : ->
       v.resize?() for k, v of @ui

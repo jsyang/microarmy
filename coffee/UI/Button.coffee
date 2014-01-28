@@ -4,17 +4,11 @@ define ['core/Battle/UI'], (UI) ->
     state : 'up'
     contained_cursor : false
     
-    constructor : (params) ->
-      @[k] = v for k, v of params
-      sprite = GFXINFO[@sprite_up]
-      @w = sprite.width
-      @h = sprite.height
+    _getName : ->
+      @["sprite_#{@state}"]
     
     draw : ->
       atom.context.drawSprite @_getName(), @x, @y
-    
-    _getName : ->
-      @["sprite_#{@state}"]
         
     tick : ->
       pressed   = atom.input.pressed 'mouseleft'
@@ -31,4 +25,9 @@ define ['core/Battle/UI'], (UI) ->
           @out?()
           @contained_cursor = false
         @state = 'up'
-      
+    
+    constructor : (params) ->
+      @[k] = v for k, v of params
+      sprite = GFXINFO[@sprite_up]
+      @w = sprite.width
+      @h = sprite.height

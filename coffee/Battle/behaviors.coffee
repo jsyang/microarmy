@@ -427,6 +427,12 @@ define ->
           @build_current = 0
           true
         
+        doClearCommCenterBuildOrder : ->
+          delete @build_structure
+          delete @build_structure_x
+          delete @build_structure_type
+          true
+        
         isStructureCrumbling : ->
           @state is @STATE.WRECK
         
@@ -503,7 +509,7 @@ define ->
         StructureDeadCrumbleExplode : '<[StructureDeadCrumble],[addStructureSmallExplosion]>'
         
         StructureBuilding           : '<[isBuilding],[doBuilding]>'
-        StructureBuildingDone       : '<[addBuiltEntity],[doClearBuildOrder]>'
+        StructureBuildingDone       : '<[addBuiltEntity],[doClearBuildOrder],[doClearCommCenterBuildOrder]>'
         StructureBuild              : '<[isBuildingOrder],([StructureBuilding],[StructureBuildingDone])>'
         StructureAlive              : '<[~StructureBuild],[!PawnNeedsReload],[PawnTarget],[doRangedAttack]>'
         StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
@@ -597,5 +603,8 @@ define ->
         
         PistolInfantry              : '[Infantry]'
         RocketInfantry              : '[Infantry]'
-        EngineerInfantry            : '[Infantry]'
+        
+        EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[addScaffold],[setUntargetable],[doRemove]>'
+        EngineerInfantryAlive       : '([InfantryGoalMoveToRally],[EngineerInfantryGoalBuild],[InfantryGoalIdle])'
+        EngineerInfantry            : '([InfantryDead],[EngineerInfantryAlive])'
     }

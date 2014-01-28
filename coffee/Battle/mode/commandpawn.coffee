@@ -31,7 +31,7 @@ define [
         w
         h
       }
-
+    
     _clearSelection : ->
       @_clearSingleSelection()
       @units = []
