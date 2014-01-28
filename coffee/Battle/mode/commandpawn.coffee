@@ -64,15 +64,16 @@ define [
         y     : @battle.scroll.y + atom.input.mouse.y
         team  : @battle.player.team
       }
-      if result? and result != @structure or result != @units[0]
-        @_clearSelection()
-        if result instanceof @INFANTRY
-          @units = [result]
-          @battle.voices.UNITSSELECTED()
-        else if result instanceof @STRUCTURE
-          @structure = result
-          # Only add label box for Structures
-          @labelbox = new PawnLabelBox result, @battle
+      if result?
+        if result != @structure or result != @units[0]
+          @_clearSelection()
+          if result instanceof @INFANTRY
+            @units = [result]
+            @battle.voices.UNITSSELECTED()
+          else if result instanceof @STRUCTURE
+            @structure = result
+            # Only add label box for Structures
+            @labelbox = new PawnLabelBox result, @battle
       result
       
     # Prune dead things from our selection

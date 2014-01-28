@@ -64,7 +64,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
     sight              : 6
     health_current     : [2400, 2700]
     health_max         : [2700, 3200]
-    buildable_type     : 'RocketInfantry'
+    buildable_type     : [
+      'RocketInfantry'
+      'EngineerInfantry'
+    ]
     build_current      : 0
     build_max          : 60
     build_modifiers    : [
