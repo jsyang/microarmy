@@ -67,9 +67,10 @@ define ->
     _addBuildCapability : (p) ->
       if p.buildable_type?
         if p.buildable_type instanceof Array
-          # not used yet
           for type in p.buildable_type when @buildable_units.indexOf(type) is -1
-            @buildable_units = @buildable_units.concat p.buildable_type
+            @factory[type] = [p] unless @factory[type]?
+            @factory[type].push p
+          @buildable_units = @buildable_units.concat p.buildable_type
         else
           @buildable_units.push p.buildable_type
           @factory[p.buildable_type] = [p]

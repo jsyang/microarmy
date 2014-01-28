@@ -115,7 +115,7 @@ define [
           #'MissileRack'       : 1
           # 'MissileRackSmall'  : 1 
           #'Scaffold'          : 1
-          'Barracks'          : 1
+          # 'Barracks'          : 1
           # 'Depot'
           # 'RepairYard'
           # 'Helipad'

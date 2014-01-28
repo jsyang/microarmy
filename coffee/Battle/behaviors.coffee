@@ -597,4 +597,5 @@ define ->
         
         PistolInfantry              : '[Infantry]'
         RocketInfantry              : '[Infantry]'
+        EngineerInfantry            : '[Infantry]'
     }
