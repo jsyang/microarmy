@@ -51,7 +51,11 @@ define ['core/Battle/UI'], (BattleUI) ->
       @battle.player.addEntity entity
     
     _setBuildLocationToCursor : ->
-      @battle.player.sendEngineerToBuildStructure @build_structure_type, atom.input.mouse.x + @battle.scroll.x
+      @battle.player.sendEngineerToBuildStructure(
+        @build_structure_type,
+        atom.input.mouse.x + @battle.scroll.x,
+        @direction
+      )
       
     resize : ->
       @w = atom.width - @battle.ui.sidebar.w

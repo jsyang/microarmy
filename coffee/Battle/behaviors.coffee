@@ -376,8 +376,9 @@ define ->
             y           : World.height(@)
             team        : @team
             build_type  : @build_type
+            direction   : @direction
           })
-          atom.playSound 'tack'
+          atom.playSound 'dropitem'
           true
           
         doRotting : ->
@@ -456,6 +457,10 @@ define ->
         
         doBuilding : ->
           @build_current++
+          true
+        
+        setFaceBuildDirection : ->
+          @direction = @build_direction
           true
         
         isInfantryGoalMoveToRally : ->
@@ -604,7 +609,7 @@ define ->
         PistolInfantry              : '[Infantry]'
         RocketInfantry              : '[Infantry]'
         
-        EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[addScaffold],[setUntargetable],[doRemove]>'
+        EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[setFaceBuildDirection],[addScaffold],[setUntargetable],[doRemove]>'
         EngineerInfantryAlive       : '([InfantryGoalMoveToRally],[EngineerInfantryGoalBuild],[InfantryGoalIdle])'
         EngineerInfantry            : '([InfantryDead],[EngineerInfantryAlive])'
     }

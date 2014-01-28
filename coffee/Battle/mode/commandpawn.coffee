@@ -179,6 +179,9 @@ define [
               @_selectedSetRally()
           if Rpressed
             @_clearSelection()
+            
+        @battle.ui.cursor.clearText()
+        
       else
         @isDragging = false
         

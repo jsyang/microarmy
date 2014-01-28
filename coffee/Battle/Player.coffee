@@ -86,13 +86,14 @@ define ->
         @_updateBuildButtons()
       
     
-    sendEngineerToBuildStructure : (name, x) ->
+    sendEngineerToBuildStructure : (name, x, direction) ->
       f = @factory['EngineerInfantry']
       if f? and f.length > 0
         f = f[0]
-        f.build_structure = true
-        f.build_structure_type = name
-        f.build_structure_x = x
+        f.build_structure           = true
+        f.build_structure_x         = x
+        f.build_structure_type      = name
+        f.build_structure_direction = direction
         @build 'EngineerInfantry'
     
     addEntity : (p) -> # Calls to this should be explicit

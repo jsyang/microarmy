@@ -20,7 +20,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
       
       if b.build_structure and b.build_type is 'EngineerInfantry'
         # Sending EngineerInfantry to a spot we wanted to build at.
-        @build_type = b.build_structure_type
+        @build_type      = b.build_structure_type
+        @build_direction = b.build_structure_direction
         @rally =
           x : b.build_structure_x
           y : b.y
