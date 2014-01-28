@@ -33,9 +33,12 @@ define [
       }
 
     _clearSelection : ->
-      delete @optionsbox
-      delete @structure
+      @_clearSingleSelection()
       @units = []
+    
+    _clearSingleSelection : ->
+      delete @labelbox
+      delete @structure
       @statsbars = []
     
     # Multiple select = units only
@@ -50,6 +53,7 @@ define [
           rect.y + rect.h,
           @battle.player.team
         )
+        @_clearSingleSelection()
         return @units.length > 0
       false
       
@@ -60,13 +64,15 @@ define [
         y     : @battle.scroll.y + atom.input.mouse.y
         team  : @battle.player.team
       }
-      if result?
+      if result? and result != @structure or result != @units[0]
         @_clearSelection()
         if result instanceof @INFANTRY
           @units = [result]
           @battle.voices.UNITSSELECTED()
         else if result instanceof @STRUCTURE
           @structure = result
+          # Only add label box for Structures
+          @labelbox = new PawnLabelBox result, @battle
       result
       
     # Prune dead things from our selection
@@ -91,7 +97,6 @@ define [
     _selectSingleOrDrag : ->
       foundSingle = @_findSingle()
       if foundSingle?
-        @optionsbox = new PawnLabelBox foundSingle, @battle
         @statsbars.push new PawnStatsBar foundSingle, @battle
         return true
       else
@@ -101,14 +106,16 @@ define [
           y : atom.input.mouse.y
         return false
     
+    _addMultipleStatsbars : ->
+      for u in @units
+        @statsbars.push new PawnStatsBar u, @battle
+    
     _selectMultipleOrCancelDrag : ->
       @isDragging = false
-      @_clearSelection()
       foundMultiple = @_findMultiple()
       if foundMultiple
         @battle.voices.UNITSSELECTED()
-        for u in @units
-          @statsbars.push new PawnStatsBar u, @battle
+        @_addMultipleStatsbars()
     
     _hasSelection : ->
       @structure? or @units.length > 0
@@ -132,8 +139,7 @@ define [
       @h = @battle.world.h
         
     draw : ->
-      if @optionsbox?
-        @optionsbox.draw()
+      @labelbox?.draw()
       
       if @isDragging
         atom.context.save()
@@ -158,6 +164,8 @@ define [
         Rpressed   = atom.input.pressed  'mouseright'
         Rreleased  = atom.input.pressed  'mouseright'
         Rdown      = atom.input.down     'mouseright'
+
+        # Needs work here. Dragging should still work when units are selected.
 
         if @isDragging
           if Lreleased

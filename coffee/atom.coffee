@@ -179,7 +179,7 @@ define [
         # jsyang: Need this limiter here otherwise CPU climbs to 100%.
         # Browser is so fast that it requests a frame nearly every ms.
         # a la http://code.bytespider.eu/post/20484989272/requestanimationframe-and-html5-game-loops
-        @_frametimer = setTimeout(=> @frameRequest = window.requestAnimationFrame s, 20)
+        @_frametimer = setTimeout(=> @frameRequest = window.requestAnimationFrame s, 30)
   
       @last_step = Date.now()
       @frameRequest = window.requestAnimationFrame s
