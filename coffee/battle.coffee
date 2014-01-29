@@ -7,10 +7,12 @@ define [
   'core/Battle/EVA'
   'core/Battle/Voices'
   'core/Battle/Player'
+  'core/Battle/Player.AI'
   
   'core/Battle/UI/minimap'
   'core/Battle/UI/cursor'
   'core/Battle/UI/sidebar'
+  'core/Battle/UI/Sound'
   
   'core/Battle/mode/constructbase'
   'core/Battle/mode/commandpawn'
@@ -23,10 +25,12 @@ define [
     BattleEVA,
     BattleVoices,
     BattlePlayer,
+    BattlePlayerAI,
     
     BattleUIMinimap,
     BattleUICursor,
     BattleUISidebar,
+    BattleUISound,
     
     ConstructBase,
     CommandPawn,
@@ -84,6 +88,8 @@ define [
       @ui.cursor.draw()
 
     tick : ->
+      @enemy?.tick()
+      
       @EVA.tick()
       @mode.tick?()
       @ui.minimap.tick()
@@ -125,12 +131,26 @@ define [
         }
       }
       
+      @enemy = new BattlePlayerAI {
+        team     : 1
+        funds    : 9000
+        battle   : @
+        commands : [
+          'CONSTRUCT_INITIAL_BASE'
+        ]
+        starting_inventory : {
+          'Pillbox'  : 1
+          'Barracks' : 1
+        }
+      }
+      
       # Various UI components, must be init in order.
       uiParams = { battle : @ }
       @ui = {}
       @ui.sidebar = new BattleUISidebar uiParams
       @ui.minimap = new BattleUIMinimap uiParams
       @ui.cursor  = new BattleUICursor  uiParams
+      @ui.sound   = new BattleUISound   uiParams
 
       @mode       = new @MODE.ConstructBase uiParams
       @EVA        = new BattleEVA

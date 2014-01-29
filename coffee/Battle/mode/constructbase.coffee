@@ -5,49 +5,77 @@ define ['core/Battle/UI'], (BattleUI) ->
     
     LOCATIONVALIDTHRESHOLD : 0.35
     
+    CURSORTEXT_INVALID :
+      value  : "Cannot build here!"
+      color  : "#ff0000"
+      halign : 'center'
+    
+    CURSORTEXT_VALID :
+      value  : "Right click to change direction."
+      color  : "#555555"
+      halign : 'center'
+      
+      
+    _updateTempInstance : ->
+      @temp_instance = new @battle.world.Classes[@cart] {
+        team      : @team
+        direction : @direction
+      }
+      
     _getSpriteName : ->
-      if not @temp_instance?
-        @temp_instance = new @battle.world.Classes[@cart] {
-          team      : @team
-          direction : @direction
-        }
-      else
-        @temp_instance.direction = @direction
+      @temp_instance.direction = @direction
       @temp_instance.getName()
-        
-    _checkIfLocationValid : ->
-      x = @battle.scroll.x + atom.input.mouse.x
-      name = @_getSpriteName()
-      w = GFXINFO[name].width
-      w2 = w >> 1
+    
+    checkLocationEmptyOfExistingStructure : (x) ->
+      for s in @battle.world.Instances.Structure
+        if s instanceof @battle.world.Classes.Scaffold
+          temp_instance = new @battle.world.Classes[s.build_type]
+          w2 = temp_instance._halfWidth
+        else
+          w2 = s._halfWidth
+        if s.x - w2 <= x <= s.x + w2
+          return false
+        else
+          return true
+      return true
+    
+    checkLocationTerrain : (x, temp_instance = @temp_instance) ->
+      name = temp_instance.getName()
+      w2 = temp_instance._halfWidth
       numberOfDifferentHeights = 0
       baseline = @battle.world.height x
       for i in [x - w2 .. x + w2]
         if @battle.world.height(i) != baseline
           numberOfDifferentHeights++
-      w * @LOCATIONVALIDTHRESHOLD > numberOfDifferentHeights
+      2 * w2 * @LOCATIONVALIDTHRESHOLD > numberOfDifferentHeights
     
     _cullInventory : (entity) ->
       @inventory[entity]-- if @inventory[entity]?
       delete @inventory[entity] if @inventory[entity] is 0
       delete @temp_instance
-      return @cart = k for k, v of @inventory
+      for k, v of @inventory
+        @cart = k
+        @_updateTempInstance()
+        return
       @_constructionComplete()
       
     _constructionComplete : ->
       @battle.resetMode()
     
-    _addInventoryToWorld : ->
-      atom.playSound 'dropitem'
-      x = atom.input.mouse.x + @battle.scroll.x
+    addEntityToWorld : (type, x) ->
+      @battle.ui.sound.ADD_SCAFFOLD()
       entity = new @battle.world.Classes['Scaffold'] {
-        build_type : @cart
+        build_type : type
         x          : x
-        y          : @battle.world.height(x)
+        y          : @battle.world.height x
         team       : @team
         direction  : @direction
       }
       @battle.world.add entity
+      entity
+    
+    _addInventoryToWorld : ->
+      entity = @addEntityToWorld @cart, atom.input.mouse.x + @battle.scroll.x
       @battle.player.addEntity entity
     
     _setBuildLocationToCursor : ->
@@ -56,7 +84,11 @@ define ['core/Battle/UI'], (BattleUI) ->
         atom.input.mouse.x + @battle.scroll.x,
         @direction
       )
-      
+    
+    _checkCursorLocationValidBuild : ->
+      x = atom.input.mouse.x + @battle.scroll.x
+      @checkLocationTerrain(x) and @checkLocationEmptyOfExistingStructure(x)
+          
     resize : ->
       @w = atom.width - @battle.ui.sidebar.w
       @h = @battle.world.h
@@ -64,26 +96,15 @@ define ['core/Battle/UI'], (BattleUI) ->
     draw : ->
       if @containsCursor()
         if @cart?
-          mx = atom.input.mouse.x
-          my = atom.input.mouse.y
-          
-          spriteName = @_getSpriteName()
-          isLocationValid = @_checkIfLocationValid()        
-          if isLocationValid
-            opacity   = 0.6
-            @battle.ui.cursor.setText {
-              value  : "Right click to change direction."
-              color  : "#555555"
-              halign : 'center'
-            }
+          if @_checkCursorLocationValidBuild()
+            opacity = 0.6
+            @battle.ui.cursor.setText @CURSORTEXT_VALID
           else
             opacity = 0.3
-            @battle.ui.cursor.setText {
-              value  : "Cannot build here!"
-              color  : "#ff0000"
-              halign : 'center'
-            }
-          atom.context.drawSprite spriteName, mx, @battle.world.height(mx + @battle.scroll.x), 'bottom', 'center', opacity
+            @battle.ui.cursor.setText @CURSORTEXT_INVALID
+          mx = atom.input.mouse.x
+          x = mx + @battle.scroll.x
+          atom.context.drawSprite @_getSpriteName(), mx, @battle.world.height(x), 'bottom', 'center', opacity
       else
         @battle.ui.cursor.clearText()
     
@@ -96,7 +117,7 @@ define ['core/Battle/UI'], (BattleUI) ->
             @direction = 0
           
         if atom.input.pressed('mouseleft')
-          if @_checkIfLocationValid()
+          if @_checkCursorLocationValidBuild()
             if @build_structure
               @_setBuildLocationToCursor()
               @_constructionComplete()
@@ -112,6 +133,7 @@ define ['core/Battle/UI'], (BattleUI) ->
       if @build_structure
         @battle.EVA.add 'v_selectlocationtobuildstructures'
         @cart = @build_structure_type
+        @_updateTempInstance()
       else
         @inventory = @battle.player.starting_inventory
         @_cullInventory()

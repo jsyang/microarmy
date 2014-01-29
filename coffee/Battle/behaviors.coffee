@@ -309,6 +309,9 @@ define ->
           @target.setDamage @melee_dmg
           @target.setTarget @
           true
+
+        hasWeapon : ->
+          @projectile?
         
         doRangedAttack : ->
           projectile = new Classes[@projectile] {
@@ -516,7 +519,7 @@ define ->
         StructureBuilding           : '<[isBuilding],[doBuilding]>'
         StructureBuildingDone       : '<[addBuiltEntity],[doClearBuildOrder],[doClearCommCenterBuildOrder]>'
         StructureBuild              : '<[isBuildingOrder],([StructureBuilding],[StructureBuildingDone])>'
-        StructureAlive              : '<[~StructureBuild],[!PawnNeedsReload],[PawnTarget],[doRangedAttack]>'
+        StructureAlive              : '<[~StructureBuild],[!PawnNeedsReload],[PawnTarget],<[hasWeapon],[doRangedAttack]>>'
         StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
         
         ScaffoldAlive               : '([StructureBuilding],<[addBuiltEntity],[setUntargetable],[doRemove]>)'
