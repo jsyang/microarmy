@@ -1,10 +1,9 @@
 define ['core/Battle/Player'], (Player) ->
-  class AIPlayer extends Player
-    delay_between_commands : 30
-  
+  class AIPlayer extends Player  
     SQUAD_SEND_TO_ATTACK : ->
     
     BUILD_SQUAD : ->
+      @build 'PistolInfantry'
       
     CONSTRUCT_INITIAL_BASE : ->
       for k, v of @starting_inventory

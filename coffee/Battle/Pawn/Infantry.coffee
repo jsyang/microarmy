@@ -77,7 +77,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     reload_time    : [60, 90]
     berserk_ing    : 0
     berserk_time   : [6, 21]
-    berserk_chance : -> $.r(0.35) + 0.08
+    berserk_chance : -> $.r(0.1)
     ammo_current   : 1
     ammo_max       : 1
     SHOTFRAMES :

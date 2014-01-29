@@ -602,7 +602,7 @@ define ->
         InfantryBerserk             : '(<[isBerserking],[doBerserking],[InfantryMove]>,<[isTargeting],[!doTryBerserking]>)'
         
         InfantryGoalMoveToRally     : '<[isInfantryGoalMoveToRally],[setFaceRally],[InfantryMove],<[isAtRally],[doClearGoal],[setInfantryIdle]>>'
-        InfantryGoalIdle            : '<[!hasGoal],([InfantryBerserk],[InfantryAttack])>'
+        InfantryGoalIdle            : '<[!hasGoal],([InfantryBerserk],[InfantryAttack],[!setInfantryIdle])>'
         InfantryFulfillGoal         : '([InfantryGoalMoveToRally],[InfantryGoalIdle])'
 
         InfantryAlive               : '([InfantryNeedsReload],[InfantryFulfillGoal])'
