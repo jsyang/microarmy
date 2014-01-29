@@ -35,6 +35,9 @@ define ['core/Battle/Player'], (Player) ->
       if @commands.length > 0
         command = @commands.shift()
         @[command]()
+      else if $.r() < $.r(0.01)
+        @commands.push 'BUILD_SQUAD'
+        
   
     tick : ->
       @_processNextCommand()

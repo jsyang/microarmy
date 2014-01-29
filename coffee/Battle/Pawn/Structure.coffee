@@ -119,8 +119,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
         'MissileRack'       : 300
         'MissileRackSmall'  : 140
         'SmallTurret'       : 300
-        'Barracks'          : 10#1200
-        'CommCenter'        : 10#2000
+        'Barracks'          : 1200
+        'CommCenter'        : 2000
       }[@build_type]
   
   class AmmoDump extends Structure

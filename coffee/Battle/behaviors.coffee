@@ -422,7 +422,10 @@ define ->
           
           if World.battle.player.team is @team
             World.battle.player.addEntity child
-          World.add child  
+          else
+            World.battle.enemy.addEntity child
+          
+          World.add child
           child.playConstructedSound() if child.playConstructedSound?
           true  
         
