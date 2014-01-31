@@ -125,7 +125,7 @@ define ['core/Battle/UI'], (BattleUI) ->
               @_addInventoryToWorld()
               @_cullInventory @cart
           else
-            atom.playSound 'invalid'
+            @battle.ui.sound.BUTTON_CLICK_INVALID()
 
     constructor : (params) ->
       @[k]  = v for k, v of params

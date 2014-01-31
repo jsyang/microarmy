@@ -117,7 +117,11 @@ module.exports = function(grunt) {
         command : "ls -1 ./snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
       },
       copySounds: {
-        command : "mkdir ./core/snd ; cp ./snd/* ./core/snd"
+        command : [
+          'mkdir ./core/snd',
+          'cp ./snd/* ./core/snd',
+          'cp ./snd/* ./core/snd'
+        ].join(' ; ')
       },
       clean: {
         command : [
