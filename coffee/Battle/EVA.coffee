@@ -4,6 +4,7 @@ define ->
     DELAY                         : (t) -> @add t
   
     NEW_CONSTRUCTION_OPTIONS      : -> @add 'v_newconstructionoptions'
+    BUILDING                      : -> @add 'v_building'
     CANNOT_BUILD_HERE             : -> @add 'v_cannotbuildhere'
     COMMAND_INTERFACE_INITIATED   : -> @add 'v_commandinterfaceinitiated'
     SELECT_BUILD_LOCATION         : -> @add 'v_selectbuildlocation'

@@ -5,7 +5,9 @@ define ->
     funds : 0 
     
     _canBuyPawn : (p) ->
-      p::COST <= @funds
+      cost = p::COST
+      cost += @battle.world.Classes.EngineerInfantry::COST if p instanceof @battle.world.Classes.Structure
+      cost <= @funds
     
     _updateBuildButtons : ->
       @battle.ui.sidebar.updateBuildButtons()
@@ -51,12 +53,17 @@ define ->
     sendEngineerToBuildStructure : (name, x, direction) ->
       f = @factory['EngineerInfantry']
       if f? and f.length > 0
-        f = f[0]
-        f.build_structure           = true
-        f.build_structure_x         = x
-        f.build_structure_type      = name
-        f.build_structure_direction = direction
-        @build 'EngineerInfantry'
+        if @_canBuyPawn @battle.world.Classes[name]
+          f = f[0]
+          f.build_structure           = true
+          f.build_structure_x         = x
+          f.build_structure_type      = name
+          f.build_structure_direction = direction
+          @funds -= @battle.world.Classes[name]::COST
+          @build 'EngineerInfantry'
+        else if not @AI
+          @battle.EVA.INSUFFICIENT_FUNDS()
+          
     
     removeEntity : (p) ->
       return unless p.team is @team
@@ -83,7 +90,7 @@ define ->
             factory.build_type = name
             @funds -= buildClass::COST
             @battle.ui.sound.BUILDING() unless @AI
-      
+            @battle.EVA.BUILDING()      unless @AI
       else if not @AI
         @battle.EVA.INSUFFICIENT_FUNDS()
     
