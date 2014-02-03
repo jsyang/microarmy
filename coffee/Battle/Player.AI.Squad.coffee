@@ -74,7 +74,7 @@ define ->
       @idle_units.push p
   
     sendIdleSquadToScout : (x) ->
-      squad = @idle_squads[0]
+      squad = @idle_squads.shift()
       @_setSquadRally(squad, x) if squad?
   
     tick : ->
