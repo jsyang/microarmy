@@ -126,10 +126,8 @@ define [
         x = 0
         for u, i in @units
           u.goal = u.GOAL.MOVE_TO_RALLY
-          u.rally = {
-            x : atom.input.mouse.x + @battle.scroll.x + x
-            y : atom.input.mouse.y
-          }
+          u.rally_x = atom.input.mouse.x + @battle.scroll.x + x
+          u.rally_y = atom.input.mouse.y
           x += $.R(1, u._halfWidth << 2) # Move as a group but not into 1 spot.
         @battle.voices.UNITORDERRECEIVED()
         # Make sure we don't deselect

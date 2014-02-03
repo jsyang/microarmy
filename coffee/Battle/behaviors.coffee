@@ -199,6 +199,11 @@ define ->
           @y = World.height @
           true
         
+        doAIVisionChange : ->
+          if @AI
+            World.battle.enemy.vision.addUnitVisit @
+          true
+        
         doProjectileFly : ->
           @x += @dx
           @y += @dy
@@ -473,11 +478,11 @@ define ->
           @goal is @GOAL.MOVE_TO_RALLY
           
         setFaceRally : ->
-          @direction = if @rally.x > @x then 1 else 0
+          @direction = if @rally_x > @x then 1 else 0
           true
           
         isAtRally : ->
-          @x is @rally.x
+          @x is @rally_x
         
         doClearRally : ->
           delete @rally
@@ -570,7 +575,7 @@ define ->
         
         Projectile                  : '<[!ProjectileNotActive],[!ProjectileHitGround],[!ProjectileHitEntity],[doProjectileFly]>'
         ProjectileNotActive         : '<[!isProjectileActive],[doRemove]>'
-        ProjectileHitGround         : '<[isGroundHit],[addProjectileExplosion],[doRemove]>'
+        ProjectileHitGround         : '<[isGroundHit],[doRemove]>' #'<[isGroundHit],[addProjectileExplosion],[doRemove]>'
         ProjectileHitEntity         : '<[hasProjectileHitEnemy],[addProjectileExplosion],[doRemove]>'
         Bullet                      : '[Projectile]'
         MGBullet                    : '[Projectile]'
@@ -594,7 +599,7 @@ define ->
         
         Infantry                    : '([InfantryDead],[InfantryAlive])'
         InfantryNeedsReload         : '<[isOutOfAmmo],[doReloading],[setFirstFrame],[~PawnRetarget]>'
-        InfantryMove                : '<[setInfantryMoving],[doMoveOnGround],[~InfantryAnimate]>'
+        InfantryMove                : '<[setInfantryMoving],[doMoveOnGround],[doAIVisionChange],[~InfantryAnimate]>'
         InfantryAnimate             : '<[setNextFrame],[isPastLastFrame],[setFirstFrame]>'
         InfantryRangedAttack        : '<[isInfantryInShotFrame],[doRangedAttack]>'
         InfantryMeleeAttack         : '<[isInfantryMeleeDistance],[isInfantryMeleeSuccessful],[doInfantryMeleeAttack]>'
@@ -604,16 +609,20 @@ define ->
         
         InfantryBerserk             : '(<[isBerserking],[doBerserking],[InfantryMove]>,<[isTargeting],[!doTryBerserking]>)'
         
-        InfantryGoalMoveToRally     : '<[isInfantryGoalMoveToRally],[setFaceRally],[InfantryMove],<[isAtRally],[doClearGoal],[setInfantryIdle]>>'
+        InfantryClearGoalIfAtRally  : '<[isAtRally],[doClearGoal],[setInfantryIdle]>'
+        InfantryGoalMoveToRally     : '<[isInfantryGoalMoveToRally],[setFaceRally],[InfantryMove],[~InfantryClearGoalIfAtRally]>'
         InfantryGoalIdle            : '<[!hasGoal],([InfantryBerserk],[InfantryAttack],[!setInfantryIdle])>'
-        InfantryFulfillGoal         : '([InfantryGoalMoveToRally],[InfantryGoalIdle])'
+        InfantryFulfillGoal         : '([InfantryGoalMoveToRally],[InfantryNeedsReload],[InfantryGoalIdle])'
 
-        InfantryAlive               : '([InfantryNeedsReload],[InfantryFulfillGoal])'
+        InfantryAlive               : '[InfantryFulfillGoal]'
         InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying]>,<[!isLastFrame],[setNextFrame]>)'
         InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         
         PistolInfantry              : '[Infantry]'
         RocketInfantry              : '[Infantry]'
+        
+        AIInfantryFulfillGoal       : '([InfantryNeedsReload],[InfantryBerserk],[InfantryAttack],[InfantryGoalMoveToRally],[setInfantryIdle])'
+        AIInfantry                  : '([InfantryDead],[AIInfantryFulfillGoal])'
         
         EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[setFaceBuildDirection],[addScaffold],[setUntargetable],[doRemove]>'
         EngineerInfantryAlive       : '([InfantryGoalMoveToRally],[EngineerInfantryGoalBuild],[InfantryGoalIdle])'

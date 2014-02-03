@@ -22,13 +22,9 @@ define ['core/Battle/Pawn'], (Pawn) ->
         # Sending EngineerInfantry to a spot we wanted to build at.
         @build_type      = b.build_structure_type
         @build_direction = b.build_structure_direction
-        @rally =
-          x : b.build_structure_x
-          y : b.y
+        @rally_x         = b.build_structure_x
       else
-        @rally =
-          x : b.x + $.R(-20, 20)
-          y : b.y
+        @rally_x         = b.x + $.R(-20, 20)
 
   class Structure extends Pawn
     NAMETEXT        : 'Generic structure'

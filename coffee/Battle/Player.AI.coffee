@@ -1,13 +1,42 @@
-define ['core/Battle/Player'], (Player) ->
-  class AIPlayer extends Player
-    
-    AI : true
+define [
+  'core/util/SimpleHash'
+  'core/Battle/Player'
+  'core/Battle/Player.AI.Vision'
+  'core/Battle/Player.AI.Squad'
+  'core/Battle/Player.AI.Construct'
+], (SimpleHash, Player, AIVision, AISquad, AIConstruct) ->
   
-    SQUAD_SEND_TO_ATTACK : ->
+  TRAIT = # Strategic
+    AGGRESSIVE : 0 # Stops at nothing to destroy enemy. Scouts often, at first opportunity.
+    PASSIVE    : 1 # Does nothing.
+    DEFENSIVE  : 2 # Scouts occasionally cash permitting.
+  
+  SKILL = # Tactical
+    INFANTRY     : 0 # Manages Infantry squads well
+    STRUCTURE    : 1 # Manages Structures well
+    INDIRECT     : 2 # Bias toward indirect fire weapons
+    BASE_DEFENSE : 3 # Bias toward fortifying existing bases
+    CHEAP        : 4 # Bias toward cheapest means of victory
+  
+  class AIPlayer extends Player
+    AI    : true
     
-    BUILD_SQUAD : ->
-      @build 'PistolInfantry'
-      
+    TRAIT : TRAIT.AGGRESSIVE
+    SKILL : SKILL.CHEAP
+    
+    BUILD_IDLE_UNIT : ->
+      # todo: make this not so random later
+      type = $.AR(@buildable_units)
+      @build type if type?
+    
+    FORM_SQUAD : ->
+      # todo: make this not so random later
+      @squad.form $.AR(@buildable_units)
+    
+    SEND_SCOUT_SQUAD : ->
+      @squad.sendIdleSquadToScout @vision.getNextLocationScout()
+    
+    # todo: move this into AIConstruct
     CONSTRUCT_INITIAL_BASE : ->
       for k, v of @starting_inventory
         if v > 0
@@ -39,18 +68,43 @@ define ['core/Battle/Player'], (Player) ->
         command = @commands.shift()
         @[command]()
       else if $.r() < $.r(0.01)
-        @commands.push 'BUILD_SQUAD'
-        
+        console.log    'BUILD_IDLE_UNIT'
+        @commands.push 'BUILD_IDLE_UNIT'
+      else if $.r() < $.r(0.03)
+        console.log    'FORM_SQUAD'
+        @commands.push 'FORM_SQUAD'
+      else if $.r() < $.r(0.05)
+        console.log    'SEND_SCOUT_SQUAD'
+        @commands.push 'SEND_SCOUT_SQUAD' 
   
     tick : ->
       @_processNextCommand()
+      @squad.tick()
 
     build_x : 0
+    
+    addEntity : (p) ->
+      p.AI = true
+      if p instanceof @battle.world.Classes.Structure
+        @structures.push p
+        @_addBuildCapability p
+        @vision.addStructure p
+      else
+        @units.push p
+        @squad.addUnit p
 
     constructor : (params) ->
       super params
+      
       @direction = 0
       @dx = [-1, 1][@direction]
       @build_x = @battle.world.w - $.R(20,80)
-      
       @LOCATIONVALIDTHRESHOLD = @battle.MODE.ConstructBase::LOCATIONVALIDTHRESHOLD
+      
+      childrenParams =
+        player : @
+        battle : @battle
+      
+      @squad     = new AISquad     childrenParams
+      @vision    = new AIVision    childrenParams
+      @construct = new AIConstruct childrenParams

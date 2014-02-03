@@ -64,7 +64,7 @@ define ->
         else if not @AI
           @battle.EVA.INSUFFICIENT_FUNDS()
           
-    
+    # Called from Behaviors.
     removeEntity : (p) ->
       return unless p.team is @team
       if p instanceof @battle.world.Classes.Structure
@@ -78,6 +78,8 @@ define ->
       @_updateEntityArray(arrayName)
 
     build : (name) ->
+      throw new Error "Player tried to build with a type name!" unless name?
+    
       buildClass = @battle.world.Classes[name]
       if @_canBuyPawn buildClass
         if @factory[name]?

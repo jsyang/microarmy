@@ -56,8 +56,8 @@ define ->
             @playing = true
             source = atom.playSound v
             source.onended = =>
-              @playing = false
               @PLAYLIST.shift()
+              @playing = false
           else
             if @delay > 0
               @delay--

@@ -49,10 +49,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
     NAMETEXT       : 'Soldier'
     COST           : 150
     projectile     : 'Bullet'
-    sight          : 3
+    sight          : 4
     melee_dmg      : 8
     health_current : [30, 70]
-    health_max     : 70
+    health_max     : 30
     reload_ing     : 0
     reload_time    : 40
     berserk_ing    : 0
@@ -69,10 +69,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
     NAMETEXT       : 'Elite Soldier'
     COST           : 300
     projectile     : 'SmallRocket'
-    sight          : 6
+    sight          : 5
     melee_dmg      : 23
     health_current : [60, 90]
-    health_max     : 80
+    health_max     : 60
     reload_ing     : 0
     reload_time    : [60, 90]
     berserk_ing    : 0
@@ -90,7 +90,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     melee_dmg      : 5
     #build_type     : 'Pillbox'
     health_current : [20, 50]
-    health_max     : 40
+    health_max     : 20
 
   exportClasses = {
     Infantry

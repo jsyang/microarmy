@@ -139,8 +139,8 @@ define [
           'CONSTRUCT_INITIAL_BASE'
         ]
         starting_inventory : {
-          'Pillbox'  : 1
           'Barracks' : 1
+          'MissileRackSmall' : 1
         }
       }
       
