@@ -111,12 +111,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
     constructor : (params) ->
       super params
       @build_max = { # Build times.
-        'Pillbox'           : 170
+        'Pillbox'           : 200
         'MissileRackSmall'  : 240
         'MissileRack'       : 400
         'SmallTurret'       : 300
-        'Barracks'          : 800
-        'CommCenter'        : 1600
+        'Barracks'          : 600
+        'CommCenter'        : 1000
       }[@build_type]
   
   class AmmoDump extends Structure
