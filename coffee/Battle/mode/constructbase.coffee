@@ -125,17 +125,21 @@ define ['core/Battle/UI'], (BattleUI) ->
               @_addInventoryToWorld()
               @_cullInventory @cart
           else
-            @battle.ui.sound.BUTTON_CLICK_INVALID()
+            @EVA.CANNOT_BUILD_HERE()
 
     constructor : (params) ->
       @[k]  = v for k, v of params
       @team = @battle.player.team
+      @EVA  = @battle.EVA
+      
       if @build_structure
-        @battle.EVA.add 'v_selectlocationtobuildstructures'
         @cart = @build_structure_type
         @_updateTempInstance()
+        @EVA.SELECT_BUILD_LOCATION()
       else
         @inventory = @battle.player.starting_inventory
         @_cullInventory()
+        @EVA.INITIAL_BASE_CONSTRUCTION()
+
       @resize()
       

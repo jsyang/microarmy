@@ -1,7 +1,6 @@
 define ->
-  # todo : AIPlayer extends Player
   class Player
-    is_ai : false
+    AI    : false
     team  : 0
     funds : 0 
     
@@ -28,6 +27,8 @@ define ->
     
     _addBuildCapability : (p) ->
       if p.buildable_type?
+        @battle.EVA.NEW_CONSTRUCTION_OPTIONS() unless @AI
+          
         if p.buildable_type instanceof Array
           for type in p.buildable_type when @buildable_units.indexOf(type) is -1
             if @battle.world.Classes[type].__super__.constructor.name is 'Structure'
@@ -77,15 +78,16 @@ define ->
           if factory.build_type?
             # Already building something.
             # todo: build queue
-            atom.playSound 'invalid'
+            @battle.ui.sound.INVALID() unless @AI
           else
             factory.build_type = name
             @funds -= buildClass::COST
-            atom.playSound 'feed'
-      else
-        atom.playSound 'invalid'
+            @battle.ui.sound.BUILDING() unless @AI
+      
+      else if not @AI
+        @battle.EVA.INSUFFICIENT_FUNDS()
     
-    addEntity : (p) -> # Calls to this should be explicit
+    addEntity : (p) ->
       if p instanceof @battle.world.Classes.Structure
         @structures.push p
         @_addBuildCapability p

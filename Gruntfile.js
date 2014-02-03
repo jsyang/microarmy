@@ -114,14 +114,18 @@ module.exports = function(grunt) {
     
     shell: {
       compileSFXList: {
-        command : "ls -1 ./snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
+        command : "ls -1 ./core/snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
       },
       copySounds: {
         command : [
           'mkdir ./core/snd',
           'cp ./snd/* ./core/snd',
-          'cp ./snd/* ./core/snd'
+          'cp ./snd/eva_voice/* ./core/snd',
+          'cp ./snd/entity_voice/* ./core/snd',
         ].join(' ; ')
+      },
+      renameCopiedSounds : {
+        command : "find ./core/snd -type f -name '*.mp3' | while read f; do mv \"$f\" \"${f%.mp3}\"; done"
       },
       clean: {
         command : [
@@ -217,8 +221,9 @@ module.exports = function(grunt) {
     'sprite',
     'coffee',
     'jasmine_node',
-    'shell:compileSFXList',
     'shell:copySounds',
+    'shell:renameCopiedSounds',
+    'shell:compileSFXList',
     'requirejs',
     //'preprocess:release',
     'zip',

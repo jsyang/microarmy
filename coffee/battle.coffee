@@ -152,6 +152,6 @@ define [
       @ui.cursor  = new BattleUICursor  uiParams
       @ui.sound   = new BattleUISound   uiParams
 
-      @mode       = new @MODE.ConstructBase uiParams
       @EVA        = new BattleEVA
+      @mode       = new @MODE.ConstructBase uiParams
       @voices     = new BattleVoices

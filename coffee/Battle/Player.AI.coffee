@@ -1,5 +1,8 @@
 define ['core/Battle/Player'], (Player) ->
-  class AIPlayer extends Player  
+  class AIPlayer extends Player
+    
+    AI : true
+  
     SQUAD_SEND_TO_ATTACK : ->
     
     BUILD_SQUAD : ->
@@ -42,8 +45,6 @@ define ['core/Battle/Player'], (Player) ->
     tick : ->
       @_processNextCommand()
 
-    LOCATIONVALIDTHRESHOLD : 0.35 # Duplicated from core/Battle/mode/constructbase
-
     build_x : 0
 
     constructor : (params) ->
@@ -51,3 +52,5 @@ define ['core/Battle/Player'], (Player) ->
       @direction = 0
       @dx = [-1, 1][@direction]
       @build_x = @battle.world.w - $.R(20,80)
+      
+      @LOCATIONVALIDTHRESHOLD = @battle.MODE.ConstructBase::LOCATIONVALIDTHRESHOLD

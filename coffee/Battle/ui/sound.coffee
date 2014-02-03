@@ -6,6 +6,7 @@ define ->
     constructor : ->
       @[k] = atom.playSound.bind atom, v for k, v of @
       
-    BUTTON_CLICK_INVALID  : 'invalid'
+    INVALID               : 'invalid'
+    BUILDING              : 'feed'
     
     ADD_SCAFFOLD          : 'dropitem'
