@@ -329,10 +329,7 @@ module.exports = function(grunt) {
     'requirejs:compileUglify',
     'zip',
     'unzip',
-    'shell:findTodos',
-    'shell:copyNodeWebkitManifest',
-    'shell:deleteDistZip',
-    'nodewebkit'
+    'shell:findTodos'
   ]);
   
   // Build for node-webkit
@@ -344,9 +341,14 @@ module.exports = function(grunt) {
     'shell:copySounds',
     'shell:renameCopiedSounds',
     'shell:compileSFXList',
+    'shell:createGFXINFO',
+    'shell:createSFXINFO',
     'requirejs:compileUglify',
     'zip',
     'unzip',
-    'shell:findTodos'
+    'shell:findTodos',
+    'shell:copyNodeWebkitManifest',
+    'shell:deleteDistZip',
+    'nodewebkit'
   ]);
 };
