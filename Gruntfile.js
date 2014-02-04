@@ -1,5 +1,52 @@
 module.exports = function(grunt) {
   
+  // Keep all the Pawn constructor names, needed in Pawn.getName()
+  var RESERVED_CLASS_NAMES = [
+    'Structure',
+    'CommCenter',
+    'Barracks',
+    'Scaffold',
+    'CommRelay',
+    'WatchTower',
+    'AmmoDump',
+    'AmmoDumpSmall',
+    'MineFieldSmall',
+    'Depot',
+    'RepairYard',
+    'Helipad',
+    'Pillbox',
+    'SmallTurret',
+    'MissileRack',
+    'MissileRackSmall',
+    'Projectile',
+    'Bullet',
+    'MGBullet',
+    'SmallRocket',
+    'SmallShell',
+    'SmallMine',
+    'SmallChemMine',
+    'HomingMissile',
+    'HomingMissileSmall',
+    'MediumRocketHE',
+    'Infantry',
+    'PistolInfantry',
+    'RocketInfantry',
+    'EngineerInfantry',
+    'Explosion',
+    'FragExplosion',
+    'SmallExplosion',
+    'FlakExplosion',
+    'HEAPExplosion',
+    'ChemExplosion',
+    'SmokeCloud',
+    'SmokeCloudSmall',
+    'Flame',
+    'ChemCloud'
+  ];
+  
+  // todo: Reserved method names (not to be mangled by Uglify).
+  // Mangle everything else.
+  
   var coffeeSourceFiles = [
     'coffee/*.coffee',
     'coffee/util/*.coffee',
@@ -190,13 +237,16 @@ module.exports = function(grunt) {
       compileUglify : {
         options: {
           almond: true,
-          optimize: "uglify",
+          optimize: "uglify2",
+          uglify2: {
+            mangle: {
+              except: RESERVED_CLASS_NAMES
+            }
+          },
           baseUrl: "./",
           name: "lib/almond.js",
           wrap:true,
-          include: [
-            "core/init"
-          ],
+          include: ["core/init"],
           insertRequire: ["core/init"],
           out: "core/<%= pkg.name %>.min.js",
         }
@@ -258,7 +308,7 @@ module.exports = function(grunt) {
     'shell:compileSFXList',
     'shell:createGFXINFO',
     'shell:createSFXINFO',
-    'requirejs:compile',
+    'requirejs:compileUglify',
     //'preprocess:release',
     'zip',
     'unzip',
