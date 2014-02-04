@@ -113,14 +113,24 @@ module.exports = function(grunt) {
     },
     
     shell: {
-      createGFXINFOFromSpritesheetJSON : {
+      // Removes the requirejs/text dependency since we build the module ourself.
+      createSFXINFO : {
+        command : [
+          'sed \'s/^/\\"/\'  ./core/RESOURCES_SND.txt > ./core/tmp_SFXINFO.txt',
+          'sed \'s/$/\\",/\' ./core/tmp_SFXINFO.txt > ./core/_SFXINFO.txt',
+          'echo "define(function(){return [" > ./core/SFXINFO.js',
+          'cat ./core/_SFXINFO.txt >> ./core/SFXINFO.js',
+          'echo "];});" >> ./core/SFXINFO.js'
+        ].join(' ; ')
+      },
+      // Removes the requirejs/text dependency since we build the module ourself.
+      createGFXINFO : {
         command : [
           'echo "define(function(){window.GFXINFO=" > ./core/GFXINFO.js',
           'cat ./core/spritesheet.json >> ./core/GFXINFO.js',
           'echo ";});" >> ./core/GFXINFO.js'
         ].join(' ; ')
       },
-      
       compileSFXList: {
         command : "ls -1 ./core/snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
       },
@@ -174,9 +184,6 @@ module.exports = function(grunt) {
           ],
           insertRequire: ["core/init"],
           out: "core/<%= pkg.name %>.min.js",
-          paths: {
-            "text" : "lib/text"
-          }
         }
       },
       
@@ -192,9 +199,6 @@ module.exports = function(grunt) {
           ],
           insertRequire: ["core/init"],
           out: "core/<%= pkg.name %>.min.js",
-          paths: {
-            "text" : "lib/text"
-          }
         }
       }
     },
@@ -248,11 +252,12 @@ module.exports = function(grunt) {
     'shell:clean',
     'sprite',
     'coffee',
-    'shell:createGFXINFOFromSpritesheetJSON',
     'jasmine_node',
     'shell:copySounds',
     'shell:renameCopiedSounds',
     'shell:compileSFXList',
+    'shell:createGFXINFO',
+    'shell:createSFXINFO',
     'requirejs:compile',
     //'preprocess:release',
     'zip',

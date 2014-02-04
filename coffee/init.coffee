@@ -4,11 +4,9 @@ define [
   
   'core/Game'
   
-  'text!core/spritesheet.json'
-  'text!core/RESOURCES_SND.txt'
-], (_util, _atom, MicroarmyGame, GFXJSON, SFXLIST) ->
-
-  window.GFXINFO = JSON.parse(GFXJSON)
+  'core/GFXINFO'
+  'core/SFXINFO'
+], (_util, _atom, MicroarmyGame, _GFXINFO, SFXINFO) ->
 
   loaded =
     gfx : false
@@ -32,7 +30,7 @@ define [
   
   # Create sound dictionary
   SOUNDSDICT = {}
-  for soundname in SFXLIST.split('\n')
+  for soundname in SFXINFO
     SOUNDSDICT[soundname] = "./core/snd/#{soundname}" unless soundname.length is 0
   
   atom.preloadSounds(
