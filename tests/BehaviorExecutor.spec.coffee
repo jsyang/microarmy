@@ -3,6 +3,8 @@ require [
   '../core/BehaviorExecutor'
 ], ($, BehaviorExecutor) ->
 
+  global.$ = $
+
   describe 'BehaviorExecutor', ->
     
     describe 'constructor', ->

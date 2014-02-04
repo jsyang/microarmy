@@ -3,6 +3,8 @@ require [
   '../core/util/SimpleHash'
 ], ($, SimpleHash) ->    
   
+  global.$ = $
+  
   describe 'SimpleHash', ->    
     it 'throws if no width given', ->
       expect( -> new SimpleHash({}) ).toThrow()

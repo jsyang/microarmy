@@ -41,7 +41,8 @@ module.exports = function(grunt) {
     'SmokeCloud',
     'SmokeCloudSmall',
     'Flame',
-    'ChemCloud'
+    'ChemCloud',
+    '$'
   ];
   
   // todo: Reserved method names (not to be mangled by Uglify).
@@ -184,15 +185,14 @@ module.exports = function(grunt) {
       copySounds: {
         command : [
           'mkdir ./core/snd',
-          'cp ./snd/* ./core/snd',
-          'cp ./snd/eva_voice/* ./core/snd',
-          'cp ./snd/entity_voice/* ./core/snd',
+          'cp ./snd/* ./core/snd'
         ].join(' ; ')
       },
       renameCopiedSounds : {
         command : [
-          "find ./core/snd -type f -name '*.mp3' | while read f; do mv \"$f\" \"${f%.mp3}\"; done",
-          "find ./core/snd -type f -name '*.wav' | while read f; do mv \"$f\" \"${f%.wav}\"; done"
+          "find ./core/snd -type f -name '*.mp3' | while read f; do mv \"$f\" \"${f%.mp3}\"; done", // node-webkit is not built with an MP3 decoder! fuck!
+          "find ./core/snd -type f -name '*.wav' | while read f; do mv \"$f\" \"${f%.wav}\"; done",
+          "find ./core/snd -type f -name '*.ogg' | while read f; do mv \"$f\" \"${f%.ogg}\"; done"
         ].join(' ; ')
       },
       clean: {
@@ -207,6 +207,14 @@ module.exports = function(grunt) {
             stdout: true
         },
         command : "echo '\\n\\n** TODOs located in these files: **'; grep -ril '# todo' coffee/"
+      },
+      
+      copyNodeWebkitManifest : {
+        command : 'cp ./nw/* ./dist'
+      },
+      
+      deleteDistZip : {
+        command : 'rm ./dist/*.zip'
       }
     },
     
@@ -233,7 +241,8 @@ module.exports = function(grunt) {
           out: "core/<%= pkg.name %>.min.js",
         }
       },
-      
+      // todo: More work on uglify options.
+      // We want to use the compressor in a better way.
       compileUglify : {
         options: {
           almond: true,
@@ -282,6 +291,16 @@ module.exports = function(grunt) {
         dest: '/www',
         exclusions: ['./dist/**/.DS_Store']
       }
+    },
+    
+    nodewebkit: {
+      options: {
+        //timestamped_builds : true,
+        mac : true,
+        win : false,
+        build_dir : './build'
+      },
+      src: './dist/**/*'
     }
   };
   
@@ -294,8 +313,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-spritesmith');
   grunt.loadNpmTasks('grunt-zip');
   grunt.loadNpmTasks('grunt-sftp-deploy');
-  
-  grunt.registerTask('test',    ['shell:clean', 'coffee', 'jasmine_node']);
+  grunt.loadNpmTasks('grunt-node-webkit-builder');
   
   // Default build is for a web release build.
   grunt.registerTask('default', [
@@ -309,10 +327,12 @@ module.exports = function(grunt) {
     'shell:createGFXINFO',
     'shell:createSFXINFO',
     'requirejs:compileUglify',
-    //'preprocess:release',
     'zip',
     'unzip',
-    'shell:findTodos'
+    'shell:findTodos',
+    'shell:copyNodeWebkitManifest',
+    'shell:deleteDistZip',
+    'nodewebkit'
   ]);
   
   // Build for node-webkit
@@ -325,7 +345,6 @@ module.exports = function(grunt) {
     'shell:renameCopiedSounds',
     'shell:compileSFXList',
     'requirejs:compileUglify',
-    //'preprocess:release',
     'zip',
     'unzip',
     'shell:findTodos'

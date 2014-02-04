@@ -7,7 +7,6 @@ define [
   'core/GFXINFO'
   'core/SFXINFO'
 ], (_util, _atom, MicroarmyGame, _GFXINFO, SFXINFO) ->
-
   loaded =
     gfx : false
     sfx : false
@@ -31,7 +30,7 @@ define [
   # Create sound dictionary
   SOUNDSDICT = {}
   for soundname in SFXINFO
-    SOUNDSDICT[soundname] = "./core/snd/#{soundname}" unless soundname.length is 0
+    SOUNDSDICT[soundname] = "core/snd/#{soundname}" unless soundname.length is 0
   
   atom.preloadSounds(
     SOUNDSDICT,

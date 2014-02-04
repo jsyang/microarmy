@@ -1,18 +1,5 @@
 define ->
-  # See if we're running tests or the game
-  if global?
-    globalscope = global
-  else if window?
-    globalscope = window
-  else
-    throw new Error 'could not find a global scope to attach $'
-
-  # Don't redef $ if something's there already.
-  if globalscope['$']? then return new Error '$ already exists globally!'
-
-  # Globally defined $ utility namespace.
-  globalscope['$'] =
-    
+  $ =
     r : (n=1) -> n*Math.random()
     
     R : (l,h) -> Math.floor(
@@ -48,3 +35,6 @@ define ->
       target = {} unless target?
       target[k] = v for k,v of extender
       target
+
+  window.$ = $ if window?
+  $

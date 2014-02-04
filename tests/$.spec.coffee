@@ -1,7 +1,9 @@
 require [
   '../core/util'
 ], ($) ->
-
+  
+  global.$ = $
+  
   describe '$', ->
   
     describe 'R', ->

@@ -4,6 +4,8 @@ require [
   '../core/Battle/Pawn'
 ], ($, XHash, Pawn) ->
 
+  global.$ = $
+
   teams =
     '0' : [
       { x : 31,   team : 0, health_current : 12 }
