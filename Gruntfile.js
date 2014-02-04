@@ -113,6 +113,14 @@ module.exports = function(grunt) {
     },
     
     shell: {
+      createGFXINFOFromSpritesheetJSON : {
+        command : [
+          'echo "define(function(){window.GFXINFO=" > ./core/GFXINFO.js',
+          'cat ./core/spritesheet.json >> ./core/GFXINFO.js',
+          'echo ";});" >> ./core/GFXINFO.js'
+        ].join(' ; ')
+      },
+      
       compileSFXList: {
         command : "ls -1 ./core/snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
       },
@@ -158,7 +166,24 @@ module.exports = function(grunt) {
         options: {
           almond: true,
           optimize: "none",
-          //optimize: "uglify",
+          baseUrl: "./",
+          name: "lib/almond.js",
+          wrap:true,
+          include: [
+            "core/init"
+          ],
+          insertRequire: ["core/init"],
+          out: "core/<%= pkg.name %>.min.js",
+          paths: {
+            "text" : "lib/text"
+          }
+        }
+      },
+      
+      compileUglify : {
+        options: {
+          almond: true,
+          optimize: "uglify",
           baseUrl: "./",
           name: "lib/almond.js",
           wrap:true,
@@ -223,15 +248,31 @@ module.exports = function(grunt) {
     'shell:clean',
     'sprite',
     'coffee',
+    'shell:createGFXINFOFromSpritesheetJSON',
     'jasmine_node',
     'shell:copySounds',
     'shell:renameCopiedSounds',
     'shell:compileSFXList',
-    'requirejs',
+    'requirejs:compile',
     //'preprocess:release',
     'zip',
     'unzip',
-    //'sftp-deploy', // todo : deploy is broken, fix for later
+    'shell:findTodos'
+  ]);
+  
+  // Build for node-webkit
+  grunt.registerTask('release', [
+    'shell:clean',
+    'sprite',
+    'coffee',
+    'jasmine_node',
+    'shell:copySounds',
+    'shell:renameCopiedSounds',
+    'shell:compileSFXList',
+    'requirejs:compileUglify',
+    //'preprocess:release',
+    'zip',
+    'unzip',
     'shell:findTodos'
   ]);
 };

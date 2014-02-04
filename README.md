@@ -28,6 +28,19 @@ Asset scraps | `git checkout assetscraps` -- things that might inspire future fe
 
 ### Dev log
 
+    Feb 4, 2014
+    The game is now in a playable state. Over the past week I've added these things:
+      - mission handler (win/lose)
+      - battle sound interface
+      - battle UI voice (I even called it EVA)
+      - AI player with the ability to construct squads and do recon
+      - minimap radar scrolling
+      - build options sidebar
+    Working on getting the game to build as a node-webkit release. First, I'm going to remove the requirejs/text dependency
+    to cut down on the minified file size, and I've already made edits the grunt-spritesmith to strip the generated CSS of
+    all the extra properties that I don't need.
+    
+
     Jan (20, 21), 2014
     Started making sense of the gameplay modes: drafted a "construct base" mode where you can lay down your base structures.
     Converted most of the graphics into a format that has a filenaming convention which better suits grunt-spritesmith.
@@ -98,4 +111,6 @@ Entity | Description | Example
 --- | --- | ---
 Barracks | Team 0, facing left, in good shape | `barracks-0-0-0.png`
 PistolInfantry | Team 0, facing left, shooting, frame 0 | `pistolinfantry-0-0-1-0.png`
-  
+
+### Stripping the generated spritesheet JSON of extra properties
+I've added a replacement `json2css` within `custom/`. You should replace `node_modules/grunt-spritesmith/node_modules/json2css/lib/json2css.js` with it.
