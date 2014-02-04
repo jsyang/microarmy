@@ -48,7 +48,12 @@ define ->
             @factory[type] = [p]
           
         @_updateBuildButtons()
-      
+    
+    _updateBuiltEntityTally : (type, p) ->
+      if @["built_#{type}"][p.constructor.name]?
+        @["built_#{type}"][p.constructor.name]++
+      else
+        @["built_#{type}"][p.constructor.name] = 1
     
     sendEngineerToBuildStructure : (name, x, direction) ->
       f = @factory['EngineerInfantry']
@@ -84,15 +89,16 @@ define ->
       if @_canBuyPawn buildClass
         if @factory[name]?
           factory = @factory[name][0]
-          if factory.build_type?
-            # Already building something.
-            # todo: build queue
-            @battle.ui.sound.INVALID() unless @AI
-          else
-            factory.build_type = name
-            @funds -= buildClass::COST
-            @battle.ui.sound.BUILDING() unless @AI
-            @battle.EVA.BUILDING()      unless @AI
+          if factory?
+            if factory.build_type?
+              # Already building something.
+              # todo: build queue
+              @battle.ui.sound.INVALID() unless @AI
+            else
+              factory.build_type = name
+              @funds -= buildClass::COST
+              @battle.ui.sound.BUILDING() unless @AI
+              @battle.EVA.BUILDING()      unless @AI
       else if not @AI
         @battle.EVA.INSUFFICIENT_FUNDS()
     
@@ -100,8 +106,10 @@ define ->
       if p instanceof @battle.world.Classes.Structure
         @structures.push p
         @_addBuildCapability p
+        @_updateBuiltEntityTally 'structures', p
       else
         @units.push p
+        @_updateBuiltEntityTally 'units', p
         
     constructor : (params) ->
       @[k] = v for k, v of params
@@ -110,7 +118,10 @@ define ->
       
       @factory    = {} # What structures are available to build things
       
+      # Track of entities that have been built and their number (to test if they have been lost)
+      @built_structures = {}
+      @built_units      = {}
+      
+      # Track currently alive entities
       @buildable_structures = []
       @buildable_units      = []
-      
-      @structures_under_construction = []

@@ -34,6 +34,11 @@ define ->
     
     delay : 0
     
+    clear : ->
+      @PLAYLIST = []
+      @playing  = false
+      @delay    = 0
+    
     add : (item) ->
       if not @playing
         if @PLAYLIST.length is 0

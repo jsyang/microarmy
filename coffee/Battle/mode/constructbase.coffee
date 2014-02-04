@@ -61,6 +61,7 @@ define ['core/Battle/UI'], (BattleUI) ->
       
     _constructionComplete : ->
       @battle.resetMode()
+      @cb?()
     
     addEntityToWorld : (type, x) ->
       @battle.ui.sound.ADD_SCAFFOLD()

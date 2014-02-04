@@ -125,7 +125,10 @@ module.exports = function(grunt) {
         ].join(' ; ')
       },
       renameCopiedSounds : {
-        command : "find ./core/snd -type f -name '*.mp3' | while read f; do mv \"$f\" \"${f%.mp3}\"; done"
+        command : [
+          "find ./core/snd -type f -name '*.mp3' | while read f; do mv \"$f\" \"${f%.mp3}\"; done",
+          "find ./core/snd -type f -name '*.wav' | while read f; do mv \"$f\" \"${f%.wav}\"; done"
+        ].join(' ; ')
       },
       clean: {
         command : [

@@ -1,6 +1,8 @@
 define [
   'core/BehaviorExecutor'
   'core/Battle/behaviors'
+  'core/Battle/Mission'
+  
   'core/Battle/World'
   'core/Battle/makeBackgroundImageData'
   
@@ -16,9 +18,11 @@ define [
   
   'core/Battle/mode/constructbase'
   'core/Battle/mode/commandpawn'
-  'core/Battle/mode/spawnpawn'
+  #'core/Battle/mode/spawnpawn'
 ], (BehaviorExecutor,
     BattleBehaviors,
+    BattleMission,
+    
     World,
     makeBackgroundImageData,
     
@@ -33,14 +37,15 @@ define [
     BattleUISound,
     
     ConstructBase,
-    CommandPawn,
-    SpawnPawn) ->
+    CommandPawn
+    #SpawnPawn
+) ->
   
   class Battle
     MODE : { # UI controller
       ConstructBase
       CommandPawn
-      SpawnPawn
+      #SpawnPawn
     }
         
     scroll :
@@ -92,6 +97,7 @@ define [
       
       @EVA.tick()
       @mode.tick?()
+      @mission?.tick()
       @ui.minimap.tick()
       @ui.sidebar.tick()
       @world.tick()
@@ -104,9 +110,9 @@ define [
       # background = sky + terrain layer, sits below the instances drawn layer
       @backgroundImgData = makeBackgroundImageData(@world)
       
-      # BTree interpreter
       @behaviors = new BehaviorExecutor BattleBehaviors(@world, @world.Classes)
       
+      # Factions
       @player = new BattlePlayer {
         team   : 0
         funds  : 20000
@@ -131,7 +137,7 @@ define [
         }
       }
       
-      # Various UI components, must be init in order.
+      # UI components, must be init in order.
       uiParams = { battle : @ }
       @ui = {}
       @ui.sidebar = new BattleUISidebar uiParams
@@ -139,6 +145,21 @@ define [
       @ui.cursor  = new BattleUICursor  uiParams
       @ui.sound   = new BattleUISound   uiParams
 
+      # Misc Battle controller stuff
       @EVA        = new BattleEVA
-      @mode       = new @MODE.ConstructBase uiParams
       @voices     = new BattleVoices
+      @mission    = new BattleMission {
+        battle : @
+        win : [
+          'EXTERMINATE'
+        ]
+        lose : [
+          'ALL_UNITS_AND_STRUCTURES_DESTROYED'
+          'COMMCENTER_DESTROYED'
+        ]
+      }
+      @mode       = new @MODE.ConstructBase {
+        battle : @
+        cb     : @mission.start.bind @mission
+      }
+      

@@ -215,6 +215,13 @@ define ->
           @corpsetime = 0
           true
       
+        doPlayerEntityRemove : ->
+          player = 'player'
+          player = 'enemy' if @AI
+          team = World.battle[player]
+          team.removeEntity.call team, @
+          true
+      
         setNextFrame : ->
           @frame_current++
           true
@@ -391,6 +398,8 @@ define ->
           
         doRotting : ->
           @corpsetime-- if @corpsetime > 0
+          if @corpsetime is 0
+            World.battle.behaviors.Decorators.doPlayerEntityRemove.call @
           true
         
         isCrewed : ->
@@ -520,8 +529,9 @@ define ->
         Structure                   : '([StructureDead],[StructureAlive])'
         StructureDeadExplode        : '<[isDead],[~StructureDeadCrumbleExplode]>'
         StructureDead               : '<[isDead],[~StructureDeadCrumble]>'
-        StructureDeadRemove         : '<[isDead],[setStructureCrumbled],[setUntargetable],[doRemove]>'
-        StructureDeadCrumble        : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable]>'
+        StructureDeadRemoveNow      : '<[isDead],[setUntargetable],[doRemove],[doPlayerEntityRemove]>'
+        StructureDeadRemove         : '<[isDead],[setStructureCrumbled],[setUntargetable],[doRemove],[doPlayerEntityRemove]>'
+        StructureDeadCrumble        : '<[!isStructureCrumbled],[setStructureCrumbled],[setUntargetable],[doPlayerEntityRemove]>'
         StructureDeadCrumbleExplode : '<[StructureDeadCrumble],[addStructureSmallExplosion]>'
         
         StructureBuilding           : '<[isBuilding],[doBuilding]>'
@@ -530,15 +540,15 @@ define ->
         StructureAlive              : '<[~StructureBuild],[!PawnNeedsReload],[PawnTarget],<[hasWeapon],[doRangedAttack]>>'
         StructureCrew               : '<[!isFullyCrewed],[doCrewing]>'
         
-        ScaffoldAlive               : '([StructureBuilding],<[addBuiltEntity],[setUntargetable],[doRemove]>)'
-        Scaffold                    : '([StructureDeadRemove],[ScaffoldAlive])'
+        ScaffoldAlive               : '([StructureBuilding],<[addBuiltEntity],[setUntargetable],[doRemove],[doPlayerEntityRemove]>)'
+        Scaffold                    : '([StructureDeadRemoveNow],[ScaffoldAlive])'
         
         PillboxTarget               : '(<[isTargeting],[isTargetVisibleRay]>,[doFindTargetRay])'
-        PillboxAlive                : '<[~StructureCrew],[!PawnNeedsReload],[PillboxTarget],[doRangedAttack]>'
+        PillboxAlive                : '<[!PawnNeedsReload],[PillboxTarget],[doRangedAttack]>'
         Pillbox                     : '([StructureDeadExplode],[PillboxAlive])'
         
         SmallTurretNeedsTurn        : '<[!isFacingTarget], [doTurning]>'
-        SmallTurretAlive            : '<[~StructureCrew],[!PawnNeedsReload],[PawnTarget],[!SmallTurretNeedsTurn],[doRangedAttack]>'
+        SmallTurretAlive            : '<[!PawnNeedsReload],[PawnTarget],[!SmallTurretNeedsTurn],[doRangedAttack]>'
         SmallTurret                 : '([StructureDeadExplode],[SmallTurretAlive])'
         
         MissileRack                 : '([StructureDeadExplode],[StructureAlive])'

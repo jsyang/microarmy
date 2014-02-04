@@ -66,7 +66,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     spriteName            : 'pistolshell'
     sound                 : 'mgburst'
     range_current         : 50
-    damage                : [20, 35]
+    damage                : [4, 10]
     accuracy              : 0.65
     accuracy_target_bonus : 0.35
     speed                 : 4

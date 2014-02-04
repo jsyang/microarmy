@@ -68,13 +68,13 @@ define [
         command = @commands.shift()
         @[command]()
       else if $.r() < $.r(0.01)
-        console.log    'BUILD_IDLE_UNIT'
+        #console.log    'BUILD_IDLE_UNIT'
         @commands.push 'BUILD_IDLE_UNIT'
       else if $.r() < $.r(0.03)
-        console.log    'FORM_SQUAD'
+        #console.log    'FORM_SQUAD'
         @commands.push 'FORM_SQUAD'
       else if $.r() < $.r(0.05)
-        console.log    'SEND_SCOUT_SQUAD'
+        #console.log    'SEND_SCOUT_SQUAD'
         @commands.push 'SEND_SCOUT_SQUAD' 
   
     tick : ->
