@@ -1,4 +1,5 @@
 define [
+  'core/Battle/UI/sidebar.build'
   'core/Battle/UI'
   'core/UI/UIGroup'
   'core/UI/Button'
@@ -67,7 +68,6 @@ define [
             @battle.EVA.INSUFFICIENT_FUNDS()
         build = build.bind @, type
       else
-        console.log type
         build = @battle.player.build.bind @battle.player, type
       build
     
@@ -89,11 +89,12 @@ define [
           button = new Button {
             x
             y
-            sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
-            sprite_down : "sidebar-button-#{type.toLowerCase()}-1"
-            pressed     : @_getBuildFunction type, attr.isStructure
-            over        : @_getMouseOverFunction attr.name, attr.cost
-            out         : => @battle.ui.cursor.clearText()
+            sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
+            sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
+            pressed      : @_getBuildFunction type, attr.isStructure
+            pressedright : -> # todo
+            over         : @_getMouseOverFunction attr.name, attr.cost
+            out          : => @battle.ui.cursor.clearText()
           }
           
           y += 100
