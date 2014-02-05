@@ -10,7 +10,6 @@ define ->
 
     constructor : (params) ->
       @[k] = v for k, v of params
-      document.body.style.cursor = 'crosshair'
       @_setColors @battle.player.team
       
     clearText : ->

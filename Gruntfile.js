@@ -145,7 +145,8 @@ module.exports = function(grunt) {
     "core/microarmy.min.js",
     "core/spritesheet.png",
     "core/snd/*",
-    "index.html"
+    "index.html",
+    "core/timestamp.txt"
   ];
   
   var gruntConfig = {
@@ -181,6 +182,9 @@ module.exports = function(grunt) {
       },
       compileSFXList: {
         command : "ls -1 ./core/snd | sed -e 's/\\.[a-zA-Z]*$//' > ./core/RESOURCES_SND.txt"
+      },
+      dateStampBuild : {
+        command : "date +%Y.%m.%d-%R > ./core/timestamp.txt"
       },
       copySounds: {
         command : [
@@ -295,6 +299,7 @@ module.exports = function(grunt) {
     
     nodewebkit: {
       options: {
+        version : '0.9.0-rc1',
         //timestamped_builds : true,
         mac : true,
         win : false,
@@ -327,6 +332,7 @@ module.exports = function(grunt) {
     'shell:createGFXINFO',
     'shell:createSFXINFO',
     'requirejs:compileUglify',
+    'shell:dateStampBuild',
     'zip',
     'unzip',
     'shell:findTodos'
@@ -344,6 +350,7 @@ module.exports = function(grunt) {
     'shell:createGFXINFO',
     'shell:createSFXINFO',
     'requirejs:compileUglify',
+    'shell:dateStampBuild',
     'zip',
     'unzip',
     'shell:findTodos',
