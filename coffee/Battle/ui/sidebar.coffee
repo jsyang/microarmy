@@ -43,50 +43,59 @@ define [
           sprite_down : 'sidebar-button-1-1'
         }
     
+    _getItemAttributes : (type) ->
+      typeClass = @battle.world.Classes[type]
+      name = typeClass::NAMETEXT
+      cost = typeClass::COST
+      isStructure = typeClass.__super__.constructor.name is 'Structure'
+      cost += @battle.world.Classes.EngineerInfantry::COST if isStructure
+      {
+        name
+        cost
+        isStructure
+      }
+    
+    _getBuildFunction : (type, isStructure) ->
+      if isStructure
+        build = (_type) ->
+          if @battle.player.canBuyPawnName _type
+            @battle.switchMode 'ConstructBase', {
+              build_structure : true
+              build_structure_type : _type
+            }
+          else
+            @battle.EVA.INSUFFICIENT_FUNDS()
+        build = build.bind @, type
+      else
+        console.log type
+        build = @battle.player.build.bind @battle.player, type
+      build
+    
+    _getMouseOverFunction : (name, cost) ->
+      ((name, cost) ->
+        @setText {
+          value  : "#{name} ($#{cost})"
+          halign : 'center'
+          color  : '#000'
+        }).bind @battle.ui.cursor, name, cost
+    
     _setColButtons : (x, y, col) ->
       @["COL#{col}BUTTONS"] = []
       buildable_type = ['structures', 'units'][col]
       buildable_list = @battle.player["buildable_#{buildable_type}"]
       if buildable_list.length
         for type in buildable_list
-          typeClass = @battle.world.Classes[type]
-          name = typeClass::NAMETEXT
-          cost = typeClass::COST
-          isStructure = typeClass.__super__.constructor.name is 'Structure'
-          
-          # todo: This is probably a really horrible way to go about it, come up with something better later.
-          # Add the cost of sending an Engineer from the CommCenter
-          if isStructure
-            cost += @battle.world.Classes.EngineerInfantry::COST
-            buildFunction = (type, _battle) ->
-              @state = 'down'
-              _battle.switchMode 'ConstructBase', {
-                build_structure : true
-                build_structure_type : type
-              }
-          else
-            buildFunction = @battle.player.build.bind @battle.player, type
-            
+          attr = @_getItemAttributes type
           button = new Button {
             x
             y
             sprite_up   : "sidebar-button-#{type.toLowerCase()}-0"
             sprite_down : "sidebar-button-#{type.toLowerCase()}-1"
-            pressed     : buildFunction
-            over : ((name, cost) ->
-              @setText {
-                value  : "#{name} ($#{cost})"
-                halign : 'center'
-                color  : '#000'
-              }).bind @battle.ui.cursor, name, cost
-            out : =>
-              @battle.ui.cursor.clearText()
+            pressed     : @_getBuildFunction type, attr.isStructure
+            over        : @_getMouseOverFunction attr.name, attr.cost
+            out         : => @battle.ui.cursor.clearText()
           }
           
-          # Build mode, click again to select location.
-          if isStructure
-            button.pressed = button.pressed.bind button, type, @battle
-            
           y += 100
           @["COL#{col}BUTTONS"].push button
     

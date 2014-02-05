@@ -4,6 +4,15 @@ define ->
     team  : 0
     funds : 0 
     
+    canBuyPawnName : (name) ->
+      pawnClass = @battle.world.Classes[name]
+      unless pawnClass?
+        cost = pawnClass::COST
+        cost += @battle.world.Classes.EngineerInfantry::COST if pawnClass.__super__.name is 'Structure'
+        cost <= @funds
+      else
+        false
+    
     _canBuyPawn : (p) ->
       cost = p::COST
       cost += @battle.world.Classes.EngineerInfantry::COST if p instanceof @battle.world.Classes.Structure
