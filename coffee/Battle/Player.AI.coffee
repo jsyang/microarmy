@@ -47,7 +47,6 @@ define [
     # todo: move this into AIConstruct
     CONSTRUCT_INITIAL_BASE : ->
       for k, v of @starting_inventory
-        # todo: structure placement is still a little bit weird.
         temp_instance = new @battle.world.Classes[k] { team : @team }
         x = @build_x
         until @_checkBuildLocationValid(x, temp_instance) or x < 0
