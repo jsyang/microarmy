@@ -11,14 +11,19 @@ define ['core/Battle/UI'], (UI) ->
       atom.context.drawSprite @_getName(), @x, @y
         
     tick : ->
-      pressed   = atom.input.pressed 'mouseleft'
-      released  = atom.input.pressed 'mouseleft'
-      down      = atom.input.down 'mouseleft'
+      pressedL  = atom.input.pressed  'mouseleft'
+      releasedL = atom.input.released 'mouseleft'
+      
+      pressedR  = atom.input.pressed  'mouseright'
+      releasedR = atom.input.released 'mouseright'
+      
+      downL     = atom.input.down 'mouseleft'
       if @containsCursor()
         @contained_cursor = true
         @state = 'up'
-        @state = 'down' if down
-        @pressed?() if released
+        @state = 'down' if downL
+        @pressed?()  if releasedL
+        @pressedR?() if releasedR
         @over?()
       else
         if @contained_cursor

@@ -90,7 +90,7 @@ define [
             sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
             sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
             pressed      : @_getBuildFunction type, attr.isStructure
-            pressedright : -> # todo
+            pressedR     : -> @player.buildsystem.removeFromQueue @type
             over         : @_getMouseOverFunction attr.name, attr.cost
             out          : => @battle.ui.cursor.clearText()
             draw         : ->

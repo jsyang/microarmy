@@ -20,8 +20,8 @@ define ->
       name of @player.buildable_structures or
       name of @player.buildable_units
 
-    _removeFromQueue : (name) ->
-      @queue[name]--
+    removeFromQueue : (name) ->
+      @queue[name]-- if @queue[name]?
       delete @queue[name] unless @queue[name] > 0
       
     _addToQueue : (name) ->
@@ -69,7 +69,7 @@ define ->
           if isIdle and canBuildType
             factory[k] = v for k,v of order
             @player.funds -= @getCost name
-            @_removeFromQueue name
+            @removeFromQueue name
             return
         # Couldn't find a factory that's free; queuing.
         @_addToQueue name unless noQueueActions
