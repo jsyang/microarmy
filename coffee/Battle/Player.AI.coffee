@@ -21,7 +21,8 @@ define [
   
   BUILD_PRIORITY =
     AGGRESSIVE :
-      PistolInfantry : 1
+      PistolInfantry : 4
+      RocketInfantry : 1
   
   class AIPlayer extends Player
     AI    : true
@@ -37,7 +38,8 @@ define [
     
     FORM_SQUAD : ->
       # todo: hard coded for now. the squad should be mixed later
-      @squad.form 'PistolInfantry'
+      type = $.WR BUILD_PRIORITY.AGGRESSIVE
+      @squad.form type
     
     SEND_SCOUT_SQUAD : ->
       @squad.sendIdleSquadToScout @vision.getNextLocationScout()
@@ -45,28 +47,26 @@ define [
     # todo: move this into AIConstruct
     CONSTRUCT_INITIAL_BASE : ->
       for k, v of @starting_inventory
-        if v > 0
-          # todo: structure placement is still a little bit weird.
-          temp_instance = new @battle.world.Classes[k] { team : @team }
-          x = @build_x
-          until @_checkBuildLocationValid(x, temp_instance) or x < 0
-            x += @dx * $.R(1,8)
-            
-          unless x < 0
-            entity = @battle.MODE.ConstructBase::addEntityToWorld.call(@, k, x)
-            @addEntity entity
-            @commands.push 'CONSTRUCT_INITIAL_BASE'
-            @starting_inventory[k]--
-            
-            @build_x = x
-        else
-          delete @starting_inventory[k]
+        # todo: structure placement is still a little bit weird.
+        temp_instance = new @battle.world.Classes[k] { team : @team }
+        x = @build_x
+        until @_checkBuildLocationValid(x, temp_instance) or x < 0
+          x += @dx * $.R(1,8)
+          
+        unless x < 0
+          entity = @battle.MODE.ConstructBase::addEntityToWorld.call(@, k, x)
+          @addEntity entity
+          @commands.push 'CONSTRUCT_INITIAL_BASE'
+          @build_x = x
+          @starting_inventory[k]--
+          delete @starting_inventory[k] if @starting_inventory[k] is 0
           return
+      return
 
     _checkBuildLocationValid : (x, t) ->
       cb = @battle.MODE.ConstructBase
       check1 = cb::checkLocationTerrain.call @, x, t
-      check2 = cb::checkLocationEmptyOfExistingStructure.call @, x
+      check2 = cb::checkLocationEmptyOfExistingStructure.call @, x, t
       check1 and check2
 
     _processNextCommand : ->

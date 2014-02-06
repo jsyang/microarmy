@@ -1,6 +1,6 @@
 define ->
   class AIPlayerSquad
-    SQUADSIZE  : 5
+    SQUADSIZE  : 7
     MAXSQUADS  : 6
     
     CYCLES_PER_TICK : 50 # Period the updater runs

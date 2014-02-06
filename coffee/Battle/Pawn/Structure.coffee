@@ -80,6 +80,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       'EngineerInfantry'
       'Pillbox'
       'SmallTurret'
+      'MissileRackSmall'
     ]
     buildable_primitives : [
       'Structure'
@@ -233,7 +234,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class MissileRackSmall extends Structure
     NAMETEXT          : 'Missile Launcher'
-    COST              : 1200
+    COST              : 2200
     hDist2            : 18
     sight             : 9
     health_current    : [100, 180]

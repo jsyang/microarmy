@@ -129,8 +129,10 @@ define [
           'CONSTRUCT_INITIAL_BASE'
         ]
         starting_inventory : {
+          'CommCenter' : 1
+          'MissileRack' : 1
+          'MissileRackSmall' : 2
           'Barracks' : 1
-          'MissileRackSmall' : 1
         }
       }
       

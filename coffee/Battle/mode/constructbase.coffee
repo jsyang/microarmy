@@ -26,17 +26,16 @@ define ['core/Battle/UI'], (BattleUI) ->
       @temp_instance.direction = @direction
       @temp_instance.getName()
     
-    checkLocationEmptyOfExistingStructure : (x) ->
+    # Consumed by Player.AI also
+    checkLocationEmptyOfExistingStructure : (x, build_type_instance = @temp_instance) ->
       for s in @battle.world.Instances.Structure
         if s instanceof @battle.world.Classes.Scaffold
           temp_instance = new @battle.world.Classes[s.build_type]
-          w2 = temp_instance._halfWidth
+          w2 = temp_instance._halfWidth + build_type_instance._halfWidth + 2
         else
-          w2 = s._halfWidth
+          w2 = s._halfWidth + build_type_instance._halfWidth + 2
         if s.x - w2 <= x <= s.x + w2
           return false
-        else
-          return true
       return true
     
     checkLocationTerrain : (x, temp_instance = @temp_instance) ->
