@@ -34,6 +34,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     crumbled        : false         # Already destroyed?
     corpsetime      : 1
     state           : STATE.GOOD
+    tech_level      : 1
     #shoot_dy        : 0            # Where does the projectile origin from, relative to structure
     
     getName : ->

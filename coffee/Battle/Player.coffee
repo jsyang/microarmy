@@ -71,10 +71,10 @@ define [
       delete @[arrayName][index] unless index is -1
       @_updateEntityArray arrayName
 
-    build : (name, x, direction) ->
-      @buildsystem.sendBuildOrder name, x, direction
+    build : (name, x, direction, noQueueActions) ->
+      @buildsystem.sendBuildOrder name, x, direction, noQueueActions
       @battle.ui.sound.BUILDING() unless @AI
-      @battle.EVA.BUILDING()      unless @AI
+      # @battle.EVA.BUILDING()      unless @AI
     
     addEntity : (p) ->
       if p instanceof @battle.world.Classes.Structure

@@ -5,7 +5,7 @@ define ->
     
     getCost : (name) ->
       pawnClass = @battle.world.Classes[name]
-      pawnType  = pawnClass.__super__.name
+      pawnType  = pawnClass.__super__.constructor.name
       cost = pawnClass::COST
       cost += @battle.world.Classes.EngineerInfantry::COST if pawnType is 'Structure'
       cost

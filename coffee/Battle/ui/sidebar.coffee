@@ -79,20 +79,28 @@ define [
       buildable_type = ['structures', 'units'][col]
       buildable_list = @battle.player["buildable_#{buildable_type}"]
       for type, numberOfFactories of buildable_list
-        attr = @_getItemAttributes type
-        button = new Button {
-          x
-          y
-          sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
-          sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
-          pressed      : @_getBuildFunction type, attr.isStructure
-          pressedright : -> # todo
-          over         : @_getMouseOverFunction attr.name, attr.cost
-          out          : => @battle.ui.cursor.clearText()
-        }
-        
-        y += 100
-        @["COL#{col}BUTTONS"].push button
+        if @battle.player.tech_level >= @battle.world.Classes[type]::tech_level
+          attr = @_getItemAttributes type
+          player = @battle.player
+          button = new Button {
+            type
+            player
+            x
+            y
+            sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
+            sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
+            pressed      : @_getBuildFunction type, attr.isStructure
+            pressedright : -> # todo
+            over         : @_getMouseOverFunction attr.name, attr.cost
+            out          : => @battle.ui.cursor.clearText()
+            draw         : ->
+              @constructor::draw.call @
+              queued = @player.buildsystem.queue[@type]
+              atom.context.drawText queued, @x + @w, @y, '#f00', 'right' if queued?
+          }
+          
+          y += 100
+          @["COL#{col}BUTTONS"].push button
     
     updateBuildButtons : ->
       delete @COL0BUTTONS

@@ -8,7 +8,7 @@ define ->
       if text instanceof Array
         lines = text
       else
-        lines = text.split('\n')
+        lines = ('' + text).split('\n')
       
       @save()
       @fillStyle = color

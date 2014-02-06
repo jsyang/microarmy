@@ -80,10 +80,11 @@ define ['core/Battle/UI'], (BattleUI) ->
       @battle.player.addEntity entity
     
     _setBuildLocationToCursor : ->
-      @battle.player.sendEngineerToBuildStructure(
+      @battle.player.build(
         @build_structure_type,
         atom.input.mouse.x + @battle.scroll.x,
-        @direction
+        @direction,
+        true
       )
     
     _checkCursorLocationValidBuild : ->
