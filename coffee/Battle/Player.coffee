@@ -1,31 +1,24 @@
-define ->
+define [
+  'core/Battle/Player.Build'
+], (PlayerBuild) ->
   class Player
-    AI    : false
-    team  : 0
-    funds : 0 
+    AI         : false
+    team       : 0
+    funds      : 0 
+    tech_level : 99
     
-    canBuyPawnName : (name) ->
-      pawnClass = @battle.world.Classes[name]
-      unless pawnClass?
-        cost = pawnClass::COST
-        cost += @battle.world.Classes.EngineerInfantry::COST if pawnClass.__super__.name is 'Structure'
-        cost <= @funds
-      else
-        false
-    
-    _canBuyPawn : (p) ->
-      cost = p::COST
-      cost += @battle.world.Classes.EngineerInfantry::COST if p instanceof @battle.world.Classes.Structure
-      cost <= @funds
+    canBuyPawnName : (name) -> @buildsystem.canBuy name
     
     _updateBuildButtons : ->
       @battle.ui.sidebar.updateBuildButtons()
     
     _removeFactory : (p) ->
-      if p.buildable_type?
-        factories = @factory[p.buildable_type]
-        index = factories.indexOf p
-        factories.splice index, 1
+      return unless p.buildable_primitives?
+      for primitive in p.buildable_primitives
+        newFactories = []
+        for f in @factory[primitive]
+          newFactories.push f unless f is p
+        @factory[primitive] = newFactories
         @_updateBuildButtons()
 
     # Prunes undefineds from entity arrays.
@@ -37,25 +30,26 @@ define ->
       @[name] = newArray
     
     _addBuildCapability : (p) ->
-      if p.buildable_type?
+      if p.buildable_primitives?
         @battle.EVA.NEW_CONSTRUCTION_OPTIONS() unless @AI
-          
-        if p.buildable_type instanceof Array
-          for type in p.buildable_type when @buildable_units.indexOf(type) is -1
-            if @battle.world.Classes[type].__super__.constructor.name is 'Structure'
-              @buildable_structures.push type
-            else
-              @factory[type] = [p] unless @factory[type]?
-              @factory[type].push p
-              @buildable_units.push type
-        else
-          type = p.buildable_type
-          if @battle.world.Classes[type] instanceof @battle.world.Classes.Structure
-            @buildable_structures.push type
+        
+        for primitive in p.buildable_primitives
+          if @factory[primitive]?
+            @factory[primitive].push p
           else
-            @buildable_units.push type
-            @factory[type] = [p]
-          
+            @factory[primitive] = [p]
+        
+        for type in p.buildable_types
+          if @battle.world.Classes[type].__super__.constructor.name is 'Structure'
+            if @buildable_structures[type]?
+              @buildable_structures[type]++
+            else
+              @buildable_structures[type] = 1
+          else
+            if @buildable_units[type]?
+              @buildable_units[type]++
+            else
+              @buildable_units[type] = 1
         @_updateBuildButtons()
     
     _updateBuiltEntityTally : (type, p) ->
@@ -63,20 +57,6 @@ define ->
         @["built_#{type}"][p.constructor.name]++
       else
         @["built_#{type}"][p.constructor.name] = 1
-    
-    sendEngineerToBuildStructure : (name, x, direction) ->
-      f = @factory['EngineerInfantry']
-      if f? and f.length > 0
-        if @_canBuyPawn @battle.world.Classes[name]
-          f = f[0]
-          f.build_structure           = true
-          f.build_structure_x         = x
-          f.build_structure_type      = name
-          f.build_structure_direction = direction
-          @funds -= @battle.world.Classes[name]::COST
-          @build 'EngineerInfantry'
-        else if not @AI
-          @battle.EVA.INSUFFICIENT_FUNDS()
           
     # Called from Behaviors.
     removeEntity : (p) ->
@@ -86,30 +66,15 @@ define ->
         @_removeFactory p
         @_updateBuildButtons()
       else
-        arrayName = 'units'      
-      index = @[arrayName].indexOf(p)
+        arrayName = 'units'
+      index = @[arrayName].indexOf p
       delete @[arrayName][index] unless index is -1
-      @_updateEntityArray(arrayName)
+      @_updateEntityArray arrayName
 
-    build : (name) ->
-      throw new Error "Player tried to build with a type name!" unless name?
-    
-      buildClass = @battle.world.Classes[name]
-      if @_canBuyPawn buildClass
-        if @factory[name]?
-          factory = @factory[name][0]
-          if factory?
-            if factory.build_type?
-              # Already building something.
-              # todo: build queue
-              @battle.ui.sound.INVALID() unless @AI
-            else
-              factory.build_type = name
-              @funds -= buildClass::COST
-              @battle.ui.sound.BUILDING() unless @AI
-              @battle.EVA.BUILDING()      unless @AI
-      else if not @AI
-        @battle.EVA.INSUFFICIENT_FUNDS()
+    build : (name, x, direction) ->
+      @buildsystem.sendBuildOrder name, x, direction
+      @battle.ui.sound.BUILDING() unless @AI
+      @battle.EVA.BUILDING()      unless @AI
     
     addEntity : (p) ->
       if p instanceof @battle.world.Classes.Structure
@@ -122,15 +87,28 @@ define ->
         
     constructor : (params) ->
       @[k] = v for k, v of params
+      
+      # Track currently alive entities
       @structures = []
       @units      = []
       
-      @factory    = {} # What structures are available to build things
+      # Track things that can build all entities under a primitive type
+      @factory    = {}
+      # ex =
+      #   Infantry : [ Barracks, Barracks, CommCenter, ...]
+      #   Vehicles : [ Depot, ... ]
+      #   Aircraft : [ Helipad, Airstrip, ...]
       
       # Track of entities that have been built and their number (to test if they have been lost)
       @built_structures = {}
       @built_units      = {}
       
-      # Track currently alive entities
-      @buildable_structures = []
-      @buildable_units      = []
+      # Track specific buildable entities
+      @buildable_structures = {}
+      @buildable_units      = {}
+      
+      # Queuing  
+      @buildsystem = new PlayerBuild {
+        battle : @battle
+        player : @
+      }

@@ -74,10 +74,14 @@ define ['core/Battle/Pawn'], (Pawn) ->
     build_structure_x    : null           # Where do we send our Engineer off to?
     build_current        : 0
     build_max            : 120
-    buildable_type       : [
+    buildable_types      : [
       'RocketInfantry'
       'EngineerInfantry'
       'Pillbox'
+    ]
+    buildable_primitives : [
+      'Structure'
+      'Infantry'
     ]
     build_modifiers      : [
       BUILDMODIFIER.SET_RALLY_POINT
@@ -85,16 +89,21 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   
   class Barracks extends Structure
-    NAMETEXT           : 'Barracks'
-    COST               : 3000
-    construct_sound    : 'tack'
-    hDist2             : 169
-    health_current     : [1800, 1950]
-    health_max         : [1950, 2500]
-    DX_DOOR            : 6
-    buildable_type     : 'PistolInfantry'
-    build_current      : 0
-    build_max          : 30
+    NAMETEXT             : 'Barracks'
+    COST                 : 3000
+    construct_sound      : 'tack'
+    hDist2               : 169
+    health_current       : [1800, 1950]
+    health_max           : [1950, 2500]
+    DX_DOOR              : 6
+    build_current        : 0
+    build_max            : 30
+    buildable_types      : [
+      'PistolInfantry'
+    ]
+    buildable_primitives : [
+      'Infantry'
+    ]
     build_modifiers    : [
       BUILDMODIFIER.SPAWN_AT_DOOR
       BUILDMODIFIER.SET_RALLY_POINT
@@ -115,8 +124,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
         'MissileRackSmall'  : 240
         'MissileRack'       : 400
         'SmallTurret'       : 300
-        'Barracks'          : 600
-        'CommCenter'        : 1000
+        'Barracks'          : 10 #600
+        'CommCenter'        : 10 #1000
       }[@build_type]
   
   class AmmoDump extends Structure

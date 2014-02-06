@@ -60,6 +60,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     berserk_chance : -> $.r(0.59)
     ammo_current   : 2
     ammo_max       : 2
+    #prerequisites  : ['Barracks']
+    tech_level     : 1
     # In which attack state frames do we want to spawn projectiles
     SHOTFRAMES :
       '1' : true
@@ -80,6 +82,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     berserk_chance : -> $.r(0.1)
     ammo_current   : 1
     ammo_max       : 1
+    prerequisites  : ['CommCenter']
+    tech_level     : 4
     SHOTFRAMES :
       '3' : true
       
@@ -91,6 +95,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     #build_type     : 'Pillbox'
     health_current : [20, 50]
     health_max     : 20
+    prerequisites  : ['CommCenter']
+    tech_level     : 2
 
   exportClasses = {
     Infantry

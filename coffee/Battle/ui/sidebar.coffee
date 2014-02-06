@@ -1,5 +1,4 @@
 define [
-  'core/Battle/UI/sidebar.build'
   'core/Battle/UI'
   'core/UI/UIGroup'
   'core/UI/Button'
@@ -46,14 +45,10 @@ define [
     
     _getItemAttributes : (type) ->
       typeClass = @battle.world.Classes[type]
-      name = typeClass::NAMETEXT
-      cost = typeClass::COST
-      isStructure = typeClass.__super__.constructor.name is 'Structure'
-      cost += @battle.world.Classes.EngineerInfantry::COST if isStructure
       {
-        name
-        cost
-        isStructure
+        name        : typeClass::NAMETEXT
+        cost        : @battle.player.buildsystem.getCost type
+        isStructure : typeClass.__super__.constructor.name is 'Structure'
       }
     
     _getBuildFunction : (type, isStructure) ->
@@ -83,22 +78,21 @@ define [
       @["COL#{col}BUTTONS"] = []
       buildable_type = ['structures', 'units'][col]
       buildable_list = @battle.player["buildable_#{buildable_type}"]
-      if buildable_list.length
-        for type in buildable_list
-          attr = @_getItemAttributes type
-          button = new Button {
-            x
-            y
-            sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
-            sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
-            pressed      : @_getBuildFunction type, attr.isStructure
-            pressedright : -> # todo
-            over         : @_getMouseOverFunction attr.name, attr.cost
-            out          : => @battle.ui.cursor.clearText()
-          }
-          
-          y += 100
-          @["COL#{col}BUTTONS"].push button
+      for type, numberOfFactories of buildable_list
+        attr = @_getItemAttributes type
+        button = new Button {
+          x
+          y
+          sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
+          sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
+          pressed      : @_getBuildFunction type, attr.isStructure
+          pressedright : -> # todo
+          over         : @_getMouseOverFunction attr.name, attr.cost
+          out          : => @battle.ui.cursor.clearText()
+        }
+        
+        y += 100
+        @["COL#{col}BUTTONS"].push button
     
     updateBuildButtons : ->
       delete @COL0BUTTONS

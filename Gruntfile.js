@@ -331,7 +331,7 @@ module.exports = function(grunt) {
     'shell:compileSFXList',
     'shell:createGFXINFO',
     'shell:createSFXINFO',
-    'requirejs:compileUglify',
+    'requirejs:compile',
     'shell:dateStampBuild',
     'zip',
     'unzip',
