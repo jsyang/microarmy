@@ -16,6 +16,10 @@ define ->
       hasFunds = @getCost(name) <= @player.funds
       hasTech and hasFunds
 
+    isBuildable : (name) ->
+      name of @player.buildable_structures or
+      name of @player.buildable_units
+
     _removeFromQueue : (name) ->
       @queue[name]--
       delete @queue[name] unless @queue[name] > 0
@@ -28,7 +32,7 @@ define ->
         @battle.ui.sound.INVALID() unless @AI
 
     sendBuildOrder : (name, x, direction, noQueueActions) ->
-      unless @canBuy name
+      unless @canBuy(name) and @isBuildable(name)
         return
         
       pawnClass = @battle.world.Classes[name]

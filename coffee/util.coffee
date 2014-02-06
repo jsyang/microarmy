@@ -30,7 +30,8 @@ define ->
       else
         sum += v for k,v of o
       sum
-    
+  
+    # todo: remove all references to this  
     extend : (target, extender) ->
       target = {} unless target?
       target[k] = v for k,v of extender

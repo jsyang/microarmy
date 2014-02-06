@@ -79,6 +79,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
       'RocketInfantry'
       'EngineerInfantry'
       'Pillbox'
+      'SmallTurret'
     ]
     buildable_primitives : [
       'Structure'
@@ -188,7 +189,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   
   class SmallTurret extends Structure
     NAMETEXT        : 'Turret'
-    COST            : 900
+    COST            : 1200
     construct_sound : 'sliderack1'
     hDist2          : 90
     sight           : 5

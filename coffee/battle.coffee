@@ -123,7 +123,7 @@ define [
       
       @enemy = new BattlePlayerAI {
         team     : 1
-        funds    : 9000
+        funds    : 15000
         battle   : @
         commands : [
           'CONSTRUCT_INITIAL_BASE'

@@ -19,7 +19,10 @@ define [
         for f in @factory[primitive]
           newFactories.push f unless f is p
         @factory[primitive] = newFactories
-        @_updateBuildButtons()
+        
+      @_updateBuildableTypes p, 'remove'
+      @_updateBuildButtons()
+      return
 
     # Prunes undefineds from entity arrays.
     _updateEntityArray : (name) ->
@@ -28,6 +31,30 @@ define [
         if p? and p.team is @team and not p.isDead() and not p.isPendingRemoval()
           newArray.push p
       @[name] = newArray
+    
+    _updateBuildableTypes : (p, operation) ->
+      for type in p.buildable_types
+        if @battle.world.Classes[type].__super__.constructor.name is 'Structure'
+          if operation is 'add'
+            if @buildable_structures[type]?
+              @buildable_structures[type]++
+            else
+              @buildable_structures[type] = 1
+          else
+            if @buildable_structures[type]?
+              @buildable_structures[type]--
+              delete @buildable_structures[type] if @buildable_structures[type] is 0
+        else
+          if operation is 'add'
+            if @buildable_units[type]?
+              @buildable_units[type]++
+            else
+              @buildable_units[type] = 1
+          else
+            if @buildable_units[type]?
+              @buildable_units[type]--
+              delete @buildable_units[type] if @buildable_units[type] is 0
+      return
     
     _addBuildCapability : (p) ->
       if p.buildable_primitives?
@@ -39,18 +66,9 @@ define [
           else
             @factory[primitive] = [p]
         
-        for type in p.buildable_types
-          if @battle.world.Classes[type].__super__.constructor.name is 'Structure'
-            if @buildable_structures[type]?
-              @buildable_structures[type]++
-            else
-              @buildable_structures[type] = 1
-          else
-            if @buildable_units[type]?
-              @buildable_units[type]++
-            else
-              @buildable_units[type] = 1
+        @_updateBuildableTypes p, 'add'
         @_updateBuildButtons()
+      return
     
     _updateBuiltEntityTally : (type, p) ->
       if @["built_#{type}"][p.constructor.name]?

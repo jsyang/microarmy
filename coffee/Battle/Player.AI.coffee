@@ -1,10 +1,11 @@
 define [
   'core/util/SimpleHash'
   'core/Battle/Player'
+  'core/Battle/Player.Build'
   'core/Battle/Player.AI.Vision'
   'core/Battle/Player.AI.Squad'
   'core/Battle/Player.AI.Construct'
-], (SimpleHash, Player, AIVision, AISquad, AIConstruct) ->
+], (SimpleHash, Player, PlayerBuild, AIVision, AISquad, AIConstruct) ->
   
   TRAIT = # Strategic
     AGGRESSIVE : 0 # Stops at nothing to destroy enemy. Scouts often, at first opportunity.
@@ -18,6 +19,10 @@ define [
     BASE_DEFENSE : 3 # Bias toward fortifying existing bases
     CHEAP        : 4 # Bias toward cheapest means of victory
   
+  BUILD_PRIORITY =
+    AGGRESSIVE :
+      PistolInfantry : 1
+  
   class AIPlayer extends Player
     AI    : true
     
@@ -26,12 +31,13 @@ define [
     
     BUILD_IDLE_UNIT : ->
       # todo: make this not so random later
-      type = $.AR(@buildable_units)
-      @build type if type?
+      #type = $.AR(@buildable_units)
+      type = $.WR BUILD_PRIORITY.AGGRESSIVE
+      @build(type, null, null, true) if type?
     
     FORM_SQUAD : ->
-      # todo: make this not so random later
-      @squad.form $.AR(@buildable_units)
+      # todo: hard coded for now. the squad should be mixed later
+      @squad.form 'PistolInfantry'
     
     SEND_SCOUT_SQUAD : ->
       @squad.sendIdleSquadToScout @vision.getNextLocationScout()
@@ -68,13 +74,10 @@ define [
         command = @commands.shift()
         @[command]()
       else if $.r() < $.r(0.01)
-        #console.log    'BUILD_IDLE_UNIT'
         @commands.push 'BUILD_IDLE_UNIT'
       else if $.r() < $.r(0.03)
-        #console.log    'FORM_SQUAD'
         @commands.push 'FORM_SQUAD'
       else if $.r() < $.r(0.05)
-        #console.log    'SEND_SCOUT_SQUAD'
         @commands.push 'SEND_SCOUT_SQUAD' 
   
     tick : ->
@@ -105,6 +108,9 @@ define [
         player : @
         battle : @battle
       
-      @squad     = new AISquad     childrenParams
-      @vision    = new AIVision    childrenParams
-      @construct = new AIConstruct childrenParams
+      @squad       = new AISquad     childrenParams
+      @vision      = new AIVision    childrenParams
+      @construct   = new AIConstruct childrenParams
+      
+      # Queuing  
+      @buildsystem = new PlayerBuild childrenParams
