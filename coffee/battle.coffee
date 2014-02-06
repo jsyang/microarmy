@@ -52,10 +52,7 @@ define [
       margin : 50 # if something is closer than this to the viewport, render it
       x : 0
       y : 0
-    
-    _drawBackground : (x = 0, y = 0) ->
-      atom.context.putImageData(@backgroundImgData, x, y)
-    
+        
     resetMode : ->
       @switchMode 'CommandPawn'
     
@@ -70,12 +67,12 @@ define [
       v.resize?() for k, v of @ui
       
     draw : ->
-      @_drawBackground(-@scroll.x, -@scroll.y) # scroll position
+      atom.context.putImageData @backgroundImgData, -@scroll.x, -@scroll.y
       
       # Drawing order is based on primitiveCLasses
       for type in @world.primitiveClasses
         switch type
-          when 'Structure', 'Infantry'
+          when 'Structure', 'Infantry', 'Prop'
             valign = 'bottom'
             halign = 'center'
           when 'Projectile', 'Explosion'

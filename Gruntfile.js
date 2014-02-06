@@ -113,6 +113,7 @@ module.exports = function(grunt) {
     './gfx/rocketinfantry/',
     './gfx/rocketshell/',
     './gfx/scaffold/',
+    './gfx/smalltree/',
     './gfx/smokelarge/',
     './gfx/smokesmall/',
     './gfx/turret/',
@@ -214,7 +215,7 @@ module.exports = function(grunt) {
       },
       
       copyNodeWebkitManifest : {
-        command : 'cp ./nw/* ./dist'
+        command : 'cp ./nodewebkit/* ./dist'
       },
       
       deleteDistZip : {

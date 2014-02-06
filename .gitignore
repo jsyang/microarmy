@@ -3,5 +3,4 @@ core/
 dist/
 build/
 node_modules/
-index.html
 .ftppass

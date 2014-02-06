@@ -37,7 +37,7 @@ Asset scraps | `git checkout assetscraps` -- things that might inspire future fe
       - minimap radar scrolling
       - build options sidebar
     Working on getting the game to build as a node-webkit release. First, I'm going to remove the requirejs/text dependency
-    to cut down on the minified file size, and I've already made edits the grunt-spritesmith to strip the generated CSS of
+    to cut down on the minified file size, and I've already made edits to the grunt-spritesmith to strip the generated CSS of
     all the extra properties that I don't need.
     
 

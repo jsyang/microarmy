@@ -1,19 +1,23 @@
 define [
   'core/Battle/addTerrain'
+  'core/Battle/addPropsToWorld'
   
   # Functions to attach Class constructors for the various types of Pawns
   'core/Battle/Pawn/Structure'
   'core/Battle/Pawn/Explosion'
   'core/Battle/Pawn/Infantry'
   'core/Battle/Pawn/Projectile'
+  'core/Battle/Pawn/Prop'
     
   'core/util/XHash'
   'core/util/SimpleHash'
 ], (addTerrain,
+    addPropsToWorld,
     addStructureClasses,
     addExplosionClasses,
     addInfantryClasses,
     addProjectileClasses,
+    addPropClasses,
     XHash,
     SimpleHash) ->
 
@@ -22,6 +26,7 @@ define [
     h : 500
   
     primitiveClasses : [  # Also used for drawing order
+      'Prop'
       'Structure'
       #'Vehicle'
       #'Aircraft'
@@ -44,12 +49,13 @@ define [
       @createNewXHash()
       @createNewInstances()
 
-      # see logic.coffee for more details.
       for k, v of @Instances
         for entity in v when !entity.isPendingRemoval()
-          btree = entity.behavior ? entity.constructor.name
-          btree = @battle.behaviors.Trees[btree]
-          @battle.behaviors.Execute(entity, btree)
+          # Props are only drawn.
+          unless k is 'Prop'
+            btree = entity.behavior ? entity.constructor.name
+            btree = @battle.behaviors.Trees[btree]
+            @battle.behaviors.Execute(entity, btree)
           @add(entity)
   
       @XHash     = @XHash_        # Replace the old xhash and instances with new ones
@@ -94,7 +100,7 @@ define [
         w : @w
         h : @h
       
-      @XHash     = new XHash dimensions
+      @XHash     = new XHash      dimensions
       @DeathHash = new SimpleHash dimensions
       
       @initInstancesDict 'Instances'
@@ -103,5 +109,7 @@ define [
       addInfantryClasses    @Classes
       addExplosionClasses   @Classes
       addProjectileClasses  @Classes
+      addPropClasses        @Classes
       
-      addTerrain @
+      addTerrain      @
+      addPropsToWorld @
