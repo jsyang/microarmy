@@ -93,6 +93,7 @@ define ['core/Battle/UI'], (BattleUI) ->
     
     tick : ->
       if @containsCursor()
+        @battle.ui.cursor.clearText()
         if atom.input.down 'mouseleft'
           if @isDragging
             @_scrollBattleView()

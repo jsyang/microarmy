@@ -8,5 +8,6 @@ define ->
       
     INVALID               : 'invalid'
     BUILDING              : 'feed'
+    SWITCH_DIRECTION      : 'metalclink'
     
     ADD_SCAFFOLD          : 'dropitem'

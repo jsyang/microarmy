@@ -4,18 +4,7 @@ define ['core/Battle/UI'], (BattleUI) ->
     direction : 0
     
     LOCATIONVALIDTHRESHOLD : 0.35
-    
-    CURSORTEXT_INVALID :
-      value  : "Cannot build here!"
-      color  : "#ff0000"
-      halign : 'center'
-    
-    CURSORTEXT_VALID :
-      value  : "Right click to change direction."
-      color  : "#555555"
-      halign : 'center'
-      
-      
+          
     _updateTempInstance : ->
       @temp_instance = new @battle.world.Classes[@cart] {
         team      : @team
@@ -55,6 +44,7 @@ define ['core/Battle/UI'], (BattleUI) ->
       for k, v of @inventory
         @cart = k
         @_updateTempInstance()
+        @battle.ui.sidebar.setContext "Select build area for #{k}.", 'ConstructBase'
         return
       @_constructionComplete()
       
@@ -98,16 +88,12 @@ define ['core/Battle/UI'], (BattleUI) ->
       if @containsCursor()
         if @cart?
           if @_checkCursorLocationValidBuild()
-            opacity = 0.6
-            @battle.ui.cursor.setText @CURSORTEXT_VALID
+            opacity = 0.75
           else
             opacity = 0.3
-            @battle.ui.cursor.setText @CURSORTEXT_INVALID
           mx = atom.input.mouse.x
           x = mx + @battle.scroll.x
           atom.context.drawSprite @_getSpriteName(), mx, @battle.world.height(x), 'bottom', 'center', opacity
-      else
-        @battle.ui.cursor.clearText()
     
     tick : ->
       if @containsCursor()
@@ -133,14 +119,14 @@ define ['core/Battle/UI'], (BattleUI) ->
       @team = @battle.player.team
       @EVA  = @battle.EVA
       
-      if @build_structure
-        @cart = @build_structure_type
-        @_updateTempInstance()
+      if @build_structure # Build order from sidebar
+        @inventory = {}
+        @inventory[@build_structure_type] = 1
         @EVA.SELECT_BUILD_LOCATION()
       else
         @inventory = @battle.player.starting_inventory
-        @_cullInventory()
         @EVA.INITIAL_BASE_CONSTRUCTION()
 
+      @_cullInventory()
       @resize()
       

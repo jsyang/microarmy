@@ -6,6 +6,7 @@ define [
     team       : 0
     funds      : 0 
     tech_level : 99
+    direction  : 1
     
     canBuyPawnName : (name) -> @buildsystem.canBuy name
     

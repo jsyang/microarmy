@@ -54,6 +54,7 @@ define [
       y : 0
         
     resetMode : ->
+      @ui.sidebar.clearContext()
       @switchMode 'CommandPawn'
     
     switchMode : (mode, params) ->

@@ -49,7 +49,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     NAMETEXT       : 'Soldier'
     COST           : 150
     projectile     : 'Bullet'
-    sight          : 4
+    sight          : 3
     melee_dmg      : 8
     health_current : [30, 70]
     health_max     : 30
@@ -79,7 +79,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     reload_time    : [60, 90]
     berserk_ing    : 0
     berserk_time   : [6, 21]
-    berserk_chance : -> $.r(0.1)
+    berserk_chance : -> $.r(0.25)
     ammo_current   : 1
     ammo_max       : 1
     prerequisites  : ['CommCenter']
@@ -90,7 +90,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
   class EngineerInfantry extends Infantry
     NAMETEXT       : 'Engineer'
     COST           : 500
-    sight          : 4
+    sight          : 3
     melee_dmg      : 5
     #build_type     : 'Pillbox'
     health_current : [20, 50]

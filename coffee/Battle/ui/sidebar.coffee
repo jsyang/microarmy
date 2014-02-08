@@ -7,13 +7,61 @@ define [
   class BattleUISidebar extends BattleUI
     w : 202
 
-    messages     : []
-    messages_max : 6
+    context_header : 'Nothing selected.'
 
     COLOR_BACKGROUND  : 'rgb(36,36,36)'
     COLOR_FRAME       : 'rgb(88,88,88)'
     COLOR_FRAME_DARK  : 'rgb(60,60,60)'
-         
+  
+    _getContextMouseOverFunction : (tooltipText) ->
+      ((text) ->
+        @setText {
+          value  : text
+          halign : 'center'
+          color  : '#000'
+        }).bind @battle.ui.cursor, tooltipText
+  
+    _setContextButtons : (x, y) ->     
+      switch @context
+        when 'ConstructBase'
+          SWITCHDIRECTION = new Button {
+            x : x
+            y
+            sprite_up   : 'sidebar-button-direction-0'
+            sprite_down : 'sidebar-button-direction-1'
+            over        : @_getContextMouseOverFunction 'Reverse build direction'
+            pressed     : =>
+              @battle.mode.direction++
+              @battle.mode.direction %= 2
+              @battle.ui.sound.SWITCH_DIRECTION()
+          }
+          x += 50
+          CANCEL = new Button {
+            x : x
+            y
+            sprite_up   : 'sidebar-button-cancel-0'
+            sprite_down : 'sidebar-button-cancel-1'
+            over        : @_getContextMouseOverFunction 'Cancel build'
+            pressed     : =>
+              @battle.resetMode()
+              @battle.ui.sound.INVALID()
+          }
+          @CONTEXTBUTTONS = [
+            SWITCHDIRECTION
+            CANCEL
+          ]
+      return
+    
+    setContext : (header, context) ->
+      @clearContext()
+      @context_header = header
+      @context        = context
+    
+    clearContext : ->
+      delete @CONTEXTBUTTONS
+      delete @context
+      @context_header = 'Nothing selected.'
+    
     _setScrollButtons : (x, y) ->
       @SCROLLBUTTON =
         # 0 = left column, 0 = up button
@@ -66,7 +114,7 @@ define [
         build = @battle.player.build.bind @battle.player, type
       build
     
-    _getMouseOverFunction : (name, cost) ->
+    _getBuildMouseOverFunction : (name, cost) ->
       ((name, cost) ->
         @setText {
           value  : "#{name} ($#{cost})"
@@ -91,7 +139,7 @@ define [
             sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
             pressed      : @_getBuildFunction type, attr.isStructure
             pressedR     : -> @player.buildsystem.removeFromQueue @type
-            over         : @_getMouseOverFunction attr.name, attr.cost
+            over         : @_getBuildMouseOverFunction attr.name, attr.cost
             out          : => @battle.ui.cursor.clearText()
             draw         : ->
               @constructor::draw.call @
@@ -111,6 +159,7 @@ define [
       @messages.shift() if @messages.length > @messages_max
     
     resize : ->
+      delete @CONTEXTBUTTONS
       delete @SCROLLBUTTON
       delete @COL0BUTTONS
       delete @COL1BUTTONS
@@ -132,21 +181,23 @@ define [
         atom.context.drawText "FUNDS : #{@battle.player.funds}", x + 2, y, '#fff'
       y += atom.context.drawText.lineHeight + 1
       
-      # MESSAGES HEADER
-      atom.context.drawText "MESSAGES", x + 2, y, '#ccc'
+      # CONTEXT HEADER
+      atom.context.drawText @context_header, x + 2, y, '#ccc'
       y += atom.context.drawText.lineHeight + 1
       
-      # MESSAGES BODY
+      # CONTEXT ACTIONS
       atom.context.fillStyle = @COLOR_FRAME_DARK
-      bodyHeight = atom.context.drawText.lineHeight * @messages_max
-      atom.context.fillRect x + 1, y, @w - 2, bodyHeight
-      atom.context.drawText @messages, x + 2, y, '#eee'
-      y += bodyHeight + 1
+      atom.context.fillRect x + 1, y, @w - 2, 50
+      if @context? and !(@CONTEXTBUTTONS?)
+        @_setContextButtons x + 1, y
+      else
+        v.draw() for v in @CONTEXTBUTTONS
+      y += 50 + 1
       
       # CONSTRUCTION HEADER      
       atom.context.fillStyle = @COLOR_FRAME
       atom.context.fillRect x + 1, y, @w - 2, atom.context.drawText.lineHeight
-      atom.context.drawText "CONSTRUCTION COMMANDS", x + 2, y, '#fff'
+      atom.context.drawText "CONSTRUCTION OPTIONS", x + 2, y, '#fff'
       y += atom.context.drawText.lineHeight + 1
       
       # CONSTRUCTION BODY
@@ -173,6 +224,7 @@ define [
         v.tick() for k, v of @SCROLLBUTTON
         v.tick() for v    in @COL0BUTTONS
         v.tick() for v    in @COL1BUTTONS
+        v.tick() for v    in @CONTEXTBUTTONS
         true
       else
         false
@@ -180,3 +232,4 @@ define [
     constructor : (params) ->
       @[k]  = v for k, v of params
       @resize()
+      @clearContext()

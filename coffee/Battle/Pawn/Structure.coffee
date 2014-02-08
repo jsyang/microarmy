@@ -81,6 +81,9 @@ define ['core/Battle/Pawn'], (Pawn) ->
       'Pillbox'
       'SmallTurret'
       'MissileRackSmall'
+      'AmmoDumpSmall'
+      'AmmoDump'
+      'Barracks'
     ]
     buildable_primitives : [
       'Structure'

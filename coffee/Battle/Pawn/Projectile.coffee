@@ -66,7 +66,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     spriteName            : 'pistolshell'
     sound                 : 'mgburst'
     range_current         : 50
-    damage                : [4, 10]
+    damage                : [10, 20]
     accuracy              : 0.65
     accuracy_target_bonus : 0.35
     speed                 : 4
@@ -131,8 +131,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     sound         : 'missile1'
     hDist2        : 81
     maxSpeed      : 90
-    range_current : 280             
-    range_max     : 280
+    range_current : 380             
+    range_max     : 380
     d_dy          : 0.081           # downward drift "gravity"
     dspeed        : 0.84
     sight         : 8
@@ -169,8 +169,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     sound             : 'rocket'
     hDist2            : 64
     maxSpeed          : 110
-    range_current     : 90
-    range_max         : 90
+    range_current     : 120
+    range_max         : 120
     d_dy              : 0.0173
     sight             : 8
     dx                : -> [-1, 1][@direction] * 5.12
