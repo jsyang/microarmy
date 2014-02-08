@@ -615,7 +615,7 @@ define ->
         InfantryMeleeAttack         : '<[isInfantryMeleeDistance],[isInfantryMeleeSuccessful],[doInfantryMeleeAttack]>'
         InfantryCombat              : '<[~InfantryCombatBegin],[!InfantryMeleeAttack],[InfantryRangedAttack]>'
         InfantryCombatBegin         : '<[!isInfantryAttacking],[setInfantryAttackStance],[setFirstFrame]>'
-        InfantryAttack              : '<[PawnTarget],[setFaceTarget],[~InfantryCombat],[~InfantryAnimate]>'
+        InfantryAttack              : '<[isArmed],[PawnTarget],[setFaceTarget],[~InfantryCombat],[~InfantryAnimate]>'
         
         InfantryBerserk             : '(<[isBerserking],[doBerserking],[InfantryMove]>,<[isTargeting],[!doTryBerserking]>)'
         
@@ -634,7 +634,7 @@ define ->
         AIInfantryFulfillGoal       : '([InfantryNeedsReload],[InfantryBerserk],[InfantryAttack],[InfantryGoalMoveToRally],[setInfantryIdle])'
         AIInfantry                  : '([InfantryDead],[AIInfantryFulfillGoal])'
         
-        EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[setFaceBuildDirection],[addScaffold],[setUntargetable],[doRemove]>'
+        EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[setFaceBuildDirection],[addScaffold],[setUntargetable],[doRemove],[doPlayerEntityRemove]>'
         EngineerInfantryAlive       : '([InfantryGoalMoveToRally],[EngineerInfantryGoalBuild],[InfantryGoalIdle])'
         EngineerInfantry            : '([InfantryDead],[EngineerInfantryAlive])'
     }
