@@ -6,7 +6,11 @@ define [
   
   class BattleUISidebar extends BattleUI
     w : 202
-
+    col0_scroll : 0
+    col1_scroll : 0
+    col0_scroll_max : 0
+    col1_scroll_max : 0
+    
     context_header : 'Nothing selected.'
 
     COLOR_BACKGROUND  : 'rgb(36,36,36)'
@@ -29,7 +33,7 @@ define [
             y
             sprite_up   : 'sidebar-button-direction-0'
             sprite_down : 'sidebar-button-direction-1'
-            over        : @_getContextMouseOverFunction 'Reverse build direction'
+            over        : @_getTooltipFunction 'Reverse build direction'
             out         : => @battle.ui.cursor.clearText()
             pressed     : =>
               @battle.mode.direction++
@@ -42,7 +46,7 @@ define [
             y
             sprite_up   : 'sidebar-button-cancel-0'
             sprite_down : 'sidebar-button-cancel-1'
-            over        : @_getContextMouseOverFunction 'Cancel build'
+            over        : @_getTooltipFunction 'Cancel build'
             out         : => @battle.ui.cursor.clearText()
             pressed     : =>
               @battle.resetMode()
@@ -72,12 +76,20 @@ define [
           y : y
           sprite_up   : 'sidebar-button-0-0'
           sprite_down : 'sidebar-button-0-1'
+          pressed     : =>
+            @col0_scroll--
+            @col0_scroll = 0 if @col0_scroll < 0
+            @updateBuildButtons true
         }
         COL01 : new Button {
           x : x + 1
           y : atom.height - 30
           sprite_up   : 'sidebar-button-1-0'
           sprite_down : 'sidebar-button-1-1'
+          pressed     : =>
+            @col0_scroll++
+            @col0_scroll = @col0_scroll_max if @col0_scroll > @col0_scroll_max
+            @updateBuildButtons true
         }
         
         COL10 : new Button {
@@ -85,12 +97,20 @@ define [
           y : y
           sprite_up   : 'sidebar-button-0-0'
           sprite_down : 'sidebar-button-0-1'
+          pressed     : =>
+            @col1_scroll--
+            @col1_scroll = 0 if @col1_scroll < 0
+            @updateBuildButtons true
         }
         COL11 : new Button {
           x : x + 100 + 1
           y : atom.height - 30
           sprite_up   : 'sidebar-button-1-0'
           sprite_down : 'sidebar-button-1-1'
+          pressed     : =>
+            @col1_scroll++
+            @col1_scroll = @col1_scroll_max if @col1_scroll > @col1_scroll_max
+            @updateBuildButtons true
         }
     
     _getItemAttributes : (type) ->
@@ -115,21 +135,42 @@ define [
       else
         build = @battle.player.build.bind @battle.player, type
       build
-    
-    _getBuildMouseOverFunction : (name, cost) ->
-      ((name, cost) ->
+        
+    _getTooltipFunction : (tooltipText) ->
+      ((text) ->
         @setText {
-          value  : "#{name} ($#{cost})"
+          value  : text
           halign : 'center'
           color  : '#000'
-        }).bind @battle.ui.cursor, name, cost
+        }).bind @battle.ui.cursor, tooltipText
+    
+    # How far can we scroll down in the construction options buttons?
+    _getMaxColScroll : (col) ->
+      buildable_type = ['structures', 'units'][col]
+      buildable_list = @battle.player["buildable_#{buildable_type}"]
+      # Constant.
+      y  = 3 * (atom.context.drawText.lineHeight + 1) + 50 + 30
+      y_max = atom.height - 30
+      col_max_scroll = 0
+      for type, numberOfFactories of buildable_list
+        if @battle.player.tech_level >= @battle.world.Classes[type]::tech_level
+          y += 100
+          col_max_scroll++ if y > y_max
+      col_max_scroll
     
     _setColButtons : (x, y, col) ->
       @["COL#{col}BUTTONS"] = []
       buildable_type = ['structures', 'units'][col]
       buildable_list = @battle.player["buildable_#{buildable_type}"]
+      
+      button_index = 0
+      
       for type, numberOfFactories of buildable_list
         if @battle.player.tech_level >= @battle.world.Classes[type]::tech_level
+          if button_index < @["col#{col}_scroll"]
+            button_index++
+            continue
+          
           attr = @_getItemAttributes type
           player = @battle.player
           button = new Button {
@@ -141,24 +182,26 @@ define [
             sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
             pressed      : @_getBuildFunction type, attr.isStructure
             pressedR     : -> @player.buildsystem.removeFromQueue @type
-            over         : @_getBuildMouseOverFunction attr.name, attr.cost
+            over         : @_getTooltipFunction "#{attr.name} ($#{attr.cost})"
             out          : => @battle.ui.cursor.clearText()
             draw         : ->
               @constructor::draw.call @
               queued = @player.buildsystem.queue[@type]
               atom.context.drawText queued, @x + @w, @y, '#f00', 'right' if queued?
           }
-          
+          button_index++
           y += 100
           @["COL#{col}BUTTONS"].push button
     
-    updateBuildButtons : ->
+    updateBuildButtons : (noScrollReset) ->
       delete @COL0BUTTONS
       delete @COL1BUTTONS
-    
-    addMessage : (m) ->
-      @messages.push m
-      @messages.shift() if @messages.length > @messages_max
+      # Only update the build buttons, do not reset our scroll position
+      unless noScrollReset
+        @col0_scroll = 0
+        @col1_scroll = 0
+      @col0_scroll_max = @_getMaxColScroll 0
+      @col1_scroll_max = @_getMaxColScroll 1
     
     resize : ->
       delete @CONTEXTBUTTONS
@@ -209,23 +252,27 @@ define [
       # SCROLL BUTTONS
       unless @SCROLLBUTTON?
         @_setScrollButtons x, y
-      v.draw() for k, v of @SCROLLBUTTON
       y += @SCROLLBUTTON.COL00.h
       
       # CONSTRUCTION OPTION BUTTONS
       unless @COL0BUTTONS? and @COL1BUTTONS?
         @_setColButtons x + 1, y, 0
         @_setColButtons x + 100 + 1, y, 1
-      v.draw() for v in @COL0BUTTONS
-      v.draw() for v in @COL1BUTTONS
-        
+      v.draw() for v in @COL0BUTTONS if @COL0BUTTONS?
+      v.draw() for v in @COL1BUTTONS if @COL1BUTTONS?
+      
+      # Scroll buttons must be drawn on top of the build options.
+      v.draw() for k, v of @SCROLLBUTTON if @SCROLLBUTTON?
+      
       atom.context.restore()
     
     tick : ->
       if @containsCursor()
-        v.tick() for v    in @COL0BUTTONS
-        v.tick() for v    in @COL1BUTTONS
-        v.tick() for k, v of @SCROLLBUTTON
+        scrollButtonsTicked = false
+        scrollButtonsTicked ||= v.tick() for k, v of @SCROLLBUTTON
+        if not scrollButtonsTicked
+          v.tick() for v    in @COL0BUTTONS if @COL0BUTTONS?
+          v.tick() for v    in @COL1BUTTONS if @COL1BUTTONS?
         v.tick() for v    in @CONTEXTBUTTONS if @CONTEXTBUTTONS?
         true
       else

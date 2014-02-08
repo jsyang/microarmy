@@ -22,7 +22,7 @@ define [
         @factory[primitive] = newFactories
         
       @_updateBuildableTypes p, 'remove'
-      @_updateBuildButtons()
+      @_updateBuildButtons() unless @AI
       return
 
     # Prunes undefineds from entity arrays.
@@ -68,7 +68,7 @@ define [
             @factory[primitive] = [p]
         
         @_updateBuildableTypes p, 'add'
-        @_updateBuildButtons()
+        @_updateBuildButtons() unless @AI
       return
     
     _updateBuiltEntityTally : (type, p) ->
@@ -83,7 +83,7 @@ define [
       if p instanceof @battle.world.Classes.Structure
         arrayName = 'structures'
         @_removeFactory p
-        @_updateBuildButtons()
+        @_updateBuildButtons() unless @AI
       else
         arrayName = 'units'
       index = @[arrayName].indexOf p

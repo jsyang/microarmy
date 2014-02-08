@@ -11,6 +11,7 @@ define ['core/Battle/UI'], (UI) ->
       atom.context.drawSprite @_getName(), @x, @y
         
     tick : ->
+      userActiveInteraction = false
       pressedL  = atom.input.pressed  'mouseleft'
       releasedL = atom.input.released 'mouseleft'
       
@@ -22,14 +23,20 @@ define ['core/Battle/UI'], (UI) ->
         @contained_cursor = true
         @state = 'up'
         @state = 'down' if downL
-        @pressed?()  if releasedL
-        @pressedR?() if releasedR
+        if releasedL
+          @pressed?()
+          userActiveInteraction = true
+        if releasedL
+          @pressedR?()
+          userActiveInteraction = true
         @over?()
       else
         if @contained_cursor
           @out?()
           @contained_cursor = false
         @state = 'up'
+    
+      userActiveInteraction
     
     constructor : (params) ->
       @[k] = v for k, v of params

@@ -113,6 +113,8 @@ define ['core/Battle/UI'], (BattleUI) ->
               @_cullInventory @cart
           else
             @EVA.CANNOT_BUILD_HERE()
+      else
+        @battle.ui.cursor.clearText()
 
     constructor : (params) ->
       @[k]  = v for k, v of params

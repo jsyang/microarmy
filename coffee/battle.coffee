@@ -118,7 +118,6 @@ define [
         starting_inventory : {
           # Base starter kit
           'CommCenter' : 1
-          'Barracks'   : 1
         }
       }
       
