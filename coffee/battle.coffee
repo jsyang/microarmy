@@ -18,7 +18,6 @@ define [
   
   'core/Battle/mode/constructbase'
   'core/Battle/mode/commandpawn'
-  #'core/Battle/mode/spawnpawn'
 ], (BehaviorExecutor,
     BattleBehaviors,
     BattleMission,
@@ -38,14 +37,12 @@ define [
     
     ConstructBase,
     CommandPawn
-    #SpawnPawn
 ) ->
   
   class Battle
     MODE : { # UI controller
       ConstructBase
       CommandPawn
-      #SpawnPawn
     }
         
     scroll :

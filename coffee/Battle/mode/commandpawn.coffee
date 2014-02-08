@@ -81,6 +81,10 @@ define [
       if @structure?
         if @structure.isDead() or @structure.isPendingRemoval()
           @_clearSelection()
+          @battle.ui.sidebar.clearContext()
+        else
+          unless @battle.ui.sidebar.context?
+            @battle.ui.sidebar.setContext "#{@structure.NAMETEXT} selected.", 'StructureSelected'
       else if @units.length
         newUnits = []
         for u in @units
@@ -89,7 +93,14 @@ define [
               delete @statsbars[i]
           else
             newUnits.push u
+        if newUnits.length is 0
+          @battle.ui.sidebar.clearContext()
+        else
+          unless @units.length is newUnits.length
+            @battle.ui.sidebar.clearContext()
+            @battle.ui.sidebar.setContext "#{newUnits.length} units selected.", 'UnitsSelected'
         @units = newUnits
+        
     
     _drawStatsBars : ->
       for i in @statsbars when i?
@@ -117,6 +128,8 @@ define [
       if foundMultiple
         @battle.voices.UNITSSELECTED()
         @_addMultipleStatsbars()
+        @battle.ui.sidebar.clearContext()
+        @battle.ui.sidebar.setContext "#{@units.length} units selected.", 'UnitsSelected'
     
     _hasSelection : ->
       @structure? or @units.length > 0
@@ -174,10 +187,13 @@ define [
           if Lpressed
             foundSingle = @_selectSingleOrDrag()
             if not foundSingle
-              @_selectedSetRally()
-          if Rpressed
-            @_clearSelection()
-            
+              @_clearSelection()
+              @battle.ui.sidebar.clearContext()
+              @isDragging = true
+              
+          if Rpressed and selected
+            @_selectedSetRally()
+
         @battle.ui.cursor.clearText()
         
       else

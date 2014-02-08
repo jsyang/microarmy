@@ -2,7 +2,8 @@ define [
   'core/Battle/UI'
   'core/UI/UIGroup'
   'core/UI/Button'
-], (BattleUI, UIGroup, Button) ->
+  'core/Battle/UI/Sidebar.Context'
+], (BattleUI, UIGroup, Button, addContextButtons) ->
   
   class BattleUISidebar extends BattleUI
     w : 202
@@ -16,17 +17,24 @@ define [
     COLOR_BACKGROUND  : 'rgb(36,36,36)'
     COLOR_FRAME       : 'rgb(88,88,88)'
     COLOR_FRAME_DARK  : 'rgb(60,60,60)'
-  
-    _getContextMouseOverFunction : (tooltipText) ->
-      ((text) ->
-        @setText {
-          value  : text
-          halign : 'center'
-          color  : '#000'
-        }).bind @battle.ui.cursor, tooltipText
-  
+    
     _setContextButtons : (x, y) ->     
       switch @context
+        when 'StructureSelected', 'UnitsSelected'
+          CANCEL = new Button {
+            x : x
+            y
+            sprite_up   : 'sidebar-button-cancel-0'
+            sprite_down : 'sidebar-button-cancel-1'
+            over        : @_getTooltipFunction 'Cancel selection'
+            out         : => @battle.ui.cursor.clearText()
+            pressed     : =>
+              @battle.resetMode()
+              @battle.ui.sound.INVALID()
+          }
+          @CONTEXTBUTTONS = [
+            CANCEL
+          ]
         when 'ConstructBase'
           SWITCHDIRECTION = new Button {
             x : x
