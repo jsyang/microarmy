@@ -30,6 +30,7 @@ define [
             sprite_up   : 'sidebar-button-direction-0'
             sprite_down : 'sidebar-button-direction-1'
             over        : @_getContextMouseOverFunction 'Reverse build direction'
+            out         : => @battle.ui.cursor.clearText()
             pressed     : =>
               @battle.mode.direction++
               @battle.mode.direction %= 2
@@ -42,6 +43,7 @@ define [
             sprite_up   : 'sidebar-button-cancel-0'
             sprite_down : 'sidebar-button-cancel-1'
             over        : @_getContextMouseOverFunction 'Cancel build'
+            out         : => @battle.ui.cursor.clearText()
             pressed     : =>
               @battle.resetMode()
               @battle.ui.sound.INVALID()
@@ -224,7 +226,7 @@ define [
         v.tick() for k, v of @SCROLLBUTTON
         v.tick() for v    in @COL0BUTTONS
         v.tick() for v    in @COL1BUTTONS
-        v.tick() for v    in @CONTEXTBUTTONS
+        v.tick() for v    in @CONTEXTBUTTONS if @CONTEXTBUTTONS?
         true
       else
         false
