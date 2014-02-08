@@ -223,9 +223,9 @@ define [
     
     tick : ->
       if @containsCursor()
-        v.tick() for k, v of @SCROLLBUTTON
         v.tick() for v    in @COL0BUTTONS
         v.tick() for v    in @COL1BUTTONS
+        v.tick() for k, v of @SCROLLBUTTON
         v.tick() for v    in @CONTEXTBUTTONS if @CONTEXTBUTTONS?
         true
       else
