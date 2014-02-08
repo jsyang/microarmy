@@ -92,10 +92,9 @@ define ['core/Battle/Pawn'], (Pawn) ->
     COST           : 500
     sight          : 3
     melee_dmg      : 5
-    #build_type     : 'Pillbox'
     health_current : [20, 50]
     health_max     : 20
-    prerequisites  : ['CommCenter']
+    prerequisites  : ['CommCenter'] # this doesn't work!
     tech_level     : 2
 
   exportClasses = {

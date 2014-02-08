@@ -632,7 +632,7 @@ define ->
         InfantryFulfillGoal         : '([InfantryGoalMoveToRally],[InfantryNeedsReload],[InfantryGoalIdle])'
 
         InfantryAlive               : '[InfantryFulfillGoal]'
-        InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying]>,<[!isLastFrame],[setNextFrame]>)'
+        InfantryDyingAnimate        : '(<[!isInfantryDying],[doInfantryDying],[doInfantryDeathRefund]>,<[!isLastFrame],[setNextFrame]>)'
         InfantryDead                : '<[isDead],[~InfantryDyingAnimate],[doRotting]>'
         
         PistolInfantry              : '[Infantry]'
