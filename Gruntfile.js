@@ -109,6 +109,7 @@ module.exports = function(grunt) {
     './gfx/engineerinfantry/death2/',
     './gfx/engineerinfantry/idle/',
     './gfx/pistolshell/',
+    './gfx/smalljet/',
     './gfx/repairbay/',
     './gfx/rocketinfantry/',
     './gfx/rocketshell/',

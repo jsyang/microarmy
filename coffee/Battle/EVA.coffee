@@ -69,4 +69,5 @@ define ->
               @PLAYLIST.shift() if @delay is 0
             else
               @delay = v
-          
+        else
+          @playing = false

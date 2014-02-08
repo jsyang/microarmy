@@ -1,8 +1,6 @@
-define [
-  'core/Battle/Pawn'
-], (Pawn) ->
+define ['core/Battle/Pawn'], (Pawn) ->
 
-  CONST :
+  CONST =
     STATE :
       PITCHHIGH : 0
       PITCHZERO : 1
@@ -21,21 +19,20 @@ define [
       MEDIUM  : 1
       LOW     : 2
 
-  class Aircraft extends Pawn
-    CONST : CONST  
+  VARIABLESTATS = [
+    
+  ]
   
-    constructor : (_) ->
-      @_ = $.extend {
-        corpsetime  : 800
-        imgsheet    : null
-        target      : null
-        squad       : null
-        direction   : null
-        state       : null
-      }, _
-      @setSpriteSheet(@_.imgsheet)
-      super @_
-      
+  class Aircraft extends Pawn
+    CONST      : CONST  
+    corpsetime : 1
+    constructor : (params) ->
+      @[k]  = v for k, v of params
+      @_setHalfDimensions()
+      @_setVariableStats VARIABLESTATS
+  
+  class SmallJet extends Aircraft
+    
   
   class AttackHelicopter extends Aircraft
     constructor : (_) ->
@@ -107,9 +104,11 @@ define [
             # Not going fast enough to pitch.
             @_.state = CONST.STATE.PITCHZERO
   
-  # export
-  (Classes) ->
-    $.extend(Classes, {
-      Aircraft
-      AttackHelicopter
-    })
+  exportClasses = {
+    Aircraft
+    SmallJet
+    Helicopter
+  }
+  
+  # Attach all these classes to the "importer" object.
+  (importer) -> importer[k] = v for k, v of exportClasses
