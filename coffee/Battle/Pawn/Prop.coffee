@@ -16,7 +16,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
 
   class Tree extends Prop
     variant : ->
-      "smalltree-#{$.R(0,2)}"
+      if $.r() < 0.2
+        "bigtree-#{$.R(0,9)}"
+      else
+        "smalltree-#{$.R(0,2)}"
 
   exportClasses = {
     Prop

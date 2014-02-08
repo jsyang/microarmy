@@ -114,6 +114,7 @@ module.exports = function(grunt) {
     './gfx/rocketshell/',
     './gfx/scaffold/',
     './gfx/smalltree/',
+    './gfx/bigtree/',
     './gfx/smokelarge/',
     './gfx/smokesmall/',
     './gfx/turret/',
