@@ -20,9 +20,43 @@ define [
     
     _setContextButtons : (x, y) ->     
       switch @context
-        when 'StructureSelected', 'UnitsSelected'
+        when 'StructureSelected'
+          @CONTEXTBUTTONS = []
+          if @battle.mode.structure.buildable_primitives?
+            PRIMARIFY = new Button {
+              x
+              y
+              sprite_up   : 'sidebar-button-primarify-0'
+              sprite_down : 'sidebar-button-primarify-1'
+              over        : @_getTooltipFunction 'Assign as primary build location'
+              out         : => @battle.ui.cursor.clearText()
+              pressed     : =>
+                selected = @battle.mode.structure
+                for type in selected.buildable_primitives
+                  i = @battle.player.factory[type].indexOf selected
+                  @battle.player.factory[type].splice i, 1
+                  @battle.player.factory[type].unshift selected
+                @battle.ui.sound.CLICK_SET()
+            }
+            @CONTEXTBUTTONS.push PRIMARIFY
+            x += 50
+            
           CANCEL = new Button {
-            x : x
+            x
+            y
+            sprite_up   : 'sidebar-button-cancel-0'
+            sprite_down : 'sidebar-button-cancel-1'
+            over        : @_getTooltipFunction 'Cancel selection'
+            out         : => @battle.ui.cursor.clearText()
+            pressed     : =>
+              @battle.resetMode()
+              @battle.ui.sound.INVALID()
+          }
+          @CONTEXTBUTTONS.push CANCEL
+        
+        when 'UnitsSelected'
+          CANCEL = new Button {
+            x
             y
             sprite_up   : 'sidebar-button-cancel-0'
             sprite_down : 'sidebar-button-cancel-1'
@@ -35,9 +69,10 @@ define [
           @CONTEXTBUTTONS = [
             CANCEL
           ]
+            
         when 'ConstructBase'
           SWITCHDIRECTION = new Button {
-            x : x
+            x
             y
             sprite_up   : 'sidebar-button-direction-0'
             sprite_down : 'sidebar-button-direction-1'
@@ -50,7 +85,7 @@ define [
           }
           x += 50
           CANCEL = new Button {
-            x : x
+            x
             y
             sprite_up   : 'sidebar-button-cancel-0'
             sprite_down : 'sidebar-button-cancel-1'

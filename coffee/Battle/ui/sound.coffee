@@ -10,6 +10,8 @@ define ->
     BUILDING              : 'feed'
     SWITCH_DIRECTION      : 'metalclink'
     
+    CLICK_SET             : 'clicklock'
+    
     INFANTRY_DEATH1       : 'die1'
     INFANTRY_DEATH2       : 'die2'
     INFANTRY_DEATH3       : 'die3'

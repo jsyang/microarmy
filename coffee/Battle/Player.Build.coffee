@@ -51,7 +51,7 @@ define ->
       
       if pawnPrerequisiteSatisfied
         if pawnType is 'Structure'
-          pawnType    = 'Infantry'
+          pawnType = 'Infantry'
           order = 
             build_type                : 'EngineerInfantry'
             build_structure           : true

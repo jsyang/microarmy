@@ -72,12 +72,14 @@ define [
       if @commands.length > 0
         command = @commands.shift()
         @[command]()
-      else if $.r() < $.r(0.01)
-        @commands.push 'BUILD_IDLE_UNIT'
-      else if $.r() < $.r(0.03)
-        @commands.push 'FORM_SQUAD'
-      else if $.r() < $.r(0.05)
-        @commands.push 'SEND_SCOUT_SQUAD' 
+      else
+        if $.r() < 0.1 # Make AI player less aggressive for now
+          if $.r() < $.r(0.01)
+            @commands.push 'BUILD_IDLE_UNIT'
+          else if $.r() < $.r(0.03)
+            @commands.push 'FORM_SQUAD'
+          else if $.r() < $.r(0.05)
+            @commands.push 'SEND_SCOUT_SQUAD' 
   
     tick : ->
       @_processNextCommand()
