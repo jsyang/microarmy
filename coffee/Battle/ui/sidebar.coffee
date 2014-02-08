@@ -193,7 +193,7 @@ define [
       if @context? and !(@CONTEXTBUTTONS?)
         @_setContextButtons x + 1, y
       else
-        v.draw() for v in @CONTEXTBUTTONS
+        v.draw() for v in @CONTEXTBUTTONS if @CONTEXTBUTTONS?
       y += 50 + 1
       
       # CONSTRUCTION HEADER      
