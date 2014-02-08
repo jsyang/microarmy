@@ -117,14 +117,14 @@ define [
       typeClass = @battle.world.Classes[type]
       {
         name        : typeClass::NAMETEXT
-        cost        : @battle.player.buildsystem.getCost type
+        cost        : @player.buildsystem.getCost type
         isStructure : typeClass.__super__.constructor.name is 'Structure'
       }
     
     _getBuildFunction : (type, isStructure) ->
       if isStructure
         build = (_type) ->
-          if @battle.player.canBuyPawnName _type
+          if @player.canBuyPawnName _type
             @battle.switchMode 'ConstructBase', {
               build_structure : true
               build_structure_type : _type
@@ -133,7 +133,7 @@ define [
             @battle.EVA.INSUFFICIENT_FUNDS()
         build = build.bind @, type
       else
-        build = @battle.player.build.bind @battle.player, type
+        build = @player.build.bind @player, type
       build
         
     _getTooltipFunction : (tooltipText) ->
@@ -147,7 +147,7 @@ define [
     # How far can we scroll down in the construction options buttons?
     _getMaxColScroll : (col) ->
       buildable_type = ['structures', 'units'][col]
-      buildable_list = @battle.player["buildable_#{buildable_type}"]
+      buildable_list = @player["buildable_#{buildable_type}"]
       # Constant.
       y  = 3 * (atom.context.drawText.lineHeight + 1) + 50 + 30
       y_max = atom.height - 30
@@ -161,23 +161,22 @@ define [
     _setColButtons : (x, y, col) ->
       @["COL#{col}BUTTONS"] = []
       buildable_type = ['structures', 'units'][col]
-      buildable_list = @battle.player["buildable_#{buildable_type}"]
+      buildable_list = @player["buildable_#{buildable_type}"]
       
       button_index = 0
       
       for type, numberOfFactories of buildable_list
-        if @battle.player.tech_level >= @battle.world.Classes[type]::tech_level
+        if @player.tech_level >= @battle.world.Classes[type]::tech_level
           if button_index < @["col#{col}_scroll"]
             button_index++
             continue
           
           attr = @_getItemAttributes type
-          player = @battle.player
           button = new Button {
             type
-            player
             x
             y
+            player       : @player
             sprite_up    : "sidebar-button-#{type.toLowerCase()}-0"
             sprite_down  : "sidebar-button-#{type.toLowerCase()}-1"
             pressed      : @_getBuildFunction type, attr.isStructure
@@ -220,10 +219,10 @@ define [
       atom.context.fillRect x, y, @w, atom.height
       
       # FUNDS
-      if @battle.player?
+      if @player?
         atom.context.fillStyle = @COLOR_FRAME
         atom.context.fillRect x + 1, y, @w - 2, atom.context.drawText.lineHeight
-        atom.context.drawText "FUNDS : #{@battle.player.funds}", x + 2, y, '#fff'
+        atom.context.drawText "FUNDS : #{@player.funds}", x + 2, y, '#fff'
       y += atom.context.drawText.lineHeight + 1
       
       # CONTEXT HEADER
@@ -280,5 +279,6 @@ define [
 
     constructor : (params) ->
       @[k]  = v for k, v of params
+      @player = @battle.player
       @resize()
       @clearContext()

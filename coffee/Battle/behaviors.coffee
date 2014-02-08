@@ -65,7 +65,14 @@ define ->
         doInfantryDying : ->
           @action = $.R(@ACTION.DEATH1, @ACTION.DEATH2)
           @frame_current = @frame_first
-          atom.playSound "die#{$.R(1,4)}"
+          World.battle.ui.sound["INFANTRY_DEATH#{$.R(1,4)}"]()
+          true
+        
+        doInfantryDeathRefund : ->
+          # Refund some money when they die.
+          player = 'player'
+          player = 'enemy' if @AI
+          World.battle[player].funds += @.COST * 0.4
           true
         
         isInfantryDying : ->

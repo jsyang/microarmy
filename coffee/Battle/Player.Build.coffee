@@ -1,7 +1,6 @@
 define ->
   class PlayerBuild
-    # Tracks what build orders from a Player
-    queue : {}
+    # Tracks a Player's build orders
     
     getCost : (name) ->
       pawnClass = @battle.world.Classes[name]
@@ -21,8 +20,9 @@ define ->
       name of @player.buildable_units
 
     removeFromQueue : (name) ->
-      @queue[name]-- if @queue[name]?
-      delete @queue[name] unless @queue[name] > 0
+      if @queue[name]?
+        @queue[name]-- 
+        delete @queue[name] unless @queue[name] > 0
       
     _addToQueue : (name) ->
       if @canBuy name
@@ -81,7 +81,8 @@ define ->
           delete @queue[name]
         else
           @sendBuildOrder name, null, null, true
+      null
 
     constructor : (params) ->
       @[k] = v for k, v of params
-      
+      @queue = {}

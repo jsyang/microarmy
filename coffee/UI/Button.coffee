@@ -26,7 +26,7 @@ define ['core/Battle/UI'], (UI) ->
         if releasedL
           @pressed?()
           userActiveInteraction = true
-        if releasedL
+        if releasedR
           @pressedR?()
           userActiveInteraction = true
         @over?()
