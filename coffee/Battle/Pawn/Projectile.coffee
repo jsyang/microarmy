@@ -126,6 +126,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
       frame = Math.abs(@blink_ing - 3) % 3
       "chemmine-#{@team}-#{frame}"
   
+  class AircraftBomb extends Projectile
+    explosion : 'FragExplosion'
+    damage    : 40
+    stray_dx  : -> $.r(-12, 12) * 0.1
+    #sound    : ''
+  
   class HomingMissile extends Projectile
     spriteName    : 'missilered'
     sound         : 'missile1'
@@ -205,6 +211,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     
     SmallMine
     SmallChemMine
+    
+    AircraftBomb
     
     HomingMissile
     HomingMissileSmall

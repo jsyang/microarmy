@@ -71,8 +71,8 @@ define ['core/Battle/Pawn'], (Pawn) ->
     health_current       : [2400, 2700]
     health_max           : [2700, 3200]
     build_structure      : false
-    build_structure_type : null           # What are we sending our Engineer to build?
-    build_structure_x    : null           # Where do we send our Engineer off to?
+    #build_structure_type # What are we sending our Engineer to build?
+    #build_structure_x    # Where do we send our Engineer off to?
     build_current        : 0
     build_max            : 120
     buildable_types      : [
@@ -91,6 +91,9 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ]
     build_modifiers      : [
       BUILDMODIFIER.SET_RALLY_POINT
+    ]
+    deployable_superweapons : [
+      'airstrike'
     ]
   
   
