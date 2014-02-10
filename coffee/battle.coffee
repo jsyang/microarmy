@@ -88,7 +88,7 @@ define [
       @ui.cursor.draw()
 
     tick : ->
-      @player.buildsystem.tick()
+      @player.tick()
       @enemy?.tick()
       @EVA.tick()
       @mode.tick?()

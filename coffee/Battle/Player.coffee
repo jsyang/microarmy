@@ -1,6 +1,7 @@
 define [
   'core/Battle/Player.Build'
-], (PlayerBuild) ->
+  'core/Battle/Player.SuperWeapon'
+], (PlayerBuild, PlayerSuperWeapon) ->
   class Player
     AI         : false
     team       : 0
@@ -71,7 +72,16 @@ define [
         @_updateBuildButtons() unless @AI
       return
     
-    _updateBuiltEntityTally : (type, p) ->
+    _addSuperWeaponCapability : (p) ->
+      
+          
+    
+    _updateBuiltEntityTally : (p) ->
+      if p instanceof @battle.world.Classes.Structure
+        type = 'structures'
+      else
+        type = 'units'
+        
       if @["built_#{type}"][p.constructor.name]?
         @["built_#{type}"][p.constructor.name]++
       else
@@ -99,11 +109,17 @@ define [
       if p instanceof @battle.world.Classes.Structure
         @structures.push p
         @_addBuildCapability p
-        @_updateBuiltEntityTally 'structures', p
+        @superweapon.add p
+        @_updateBuildButtons() unless @AI
       else
         @units.push p
-        @_updateBuiltEntityTally 'units', p
+      @_updateBuiltEntityTally p
+      return
         
+    tick : ->
+      @buildsystem.tick()
+      @superweapon.tick()
+    
     constructor : (params) ->
       @[k] = v for k, v of params
       
@@ -118,6 +134,11 @@ define [
       #   Vehicles : [ Depot, ... ]
       #   Aircraft : [ Helipad, Airstrip, ...]
       
+      # Super weapon tracking works in the same way as @factory{}
+      # ex =
+      #   'airstrike' : [ CommCenter, CommCenter, ... ]
+      #   'nuke'      : [ NukeSilo, NukeSilo, ... ]
+      
       # Track of entities that have been built and their number (to test if they have been lost)
       @built_structures = {}
       @built_units      = {}
@@ -126,8 +147,10 @@ define [
       @buildable_structures = {}
       @buildable_units      = {}
       
-      # Queuing  
-      @buildsystem = new PlayerBuild {
+      childParams =
         battle : @battle
         player : @
-      }
+      
+      # todo: move private methods from Player to child subsystems.
+      @buildsystem = new PlayerBuild        childParams # Build queuing ( todo: maybe this should handle all aspects of building?)
+      @superweapon = new PlayerSuperWeapon  childParams # Super weapon deployment

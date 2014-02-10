@@ -199,6 +199,12 @@ define [
         if @battle.player.tech_level >= @battle.world.Classes[type]::tech_level
           y += 100
           col_max_scroll++ if y > y_max
+      
+      if buildable_type is 'units'
+        for name, time_remaining of @player.superweapon.recharge
+          y += 100
+          col_max_scroll++ if y > y_max
+
       col_max_scroll
     
     _setColButtons : (x, y, col) ->
@@ -234,6 +240,25 @@ define [
           button_index++
           y += 100
           @["COL#{col}BUTTONS"].push button
+      
+      if buildable_type is 'units'
+        for name, time_remaining of @player.superweapon.recharge
+          button = new Button {
+            player      : @player
+            weapon_name : name
+            x
+            y
+            sprite_up   : "sidebar-button-#{name}-0"
+            sprite_down : "sidebar-button-#{name}-1"
+            pressed     : -> @player.superweapon.deploy @weapon_name
+            over        : @_getTooltipFunction name
+            out         : => @battle.ui.cursor.clearText()
+          }
+          y += 100
+          @["COL#{col}BUTTONS"].push button
+      
+      return
+    
     
     updateBuildButtons : (noScrollReset) ->
       delete @COL0BUTTONS

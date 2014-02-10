@@ -84,6 +84,8 @@ define [
     tick : ->
       @_processNextCommand()
       @squad.tick()
+      @buildsystem.tick()
+      @superweapon.tick()
 
     build_x : 0
     
