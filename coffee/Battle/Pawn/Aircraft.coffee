@@ -21,30 +21,20 @@ define ['core/Battle/Pawn'], (Pawn) ->
       @_setVariableStats VARIABLESTATS
   
   class SmallJet extends Aircraft
-    ACTION          : HELI_ACTION
-    action          : HELI_ACTION.PITCH_LEVEL
-    projectile      : 'HomingMissileSmall'
+    ACTION          : JET_ACTION
+    action          : JET_ACTION.FLYING
+    targetable      : false
+    projectile      : 'HomingMissile'
     ammo_current    : 3
     ammo_max        : 3
     tech_level      : 5
-    turn_ing        : 0
-    turn_max        : 6
-    frame_current   : 0
-    frame_first     : 0
-    frame_last      : 1
     sight           : 5
-    speed_max       : 40
-    speed_delta     : 0.379
-    dx              : 0.001
-    dy              : 0.001
-    reload_ing      : 0
-    reload_time     : 70
-    health_current  : [2000, 2500]
-    health_max      : 2000
-    passengers_max  : 3
+    speed_max       : 20
+    health_current  : [1200, 1500]
+    health_max      : 1200
     attack_x        : 0
     getName : ->
-      "smalljet-#{@direction}"
+      "smalljet-#{@team}-#{@direction}"
     
   
   class Helicopter extends Aircraft

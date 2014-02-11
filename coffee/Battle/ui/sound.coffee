@@ -16,5 +16,7 @@ define ->
     INFANTRY_DEATH2       : 'die2'
     INFANTRY_DEATH3       : 'die3'
     INFANTRY_DEATH4       : 'die4'
+
+    JET_FLYBY             : 'jetflyby'
     
     ADD_SCAFFOLD          : 'dropitem'

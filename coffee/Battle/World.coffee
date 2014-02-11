@@ -7,6 +7,7 @@ define [
   'core/Battle/Pawn/Explosion'
   'core/Battle/Pawn/Infantry'
   'core/Battle/Pawn/Projectile'
+  'core/Battle/Pawn/Aircraft'
   'core/Battle/Pawn/Prop'
     
   'core/util/XHash'
@@ -17,6 +18,7 @@ define [
     addExplosionClasses,
     addInfantryClasses,
     addProjectileClasses,
+    addAircraftClasses,
     addPropClasses,
     XHash,
     SimpleHash) ->
@@ -29,7 +31,7 @@ define [
       'Prop'
       'Structure'
       #'Vehicle'
-      #'Aircraft'
+      'Aircraft'
       'Infantry'
       'Projectile'
       'Explosion'
@@ -109,6 +111,7 @@ define [
       addInfantryClasses    @Classes
       addExplosionClasses   @Classes
       addProjectileClasses  @Classes
+      addAircraftClasses    @Classes
       addPropClasses        @Classes
       
       addTerrain      @

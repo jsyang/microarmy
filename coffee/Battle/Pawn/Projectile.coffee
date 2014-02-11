@@ -36,19 +36,20 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "#{@spriteName}-#{@direction}"      
     # Inaccuracy due to distance, call with thisArg = projectile stats
     _setBulletWeaponInaccuracy : ->
-      dist = @getXDist @target
-      if dist > 50
-        @accuracy -= 0.02
-        @accuracy_target_bonus -= 0.15
-      if dist > 120
-        @accuracy -= 0.01
-        @accuracy_target_bonus -= 0.18
-      if dist > 180
-        @accuracy -= 0.01
-        @accuracy_target_bonus -= 0.08
-      if dist > 200
-        @accuracy -= 0.01
-        @accuracy_target_bonus -= 0.08
+      if @target?
+        dist = @getXDist @target
+        if dist > 50
+          @accuracy -= 0.02
+          @accuracy_target_bonus -= 0.15
+        if dist > 120
+          @accuracy -= 0.01
+          @accuracy_target_bonus -= 0.18
+        if dist > 180
+          @accuracy -= 0.01
+          @accuracy_target_bonus -= 0.08
+        if dist > 200
+          @accuracy -= 0.01
+          @accuracy_target_bonus -= 0.08
     
   class Bullet extends Projectile
     spriteName            : 'pistolshell'
@@ -148,7 +149,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     homing_delay  : 20
     trail_type    : 'SmokeCloud'
     trail_length  : 280 - 8         # Has a smoke trail above this range
-    dist          : -> @getXDist @target
+    dist          : -> @getXDist @target if @target?
     getName : ->
       frame = @_getFrame()
       "#{@spriteName}-#{frame}"
@@ -183,7 +184,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     dy                : -6.35
     trail_type        : 'SmokeCloudSmall'
     trail_length      : 90 - 6
-    dist              : -> @getXDist @target
+    dist              : -> @getXDist @target if @target?
     constructor : (params) ->
       super params
       @dspeed = $.R(312,2650) * 0.001 # Gravity drift dampener

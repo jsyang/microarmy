@@ -1,7 +1,7 @@
 define ->
   
   RECHARGE_TIMES =
-    airstrike : 1000
+    airstrike : 10 # 1000
     nuke      : 4000
     chemmine  : 1200
   
@@ -36,13 +36,15 @@ define ->
       @recharge[name]? and @recharge[name] is 0
     
     _airstrike : ->
-      # todo: switch mode, airstrike mode for battle
-      alert 'boom!'
+      @battle.switchMode 'SuperWeapon', {
+        superweapon : 'airstrike'
+      }
     
     resetRechargeTime : (name) ->
       @recharge[name] = RECHARGE_TIMES[name]
     
     deploy : (name) ->
+      console.log @recharge[name]
       if @isDeployable name
         @["_#{name}"]()
         @resetRechargeTime name

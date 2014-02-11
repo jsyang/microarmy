@@ -18,6 +18,7 @@ define [
   
   'core/Battle/mode/constructbase'
   'core/Battle/mode/commandpawn'
+  'core/Battle/mode/SuperWeapon'
 ], (BehaviorExecutor,
     BattleBehaviors,
     BattleMission,
@@ -36,13 +37,15 @@ define [
     BattleUISound,
     
     ConstructBase,
-    CommandPawn
+    CommandPawn,
+    SuperWeapon
 ) ->
   
   class Battle
     MODE : { # UI controller
       ConstructBase
       CommandPawn
+      SuperWeapon
     }
         
     scroll :

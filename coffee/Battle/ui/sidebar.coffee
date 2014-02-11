@@ -243,6 +243,9 @@ define [
       
       if buildable_type is 'units'
         for name, time_remaining of @player.superweapon.recharge
+          NAMETEXT = name + ''
+          NAMETEXT[0] = NAMETEXT[0].toUpperCase()
+          
           button = new Button {
             player      : @player
             weapon_name : name

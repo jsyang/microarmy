@@ -516,6 +516,30 @@ define ->
         hasGoal : ->
           @goal?
           
+        doAircraftMove : ->
+          @x += [-1, 1][@direction] * @speed_max
+        
+        isInCloseRange : ->
+          margin = 64
+          @attack_x - @_halfWidth - margin <= @x <= @attack_x + @_halfWidth + margin
+  
+        doAircraftAttack : ->
+          direction = [-1, 1][@direction]
+          projectile = new Classes[@projectile] {
+            x             : @x
+            y             : @y
+            team          : @team
+            dx            : direction * 8
+            dy            : 0.01
+            homing_delay  : 2
+          }
+          
+          if @ammo_current is @ammo_max and projectile.sound?
+            atom.playSound projectile.sound
+          
+          World.add projectile
+          @ammo_current--
+          true
   
       # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
       # Prefix          Result
@@ -644,4 +668,11 @@ define ->
         EngineerInfantryGoalBuild   : '<[isBuildingOrder],[isAtRally],[setFaceBuildDirection],[addScaffold],[setUntargetable],[doRemove],[doPlayerEntityRemove]>'
         EngineerInfantryAlive       : '([InfantryGoalMoveToRally],[EngineerInfantryGoalBuild],[InfantryGoalIdle])'
         EngineerInfantry            : '([InfantryDead],[EngineerInfantryAlive])'
+        
+        # # #
+        
+        AircraftMove                : '(<[isOutsideWorld],[doRemove],[doPlayerEntityRemove]>,[~doAircraftMove])'
+        AircraftAttack              : '<[!isOutOfAmmo],[isInCloseRange],[doAircraftAttack]>'
+        SmallJet                    : '<[AircraftMove],[AircraftAttack]>'
+          
     }
