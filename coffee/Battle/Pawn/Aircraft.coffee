@@ -24,12 +24,12 @@ define ['core/Battle/Pawn'], (Pawn) ->
     ACTION          : JET_ACTION
     action          : JET_ACTION.FLYING
     targetable      : false
-    projectile      : 'HomingMissile'
-    ammo_current    : 3
-    ammo_max        : 3
+    projectile      : 'AircraftBomb'
+    ammo_current    : 4
+    ammo_max        : 4
     tech_level      : 5
     sight           : 5
-    speed_max       : 20
+    speed_max       : 16
     health_current  : [1200, 1500]
     health_max      : 1200
     attack_x        : 0

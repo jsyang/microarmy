@@ -20,11 +20,11 @@ define ['core/Battle/UI'], (BattleUI) ->
   
     tick : ->
       if @containsCursor()
+        @battle.ui.cursor.clearText()
         if atom.input.pressed('mouseleft')
           @["_#{@superweapon}"] atom.input.mouse.x + @battle.scroll.x
           @battle.resetMode()
-      else
-        @battle.ui.cursor.clearText()
+      return
 
     constructor : (params) ->
       @[k]  = v for k, v of params

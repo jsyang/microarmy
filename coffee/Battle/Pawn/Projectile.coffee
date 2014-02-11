@@ -4,6 +4,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     'damage'
     'dspeed'
     'dist'
+    'stray_dx'
     'stray_dy'
     'dx'
   ]
@@ -131,7 +132,10 @@ define ['core/Battle/Pawn'], (Pawn) ->
     explosion : 'FragExplosion'
     damage    : 40
     stray_dx  : -> $.r(-12, 12) * 0.1
-    #sound    : ''
+    speed_max : 5
+    d_dy      : 0.211           # downward drift "gravity"
+    getName   : ->
+      "aircraftbomb-#{@team}"
   
   class HomingMissile extends Projectile
     spriteName    : 'missilered'

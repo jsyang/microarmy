@@ -525,11 +525,12 @@ define ->
   
         doAircraftAttack : ->
           direction = [-1, 1][@direction]
-          projectile = new Classes[@projectile] {
+          projectileClass = Classes[@projectile]
+          projectile = new projectileClass {
             x             : @x
             y             : @y
             team          : @team
-            dx            : direction * 8
+            dx            : direction * projectileClass::speed_max
             dy            : 0.01
             homing_delay  : 2
           }
@@ -539,6 +540,12 @@ define ->
           
           World.add projectile
           @ammo_current--
+          true
+          
+        doProjectileGravity : ->
+          @x += @stray_dx
+          @y += @dy
+          @dy += @d_dy
           true
   
       # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -622,6 +629,8 @@ define ->
         MGBullet                    : '[Projectile]'
         SmallRocket                 : '[Projectile]'
         SmallShell                  : '[Projectile]'
+        
+        AircraftBomb                : '<[doProjectileFly],[doProjectileGravity],[isGroundHit],[addProjectileExplosion],[doRemove]>'
         
         # # #
         

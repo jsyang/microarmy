@@ -73,7 +73,7 @@ define [
         command = @commands.shift()
         @[command]()
       else
-        if $.r() < 0.1 # Make AI player less aggressive for now
+        if $.r() < 0.7 # Make AI player less aggressive for now
           if $.r() < $.r(0.01)
             @commands.push 'BUILD_IDLE_UNIT'
           else if $.r() < $.r(0.03)

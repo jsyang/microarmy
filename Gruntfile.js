@@ -62,6 +62,7 @@ module.exports = function(grunt) {
   var gfxFiles = [
     './gfx/',
     './gfx/MainMenu/',
+    './gfx/aircraftbomb/',
     './gfx/ammodump/',
     './gfx/ammodumpsmall/',
     './gfx/battleui/',
