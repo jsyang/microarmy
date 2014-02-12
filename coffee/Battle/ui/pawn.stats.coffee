@@ -3,6 +3,8 @@ define ->
     h      : 4 # Bar height
     margin : 4 # Bottom margin only.
     
+    BAR_WIDTH_MIN : 16
+    
     COLOR :
       background  : 'rgb(44,44,44)'
       health      : 'rgb(44,252,44)'
@@ -12,6 +14,7 @@ define ->
     PROPERTY : [
       'health'
       'build'
+      'ammo_supply'
     ]
     
     _setMultipliers : ->
@@ -23,7 +26,7 @@ define ->
     _getBarWidth : (type) ->
       value = @pawn["#{type}_current"] * @["_1#{type}_max"]
       value = 1 if value > 1
-      (value * @pawnSpriteWidth) >> 0
+      (value * @w) | 0
       
     _drawBar : (p, type) ->
       if @has[type]
@@ -51,4 +54,5 @@ define ->
       @pawnSpriteHeight = GFXINFO[name].height
       @pawnSpriteWidth  = GFXINFO[name].width
       @w  = @pawnSpriteWidth
+      @w  = @BAR_WIDTH_MIN if @w < @BAR_WIDTH_MIN
       @w2 = @w >> 1

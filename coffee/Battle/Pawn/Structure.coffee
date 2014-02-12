@@ -215,20 +215,20 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "turret-#{@team}-#{@direction}-#{@state}-#{@turn_ing>>0}"
   
   class MissileRack extends Structure
-    NAMETEXT        : 'Heavy Missile Launcher'
-    COST            : 2500
-    hDist2          : 64
-    sight           : 13
-    health_current  : [200, 280]
-    health_max      : [280, 300]
-    projectile      : 'HomingMissile'
-    reload_ing      : 0
-    reload_time     : 2900
-    ammo_current    : 1
-    ammo_max        : 1
-    ammo_supply     : 3
-    ammo_supply_max : 3
-    shoot_dy        : -20
+    NAMETEXT            : 'Heavy Missile Launcher'
+    COST                : 2500
+    hDist2              : 64
+    sight               : 13
+    health_current      : [200, 280]
+    health_max          : [280, 300]
+    projectile          : 'HomingMissile'
+    reload_ing          : 0
+    reload_time         : 2900
+    ammo_current        : 1
+    ammo_max            : 1
+    ammo_supply_current : 3
+    ammo_supply_max     : 3
+    shoot_dy            : -20
     getName : ->
       if @health_current <= 0
         hasAmmo = 2
@@ -239,21 +239,21 @@ define ['core/Battle/Pawn'], (Pawn) ->
       "missilerack-#{@team}-#{@direction}-#{hasAmmo}"
   
   class MissileRackSmall extends Structure
-    NAMETEXT          : 'Missile Launcher'
-    COST              : 2200
-    hDist2            : 18
-    sight             : 9
-    health_current    : [100, 180]
-    health_max        : [180, 200]
-    projectile        : 'HomingMissileSmall'
-    canTargetAircraft : true
-    reload_ing        : 0
-    reload_time       : 190
-    ammo_current      : 1
-    ammo_max          : 1
-    ammo_supply       : 12
-    ammo_supply_max   : 12
-    shoot_dy          : -8
+    NAMETEXT            : 'Missile Launcher'
+    COST                : 2200
+    hDist2              : 18
+    sight               : 9
+    health_current      : [100, 180]
+    health_max          : [180, 200]
+    projectile          : 'HomingMissileSmall'
+    canTargetAircraft   : true
+    reload_ing          : 0
+    reload_time         : 190
+    ammo_current        : 1
+    ammo_max            : 1
+    ammo_supply_current : 12
+    ammo_supply_max     : 12
+    shoot_dy            : -8
     getName : ->
       if @health_current <= 0
         hasAmmo = 2

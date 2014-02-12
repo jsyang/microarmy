@@ -283,12 +283,12 @@ define ->
           if @reload_ing is 0
             # Use ammo from our ammo supply if we're a unit limited by ammo supply
             if @ammo_supply_max?
-              if @ammo_supply < @ammo_max
-                @ammo_current   = @ammo_supply
-                @ammo_supply = 0
+              if @ammo_supply_current < @ammo_max
+                @ammo_current        = @ammo_supply_current
+                @ammo_supply_current = 0
               else
-                @ammo_current   = @ammo_max
-                @ammo_supply -= @ammo_max
+                @ammo_current         = @ammo_max
+                @ammo_supply_current -= @ammo_max
             else
               @ammo_current = @ammo_max
           true
