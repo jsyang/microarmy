@@ -42,6 +42,10 @@ module.exports = function(grunt) {
     'SmokeCloudSmall',
     'Flame',
     'ChemCloud',
+    'Aircraft',
+    'AircraftBomb',
+    'Helicopter',
+    'SmallJet',
     '$'
   ];
   
