@@ -251,7 +251,7 @@ define ['core/Battle/Pawn'], (Pawn) ->
     reload_time         : 190
     ammo_current        : 1
     ammo_max            : 1
-    ammo_supply_current : 12
+    ammo_supply_current : 0#12
     ammo_supply_max     : 12
     shoot_dy            : -8
     getName : ->

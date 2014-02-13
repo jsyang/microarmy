@@ -109,7 +109,7 @@ define ->
     # todo : test this function
     getNearestFriendlyUI : (cursor) ->
       minDist = Infinity
-      potentialTargets = @getNBucketsByCoord(cursor, 0)
+      potentialTargets = @getNBucketsByCoord(cursor, 1)
       for t in potentialTargets
         if @_groundPawnContainsPoint(t, cursor) and
            t.team is cursor.team and
@@ -136,16 +136,20 @@ define ->
       minDist = Infinity
       pawn.setTarget()
       potentialTargets = @getNBucketsByCoord(pawn, pawn.sight)
+      potentialTargets = potentialTargets.filter (
+        (_t) ->
+          _t.isAlly @            and
+          !_t.isDead()           and
+          !_t.isCrewDead()       and
+          !_t.isPendingRemoval() and
+          _t.isOutOfAmmo()       and
+          @isAbleToTarget(_t)
+        ).bind pawn
+        
       for t in potentialTargets
         dist = Math.abs(pawn.x - t.x)
         if dist < minDist
-          if  t.isAlly(pawn)        and
-              !t.isDead()           and
-              !t.isCrewDead()       and
-              !t.isPendingRemoval() and
-              t.isOutOfAmmo()       and
-              pawn.isAbleToTarget(t)
-            pawn.setTarget(t)
-            minDist = dist
+          pawn.setTarget(t)
+          minDist = dist
       pawn.target
     

@@ -547,6 +547,15 @@ define ->
           @y += @dy
           @dy += @d_dy
           true
+          
+        doFindFriendlySupplyTarget : ->
+          # bug : this is not working yet
+          World.XHash.getNearestFriendlyNeedSupply(@)?
+  
+        doSupplyTarget : ->
+          # note: have a supply for things that supply other things? that makes no sense
+          @target.ammo_supply_current += @target.ammo_supply_max
+          true
   
       # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
       # Prefix          Result
@@ -558,6 +567,7 @@ define ->
         
         # # #
         
+        PawnFriendlySupplyTarget    : '(<[isTargeting],[isTargetVisible]>,[doFindFriendlySupplyTarget])'
         PawnTarget                  : '(<[isTargeting],[isTargetVisible]>,[doFindTarget])'
         PawnRetarget                : '<[doClearTarget],[PawnTarget]>'
         PawnNeedsReload             : '<[isOutOfAmmo],[doReloading]>'
@@ -596,8 +606,11 @@ define ->
         Barracks                    : '[Structure]'
         CommRelay                   : '[Structure]'
         WatchTower                  : '[Structure]'
-        AmmoDump                    : '[Structure]'
-        AmmoDumpSmall               : '([StructureDeadRemove],[StructureAlive])'
+        
+        AmmoDump                    : '([StructureDeadExplode],[AmmoDumpSupplyFriendly])'
+        AmmoDumpSmall               : '[AmmoDump]'
+        AmmoDumpSupplyFriendly      : '<[PawnFriendlySupplyTarget],[doSupplyTarget]>'
+        
         MineFieldSmall              : '[Structure]'
         Depot                       : '[Structure]'
         RepairYard                  : '[Structure]'
