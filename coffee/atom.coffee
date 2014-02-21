@@ -1,6 +1,6 @@
 define [
-  'core/atom/spritesheet'
-  'core/atom/text'
+  'core/atom.spritesheet'
+  'core/atom.text'
 ], (atomSpritesheet, atomText) ->
   window.requestAnimationFrame = window.requestAnimationFrame or
     window.webkitRequestAnimationFrame or

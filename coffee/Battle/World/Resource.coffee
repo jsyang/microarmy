@@ -1,0 +1,1 @@
+# todo: salvagable enemy facilities / resource fields in this sector
