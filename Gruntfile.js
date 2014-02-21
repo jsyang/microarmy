@@ -5,8 +5,8 @@ module.exports = function(grunt) {
   // Keep all the Pawn constructor names, needed in Pawn.getName()
   // Use this list to ensure class names are not mangled by Uglify
   var RESERVED_CLASS_NAMES = grunt.file.read('./Gruntfile.reserved.txt').split('\n');
-  var coffeeSourceFiles = walk('coffee',  '/*.coffee');
-  var gfxFiles          = walk('gfx',     '/*.png');
+  var coffeeSourceFiles    = walk('coffee',  '/*.coffee');
+  var gfxFiles             = walk('gfx',     '/*.png');
   
   /* ex:
    * {
@@ -45,7 +45,8 @@ module.exports = function(grunt) {
     },
     
     shell: {
-      // Removes the requirejs/text dependency since we build the module ourself.
+      // createSFXINFO, createGFXINFO
+      // Removes the requirejs/text dependency since we build info into a module instead of loading a file.
       createSFXINFO : {
         command : [
           'sed \'s/^/\\"/\'  ./core/RESOURCES_SND.txt > ./core/tmp_SFXINFO.txt',
@@ -55,7 +56,6 @@ module.exports = function(grunt) {
           'echo "];});" >> ./core/SFXINFO.js'
         ].join(' ; ')
       },
-      // Removes the requirejs/text dependency since we build the module ourself.
       createGFXINFO : {
         command : [
           'echo "define(function(){window.GFXINFO=" > ./core/GFXINFO.js',
@@ -200,7 +200,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-spritesmith');
   grunt.loadNpmTasks('grunt-zip');
-  grunt.loadNpmTasks('grunt-sftp-deploy');
+  // grunt.loadNpmTasks('grunt-sftp-deploy');
   grunt.loadNpmTasks('grunt-node-webkit-builder');
   
   // Default build is for a web release build.

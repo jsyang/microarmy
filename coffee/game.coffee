@@ -27,9 +27,10 @@ define [
     switchMode : (name) ->
       @mode = new @MODES[name] { game : @ }
       
-      # Resizing should resize UI elements
+      # Resizing should resize UI elements.
+      # This also stops the game from crashing.
       window.removeEventListener 'resize', @listener if @listener?
-      @listener = @mode.resize.bind(@mode)
+      @listener = @mode.resize.bind @mode
       window.addEventListener "resize", @listener, false
     
     update : ->

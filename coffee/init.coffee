@@ -13,9 +13,9 @@ define [
     
   isPreloadComplete = ->
     if loaded.gfx and loaded.sfx
-      window.Microarmy = new MicroarmyGame()
-      window.Microarmy.switchMode 'Battle' # 'MainMenu'
-      window.Microarmy.run()
+      Microarmy = new MicroarmyGame()
+      Microarmy.switchMode 'Battle' # 'MainMenu'
+      Microarmy.run()
       true
     else
       false
