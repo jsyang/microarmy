@@ -1,4 +1,9 @@
+/**
+ * This is the entry-point for the game.
+ */
+
 var audio = require('./audio');
+var graphics = require('./graphics');
 var JSZip = require('jszip');
 var JSZipUtils = require('jszip-utils');
 
@@ -37,13 +42,32 @@ function initAudioFromZip(zip) {
 }
 
 function initImagesFromZip(zip) {
-    return JSZip.external.Promise.resolve();
-}
+    var loadImages = [];
+    var imageNames = [];
 
-function onAssetsReady() {
-    console.log('Assets loaded! Start game!');
-}
+    function addFileToLoadImagesPromise(relativePath, file) {
+        imageNames.push(
+            file.name
+                .replace(/^images\//gi, '')
+                .replace(/\.png/gi, '')
+        );
+        loadImages.push(file.async('arraybuffer'));
+    }
 
+    zip.folder('images/').forEach(addFileToLoadImagesPromise);
+
+    function defineImages(buffers) {
+        for (var i = 0; i < buffers.length; i++) {
+            graphics.define(imageNames[i], buffers[i]);
+        }
+    }
+
+    graphics.init();
+
+    return JSZip.external.Promise
+        .all(loadImages)
+        .then(defineImages);
+}
 
 function onAssetsZipLoaded(zip) {
     JSZip.external.Promise
@@ -51,8 +75,16 @@ function onAssetsZipLoaded(zip) {
         .then(onAssetsReady);
 }
 
-// Entry-point
+function onAssetsReady() {
+    console.info('Assets loaded! Start game!');
+    document.body.style.background = 'black';
 
+    setTimeout(testGFX, 500);
+}
+
+function testGFX() { graphics.draw('ammodump/ammodump-0-0-0', 0, 0); }
+
+// Entry-point
 window.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
 
     // Load all resources from assets.zip
@@ -71,6 +103,7 @@ window.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
 
 
     window.app = {
+        graphics: graphics,
         audio: audio
     };
 });

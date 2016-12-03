@@ -17237,7 +17237,62 @@ module.exports = {
     play: play
 };
 },{}],106:[function(require,module,exports){
+var UrlCreator = window.URL || window.webkitURL;
+
+var canvas;
+var ctx2d;
+var images;
+
+var width;
+var height;
+
+function init() {
+    canvas = document.querySelector('canvas');
+    images = {};
+
+    window.addEventListener('resize', onResize);
+    updateDimensions();
+}
+
+function updateDimensions() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    ctx2d = canvas.getContext('2d');
+}
+
+function onResize() {
+    updateDimensions();
+}
+
+function clear() {
+    ctx2d.clearRect(0, 0, width, height);
+}
+
+function define(name, buffer) {
+    images[name] = new Image();
+    images[name].src = UrlCreator.createObjectURL(new Blob([buffer], { type: 'image/png' }));
+}
+
+function draw(name, x, y) {
+
+    ctx2d.drawImage(images[name], x, y);
+}
+
+module.exports = {
+    init: init,
+    define: define,
+    draw: draw,
+    clear: clear
+};
+},{}],107:[function(require,module,exports){
+/**
+ * This is the entry-point for the game.
+ */
+
 var audio = require('./audio');
+var graphics = require('./graphics');
 var JSZip = require('jszip');
 var JSZipUtils = require('jszip-utils');
 
@@ -17276,13 +17331,32 @@ function initAudioFromZip(zip) {
 }
 
 function initImagesFromZip(zip) {
-    return JSZip.external.Promise.resolve();
-}
+    var loadImages = [];
+    var imageNames = [];
 
-function onAssetsReady() {
-    console.log('Assets loaded! Start game!');
-}
+    function addFileToLoadImagesPromise(relativePath, file) {
+        imageNames.push(
+            file.name
+                .replace(/^images\//gi, '')
+                .replace(/\.png/gi, '')
+        );
+        loadImages.push(file.async('arraybuffer'));
+    }
 
+    zip.folder('images/').forEach(addFileToLoadImagesPromise);
+
+    function defineImages(buffers) {
+        for (var i = 0; i < buffers.length; i++) {
+            graphics.define(imageNames[i], buffers[i]);
+        }
+    }
+
+    graphics.init();
+
+    return JSZip.external.Promise
+        .all(loadImages)
+        .then(defineImages);
+}
 
 function onAssetsZipLoaded(zip) {
     JSZip.external.Promise
@@ -17290,8 +17364,16 @@ function onAssetsZipLoaded(zip) {
         .then(onAssetsReady);
 }
 
-// Entry-point
+function onAssetsReady() {
+    console.info('Assets loaded! Start game!');
+    document.body.style.background = 'black';
 
+    setTimeout(testGFX, 500);
+}
+
+function testGFX() { graphics.draw('ammodump/ammodump-0-0-0', 0, 0); }
+
+// Entry-point
 window.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
 
     // Load all resources from assets.zip
@@ -17310,7 +17392,8 @@ window.addEventListener('DOMContentLoaded', function onDOMContentLoaded() {
 
 
     window.app = {
+        graphics: graphics,
         audio: audio
     };
 });
-},{"./audio":105,"jszip":43,"jszip-utils":33}]},{},[106]);
+},{"./audio":105,"./graphics":106,"jszip":43,"jszip-utils":33}]},{},[107]);
