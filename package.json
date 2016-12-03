@@ -1,27 +1,25 @@
 {
-  "name":         "microarmy",
-  "version":      "0.1.1",
-  "description":  "Fight massive battles with your pixel pawns!",
-  
+  "name": "microarmy",
+  "version": "0.1.1",
+  "description": "Real-time 2D war simulator",
   "author": {
     "name": "jsyang.ca@gmail.com",
-    "url":  "http://jsyang.ca/"
+    "url": "http://jsyang.ca/"
   },
-  
   "repository": {
     "type": "git",
-    "url":  "git://github.com/jsyang/microarmy.git"
+    "url": "git://github.com/jsyang/microarmy.git"
   },
-  
   "devDependencies": {
-    "grunt":                    "~0.4.2",
-    "grunt-contrib-coffee":     "~0.8.0",
-    "grunt-shell":              "~0.6.1",
-    "grunt-jasmine-node":       "~0.1.0",
-    "grunt-contrib-requirejs":  "~0.4.1",
-    "grunt-spritesmith":        "~1.21.0",
-    "grunt-zip":                "~0.12.0",
-    "grunt-sftp-deploy":        "~0.0.11",
-    "grunt-node-webkit-builder":"~0.1.17"
+    "audio-loader": "^0.6.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-compress": "^1.3.0",
+    "grunt-contrib-connect": "^1.0.2",
+    "grunt-contrib-watch": "^1.0.0",
+    "jszip": "^3.1.3",
+    "load-grunt-config": "^0.19.2",
+    "load-grunt-tasks": "^3.5.2"
   }
 }

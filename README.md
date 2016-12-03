@@ -1,14 +1,22 @@
 # Microarmy
 
-_Fight massive battles with your pixel pawns!_
+- is a 2D war simulator.
 
-### Running the game
+### Running
 
-1. Install a simple web server: `sudo npm install http-server -g`
-2. Install all build dependencies: `npm install`.
-3. Build the project: `grunt`.
-4. Start a web server in the release directory: `cd dist ; http-server`
-5. Navigate to [http://localhost:8080](http://localhost:8080).
+1. `npm i`
+2. `grunt`
+3. Open [http://localhost:3000](http://localhost:3000)
+
+
+
+
+
+
+
+---
+
+## old stuff
 
 ### Before creating a build
 
