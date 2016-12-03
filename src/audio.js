@@ -1,54 +1,35 @@
-var audioLoader = require('audio-loader');
 var audioContext;
+var audioBuffers;
 
-var soundFilesBuffers;
+function init() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioBuffers = {};
+}
 
 /**
- * @param {object} options
- * @param {string} options.from
- * @param {object} options.sounds key = sound name ; value = sound file name
+ * @param {string} name
+ * @param {ArrayBuffer} arrayBuffer
  */
-function init(options) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    return load(options.sounds, { from: options.from });
-}
-
-function remove() {
-    soundFilesBuffers = undefined;
-    audioContext = undefined;
-}
-
-// Load external sound files
-// API here: https://github.com/danigb/audio-loader
-function load(source, options) {
-    return audioLoader(source, options)
-        .then(function (audio) {
-            soundFilesBuffers = audio;
+function define(name, arrayBuffer) {
+    // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/decodeAudioData 
+    audioContext.decodeAudioData(arrayBuffer)
+        .then(function (decodedAudioBuffer) {
+            audioBuffers[name] = decodedAudioBuffer;
         });
 }
 
 /**
- * @param {string} soundName
+ * @param {string} name
  */
-function play(soundName) {
-    if (soundFilesBuffers) {
-        var source = audioContext.createBufferSource();
-        source.buffer = soundFilesBuffers[soundName];
-        source.connect(audioContext.destination);
-        source.start();
-    }
-}
-
-/**
- * @returns {Boolean}
- */
-function isLoaded() {
-    return soundFilesBuffers != null;
+function play(name) {
+    var source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[name];
+    source.connect(audioContext.destination);
+    source.start();
 }
 
 module.exports = {
     init: init,
-    remove: remove,
-    play: play,
-    isLoaded: isLoaded
+    define: define,
+    play: play
 };

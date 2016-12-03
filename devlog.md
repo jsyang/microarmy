@@ -1,8 +1,9 @@
 # Dev log
 
     Dec 3, 2016
-    Begun work on Microarmy once again, there are a lot of infrastructure pieces to be cleaned up. Firstly, the tech stack should
-    now be settled. It will include:
+    Begun work on Microarmy once again, there are a lot of infrastructure pieces to be cleaned up. Hopefully, this will expose 
+    the underlying game logic in easily digestible (read: rewritable) pieces for maintainability and future-proofing. Firstly, 
+    the tech stack should now be settled. It will include:
       - Grunt (using the grunt directory as the task configs)
       - Browserify to handle all modules (since ES6 is not yet implemented across all platforms)
       - The code will be written in ES5 with no preprocessors.
@@ -20,7 +21,7 @@
       - Scope of this project is reduced to any simulatable combat between two forces with known:
         - Number of units
         - Funds
-        
+
     Editor being used is VSCode with occasional WebStorm.
 
     Feb 12, 2014
