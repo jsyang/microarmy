@@ -1,3 +1,6 @@
+/**
+ * Audio interface
+ */
 var audioContext;
 var audioBuffers;
 

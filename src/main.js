@@ -1,5 +1,5 @@
 /**
- * This is the entry-point for the game.
+ * Application entry-point
  */
 
 var audio = require('./audio');

@@ -1,5 +1,10 @@
 # Dev log
 
+    Dec 4, 2016
+    Work continues on getting the core game engine pieces functional: XHash and BehaviorExecutor. Some rearchitecting may be needed
+    since it is not often as straightforward expressing BehaviorTrees as JSON objects; they will be turned into Promise chains.
+    
+
     Dec 3, 2016
     Begun work on Microarmy once again, there are a lot of infrastructure pieces to be cleaned up. Hopefully, this will expose 
     the underlying game logic in easily digestible (read: rewritable) pieces for maintainability and future-proofing. Firstly, 
@@ -8,7 +13,9 @@
       - Browserify to handle all modules (since ES6 is not yet implemented across all platforms)
       - The code will be written in ES5 with no preprocessors.
       - Game resources will be limited to:
+        - a favicon.ico file
         - a single HTML file
+        - a single JS file with all the game logic
         - a single zip file containing all assets: sprites, sounds, music, other resources
 
       - Game engine is composed of:

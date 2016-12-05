@@ -1,3 +1,6 @@
+/**
+ * Graphics interface
+ */
 var UrlCreator = window.URL || window.webkitURL;
 
 var canvas;
